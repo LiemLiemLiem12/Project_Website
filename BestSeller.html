@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ sưu tập sản phẩm</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Be Vietnam Pro Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/AllProduct.css">
+    <style>
+        .best-seller-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ffc107;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div class="container py-4">
+
+        <div class="row">
+            <h1 class="collection-title">TẤT CẢ SẢN PHẨM</h1>
+            <img src="assets/img/All-Product/img.webp" alt="Background" class = "mb-5 mt-2">
+            <!-- Sidebar (Bộ lọc) -->
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <div class="filter-section">
+                        <h4>Kích thước</h4>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="size1">
+                            <label class="form-check-label" for="size1">
+                                S
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="size2">
+                            <label class="form-check-label" for="size2">
+                                M
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="size3">
+                            <label class="form-check-label" for="size3">
+                                L
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="size4">
+                            <label class="form-check-label" for="size4">
+                                XL
+                            </label>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>Giá</h4>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="price1">
+                            <label class="form-check-label" for="price1">
+                                Dưới 300,000₫
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="price2">
+                            <label class="form-check-label" for="price2">
+                                300,000₫ - 500,000₫
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="price3">
+                            <label class="form-check-label" for="price3">
+                                500,000₫ - 700,000₫
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="price4">
+                            <label class="form-check-label" for="price4">
+                                Trên 700,000₫
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách sản phẩm -->
+            <div class="col-lg-9">
+                <div class="sorting-container">
+                    <p class="mb-0"><span id="product-count">24</span> sản phẩm</p>
+                    <select class="form-select sort-by">
+                        <option selected>Sắp xếp theo</option>
+                        <option value="price-asc">Giá: Tăng dần</option>
+                        <option value="price-desc">Giá: Giảm dần</option>
+                        <option value="name-asc">Tên: A-Z</option>
+                        <option value="name-desc">Tên: Z-A</option>
+                        <option value="newest">Mới nhất</option>
+                    </select>
+                </div>
+
+                <div class="row" id="product-container">
+                    <!-- Sản phẩm 1 -->
+                    <div class="col-6 col-md-4">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-container">
+                                <span class="badge bg-danger">-20%</span>
+                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Áo thun basic">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Áo thun basic hover">
+                                <button class="add-to-cart" data-product-id="1">THÊM VÀO GIỎ</button>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="product-title">Áo thun basic form rộng chất liệu cotton</h3>
+                                <div class="product-price">
+                                    <span class="sale-price">320,000₫</span>
+                                    <span class="original-price">400,000₫</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sản phẩm 2 -->
+                    <div class="col-6 col-md-4">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-container">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Quần jean">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Quần jean hover">
+                                <button class="add-to-cart" data-product-id="2">THÊM VÀO GIỎ</button>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="product-title">Quần Jean nam ống suông</h3>
+                                <div class="product-price">
+                                    <span class="sale-price">450,000₫</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sản phẩm 3 -->
+                    <div class="col-6 col-md-4">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-container">
+                                <span class="badge bg-danger">-15%</span>
+                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Áo sơ mi">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Áo sơ mi hover">
+                                <button class="add-to-cart" data-product-id="3">THÊM VÀO GIỎ</button>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="product-title">Áo sơ mi nam tay dài form regular fit</h3>
+                                <div class="product-price">
+                                    <span class="sale-price">425,000₫</span>
+                                    <span class="original-price">500,000₫</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sản phẩm 4 -->
+                    <div class="col-6 col-md-4">
+                        <div class="card product-card">
+                            <div class="product-img-container">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Áo khoác">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Áo khoác hover">
+                                <button class="add-to-cart" data-product-id="4">THÊM VÀO GIỎ</button>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="product-title">Áo khoác bomber unisex</h3>
+                                <div class="product-price">
+                                    <span class="sale-price">650,000₫</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sản phẩm 5 -->
+                    <div class="col-6 col-md-4">
+                        <div class="card product-card">
+                            <div class="product-img-container">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Quần short">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Quần short hover">
+                                <button class="add-to-cart" data-product-id="5">THÊM VÀO GIỎ</button>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="product-title">Quần short kaki nam</h3>
+                                <div class="product-price">
+                                    <span class="sale-price">350,000₫</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sản phẩm 6 -->
+                    <div class="col-6 col-md-4">
+                        <div class="card product-card">
+                            <div class="product-img-container">
+                                <span class="badge bg-danger">-25%</span>
+                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Áo polo">
+                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Áo polo hover">
+                                <button class="add-to-cart" data-product-id="6">THÊM VÀO GIỎ</button>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="product-title">Áo polo nam phối màu</h3>
+                                <div class="product-price">
+                                    <span class="sale-price">300,000₫</span>
+                                    <span class="original-price">400,000₫</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thêm nút xem thêm ở cuối danh sách sản phẩm -->
+                    <div class="load-more-container text-center mt-4 mb-5">
+                        <button id="loadMoreBtn" class="btn btn-primary">Xem thêm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

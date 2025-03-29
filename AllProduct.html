@@ -16,10 +16,13 @@
 </head>
 
 <body>
+
     <div class="container py-4">
+  
         <h1 class="collection-title">TẤT CẢ SẢN PHẨM</h1>
 
         <div class="row">
+            <img src="assets/img/All-Product/img.webp" alt="Background" class = "mb-5 mt-2">
             <!-- Sidebar (Bộ lọc) -->
             <div class="col-lg-3">
                 <div class="sidebar">
@@ -238,13 +241,27 @@
                     <div class="load-more-container text-center mt-4 mb-5">
                         <button id="loadMoreBtn" class="btn btn-primary">Xem thêm</button>
                     </div>
-
-
                 </div>
             </div>
         </div>
-
-
-
+        
     </div>
+
+    
+    <div id="cart-notification" class="cart-notification hidden">
+        <span class="close-btn">&times;</span>
+        <p>✔ Thêm vào giỏ hàng thành công</p>
+        <div class="cart-item">
+            <img id="cart-item-image" src="" alt="Sản phẩm">
+            <div>
+                <p id="cart-item-name">Tên sản phẩm</p>
+                <p id="cart-item-price">Giá sản phẩm</p>
+            </div>
+        </div>
+        <button onclick="window.location.href='cart.html'">Xem giỏ hàng</button>
+    </div>
+    
+
+    <script src="assets/js/AllProduct.js"></script>
+
 </body>

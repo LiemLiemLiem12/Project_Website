@@ -1,3 +1,15 @@
+console.log("Footer.js đã chạy!");
+
+// Kiểm tra xem phần tử có tồn tại không
+document.addEventListener("DOMContentLoaded", function() {
+    const footer = document.getElementById("footer-content");
+    if (footer) {
+        footer.style.backgroundColor = "lightblue";
+        console.log("Đã đổi màu nền footer!");
+    } else {
+        console.error("Không tìm thấy #footer-content!");
+    }
+});
 
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -43,3 +55,15 @@
             chinhSachIcon.classList.add('bi-chevron-up');
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Footer script đã chạy!");
+    
+        let footer = document.getElementById("footer");
+        if (footer) {
+            let p = document.createElement("p");
+            p.textContent = "© 2025 - Footer đã tải thành công!";
+            footer.appendChild(p);
+        }
+    });
+    
