@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Đăng nhập</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/Login.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <div class="navbar-nav">
+                <a class="nav-link" href="#">Trang chủ</a>
+                <a class="nav-link" href="#">Tài khoản</a>
+                <a class="nav-link" href="#" id="loginNav">Đăng ký</a>
+                <a class="nav-link" href="#" id="registerNav">Đăng nhập</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <!-- Login Form -->
+                <div class="auth-form" id="loginForm">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-center mb-4">ĐĂNG NHẬP</h3>
+                            <p class="text-center text-muted mb-4">HOẶC ĐĂNG NHẬP VỚI...</p>
+                            
+                            <form id="loginFormElement">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="loginEmail" placeholder="Nhập email hoặc số điện thoại" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="password" class="form-control" id="loginPassword" placeholder="Mật khẩu" required>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-dark">ĐĂNG NHẬP</button>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="#" id="forgotPassword">Quên mật khẩu?</a>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <a href="#" id="showRegister">Đăng ký</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div class="auth-form d-none" id="registerForm">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-center mb-4">TẠO TÀI KHOẢN</h3>
+                            
+                            <form id="registerFormElement">
+                                <div class="mb-3">
+                                    <input type="tel" class="form-control" id="registerPhone" placeholder="Nhập số điện thoại" required>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-dark">GỬI MÃ XÁC NHẬN</button>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <a href="#" id="showLogin">Quay về</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/Login.js"></script>
+</body>
+</html>
