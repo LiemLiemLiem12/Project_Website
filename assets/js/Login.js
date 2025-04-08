@@ -187,9 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    function showForgotPasswordAlert() {
-        alert('Chức năng quên mật khẩu đang được phát triển. Vui lòng thử lại sau.');
-    }
     // Cập nhật hiển thị của thanh điều hướng dựa trên form đang hiển thị
 function updateNavigation(currentForm) {
     if (currentForm === 'login') {
@@ -217,3 +214,97 @@ function switchForm(hideForm, showForm) {
 // Thiết lập trạng thái điều hướng ban đầu khi trang tải
 updateNavigation('login');
 });
+// Thêm vào phần khai báo DOM elements
+const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+const forgotPasswordFormElement = document.getElementById('forgotPasswordFormElement');
+const emailRecovery = document.getElementById('emailRecovery');
+const phoneRecovery = document.getElementById('phoneRecovery');
+const recoveryContact = document.getElementById('recoveryContact');
+const cancelRecovery = document.getElementById('cancelRecovery');
+
+// Thêm event listeners cho form phục hồi mật khẩu
+forgotPasswordFormElement.addEventListener('submit', function(e) {
+    e.preventDefault();
+    handlePasswordRecovery();
+});
+
+cancelRecovery.addEventListener('click', function(e) {
+    e.preventDefault();
+    switchToLoginForm();
+});
+
+emailRecovery.addEventListener('change', updateRecoveryPlaceholder);
+phoneRecovery.addEventListener('change', updateRecoveryPlaceholder);
+recoveryContact.addEventListener('blur', validateRecoveryContact);
+
+// Thay thế hàm showForgotPasswordAlert
+function showForgotPasswordAlert() {
+    // Ẩn form đăng nhập và hiển thị form phục hồi mật khẩu
+    loginForm.classList.add('d-none');
+    registerForm.classList.add('d-none');
+    forgotPasswordForm.classList.remove('d-none');
+    forgotPasswordForm.classList.add('fade-in');
+    
+    // Đặt placeholder mặc định dựa trên phương thức được chọn
+    updateRecoveryPlaceholder();
+    
+    // Reset form
+    forgotPasswordFormElement.reset();
+    removeValidationStyles(recoveryContact);
+}
+
+function switchToLoginForm() {
+    // Ẩn form phục hồi mật khẩu và hiển thị form đăng nhập
+    forgotPasswordForm.classList.add('d-none');
+    loginForm.classList.remove('d-none');
+    loginForm.classList.add('fade-in');
+    
+    // Reset form
+    loginFormElement.reset();
+    removeValidationStyles(loginEmail);
+    removeValidationStyles(loginPassword);
+    
+    // Cập nhật thanh điều hướng
+    updateNavigation('login');
+}
+
+function updateRecoveryPlaceholder() {
+    if (emailRecovery.checked) {
+        recoveryContact.placeholder = "Nhập email";
+    } else {
+        recoveryContact.placeholder = "Nhập số điện thoại";
+    }
+}
+
+function validateRecoveryContact() {
+    const value = recoveryContact.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9]{10,11}$/;
+    
+    if (value === '') {
+        const fieldName = emailRecovery.checked ? 'email' : 'số điện thoại';
+        setInvalidStyle(recoveryContact, `Vui lòng nhập ${fieldName}`);
+        return false;
+    } else if (emailRecovery.checked && !emailRegex.test(value)) {
+        setInvalidStyle(recoveryContact, 'Email không hợp lệ');
+        return false;
+    } else if (phoneRecovery.checked && !phoneRegex.test(value)) {
+        setInvalidStyle(recoveryContact, 'Số điện thoại không hợp lệ');
+        return false;
+    } else {
+        setValidStyle(recoveryContact);
+        return true;
+    }
+}
+
+function handlePasswordRecovery() {
+    if (!validateRecoveryContact()) {
+        return;
+    }
+    
+    const method = emailRecovery.checked ? 'email' : 'số điện thoại';
+    console.log(`Đang gửi mã xác nhận đến ${method}: ${recoveryContact.value}`);
+    
+    // Simulate sending verification code - in real app would call API
+    alert(`Mã xác nhận đã được gửi đến ${recoveryContact.value}`);
+}

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>160store Blog Clone</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        .blog-container {
+            padding: 50px 0;
+        }
+
+        .blog-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .blog-card {
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+            border: none;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            height: 48px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .card-text {
+            color: #666;
+            font-size: 14px;
+            height: 60px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            margin-bottom: 15px;
+        }
+
+        .card-date {
+            color: #999;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .read-more {
+            color: #333;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .read-more:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: #333;
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .read-more:hover:after {
+            transform: scaleX(1);
+        }
+
+        .blog-filter {
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            border: 1px solid #ddd;
+            background: none;
+            padding: 8px 15px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background-color: #333;
+            color: #fff;
+            border-color: #333;
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .page-link {
+            color: #333;
+            border: none;
+            margin: 0 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-link:hover,
+        .page-item.active .page-link {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .blog-search {
+            position: relative;
+            max-width: 300px;
+            margin: 0 auto 40px;
+        }
+
+        .blog-search input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .blog-search button {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 767px) {
+            .blog-title {
+                font-size: 24px;
+            }
+        }
+
+        .breadcrumb {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .breadcrumb a {
+            text-decoration: none;
+            color: blue;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="container blog-container">
+
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">Trang chủ </a> /
+                <span> Tất cả bài viết</span>
+            </div>
+
+
+            <h1 class="blog-title">Blog Posts</h1>
+
+            <!-- Search Bar -->
+            <div class="blog-search">
+                <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput">
+                <button type="button"><i class="fas fa-search"></i></button>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="blog-filter text-center">
+                <button class="filter-btn active" data-filter="all">Tất cả</button>
+                <button class="filter-btn" data-filter="news">Tin tức</button>
+                <button class="filter-btn" data-filter="fashion">Thời trang</button>
+                <button class="filter-btn" data-filter="lifestyle">Phong cách sống</button>
+                <button class="filter-btn" data-filter="tutorials">Hướng dẫn</button>
+            </div>
+
+            <!-- Blog Posts -->
+            <div class="row" id="blogPosts">
+                <!-- Blog Item 1 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="fashion">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">25 Tháng 3, 2025</span>
+                            <h5 class="card-title">Xu hướng thời trang mùa hè 2025</h5>
+                            <p class="card-text">Khám phá những xu hướng thời trang nổi bật nhất cho mùa hè năm nay với
+                                các gợi ý phối đồ tuyệt vời.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 2 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="lifestyle">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">20 Tháng 3, 2025</span>
+                            <h5 class="card-title">5 cách phối đồ minimalist cho công sở</h5>
+                            <p class="card-text">Tối giản nhưng vẫn sang trọng và chuyên nghiệp, những gợi ý này sẽ giúp
+                                bạn thay đổi phong cách.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 3 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="news">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">18 Tháng 3, 2025</span>
+                            <h5 class="card-title">BST mới nhất của 160store - Mùa xuân 2025</h5>
+                            <p class="card-text">Bộ sưu tập mới với những thiết kế độc đáo, kết hợp giữa phong cách hiện
+                                đại và truyền thống.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 4 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="tutorials">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">15 Tháng 3, 2025</span>
+                            <h5 class="card-title">Cách bảo quản quần áo linen trong mùa hè</h5>
+                            <p class="card-text">Những mẹo hữu ích giúp bạn giữ quần áo linen luôn mới và bền đẹp qua
+                                nhiều mùa sử dụng.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 5 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="fashion">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">10 Tháng 3, 2025</span>
+                            <h5 class="card-title">Màu sắc nào sẽ thống trị thời trang 2025?</h5>
+                            <p class="card-text">Phân tích các xu hướng màu sắc đang dẫn đầu trong các tuần lễ thời
+                                trang quốc tế.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 6 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="lifestyle">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">5 Tháng 3, 2025</span>
+                            <h5 class="card-title">Phối đồ cho chuyến du lịch mùa hè</h5>
+                            <p class="card-text">Gợi ý những items cần thiết và cách phối đồ thông minh cho chuyến du
+                                lịch mùa hè sắp tới.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 7 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="news">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">1 Tháng 3, 2025</span>
+                            <h5 class="card-title">160store mở rộng cửa hàng tại Hà Nội</h5>
+                            <p class="card-text">Thông tin về cửa hàng mới nhất của 160store tại Hà Nội với nhiều ưu đãi
+                                đặc biệt.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 8 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="tutorials">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">25 Tháng 2, 2025</span>
+                            <h5 class="card-title">Hướng dẫn chọn size quần áo chuẩn</h5>
+                            <p class="card-text">Bí quyết chọn đúng size quần áo cho từng dáng người để luôn tự tin với
+                                phong cách của mình.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 9 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="fashion">
+                    <div class="card blog-card">
+                        <img src="assets/img/DetailProduct/detailItem2.webp" class="card-img-top" alt="Blog Image">
+                        <div class="card-body">
+                            <span class="card-date">20 Tháng 2, 2025</span>
+                            <h5 class="card-title">Phong cách thời trang bền vững</h5>
+                            <p class="card-text">Khám phá xu hướng thời trang bền vững và cách 160store áp dụng vào các
+                                bộ sưu tập mới nhất.</p>
+                            <a href="#" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handle filter buttons
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const blogItems = document.querySelectorAll('#blogPosts > div');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter');
+
+                    // Filter blog items
+                    blogItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase();
+
+                blogItems.forEach(item => {
+                    const title = item.querySelector('.card-title').textContent.toLowerCase();
+                    const text = item.querySelector('.card-text').textContent.toLowerCase();
+
+                    if (title.includes(searchTerm) || text.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            // Handle pagination (just for UI demonstration - would need backend)
+            const pageLinks = document.querySelectorAll('.page-link');
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Remove active class from all
+                    document.querySelectorAll('.page-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+
+                    // Add active class to parent if it's a number
+                    if (!this.getAttribute('aria-label')) {
+                        this.parentElement.classList.add('active');
+                    }
+                });
+            });
+
+            // Fade-in effect for cards
+            const fadeElements = document.querySelectorAll('.fade-in');
+
+            const fadeInObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            fadeElements.forEach(element => {
+                fadeInObserver.observe(element);
+            });
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+
+    </script>
+</body>
+
+</html>

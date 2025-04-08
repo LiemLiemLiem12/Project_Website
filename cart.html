@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .cart-header {
+            background-color: #fff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 0;
+        }
+
+        .cart-container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .cart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-variant {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .quantity-input {
+            width: 40px;
+            height: 30px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+        }
+
+        .cart-item-price {
+            font-weight: 600;
+            text-align: right;
+            width: 120px;
+        }
+
+        .cart-item-original-price {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .cart-item-remove {
+            margin-left: 15px;
+            color: #000;
+            cursor: pointer;
+        }
+
+        .cart-notification {
+            background-color: #fff3cd;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .order-summary {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-total {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .checkout-btn {
+            background-color: #000;
+            color: #fff;
+            width: 100%;
+            padding: 12px;
+            font-weight: 600;
+            margin-top: 20px;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .continue-shopping {
+            text-align: center;
+            display: block;
+            margin-top: 15px;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .continue-shopping:hover {
+            text-decoration: underline;
+        }
+
+        .delivery-estimate {
+            margin-top: 20px;
+        }
+
+        .form-select {
+            margin-bottom: 10px;
+        }
+
+        .note-area {
+            margin-top: 20px;
+        }
+
+        .promotion-input {
+            margin-top: 10px;
+        }
+
+        .progress {
+            height: 5px;
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            background-color: #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cart-header">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Giỏ hàng</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="cart-container">
+                    <div class="cart-title">
+                        <span>Giỏ hàng:</span>
+                        <span class="badge bg-dark" id="item-count">22 Sản phẩm</span>
+                    </div>
+
+                    <div class="cart-notification">
+                        <i class="fas fa-tags me-2"></i> Đơn hàng của bạn đã đủ điều kiện giảm 144K nhờ nhập mã
+                        <strong>🎉</strong>
+                    </div>
+
+                    <div class="cart-items" id="cart-items">
+                        <!-- Cart Item 1 -->
+                        <div class="cart-item" data-id="1">
+                            <img src="assets/img/All-Product/item1.webp" alt="Áo Thun Nam" class="cart-item-image">
+                            <div class="cart-item-info">
+                                <div class="cart-item-title">Áo Thun Nam ICONDENIM Patterned heat-embossed ID</div>
+                                <div class="cart-item-variant">Đen-0515 / S</div>
+                                <div class="cart-item-actions">
+                                    <div class="quantity-control">
+                                        <button class="quantity-btn decrease-btn">−</button>
+                                        <input type="text" class="quantity-input" value="10" min="1" max="100">
+                                        <button class="quantity-btn increase-btn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cart-item-price">3,290,000₫</div>
+                            <span class="cart-item-remove">✕</span>
+                        </div>
+
+                        <!-- Cart Item 2 -->
+                        <div class="cart-item" data-id="2">
+                            <img src="assets/img/All-Product/item1.webp" alt="Quần Jogger Nam" class="cart-item-image">
+                            <div class="cart-item-info">
+                                <div class="cart-item-title">Quần Jogger Nam ICONDENIM Mythical Figures</div>
+                                <div class="cart-item-variant">Nâu-0065 / S</div>
+                                <div class="cart-item-actions">
+                                    <div class="quantity-control">
+                                        <button class="quantity-btn decrease-btn">−</button>
+                                        <input type="text" class="quantity-input" value="1" min="1" max="100">
+                                        <button class="quantity-btn increase-btn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cart-item-price">
+                                <div>335,200₫</div>
+                                <div class="cart-item-original-price">419,000₫</div>
+                            </div>
+                            <span class="cart-item-remove">✕</span>
+                        </div>
+
+                        <!-- Cart Item 3 -->
+                        <div class="cart-item" data-id="3">
+                            <img src="assets/img/All-Product/item1.webp" alt="Áo Thun Nam" class="cart-item-image">
+                            <div class="cart-item-info">
+                                <div class="cart-item-title">Áo Thun Nam ICONDENIM Double Stripes ICDN</div>
+                                <div class="cart-item-variant">Trắng-0540 / S</div>
+                                <div class="cart-item-actions">
+                                    <div class="quantity-control">
+                                        <button class="quantity-btn decrease-btn">−</button>
+                                        <input type="text" class="quantity-input" value="1" min="1" max="100">
+                                        <button class="quantity-btn increase-btn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cart-item-price">299,000₫</div>
+                            <span class="cart-item-remove">✕</span>
+                        </div>
+
+                        <!-- Cart Item 4 -->
+                        <div class="cart-item" data-id="4">
+                            <img src="assets/img/All-Product/item1.webp" alt="Combo Box" class="cart-item-image">
+                            <div class="cart-item-info">
+                                <div class="cart-item-title">Combo Box Vớ Form Ankle</div>
+                                <div class="cart-item-variant">Combo Trắng/Đen/Xám-0044</div>
+                                <div class="cart-item-actions">
+                                    <div class="quantity-control">
+                                        <button class="quantity-btn decrease-btn">−</button>
+                                        <input type="text" class="quantity-input" value="10" min="1" max="100">
+                                        <button class="quantity-btn increase-btn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cart-item-price">990,000₫</div>
+                            <span class="cart-item-remove">✕</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="order-summary">
+                    <div class="summary-title">Thông tin đơn hàng</div>
+                    <div class="summary-row">
+                        <span>Tạm tính:</span>
+                        <span id="subtotal">4,998,000₫</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Giá giảm:</span>
+                        <span id="discount">- 83,800₫</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Tổng tiền:</span>
+                        <span id="total">4,914,200₫</span>
+                    </div>
+
+                    <div class="delivery-estimate">
+                        <div class="mb-2"><i class="fas fa-truck me-2"></i> Ước tính thời gian giao hàng</div>
+                        <select class="form-select" id="city-select">
+                            <option selected>Chọn tỉnh/thành phố</option>
+                            <option value="1">Hà Nội</option>
+                            <option value="2">TP. Hồ Chí Minh</option>
+                            <option value="3">Đà Nẵng</option>
+                        </select>
+                        <select class="form-select" id="district-select">
+                            <option selected>Chọn Quận/huyện</option>
+                            <option value="1">Quận 1</option>
+                            <option value="2">Quận 2</option>
+                            <option value="3">Quận 3</option>
+                        </select>
+                    </div>
+
+                    <div class="note-area">
+                        <div class="mb-2">Ghi chú đơn hàng</div>
+                        <textarea class="form-control" id="note" rows="3" placeholder="Ghi chú"></textarea>
+                    </div>
+
+                    <div class="promotion-input">
+                        <input type="text" class="form-control" placeholder="Nhập mã khuyến mãi (nếu có)">
+                    </div>
+
+                    <button class="checkout-btn">THANH TOÁN NGAY</button>
+                    <a href="#" class="continue-shopping"><i class="fas fa-arrow-left me-2"></i> Tiếp tục mua hàng</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // City-district dependency
+        const citySelect = document.getElementById('city-select');
+        const districtSelect = document.getElementById('district-select');
+
+        // Define districts for each city
+        const districtsByCity = {
+            '1': [  // Hà Nội
+                { id: '1', name: 'Quận Ba Đình' },
+                { id: '2', name: 'Quận Hoàn Kiếm' },
+                { id: '3', name: 'Quận Hai Bà Trưng' },
+                { id: '4', name: 'Quận Đống Đa' }
+            ],
+            '2': [  // TP. Hồ Chí Minh
+                { id: '5', name: 'Quận 1' },
+                { id: '6', name: 'Quận 2' },
+                { id: '7', name: 'Quận 3' },
+                { id: '8', name: 'Quận 5' }
+            ],
+            '3': [  // Đà Nẵng
+                { id: '9', name: 'Quận Hải Châu' },
+                { id: '10', name: 'Quận Thanh Khê' },
+                { id: '11', name: 'Quận Liên Chiểu' },
+                { id: '12', name: 'Quận Sơn Trà' }
+            ]
+        };
+
+        // Update districts when city changes
+        citySelect.addEventListener('change', function () {
+            const cityId = this.value;
+
+            // Clear current options
+            districtSelect.innerHTML = '<option selected>Chọn Quận/huyện</option>';
+
+            // If valid city selected, add corresponding districts
+            if (cityId && districtsByCity[cityId]) {
+                districtsByCity[cityId].forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.id;
+                    option.textContent = district.name;
+                    districtSelect.appendChild(option);
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all cart items
+            const cartItems = document.querySelectorAll('.cart-item');
+            const subtotalElement = document.getElementById('subtotal');
+            const discountElement = document.getElementById('discount');
+            const totalElement = document.getElementById('total');
+            const itemCountElement = document.getElementById('item-count');
+
+            // Function to update total prices
+            function updateTotals() {
+                let subtotal = 0;
+                let itemCount = 0;
+
+                cartItems.forEach(item => {
+                    if (!item.classList.contains('d-none')) {
+                        const priceText = item.querySelector('.cart-item-price').innerText.split('\n')[0]; // Get the first line for items with discounted price
+                        const price = parseInt(priceText.replace(/[^\d]/g, ''));
+                        const quantity = parseInt(item.querySelector('.quantity-input').value);
+
+                        subtotal += price * quantity;
+                        itemCount += quantity;
+                    }
+                });
+
+                // Apply discount
+                const discount = 83800;
+                const total = subtotal - discount;
+
+                // Update the displayed values
+                subtotalElement.innerText = formatPrice(subtotal) + '₫';
+                discountElement.innerText = '- ' + formatPrice(discount) + '₫';
+                totalElement.innerText = formatPrice(total) + '₫';
+                itemCountElement.innerText = itemCount + ' Sản phẩm';
+            }
+
+            // Format price with commas
+            function formatPrice(price) {
+                return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            // Handle quantity changes
+            const decreaseBtns = document.querySelectorAll('.decrease-btn');
+            const increaseBtns = document.querySelectorAll('.increase-btn');
+            const quantityInputs = document.querySelectorAll('.quantity-input');
+
+            decreaseBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const input = this.parentElement.querySelector('.quantity-input');
+                    let value = parseInt(input.value);
+                    if (value > 1) {
+                        input.value = value - 1;
+                        updateTotals();
+                    }
+                });
+            });
+
+            increaseBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const input = this.parentElement.querySelector('.quantity-input');
+                    let value = parseInt(input.value);
+                    input.value = value + 1;
+                    updateTotals();
+                });
+            });
+
+            quantityInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    let value = parseInt(this.value);
+
+                    if (isNaN(value) || value < 1) {
+                        this.value = 1;
+                    }
+
+                    updateTotals();
+                });
+            });
+
+            // Handle item removal
+            const removeButtons = document.querySelectorAll('.cart-item-remove');
+
+            removeButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const item = this.closest('.cart-item');
+                    item.classList.add('d-none');
+                    updateTotals();
+                });
+            });
+
+            // Initialize totals on page load
+            updateTotals();
+        });
+    </script>
+</body>
+
+</html>

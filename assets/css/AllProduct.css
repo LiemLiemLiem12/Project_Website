@@ -226,3 +226,17 @@ body {
     margin-right: 10px;
     border-radius: 5px;
 }
+.breadcrumb {
+    padding: 10px;
+    font-size: 16px;
+}
+.breadcrumb a {
+    text-decoration: none;
+    color: blue;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+.breadcrumb span {
+    color: gray;
+}

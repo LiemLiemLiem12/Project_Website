@@ -9,108 +9,22 @@
     <link rel="stylesheet" href="assets/css/Home.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-top">
-                <div class="logo">
-                    <a href="index.html">
-                        <img src="assets/img/Header/logo.png" alt="160Store Logo">
-                    </a>
-                </div>
-                <div class="search-box">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm...">
-                    <button><i class="fas fa-search"></i></button>
-                </div>
-                <div class="header-actions">
-                    <a href="#" class="action-item"><i class="fas fa-user"></i> Tài khoản</a>
-                    <a href="#" class="action-item"><i class="fas fa-heart"></i> Yêu thích</a>
-                    <a href="#" class="action-item cart"><i class="fas fa-shopping-cart"></i> Giỏ hàng</a>
-                </div>
-            </div>
-            
-            <nav class="main-nav">
-                <ul class="menu">
-                    <li class="menu-item">
-                        <a href="#" class="new-badge">
-                            <i class="fas fa-tag"></i> HÀNG MỚI
-                            <span class="badge">New</span>
-                        </a>
-                    </li>
-                    <li class="menu-item has-dropdown">
-                        <a href="#">SẢN PHẨM <i class="fas fa-chevron-down"></i></a>
-                        <div class="dropdown-menu">
-                            <ul>
-                                <li><a href="#">Áo Thun</a></li>
-                                <li><a href="#">Áo Sơ Mi</a></li>
-                                <li><a href="#">Áo Khoác</a></li>
-                                <li><a href="#">Quần Jean</a></li>
-                                <li><a href="#">Quần Tây</a></li>
-                                <li><a href="#">Tất Cả Sản Phẩm</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="menu-item has-dropdown">
-                        <a href="#">ÁO NAM <i class="fas fa-chevron-down"></i></a>
-                        <div class="dropdown-menu">
-                            <ul>
-                                <li><a href="#">Áo Thun</a></li>
-                                <li><a href="#">Áo Polo</a></li>
-                                <li><a href="#">Áo Sơ Mi</a></li>
-                                <li><a href="#">Áo Khoác</a></li>
-                                <li><a href="#">Áo Len</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="menu-item has-dropdown">
-                        <a href="#">QUẦN NAM <i class="fas fa-chevron-down"></i></a>
-                        <div class="dropdown-menu">
-                            <ul>
-                                <li><a href="#">QUẦN JEAN</a></li>
-                                <li><a href="#">QUẦN SHORT</a></li>
-                                <li><a href="#">QUẦN TÂY</a></li>
-                                <li><a href="#">QUẦN JOGGER - QUẦN DÀI</a></li>
-                                <li><a href="#">QUẦN KAKI</a></li>
-                                <li><a href="#">SET QUẦN ÁO</a></li>
-                                <li><a href="#">QUẦN BOXER</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="menu-item has-dropdown">
-                        <a href="#">PHỤ KIỆN <i class="fas fa-chevron-down"></i></a>
-                        <div class="dropdown-menu">
-                            <ul>
-                                <li><a href="#">Thắt Lưng</a></li>
-                                <li><a href="#">Ví Da</a></li>
-                                <li><a href="#">Mũ Nón</a></li>
-                                <li><a href="#">Tất Vớ</a></li>
-                                <li><a href="#">Túi Xách</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#" class="sale-badge">GIÁ MỚI</a>
-                    </li>
-                    <li class="menu-item has-dropdown">
-                        <a href="#">JEANS <i class="fas fa-chevron-down"></i></a>
-                        <div class="dropdown-menu">
-                            <ul>
-                                <li><a href="#">Quần Jean Nam</a></li>
-                                <li><a href="#">Áo Jean Nam</a></li>
-                                <li><a href="#">Áo Khoác Jean</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#">TIN THỜI TRANG</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+   
 
     <main>
+        
         <section class="hero-banner">
             <div class="container">
+                <div class="breadcrumb">
+                    <a href="#" onclick="goBack()">Trang chủ</a> / 
+                    <span>Tất cả bài viết</span>
+                </div>
+            
+                <script>
+                    function goBack() {
+                        window.history.back();
+                    }
+                </script>
                 <div class="banner-slider">
                     <div class="slide active">
                         <img src="assets/img/Home/Banner1.webp" alt="Thời trang nam">

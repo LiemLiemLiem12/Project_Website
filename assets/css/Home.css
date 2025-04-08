@@ -649,3 +649,17 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+.breadcrumb {
+    padding: 10px;
+    font-size: 16px;
+}
+.breadcrumb a {
+    text-decoration: none;
+    color: blue;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+.breadcrumb span {
+    color: gray;
+}

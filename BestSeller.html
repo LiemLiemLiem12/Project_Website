@@ -31,7 +31,16 @@
 <body>
     
     <div class="container py-4">
-
+        <div class="breadcrumb">
+            <a href="#" onclick="goBack()">Trang chủ </a> / 
+            <span> Sản phẩm bán chạy</span>
+        </div>
+    
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+        </script>
         <div class="row">
             <h1 class="collection-title">TẤT CẢ SẢN PHẨM</h1>
             <img src="assets/img/All-Product/img.webp" alt="Background" class = "mb-5 mt-2">
