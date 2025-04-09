@@ -1,276 +1,548 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bộ sưu tập sản phẩm</title>
+    <title>All Products | RentEase</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Be Vietnam Pro Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/AllProduct.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb {
+            margin-bottom: 20px;
+            background-color: transparent;
+            padding-left: 0;
+        }
+
+        .breadcrumb-item a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #000;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            margin-bottom: 30px;
+        }
+
+        /* Product Card */
+        .product-card {
+            transition: all 0.3s ease;
+            height: 100%;
+            border: none;
+            margin-bottom: 30px;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-img-wrap {
+            position: relative;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #000;
+            color: #fff;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            z-index: 1;
+        }
+
+        .btn-quickview {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border: none;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .product-card:hover .btn-quickview {
+            opacity: 1;
+        }
+
+        .product-info {
+            padding: 15px 10px;
+            text-align: center;
+        }
+
+        .product-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            height: 40px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .product-price {
+            font-weight: bold;
+            font-size: 16px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .btn-add-cart {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-add-cart:hover {
+            background-color: #333;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #eaeaea;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .filter-dropdown {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 0;
+            background-color: #fff;
+            font-size: 14px;
+        }
+
+        .btn-filter {
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 0;
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-top: 30px;
+        }
+
+        .pagination .page-link {
+            color: #000;
+            border-radius: 0;
+            border: 1px solid #ddd;
+            margin: 0 3px;
+            padding: 6px 12px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #000;
+            border-color: #000;
+            color: #fff;
+        }
+
+        /* View More Button */
+        .btn-view-more {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 30px;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 500;
+            border: none;
+            margin-top: 20px;
+        }
+
+        .btn-view-more:hover {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
 </head>
 
 <body>
-
-    <div class="container py-4">
-        <div class="breadcrumb">
-            <a href="#" onclick="goBack()">Trang chủ </a> / 
-            <span> Tất cả sản phẩm</span>
+    <!-- Page Content Container -->
+    <div class="container">
+     
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Tất cả sản phẩm</li>
+            </ol>
+        </nav>
+           <!-- Hero Banner -->
+           <div class="container-fluid p-0">
+            <img src="assets/img/Home/Banner2.webp" alt="All About Menswear" class="img-fluid hero-banner">
         </div>
-    
-        <script>
-            function goBack() {
-                window.history.back();
-            }
-        </script>
-        <h1 class="collection-title">TẤT CẢ SẢN PHẨM</h1>
-
-        <div class="row">
-            <img src="assets/img/All-Product/img.webp" alt="Background" class = "mb-5 mt-2">
-            <!-- Sidebar (Bộ lọc) -->
-            <div class="col-lg-3">
-                <div class="sidebar">
-                    <div class="filter-section">
-                        <h4>Danh mục</h4>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="cat1">
-                            <label class="form-check-label" for="cat1">
-                                Áo
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="cat2">
-                            <label class="form-check-label" for="cat2">
-                                Quần
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="cat3">
-                            <label class="form-check-label" for="cat3">
-                                Áo khoác
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="cat4">
-                            <label class="form-check-label" for="cat4">
-                                Phụ kiện
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="filter-section">
-                        <h4>Kích thước</h4>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="size1">
-                            <label class="form-check-label" for="size1">
-                                S
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="size2">
-                            <label class="form-check-label" for="size2">
-                                M
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="size3">
-                            <label class="form-check-label" for="size3">
-                                L
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="size4">
-                            <label class="form-check-label" for="size4">
-                                XL
-                            </label>
-                        </div>
-                    </div>
-                    <div class="filter-section">
-                        <h4>Giá</h4>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="price1">
-                            <label class="form-check-label" for="price1">
-                                Dưới 300,000₫
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="price2">
-                            <label class="form-check-label" for="price2">
-                                300,000₫ - 500,000₫
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="price3">
-                            <label class="form-check-label" for="price3">
-                                500,000₫ - 700,000₫
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="price4">
-                            <label class="form-check-label" for="price4">
-                                Trên 700,000₫
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Danh sách sản phẩm -->
-            <div class="col-lg-9">
-                <div class="sorting-container">
-                    <p class="mb-0"><span id="product-count">24</span> sản phẩm</p>
-                    <select class="form-select sort-by">
-                        <option selected>Sắp xếp theo</option>
+        <!-- Filters and Sorting -->
+        <div class="row filter-section">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center">
+                    <span class="filter-label">Sắp xếp:</span>
+                    <select class="form-select filter-dropdown" id="sortOptions">
                         <option value="price-asc">Giá: Tăng dần</option>
                         <option value="price-desc">Giá: Giảm dần</option>
                         <option value="name-asc">Tên: A-Z</option>
                         <option value="name-desc">Tên: Z-A</option>
+                        <option value="oldest">Cũ nhất</option>
                         <option value="newest">Mới nhất</option>
+                        <option value="bestseller">Bán chạy nhất</option>
+                        <option value="stock-desc">Tồn kho: Giảm dần</option>
                     </select>
                 </div>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-outline-secondary btn-filter me-2" id="btnFilter">
+                    <i class="fas fa-filter me-1"></i> Lọc
+                </button>
+                <button class="btn btn-outline-danger btn-filter" id="btnClearFilter">
+                    <i class="fas fa-times me-1"></i> Xóa hết
+                </button>
+            </div>
+        </div>
 
-                <div class="row" id="product-container">
-                    <!-- Sản phẩm 1 -->
-                    <div class="col-6 col-md-4">
-                        <div class="card product-card">
-                            <div class="product-img-container">
-                                <span class="badge bg-danger">-20%</span>
-                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Áo thun basic">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Áo thun basic hover">
-                                <button class="add-to-cart" data-product-id="1">THÊM VÀO GIỎ</button>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="product-title">Áo thun basic form rộng chất liệu cotton</h3>
-                                <div class="product-price">
-                                    <span class="sale-price">320,000₫</span>
-                                    <span class="original-price">400,000₫</span>
-                                </div>
-                            </div>
-                        </div>
+        <!-- Products Grid -->
+        <div class="row product-grid">
+            <!-- Product 1 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Áo Thun Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
                     </div>
-
-                    <!-- Sản phẩm 2 -->
-                    <div class="col-6 col-md-4">
-                        <div class="card product-card">
-                            <div class="product-img-container">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Quần jean">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Quần jean hover">
-                                <button class="add-to-cart" data-product-id="2">THÊM VÀO GIỎ</button>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="product-title">Quần Jean nam ống suông</h3>
-                                <div class="product-price">
-                                    <span class="sale-price">450,000₫</span>
-                                </div>
-
-                            </div>
-                        </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Edge Striped</h3>
+                        <p class="product-price">299,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Sản phẩm 3 -->
-                    <div class="col-6 col-md-4">
-                        <div class="card product-card">
-                            <div class="product-img-container">
-                                <span class="badge bg-danger">-15%</span>
-                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Áo sơ mi">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Áo sơ mi hover">
-                                <button class="add-to-cart" data-product-id="3">THÊM VÀO GIỎ</button>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="product-title">Áo sơ mi nam tay dài form regular fit</h3>
-                                <div class="product-price">
-                                    <span class="sale-price">425,000₫</span>
-                                    <span class="original-price">500,000₫</span>
-                                </div>
-
-                            </div>
-                        </div>
+            <!-- Product 2 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Áo Thun Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
                     </div>
-
-                    <!-- Sản phẩm 4 -->
-                    <div class="col-6 col-md-4">
-                        <div class="card product-card">
-                            <div class="product-img-container">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Áo khoác">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Áo khoác hover">
-                                <button class="add-to-cart" data-product-id="4">THÊM VÀO GIỎ</button>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="product-title">Áo khoác bomber unisex</h3>
-                                <div class="product-price">
-                                    <span class="sale-price">650,000₫</span>
-                                </div>
-
-                            </div>
-                        </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Double Stripes ICDN</h3>
+                        <p class="product-price">299,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Sản phẩm 5 -->
-                    <div class="col-6 col-md-4">
-                        <div class="card product-card">
-                            <div class="product-img-container">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Quần short">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Quần short hover">
-                                <button class="add-to-cart" data-product-id="5">THÊM VÀO GIỎ</button>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="product-title">Quần short kaki nam</h3>
-                                <div class="product-price">
-                                    <span class="sale-price">350,000₫</span>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Product 3 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Áo Sơ Mi">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
                     </div>
-
-                    <!-- Sản phẩm 6 -->
-                    <div class="col-6 col-md-4">
-                        <div class="card product-card">
-                            <div class="product-img-container">
-                                <span class="badge bg-danger">-25%</span>
-                                <img src="assets/img/All-Product/item1.webp" class="product-img" alt="Áo polo">
-                                <img src="assets/img/All-Product/item1.webp" class="product-img-hover" alt="Áo polo hover">
-                                <button class="add-to-cart" data-product-id="6">THÊM VÀO GIỎ</button>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="product-title">Áo polo nam phối màu</h3>
-                                <div class="product-price">
-                                    <span class="sale-price">300,000₫</span>
-                                    <span class="original-price">400,000₫</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Sơ Mi Cuban Nam ICONDENIM Jacquard Stripes</h3>
+                        <p class="product-price">349,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Thêm nút xem thêm ở cuối danh sách sản phẩm -->
-                    <div class="load-more-container text-center mt-4 mb-5">
-                        <button id="loadMoreBtn" class="btn btn-primary">Xem thêm</button>
+            <!-- Product 4 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Áo Thun Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Patterned heat-embossed ID</h3>
+                        <p class="product-price">329,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 5 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Áo Thun Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Luminous</h3>
+                        <p class="product-price">299,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 6 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Áo Thun Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Rattle Essence</h3>
+                        <p class="product-price">329,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 7 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Áo Thun Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Little Monster</h3>
+                        <p class="product-price">299,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 8 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Áo Sơ Mi">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Sơ Mi Cuban Nam ICONDENIM Floral Threads</h3>
+                        <p class="product-price">349,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 9 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Thắt Lưng Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Thắt Lưng Nam ICONDENIM Urban Essential</h3>
+                        <p class="product-price">399,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 10 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Thắt Lưng Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Thắt Lưng Nam ICONDENIM Shadow Stripe</h3>
+                        <p class="product-price">399,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 11 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Quần Jean Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Quần Jean Nam ICONDENIM Straight Moss Black Wash</h3>
+                        <p class="product-price">549,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 12 -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <img src="assets\img\All-Product\img.webp" class="card-img-top" alt="Quần Jogger Nam">
+                        <span class="product-badge">Hàng Mới</span>
+                        <button class="btn-quickview">Xem nhanh</button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Quần Jogger Nam ICONDENIM LightFlex</h3>
+                        <p class="product-price">389,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
                 </div>
             </div>
         </div>
-        
-    </div>
 
-    
-    <div id="cart-notification" class="cart-notification hidden">
-        <span class="close-btn">&times;</span>
-        <p>✔ Thêm vào giỏ hàng thành công</p>
-        <div class="cart-item">
-            <img id="cart-item-image" src="" alt="Sản phẩm">
-            <div>
-                <p id="cart-item-name">Tên sản phẩm</p>
-                <p id="cart-item-price">Giá sản phẩm</p>
-            </div>
+        <!-- View More Button -->
+        <div class="text-center mb-5">
+            <button class="btn btn-view-more">Xem thêm</button>
         </div>
-        <button onclick="window.location.href='cart.html'">Xem giỏ hàng</button>
+
+        <!-- Pagination (alternative to View More button) -->
+        <nav aria-label="Product pagination" class="d-none">
+            <ul class="pagination justify-content-center">
+                <li class="page-item active">
+                    <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">2</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">3</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">...</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">14</a>
+                </li>
+            </ul>
+        </nav>
     </div>
-    
 
-    <script src="assets/js/AllProduct.js"></script>
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Product Filter and Sorting Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Quick View Button
+            const quickviewButtons = document.querySelectorAll('.btn-quickview');
+            quickviewButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const productCard = this.closest('.product-card');
+                    const productTitle = productCard.querySelector('.product-title').textContent;
+                    const productPrice = productCard.querySelector('.product-price').textContent;
+
+                    // Here you would typically show a modal with product details
+                    alert(`Quick View: ${productTitle} - ${productPrice}`);
+                    // In a real implementation, you would use a modal instead of an alert
+                });
+            });
+
+            // Add to Cart Button
+            const addToCartButtons = document.querySelectorAll('.btn-add-cart');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const productCard = this.closest('.product-card');
+                    const productTitle = productCard.querySelector('.product-title').textContent;
+
+                    // Here you would typically add the product to cart
+                    alert(`Added to cart: ${productTitle}`);
+                    // In a real implementation, you would update a cart object and UI
+                });
+            });
+
+            // Sort Products
+            const sortOptions = document.getElementById('sortOptions');
+            sortOptions.addEventListener('change', function () {
+                const sortValue = this.value;
+                // In a real implementation, you would sort the products based on the selected option
+                console.log(`Sorting by: ${sortValue}`);
+            });
+
+            // Filter Button
+            const btnFilter = document.getElementById('btnFilter');
+            btnFilter.addEventListener('click', function () {
+                // In a real implementation, you would show a filter modal or expand a filter section
+                alert('Filter options would appear here');
+            });
+
+            // Clear Filter Button
+            const btnClearFilter = document.getElementById('btnClearFilter');
+            btnClearFilter.addEventListener('click', function () {
+                // In a real implementation, you would clear all applied filters
+                alert('All filters cleared');
+            });
+
+            // View More Button
+            const btnViewMore = document.querySelector('.btn-view-more');
+            if (btnViewMore) {
+                btnViewMore.addEventListener('click', function () {
+                    // In a real implementation, you would load more products
+                    alert('Loading more products...');
+                });
+            }
+        });
+    </script>
 </body>
+
+</html>
