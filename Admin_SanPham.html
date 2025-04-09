@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - 160Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/Admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>VENTES</h2>
+            </div>
+            <ul class="nav-links">
+                <li  data-page="dashboard">
+                    <a href="#"><i class="fas fa-th-large"></i> Dashboard</a>
+                </li>
+                <li class="active" data-page="products">
+                    <a href="#"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
+                </li>
+                <li data-page="orders">
+                    <a href="#"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
+                </li>
+                <li data-page="customers">
+                    <a href="#"><i class="fas fa-users"></i> Khách Hàng</a>
+                </li>
+                <li data-page="categories">
+                    <a href="#"><i class="fas fa-tags"></i> Danh Mục</a>
+                </li>
+                <li data-page="reports">
+                    <a href="#"><i class="fas fa-chart-bar"></i> Báo Cáo</a>
+                </li>
+                <li data-page="settings">
+                    <a href="#"><i class="fas fa-cog"></i> Cài Đặt</a>
+                </li>
+            </ul>
+            <div class="admin-info">
+                <img src="assets/img/admin-avatar.jpg" alt="Admin Avatar">
+                <div>
+                    <p class="admin-name">Admin</p>
+                    <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Updated Products View for Admin_SanPham.html -->
+<div class="page-content content" id="products-content">
+    <div class="page-header">
+        <h1>Sản Phẩm</h1>
+        <button class="btn-add"><i class="fas fa-plus"></i> Thêm sản phẩm</button>
+    </div>
+
+    <div class="filter-container">
+        <div class="search-box">
+            <input type="text" placeholder="Tìm kiếm...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="filter-options">
+            <select>
+                <option value="">Danh mục</option>
+                <option value="ao-thun">Áo thun</option>
+                <option value="ao-so-mi">Áo sơ mi</option>
+                <option value="quan-jean">Quần jean</option>
+                <option value="ao-khoac">Áo khoác</option>
+            </select>
+            <select>
+                <option value="">Trạng thái</option>
+                <option value="in-stock">Còn hàng</option>
+                <option value="out-of-stock">Hết hàng</option>
+                <option value="low-stock">Sắp hết</option>
+            </select>
+            <select>
+                <option value="">Sắp xếp theo</option>
+                <option value="name-asc">Tên (A-Z)</option>
+                <option value="name-desc">Tên (Z-A)</option>
+                <option value="price-asc">Giá (Thấp-Cao)</option>
+                <option value="price-desc">Giá (Cao-Thấp)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-box"></i></div>
+            <div class="stat-content">
+                <h3>Tổng sản phẩm</h3>
+                <p>284</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+            <div class="stat-content">
+                <h3>Đã bán</h3>
+                <p>867</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-content">
+                <h3>Sắp hết hàng</h3>
+                <p>12</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-content">
+                <h3>Hết hàng</h3>
+                <p>8</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="products-table">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="select-all"></th>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Mã SKU</th>
+                    <th>Danh mục</th>
+                    <th>Giá</th>
+                    <th>Kho</th>
+                    <th>Đã bán</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td><img src="assets/img/Home/item1.jpg" alt="Product"></td>
+                    <td>Áo Thun Unisex Oversize Cottonink Phối Viền</td>
+                    <td>AT-001</td>
+                    <td>Áo thun</td>
+                    <td>249.000đ</td>
+                    <td>120</td>
+                    <td>43</td>
+                    <td><span class="status in-stock">Còn hàng</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                            <button class="btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td><img src="assets/img/Home/item1.jpg" alt="Product"></td>
+                    <td>Áo Sơ Mi Trơn Dáng Rộng Form Regular</td>
+                    <td>AS-002</td>
+                    <td>Áo sơ mi</td>
+                    <td>299.000đ</td>
+                    <td>85</td>
+                    <td>37</td>
+                    <td><span class="status in-stock">Còn hàng</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                            <button class="btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td><img src="assets/img/Home/item1.jpg" alt="Product"></td>
+                    <td>Quần Jean Nam Trơn Basic Dáng Slim Fit</td>
+                    <td>QJ-003</td>
+                    <td>Quần jean</td>
+                    <td>399.000đ</td>
+                    <td>0</td>
+                    <td>65</td>
+                    <td><span class="status out-of-stock">Hết hàng</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                            <button class="btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td><img src="assets/img/Home/item1.jpg" alt="Product"></td>
+                    <td>Áo Polo Nam Trơn Form Loose Cotton Mix</td>
+                    <td>AP-004</td>
+                    <td>Áo polo</td>
+                    <td>289.000đ</td>
+                    <td>15</td>
+                    <td>28</td>
+                    <td><span class="status low-stock">Sắp hết</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                            <button class="btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td><img src="assets/img/Home/item1.jpg" alt="Product"></td>
+                    <td>Áo Khoác Jean Nam Trơn Form Regular</td>
+                    <td>AK-005</td>
+                    <td>Áo khoác</td>
+                    <td>459.000đ</td>
+                    <td>50</td>
+                    <td>22</td>
+                    <td><span class="status in-stock">Còn hàng</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                            <button class="btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td><img src="assets/img/Home/item1.jpg" alt="Product"></td>
+                    <td>Quần Short Nam Trơn Form Slim Fit</td>
+                    <td>QS-006</td>
+                    <td>Quần short</td>
+                    <td>259.000đ</td>
+                    <td>78</td>
+                    <td>41</td>
+                    <td><span class="status in-stock">Còn hàng</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                            <button class="btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td><img src="assets/img/Home/item1.jpg" alt="Product"></td>
+                    <td>Áo Thun Nam Trơn Đơn Giản Form Regular</td>
+                    <td>ATN-007</td>
+                    <td>Áo thun</td>
+                    <td>199.000đ</td>
+                    <td>110</td>
+                    <td>59</td>
+                    <td><span class="status in-stock">Còn hàng</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                            <button class="btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-actions">
+        <div class="bulk-actions">
+            <select id="bulk-action-select">
+                <option value="">Thao tác hàng loạt</option>
+                <option value="delete">Xóa đã chọn</option>
+                <option value="in-stock">Đánh dấu còn hàng</option>
+                <option value="out-of-stock">Đánh dấu hết hàng</option>
+            </select>
+            <button class="btn-apply">Áp dụng</button>
+        </div>
+        <div class="pagination">
+            <button class="prev-page"><i class="fas fa-chevron-left"></i></button>
+            <button class="page-number active">1</button>
+            <button class="page-number">2</button>
+            <button class="page-number">3</button>
+            <span>...</span>
+            <button class="page-number">10</button>
+            <button class="next-page"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stats-overview {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .stat-card {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        background-color: rgba(108, 92, 231, 0.1);
+        color: #6c5ce7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-right: 15px;
+    }
+    
+    .stat-content h3 {
+        font-size: 14px;
+        color: #636e72;
+        margin-bottom: 5px;
+    }
+    
+    .stat-content p {
+        font-size: 24px;
+        font-weight: 600;
+        color: #2d3436;
+        margin: 0;
+    }
+    
+    .table-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+    
+    .bulk-actions {
+        display: flex;
+        align-items: center;
+    }
+    
+    .bulk-actions select {
+        padding: 8px 15px;
+        border: 1px solid #dfe6e9;
+        border-radius: 5px;
+        background-color: #fff;
+        margin-right: 10px;
+    }
+    
+    .btn-apply {
+        background-color: #6c5ce7;
+        color: #fff;
+        border-radius: 5px;
+        padding: 8px 15px;
+        font-weight: 500;
+    }
+</style>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Thêm sản phẩm mới</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="product-form">
+                    <div class="form-group">
+                        <label for="product-name">Tên sản phẩm*</label>
+                        <input type="text" id="product-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-sku">Mã SKU*</label>
+                        <input type="text" id="product-sku" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product-price">Giá bán*</label>
+                            <input type="number" id="product-price" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-compare-price">Giá gốc</label>
+                            <input type="number" id="product-compare-price">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-category">Danh mục*</label>
+                        <select id="product-category" required>
+                            <option value="">Chọn danh mục</option>
+                            <option value="ao-thun">Áo thun</option>
+                            <option value="ao-so-mi">Áo sơ mi</option>
+                            <option value="quan-jean">Quần jean</option>
+                            <option value="ao-khoac">Áo khoác</option>
+                            <option value="phu-kien">Phụ kiện</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-description">Mô tả sản phẩm</label>
+                        <textarea id="product-description"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-inventory">Số lượng trong kho*</label>
+                        <input type="number" id="product-inventory" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Hình ảnh sản phẩm</label>
+                        <div class="product-images">
+                            <div class="image-upload">
+                                <input type="file" id="product-image" multiple>
+                                <div class="upload-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Kéo thả hoặc nhấp để tải lên</p>
+                                </div>
+                            </div>
+                            <div class="image-preview">
+                                <!-- Image previews will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tùy chọn</label>
+                        <div class="product-options">
+                            <div class="option-group">
+                                <input type="text" placeholder="Tên tùy chọn (Ví dụ: Màu sắc)">
+                                <div class="option-values">
+                                    <input type="text" placeholder="Giá trị (Ví dụ: Đen)">
+                                    <button type="button" class="btn-add-option-value">+</button>
+                                </div>
+                                <button type="button" class="btn-add-option">Thêm tùy chọn khác</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel">Hủy</button>
+                        <button type="submit" class="btn-save">Lưu sản phẩm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/Admin.js"></script>
+</body>
+</html>
+
+<style>
+    /* assets/css/Admin.css */
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary-color: #6c5ce7;
+    --primary-light: #a29bfe;
+    --secondary-color: #2d3436;
+    --text-color: #2d3436;
+    --text-light: #636e72;
+    --background-color: #f5f6fa;
+    --border-color: #dfe6e9;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --info-color: #0984e3;
+    --white: #ffffff;
+    --sidebar-width: 250px;
+    --header-height: 70px;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --border-radius: 5px;
+    --transition: all 0.3s ease;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+input, select, textarea {
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+/* Admin Container */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 20px 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+}
+
+.sidebar .logo {
+    padding: 0 20px 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .logo h2 {
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.sidebar .nav-links {
+    flex: 1;
+}
+
+.sidebar .nav-links li {
+    padding: 12px 20px;
+    margin: 8px 0;
+    border-left: 3px solid transparent;
+    transition: var(--transition);
+}
+
+.sidebar .nav-links li:hover, 
+.sidebar .nav-links li.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: var(--white);
+}
+
+.sidebar .nav-links li a {
+    display: flex;
+    align-items: center;
+    color: var(--white);
+    font-weight: 500;
+}
+
+.sidebar .nav-links li a i {
+    margin-right: 15px;
+    font-size: 18px;
+}
+
+.sidebar .admin-info {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .admin-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.sidebar .admin-info .admin-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.sidebar .admin-info .logout {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+.sidebar .admin-info .logout:hover {
+    opacity: 1;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: var(--header-height) 0 0 0;
+}
+
+/* Header */
+.header {
+    height: var(--header-height);
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: var(--sidebar-width);
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    transition: var(--transition);
+}
+
+.header .search-container {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color);
+    border-radius: 30px;
+    padding: 5px 15px;
+    width: 300px;
+}
+
+.header .search-container input {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 8px 0;
+    width: 100%;
+    color: var(--text-color);
+}
+
+.header .search-container button {
+    color: var(--text-light);
+    transition: var(--transition);
+}
+
+.header .search-container button:hover {
+    color: var(--primary-color);
+}
+
+.header .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header .notification {
+    position: relative;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.header .notification i {
+    font-size: 20px;
+    color: var(--text-light);
+    transition: var(--transition);
+}
+
+.header .notification i:hover {
+    color: var(--primary-color);
+}
+
+.header .notification .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--danger-color);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 600;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+/* Content */
+.content {
+    padding: 20px 30px;
+}
+
+.page-content {
+    animation: fadeIn 0.3s ease;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.btn-add {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 10px 15px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.btn-add i {
+    margin-right: 8px;
+}
+
+.btn-add:hover {
+    background-color: var(--primary-light);
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    transition: var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-info h3 {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 10px;
+}
+
+.card-info .number {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.card-info .change {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+}
+
+.change.positive {
+    color: var(--success-color);
+}
+
+.change.negative {
+    color: var(--danger-color);
+}
+
+.change i {
+    margin-right: 4px;
+}
+
+.card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--white);
+    background-color: var(--primary-light);
+}
+
+.dashboard-charts {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-container {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+}
+
+.chart-container h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.team-target {
+    padding: 20px 0;
+}
+
+.target-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.target-info h4 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.target-info p {
+    color: var(--text-light);
+}
+
+.target-progress {
+    margin-bottom: 20px;
+}
+
+.progress {
+    height: 10px;
+    background-color: var(--background-color);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+}
+
+.team-members {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.team-members img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid var(--white);
+    margin-left: -10px;
+    object-fit: cover;
+}
+
+.team-members img:first-child {
+    margin-left: 0;
+}
+
+.more-members {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--primary-light);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: -10px;
+}
+
+/* Tables */
+.recent-sales, .products-table, .orders-table, .customers-table, .categories-table {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 30px;
+    overflow-x: auto;
+}
+
+.recent-sales h3, .top-products-table h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    padding: 15px 10px;
+    text-align: left;
+    color: var(--text-light);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+}
+
+tbody td {
+    padding: 15px 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background-color: rgba(108, 92, 231, 0.05);
+}
+
+.status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status.completed, .status.in-stock, .status.active {
+    background-color: rgba(0, 184, 148, 0.1);
+    color: var(--success-color);
+}
+
+.status.pending, .status.low-stock {
+    background-color: rgba(253, 203, 110, 0.1);
+    color: var(--warning-color);
+}
+
+.status.cancelled, .status.out-of-stock, .status.inactive, .status.hidden {
+    background-color: rgba(214, 48, 49, 0.1);
+    color: var(--danger-color);
+}
+
+.status.shipping {
+    background-color: rgba(9, 132, 227, 0.1);
+    color: var(--info-color);
+}
+
+/* Filter Container */
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 0 15px;
+    overflow: hidden;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    padding: 12px 0;
+    width: 250px;
+}
+
+.search-box button {
+    color: var(--text-light);
+    transition: var(--transition);
+}
+
+.search-box button:hover {
+    color: var(--primary-color);
+}
+
+.filter-options {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-options select {
+    padding: 10px 15px;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    color: var(--text-color);
+    box-shadow: var(--shadow);
+    outline: none;
+    cursor: pointer;
+}
+
+/* Product Table */
+.products-table img, .categories-table img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit, .btn-view, .btn-delete {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    transition: var(--transition);
+}
+
+.btn-edit {
+    background-color: var(--info-color);
+}
+
+.btn-view {
+    background-color: var(--primary-color);
+}
+
+.btn-delete {
+    background-color: var(--danger-color);
+}
+
+.btn-edit:hover, .btn-view:hover, .btn-delete:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.prev-page, .next-page, .page-number {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background-color: var(--white);
+    color: var(--text-color);
+    font-weight: 500;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.page-number.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.prev-page:hover, .next-page:hover, .page-number:hover {
+    background-color: var(--primary-light);
+    color: var(--white);
+}
+
+/* Customers Table */
+.customer-info {
+    display: flex;
+    align-items: center;
+}
+
+.customer-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+/* Reports */
+.report-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.report-card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: var(--transition);
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.report-charts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.chart-container.full-width {
+    grid-column: 1 / -1;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+    padding: 5px 15px;
+}
+
+.date-range input {
+    border: none;
+    padding: 8px 0;
+    width: 140px;
+    outline: none;
+}
+
+.date-range span {
+    margin: 0 10px;
+    color: var(--text-light);
+}
+
+.btn-apply {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    margin-left: 10px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-apply:hover {
+    background-color: var(--primary-light);
+}
+
+.report-type select {
+    padding: 11px 15px;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    color: var(--text-color);
+    box-shadow: var(--shadow);
+    outline: none;
+    width: 150px;
+}
+
+.top-products-table {
+    width: 100%;
+}
+
+/* Settings */
+.settings-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.settings-nav {
+    width: 250px;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px 0;
+}
+
+.settings-nav ul li {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    border-left: 3px solid transparent;
+}
+
+.settings-nav ul li.active {
+    background-color: rgba(108, 92, 231, 0.1);
+    color: var(--primary-color);
+    border-left-color: var(--primary-color);
+    font-weight: 500;
+}
+
+.settings-nav ul li:hover {
+    background-color: rgba(108, 92, 231, 0.05);
+}
+
+.settings-content {
+    flex: 1;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 30px;
+}
+
+.settings-panel {
+    display: none;
+}
+
+.settings-panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.settings-panel h2 {
+    margin-bottom: 25px;
+    font-size: 20px;
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+    outline: none;
+}
+
+.form-group textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.logo-upload {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo-upload img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.logo-upload input {
+    display: none;
+}
+
+.logo-upload button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.logo-upload button:hover {
+    background-color: var(--primary-light);
+}
+
+.btn-save {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-save:hover {
+    background-color: var(--primary-light);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    width: 700px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    color: var(--text-color);
+}
+
+.close-modal {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-light);
+    transition: var(--transition);
+}
+
+.close-modal:hover {
+    color: var(--danger-color);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.product-images {
+    margin-top: 10px;
+}
+
+.image-upload {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.image-upload:hover {
+    border-color: var(--primary-color);
+}
+
+.upload-placeholder i {
+    font-size: 40px;
+    color: var(--text-light);
+    margin-bottom: 10px;
+}
+
+.upload-placeholder p {
+    color: var(--text-light);
+}
+
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.option-group {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.option-values {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.btn-add-option-value {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.btn-add-option-value:hover {
+    background-color: var(--primary-light);
+}
+
+.btn-add-option {
+    background-color: transparent;
+    color: var(--primary-color);
+    padding: 8px 0;
+    font-weight: 500;
+    transition: var(--transition);
+    text-decoration: underline;
+}
+
+.btn-add-option:hover {
+    color: var(--primary-light);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-cancel {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-cancel:hover {
+    background-color: var(--border-color);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .dashboard-cards,
+    .report-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dashboard-charts,
+    .report-charts {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 991px) {
+    :root {
+        --sidebar-width: 70px;
+    }
+    
+    .sidebar {
+        width: var(--sidebar-width);
+    }
+    
+    .sidebar .logo h2,
+    .sidebar .nav-links li a span,
+    .sidebar .admin-info .admin-name,
+    .sidebar .admin-info .logout {
+        display: none;
+    }
+    
+    .sidebar .nav-links li a i {
+        margin-right: 0;
+    }
+    
+    .sidebar .nav-links li {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .sidebar .admin-info {
+        justify-content: center;
+    }
+    
+    .sidebar .admin-info img {
+        margin-right: 0;
+    }
+    
+    .main-content {
+        margin-left: var(--sidebar-width);
+    }
+    
+    .header {
+        left: var(--sidebar-width);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-cards,
+    .report-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .header .search-container {
+        width: 200px;
+    }
+    
+    .settings-container {
+        flex-direction: column;
+    }
+    
+    .settings-nav {
+        width: 100%;
+    }
+    
+    .form-row {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .content {
+        padding: 15px;
+    }
+    
+    .header {
+        padding: 0 15px;
+    }
+    
+    .header .search-container {
+        display: none;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
