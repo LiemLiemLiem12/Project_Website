@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< Updated upstream
     <title>Home</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,12 +17,77 @@
                 <div class="logo">
                     <a href="index.html">
                         <img src="assets/img/Header/logo.png" alt="160Store Logo">
+=======
+    <title>Tài khoản</title>
+    <link rel="stylesheet" href="vendor/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Header.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="pt-1 pb-1 sticky-top">
+        <div class="container">
+            <div class="row d-flex flex-row align-items-center">
+                <div class="col-4 d-lg-none">
+                    <!-- Nút mở offcanvas -->
+                    <a id="menuToggler" class="menuToggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasTop" aria-controls="offcanvasTop">
+                        <i class="fa-solid fa-bars"></i>
+                    </a>
+
+                    <!-- Offcanvas -->
+                    <div class="offcanvas offcanvas-top offcanvas-custom h-100" tabindex="-1" id="offcanvasTop"
+                    aria-labelledby="offcanvasTopLabel">
+
+                        <div class="offcanvas-header">
+                            <a href="#" class="d-flex justify-content-end mt-4">
+                                <img class="logo" src="assets/img/Header/logo.png" alt="Logo" width="60" height="90"
+                                    style="object-fit: cover;">
+                            </a>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                                <i class="fa-solid fa-x"></i>
+                            </button>
+                        </div>
+
+                        <div class="offcanvas-body">
+                            <!-- Accordion trong Offcanvas -->
+                            <div class="accordion" id="customAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="#" class="text-decoration-none">Mục 1 - Thông tin chung</a>
+                                            <span class="accordion-icon" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                ➕
+                                            </span>
+                                        </div>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#customAccordion">
+                                        <div class="accordion-body">
+                                            Nội dung chi tiết của Mục 1. Bạn có thể bấm vào icon để mở hoặc đóng.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Kết thúc Accordion -->
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-3 col-4">
+                    <a href="" class="d-flex justify-content-end">
+                        <img class="logo" src="assets/img/Header/logo.png" alt="" width="50px">
+>>>>>>> Stashed changes
                     </a>
                 </div>
                 <div class="search-box">
                     <input type="text" placeholder="Tìm kiếm sản phẩm...">
                     <button><i class="fas fa-search"></i></button>
                 </div>
+<<<<<<< Updated upstream
                 <div class="header-actions">
                     <a href="#" class="action-item"><i class="fas fa-user"></i> Đăng nhập</a>
                     <a href="#" class="action-item"><i class="fas fa-heart"></i> Yêu thích</a>
@@ -110,5 +176,180 @@
     </header>
 
     <script src="assets/js/Home.js"></script>
+=======
+                <div class="col-lg-3 col-4 p-0">
+                    <ul class="third-menu mt-2 d-flex align-items-center p-0">
+                        <li class="d-inline-block text-center me-4 me-md-5 me-lg-2">
+                            <a href="">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <div class="title-third-menu d-lg-block d-none">Cửa hàng</div>
+                            </a>
+                        </li>
+
+                        <li class="d-inline-block text-center me-4 me-md-5 me-lg-2">
+                            <a href="">
+                                <i class="fa-solid fa-user"></i>
+                                <div class="title-third-menu d-lg-block d-none">Hi, 0768xxxxxx</div>
+                            </a>
+                        </li>
+
+                        <li class="d-inline-block text-center me-4 me-md-5 me-lg-2">
+                            <a href="">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                <div class="title-third-menu d-lg-block d-none">Giỏ hàng</div>
+                                <div class="quantity">0</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div> 
+    </header>
+    <nav class="second-menu shadow d-lg-block d-none">
+        <div class="container-lg">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="" class="main-sub-menu-title">Hàng mới</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="" class="main-sub-menu-title">Sản phẩm</a>
+                    <ul class="sub-menu mt-2 shadow">
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Tất cả sản phẩm</a>
+                        </li>
+
+                        <li class="sub-menu-item">
+                            <a href="" class="sub-menu-list">Hàng bán chạy</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="" class="main-sub-menu-title">Áo nam</a>
+                    <ul class="sub-menu mt-2 shadow">
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Áo thun</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Áo polo</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Áo sơ mi</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Áo khoác</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Áo ba lỗ</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Set quần áo</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Áo nỉ</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Áo hoodie</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Áo len</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="" class="main-sub-menu-title">Quần nam</a>
+                    <ul class="sub-menu mt-2 shadow">
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Quần Jean</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Quần short</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Quần tây</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Quần jogger</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Quần kaki</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Set quần áo</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Quần boxer</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="" class="main-sub-menu-title">Phụ kiện</a>
+                    <ul class="sub-menu mt-2 shadow">
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Nón</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Thắt lưng</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Balo - Túi xách</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Ví</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Giày dép</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Mắt kính</a>
+                        </li>
+
+                        <li class="sub-menu-item pb-1">
+                            <a href="" class="sub-menu-list">Vớ</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="" class="main-sub-menu-title">Giá mới</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="" class="main-sub-menu-title">Jeans</a>
+                </li>
+            </ul>
+        </div>
+    </nav>    
+    <!--End Header -->
+
+    
+    
+    <script src="vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+>>>>>>> Stashed changes
 </body>
 </html>
+
+                            

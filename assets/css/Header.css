@@ -1,0 +1,177 @@
+* {
+    box-sizing: border-box;
+    font-family: "Be Vietnam Pro", sans-serif;
+}
+
+:root {
+    --header-background: #000000;
+    --header-color: #ffffff;
+    --light-color: #FCBF49
+}
+
+/* Header */
+header {
+    background-color: var(--header-background);
+    color: var(--header-color);
+}
+
+/* .p-custom {
+    padding-left: 8rem;
+    padding-right: 8rem;
+} */
+
+@media (max-width: 992px) {
+    .offcanvas-body ul.nav-menu {
+        padding-left: 10px;
+        text-transform: uppercase;
+        font-size: 20px;
+    }
+}
+
+
+.title-third-menu {
+    margin-top: 2px;
+}
+
+header ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    position: relative;
+}
+
+header ul li a i:first-child {
+    font-size: 17px;
+}
+
+.third-menu li {
+    white-space: nowrap;
+    gap: 0px;
+}
+
+header a > img.logo {
+    height: 35px;
+    margin-right: 40px;
+    object-fit: cover;
+}
+
+header form {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+
+header input {
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+}
+
+header form button {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    height: 34px;
+    width: 80px;
+    border-radius: 5px;
+    border: none;
+    background-color: black;
+    color: var(--header-color);
+}
+
+.quantity {
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background-color: white;
+    color: #000000;
+    border-radius: 100px;
+    width: 13px;
+    text-align: center;
+    font-size: 9px;
+}
+
+.second-menu {
+    padding-top: 10px;
+    background-color: var(--header-color);
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: bold;
+    height: 40px;
+}
+
+nav.second-menu a {
+    text-decoration: none;
+    color: #000000;
+}
+
+nav.second-menu li {
+    list-style: none;
+}
+
+nav.second-menu .nav-menu {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+nav.second-menu .nav-menu .nav-item {
+    position: relative;
+}
+
+nav.second-menu .sub-menu {
+    opacity: 0;
+    visibility: hidden; /* Ẩn menu nhưng vẫn chiếm không gian */
+    position: absolute;
+    /* display: block; */
+    min-width: 170px;
+    left: 5px;
+    background-color: var(--header-color);
+    top: 30px;
+    transition: top 0.3s ease;
+    padding-left: 10px;
+}
+
+nav.second-menu ul li.nav-item:hover .sub-menu,
+nav.second-menu .sub-menu:hover {
+    opacity: 1; /* Hiện menu */
+    visibility: visible;
+    top: 19px
+}
+nav.second-menu .nav-item a.main-sub-menu-title {
+    padding: 15px;
+
+}
+
+nav.second-menu .sub-menu-item:hover .sub-menu-list{
+    color: var(--light-color)
+}
+nav.second-menu .main-sub-menu-title:hover {
+    color: var(--light-color);
+}
+
+.menuToggler {
+    background-color: transparent;
+    color: var(--header-color);
+    font-size: 30px;
+    margin-left: 20%;
+}
+
+.offcanvas-custom {
+    background: rgba(0, 0, 0, 0.7); /* Nền mờ (đen 70%) */
+
+}
+
+.btn-close {
+    color: var(--header-color);
+    z-index: 2000;
+    margin-right: 10px;
+    font-size: 30px;
+}
+
+
+
+/* End Header */
+
+
