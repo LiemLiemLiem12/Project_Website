@@ -1,0 +1,272 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+/* Hero Banner */
+.hero-banner {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+    margin-bottom: 20px;
+    background-color: transparent;
+    padding-left: 0;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #000;
+}
+
+/* Product Grid */
+.product-grid {
+    margin-bottom: 30px;
+}
+
+/* Product Card */
+.product-card {
+    transition: all 0.3s ease;
+    height: 100%;
+    border: none;
+    margin-bottom: 30px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-img-wrap {
+    position: relative;
+    overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #000;
+    color: #fff;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    z-index: 1;
+}
+
+.btn-quickview {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border: none;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.product-card:hover .btn-quickview {
+    opacity: 1;
+}
+
+.product-info {
+    padding: 15px 10px;
+    text-align: center;
+}
+
+.product-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.product-price {
+    font-weight: bold;
+    font-size: 16px;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.btn-add-cart {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+}
+
+.btn-add-cart:hover {
+    background-color: #333;
+}
+
+/* Filter Section */
+.filter-section {
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #eaeaea;
+}
+
+.filter-label {
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.filter-dropdown {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.btn-filter {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 0;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 30px;
+}
+
+.pagination .page-link {
+    color: #000;
+    border-radius: 0;
+    border: 1px solid #ddd;
+    margin: 0 3px;
+    padding: 6px 12px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #000;
+    border-color: #000;
+    color: #fff;
+}
+
+/* View More Button */
+.btn-view-more {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 30px;
+    border: none;
+    margin: 20px auto;
+    display: block;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-view-more:hover {
+    background-color: #333;
+}
+
+/* Side Filter */
+.side-filter {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 25px;
+    border: 1px solid #eaeaea;
+}
+
+.side-filter h4 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.filter-category {
+    margin-bottom: 20px;
+}
+
+.category-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.filter-option {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.filter-checkbox {
+    margin-right: 8px;
+}
+
+.price-slider {
+    margin-bottom: 15px;
+}
+
+.price-range {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.color-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.color-option {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .side-filter {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .card-img-top {
+        height: 200px;
+    }
+}

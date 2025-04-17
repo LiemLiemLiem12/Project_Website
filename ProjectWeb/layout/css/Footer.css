@@ -1,0 +1,110 @@
+/* Footer CSS */
+.footer {
+    background-color: #000;
+    color: #fff;
+    padding: 3rem 0;
+}
+
+.footer h5 {
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.footer .list-unstyled li {
+    margin-bottom: 0.5rem;
+}
+
+.social-icons a {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 36px;
+    margin-right: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+    background-color: #000;
+    transform: translateY(-3px);
+}
+
+.payment-methods img {
+    height: 30px;
+    margin-right: 10px;
+}
+
+.copyright {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+    margin-top: 3rem;
+}
+
+.footer ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer ul li {
+    margin-bottom: 10px;
+}
+
+.footer ul li i {
+    margin-right: 10px;
+}
+
+.subscribe-form {
+    display: flex;
+}
+
+.subscribe-form .form-control {
+    border-radius: 0;
+}
+
+.subscribe-btn {
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 0;
+    padding: 8px 20px;
+}
+
+.is-invalid {
+    border-color: #000;
+}
+
+.invalid-feedback {
+    display: none;
+    color: #000;
+    font-size: 14px;
+}
+
+.dropdown-arrow {
+    float: right;
+}
+
+.locations-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.locations-list i {
+    margin-top: 5px;
+    margin-right: 10px;
+}
+
+.view-all-link {
+    text-decoration: underline;
+}

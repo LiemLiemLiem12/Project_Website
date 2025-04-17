@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm bán chạy | RSStore</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/AllProduct.css">
+    <style>
+        .best-seller-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ffc107;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Container -->
+    <div class="container mt-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="Home.html">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Sản phẩm bán chạy</li>
+            </ol>
+        </nav>
+        
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <img src="../upload/img/All-Product/Banner2.webp" alt="Best Seller Banner" class="img-fluid">
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Filters -->
+            <div class="col-lg-3">
+                <div class="side-filter">
+                    <h4>Bộ lọc sản phẩm</h4>
+                    
+                    <div class="filter-category">
+                        <div class="category-title">Loại sản phẩm</div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="cat-shirt" class="filter-checkbox">
+                            <label for="cat-shirt">Áo thun</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="cat-jeans" class="filter-checkbox">
+                            <label for="cat-jeans">Quần jeans</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="cat-jacket" class="filter-checkbox">
+                            <label for="cat-jacket">Áo khoác</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="cat-dress" class="filter-checkbox">
+                            <label for="cat-dress">Đầm</label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-category">
+                        <div class="category-title">Khoảng giá</div>
+                        <div class="price-slider">
+                            <input type="range" class="form-range" min="100000" max="2000000" step="50000" value="1000000" id="price-range">
+                            <div class="price-range mt-2">
+                                <span>100,000₫</span>
+                                <span id="price-value">1,000,000₫</span>
+                                <span>2,000,000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-category">
+                        <div class="category-title">Màu sắc</div>
+                        <div class="color-options">
+                            <div class="color-option" style="background-color: black;"></div>
+                            <div class="color-option" style="background-color: white;"></div>
+                            <div class="color-option" style="background-color: blue;"></div>
+                            <div class="color-option" style="background-color: red;"></div>
+                            <div class="color-option" style="background-color: green;"></div>
+                            <div class="color-option" style="background-color: yellow;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-category">
+                        <div class="category-title">Kích cỡ</div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="size-s" class="filter-checkbox">
+                            <label for="size-s">S</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="size-m" class="filter-checkbox">
+                            <label for="size-m">M</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="size-l" class="filter-checkbox">
+                            <label for="size-l">L</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="size-xl" class="filter-checkbox">
+                            <label for="size-xl">XL</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Listing -->
+            <div class="col-lg-9">
+                <!-- Filter Bar -->
+                <div class="filter-section d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="filter-label">Sắp xếp theo:</span>
+                        <select class="filter-dropdown" id="sort-by">
+                            <option value="bestseller">Bán chạy nhất</option>
+                            <option value="price-asc">Giá: Thấp đến cao</option>
+                            <option value="price-desc">Giá: Cao đến thấp</option>
+                            <option value="newest">Mới nhất</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span>Hiển thị 1-12 của 24 sản phẩm</span>
+                    </div>
+                </div>
+                
+                <!-- Product Grid -->
+                <div class="row product-grid">
+                    <!-- Product 1 -->
+                    <div class="col-md-4 col-6">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-wrap">
+                                <span class="product-badge">Mới</span>
+                                <img src="../upload/img/All-Product/item1.webp" class="card-img-top" alt="Áo thun nam">
+                                <button class="btn-quickview">Xem nhanh</button>
+                            </div>
+                            <div class="product-info">
+                                <h5 class="product-title">Áo Thun Nam ICONDENIM Patterned</h5>
+                                <div class="product-price">329,000₫</div>
+                                <button class="btn-add-cart">Thêm vào giỏ hàng</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 2 -->
+                    <div class="col-md-4 col-6">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-wrap">
+                                <span class="product-badge">-10%</span>
+                                <img src="../upload/img/All-Product/item2.webp" class="card-img-top" alt="Quần jeans nam">
+                                <button class="btn-quickview">Xem nhanh</button>
+                            </div>
+                            <div class="product-info">
+                                <h5 class="product-title">Quần Jean Nam Slim Fit</h5>
+                                <div class="product-price">449,000₫</div>
+                                <button class="btn-add-cart">Thêm vào giỏ hàng</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 3 -->
+                    <div class="col-md-4 col-6">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-wrap">
+                                <span class="product-badge">Bán chạy</span>
+                                <img src="../upload/img/All-Product/item3.webp" class="card-img-top" alt="Áo khoác denim">
+                                <button class="btn-quickview">Xem nhanh</button>
+                            </div>
+                            <div class="product-info">
+                                <h5 class="product-title">Áo Khoác Denim Unisex Vintage</h5>
+                                <div class="product-price">679,000₫</div>
+                                <button class="btn-add-cart">Thêm vào giỏ hàng</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 4 -->
+                    <div class="col-md-4 col-6">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-wrap">
+                                <img src="../upload/img/All-Product/item4.webp" class="card-img-top" alt="Đầm nữ">
+                                <button class="btn-quickview">Xem nhanh</button>
+                            </div>
+                            <div class="product-info">
+                                <h5 class="product-title">Đầm Suông Nữ Cổ V</h5>
+                                <div class="product-price">559,000₫</div>
+                                <button class="btn-add-cart">Thêm vào giỏ hàng</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 5 -->
+                    <div class="col-md-4 col-6">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-wrap">
+                                <span class="product-badge">-15%</span>
+                                <img src="../upload/img/All-Product/item5.webp" class="card-img-top" alt="Áo sơ mi nam">
+                                <button class="btn-quickview">Xem nhanh</button>
+                            </div>
+                            <div class="product-info">
+                                <h5 class="product-title">Áo Sơ Mi Nam Tay Dài Linen</h5>
+                                <div class="product-price">399,000₫</div>
+                                <button class="btn-add-cart">Thêm vào giỏ hàng</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 6 -->
+                    <div class="col-md-4 col-6">
+                        <div class="card product-card position-relative">
+                            <span class="best-seller-badge">Best Seller</span>
+                            <div class="product-img-wrap">
+                                <img src="../upload/img/All-Product/item6.webp" class="card-img-top" alt="Quần short nữ">
+                                <button class="btn-quickview">Xem nhanh</button>
+                            </div>
+                            <div class="product-info">
+                                <h5 class="product-title">Quần Short Nữ Lưng Cao</h5>
+                                <div class="product-price">299,000₫</div>
+                                <button class="btn-add-cart">Thêm vào giỏ hàng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <nav aria-label="Product pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- View More Button -->
+                <button type="button" class="btn-view-more">Xem thêm sản phẩm</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/AllProduct.js"></script>
+</body>
+
+</html>

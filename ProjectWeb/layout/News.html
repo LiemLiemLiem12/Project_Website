@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>160store Blog Clone</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/News.css">
+</head>
+
+<body>
+    <main>
+        <div class="container blog-container">
+
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">Trang chủ </a> /
+                <span> Tất cả bài viết</span>
+            </div>
+
+
+            <h1 class="blog-title">Blog Posts</h1>
+
+            <!-- Search Bar -->
+            <div class="blog-search">
+                <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput">
+                <button type="button"><i class="fas fa-search"></i></button>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="blog-filter text-center">
+                <button class="filter-btn active" data-filter="all">Tất cả</button>
+                <button class="filter-btn" data-filter="news">Tin tức</button>
+                <button class="filter-btn" data-filter="fashion">Thời trang</button>
+                <button class="filter-btn" data-filter="lifestyle">Phong cách sống</button>
+                <button class="filter-btn" data-filter="tutorials">Hướng dẫn</button>
+            </div>
+
+            <!-- Blog Posts -->
+            <div class="row" id="blogPosts">
+                <!-- Blog Item 1 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="fashion">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item1.webp" class="card-img-top" alt="Xu hướng thời trang mùa hè">
+                        <div class="card-body">
+                            <span class="card-date">25 Tháng 3, 2025</span>
+                            <h5 class="card-title">Xu hướng thời trang mùa hè 2025</h5>
+                            <p class="card-text">Khám phá những xu hướng thời trang nổi bật nhất cho mùa hè năm nay với
+                                các gợi ý phối đồ tuyệt vời.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 2 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="lifestyle">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item2.webp" class="card-img-top" alt="Phối đồ minimalist">
+                        <div class="card-body">
+                            <span class="card-date">20 Tháng 3, 2025</span>
+                            <h5 class="card-title">5 cách phối đồ minimalist cho công sở</h5>
+                            <p class="card-text">Tối giản nhưng vẫn sang trọng và chuyên nghiệp, những gợi ý này sẽ giúp
+                                bạn thay đổi phong cách.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 3 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="news">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item3.webp" class="card-img-top" alt="BST mới nhất của 160store">
+                        <div class="card-body">
+                            <span class="card-date">18 Tháng 3, 2025</span>
+                            <h5 class="card-title">BST mới nhất của 160store - Mùa xuân 2025</h5>
+                            <p class="card-text">Bộ sưu tập mới với những thiết kế độc đáo, kết hợp giữa phong cách hiện
+                                đại và truyền thống.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 4 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="tutorials">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item4.webp" class="card-img-top" alt="Bảo quản quần áo linen">
+                        <div class="card-body">
+                            <span class="card-date">15 Tháng 3, 2025</span>
+                            <h5 class="card-title">Cách bảo quản quần áo linen trong mùa hè</h5>
+                            <p class="card-text">Những mẹo hữu ích giúp bạn giữ quần áo linen luôn mới và bền đẹp qua
+                                nhiều mùa sử dụng.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 5 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="fashion">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item5.webp" class="card-img-top" alt="Màu sắc thời trang">
+                        <div class="card-body">
+                            <span class="card-date">10 Tháng 3, 2025</span>
+                            <h5 class="card-title">Màu sắc nào sẽ thống trị thời trang 2025?</h5>
+                            <p class="card-text">Phân tích các xu hướng màu sắc đang dẫn đầu trong các tuần lễ thời
+                                trang quốc tế.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 6 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="lifestyle">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item6.webp" class="card-img-top" alt="Phối đồ du lịch">
+                        <div class="card-body">
+                            <span class="card-date">5 Tháng 3, 2025</span>
+                            <h5 class="card-title">Phối đồ cho chuyến du lịch mùa hè</h5>
+                            <p class="card-text">Gợi ý những items cần thiết và cách phối đồ thông minh cho chuyến du
+                                lịch mùa hè sắp tới.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 7 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="news">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item7.webp" class="card-img-top" alt="160store mở rộng cửa hàng">
+                        <div class="card-body">
+                            <span class="card-date">1 Tháng 3, 2025</span>
+                            <h5 class="card-title">160store mở rộng cửa hàng tại Hà Nội</h5>
+                            <p class="card-text">Thông tin về cửa hàng mới nhất của 160store tại Hà Nội với nhiều ưu đãi
+                                đặc biệt.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 8 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="tutorials">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item8.webp" class="card-img-top" alt="Hướng dẫn chọn size">
+                        <div class="card-body">
+                            <span class="card-date">25 Tháng 2, 2025</span>
+                            <h5 class="card-title">Hướng dẫn chọn size quần áo chuẩn</h5>
+                            <p class="card-text">Bí quyết chọn đúng size quần áo cho từng dáng người để luôn tự tin với
+                                phong cách của mình.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Item 9 -->
+                <div class="col-md-6 col-lg-4 fade-in" data-category="fashion">
+                    <div class="card blog-card">
+                        <img src="../upload/img/News/item9.webp" class="card-img-top" alt="Thời trang bền vững">
+                        <div class="card-body">
+                            <span class="card-date">20 Tháng 2, 2025</span>
+                            <h5 class="card-title">Phong cách thời trang bền vững</h5>
+                            <p class="card-text">Khám phá xu hướng thời trang bền vững và cách 160store áp dụng vào các
+                                bộ sưu tập mới nhất.</p>
+                            <a href="NewsDetail.html" class="read-more">Đọc tiếp <i class="fas fa-arrow-right"
+                                    style="font-size: 12px;"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/News.js"></script>
+</body>
+
+</html>

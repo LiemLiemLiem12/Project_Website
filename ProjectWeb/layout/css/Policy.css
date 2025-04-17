@@ -1,0 +1,509 @@
+/* 
+ * Policy.css - Styling for the policy pages
+ * Merged from both Layout and root CSS files
+ * Updated with Black & White theme
+ */
+
+:root {
+    /* Updated color variables to black and white */
+    --primary: #000000;
+    --secondary: #ffffff;
+    --accent: #000000;
+    --medium-gray: #e0e0e0;
+    --dark-gray: #2d2d2d;
+    
+    /* Typography */
+    --body-font: 'Poppins', sans-serif;
+    --heading-font: 'Poppins', sans-serif;
+    
+    /* Original layout variables */
+    --primary-color: #4f2abd;
+    --secondary-color: #f83c3c;
+    --text-color: #212121;
+    --light-gray: #f8f9fa;
+    --border-color: #e0e0e0;
+    --heading-color: #333;
+    --highlight-color: #4f2abd;
+    --background-color: #ffffff;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-color);
+    background-color: #f5f5f5;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+}
+
+/* Policy Container */
+.policy-container {
+    background-color: #f5f5f5;
+    padding: 20px 0;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    padding: 10px 0;
+    background-color: transparent;
+}
+
+.breadcrumb-item a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: var(--text-color);
+    font-weight: 500;
+    color: var(--dark-gray);
+}
+
+/* Policy Title */
+.policy-title {
+    position: relative;
+    color: var(--dark-gray);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.policy-title:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--primary);
+}
+
+.policy-title h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.title-line {
+    height: 3px;
+    width: 70px;
+    background-color: var(--secondary-color);
+    margin-bottom: 30px;
+    width: 100px;
+    background-color: var(--accent);
+}
+
+/* Sidebar Styles */
+.policy-sidebar {
+    background-color: var(--secondary);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 100px;
+}
+
+.sidebar-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.sidebar-line {
+    height: 2px;
+    width: 50px;
+    background-color: var(--secondary-color);
+    height: 3px;
+    background-color: var(--accent);
+}
+
+.policy-nav {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    margin: 1.5rem 0 0 0;
+}
+
+.policy-nav li {
+    margin-bottom: 15px;
+    transition: all 0.3s;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.policy-nav li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.3s;
+    padding: 0.75rem;
+    color: var(--primary);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.policy-nav li a:hover {
+    color: var(--primary);
+    padding-left: 5px;
+}
+
+.policy-nav li.active a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.policy-nav li.active {
+    background-color: var(--light-gray);
+}
+
+.policy-nav li a img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 15px;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.policy-nav li a span {
+    font-size: 0.95rem;
+}
+
+/* Contact Section */
+.sidebar-contact {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: var(--light-gray);
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.contact-info {
+    margin: 1rem 0;
+}
+
+.contact-info p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.contact-info p i {
+    color: var(--primary-color);
+    width: 20px;
+    margin-right: 10px;
+}
+
+.contact-info i {
+    width: 20px;
+    margin-right: 8px;
+    color: var(--primary);
+}
+
+.contact-info a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s;
+    color: var(--primary);
+    transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+    color: var(--dark-gray);
+}
+
+.contact-social {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    margin-top: 1rem;
+}
+
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    color: var(--primary-color);
+    transition: all 0.3s;
+    background-color: var(--secondary);
+    margin-right: 10px;
+    color: var(--primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+    background-color: var(--primary);
+    color: var(--secondary);
+}
+
+/* Main Content Styles */
+.policy-content {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    background-color: var(--secondary);
+    padding: 2rem;
+}
+
+.policy-image img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.policy-section {
+    margin-bottom: 40px;
+    margin: 2.5rem 0;
+}
+
+.policy-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    position: relative;
+    padding-bottom: 0.75rem;
+}
+
+.policy-section h2:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--accent);
+}
+
+.policy-detail {
+    margin-bottom: 25px;
+    margin: 1.5rem 0;
+}
+
+.policy-detail h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.policy-detail p, .policy-detail li {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    line-height: 1.7;
+}
+
+.policy-detail p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.policy-detail ul {
+    padding-left: 20px;
+    padding-left: 1.5rem;
+}
+
+.policy-detail li {
+    margin-bottom: 10px;
+    margin-bottom: 0.5rem;
+}
+
+/* Notes Section */
+.policy-notes {
+    background-color: #fff3cd;
+    border-radius: 8px;
+    padding: 25px;
+    border-left: 5px solid #ffc107;
+    background-color: var(--light-gray);
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.policy-notes h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #856404;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.policy-notes ul {
+    padding-left: 20px;
+    padding-left: 1.5rem;
+}
+
+.policy-notes li {
+    margin-bottom: 10px;
+    color: #856404;
+    margin-bottom: 0.5rem;
+}
+
+/* Payment Section */
+.policy-payment h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.payment-method-item {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    height: 100%;
+    background-color: var(--light-gray);
+    padding: 1rem;
+}
+
+.payment-method-item img {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    width: 40px;
+    margin-right: 15px;
+}
+
+.payment-method-item span {
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.certification-img {
+    max-height: 60px;
+    max-width: 100%;
+    max-width: 150px;
+    height: auto;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.policy-content {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .policy-sidebar {
+        margin-bottom: 30px;
+        margin-bottom: 2rem;
+    }
+    
+    .policy-title h1 {
+        font-size: 1.8rem;
+    }
+    
+    .policy-section h2 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .policy-content {
+        padding: 20px;
+        padding: 1.5rem;
+    }
+    
+    .policy-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .policy-section h2 {
+        font-size: 1.3rem;
+    }
+    
+    .policy-detail h3 {
+        font-size: 1.1rem;
+    }
+    
+    .payment-method-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .payment-method-item img {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .breadcrumb {
+        background-color: var(--secondary);
+    }
+}
+
+@media (max-width: 576px) {
+    .policy-title h1 {
+        font-size: 1.3rem;
+    }
+    
+    .policy-image img {
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb {
+        font-size: 0.85rem;
+    }
+}
+
+.back-to-top:hover {
+    background-color: var(--primary);
+    color: var(--secondary);
+}
+
+.policy-content h3 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: var(--primary);
+    font-size: 1.3rem;
+} 
