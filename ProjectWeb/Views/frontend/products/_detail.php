@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combo Box Vớ Form Ankle - 160STORE</title>
+    <title><?= $productDetail['name'];?> - 160STORE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link rel="stylesheet" href="css/DetailProduct.css">
+    <link rel="stylesheet" href="/WEB_BAN_THOI_TRANG/layout/css/DetailProduct.css">
 </head>
 <body>
     <div class="container mt-4">
@@ -14,21 +14,21 @@
         <div class="breadcrumb mb-3">
             <a href="#" onclick="goBack()">Trang chủ</a> / 
             <a href="AllProduct.html">TẤT CẢ SẢN PHẨM</a> / 
-            <span><?</span>
+            <span><?= $productDetail['name'];?></span>
         </div>
 
         <div class="row gx-4">
             <!-- Product Images - Left side -->
             <div class="col-md-6">
                 <div class="product-main-image-container mb-3">
-                    <img id="mainProductImage" src="../upload/img/DetailProduct/detailItem1.webp" class="product-main-image" alt="Combo Box Vớ Form Ankle">
+                    <img id="mainProductImage" src="<?= $productDetail['image'];?>" class="product-main-image" alt="<?= $productDetail['name'];?>">
                 </div>
                 <div class="product-thumbnails-wrapper">
                     <div class="product-thumbnails-container">
-                        <img src="../upload/img/DetailProduct/detailItem1.webp" class="product-thumbnail img-thumbnail active" alt="Thumbnail 1">
-                        <img src="../upload/img/DetailProduct/detailItem2.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 2">
-                        <img src="../upload/img/DetailProduct/detailItem3.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 3">
-                        <img src="../upload/img/DetailProduct/detailItem4.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 4">
+                        <img src="<?= $productDetail['image'];?>" class="product-thumbnail img-thumbnail active" alt="Thumbnail 1">
+                        <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem2.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 2">
+                        <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem3.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 3">
+                        <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem4.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 4">
                     </div>
                 </div>
                 
@@ -49,17 +49,17 @@
             <div class="col-md-6">
                 <div class="product-details-container">
                     <!-- Product Title -->
-                    <h1 class="product-main-title">Combo Box Vớ Form Ankle</h1>
+                    <h1 class="product-main-title"><?= $productDetail['name'];?></h1>
                     
                     <!-- Product Code -->
                     <div class="product-code">
-                        <span>Loại: Vớ</span> | <span>MSP: VFID0098-03</span>
+                        <span>Loại: </span> | <span>MSP: VFID0098-03</span>
                     </div>
                     
                     <!-- Price -->
                     <div class="d-flex align-items-center mb-4">
-                        <span class="current-price me-2" id="totalPrice">₫98,000</span>
-                        <span class="original-price text-decoration-line-through">₫120,000</span>
+                        <span class="current-price me-2" id="totalPrice"><?= $productDetail['price_sale'];?></span>
+                        <span class="original-price text-decoration-line-through"><?= $productDetail['price'];?></span>
                     </div>
 
                     <!-- Promo Section -->
@@ -143,7 +143,7 @@
                     <div class="col-lg-8">
                         <h2>Mô Tả</h2>
                         <div class="product-description-content">
-                            <p class="fw-bold mb-3">160STORE - Combo Box Vớ Form Ankle</p>
+                            <p class="fw-bold mb-3">160STORE - <?= $productDetail['name'];?></p>
                             
                             <div class="mb-4">
                                 <h3>✔ Chất Liệu TC</h3>
@@ -162,7 +162,7 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <img src="../upload/img/DetailProduct/detailItem2.webp" alt="Product Detail" class="img-fluid rounded">
+                        <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem2.webp" alt="Product Detail" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
@@ -170,14 +170,14 @@
             <div id="giao-hang" class="tab-content">
                 <h2>Chính Sách Giao Hàng</h2>
                 <div class="text-center">
-                    <img src="../upload/img/DetailProduct/cs_giaohanh.webp" alt="Chính sách giao hàng" class="img-fluid">
+                    <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/cs_giaohanh.webp" alt="Chính sách giao hàng" class="img-fluid">
                 </div>
             </div>
 
             <div id="doi-hang" class="tab-content">
                 <h2>Chính Sách Đổi Hàng</h2>
                 <div class="text-center">
-                    <img src="../upload/img/DetailProduct/doitra_1.webp" alt="Chính sách đổi hàng" class="img-fluid">
+                    <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/doitra_1.webp" alt="Chính sách đổi hàng" class="img-fluid">
                 </div>
             </div>
         </div>
@@ -247,7 +247,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="../upload/img/DetailProduct/detailItem3.webp" alt="Vớ Lười Nam ICONDENIM Twinline">
+                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem3.webp" alt="Vớ Lười Nam ICONDENIM Twinline">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Lười Nam ICONDENIM Twinline</h6>
@@ -257,7 +257,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="../upload/img/DetailProduct/detailItem4.webp" alt="Vớ Crew Nam ICONDENIM Office Stride">
+                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem4.webp" alt="Vớ Crew Nam ICONDENIM Office Stride">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Crew Nam ICONDENIM Office Stride</h6>
@@ -267,7 +267,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="../upload/img/DetailProduct/detailItem5.webp" alt="Vớ Nam ICONDENIM Bold Logo ICDN">
+                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem5.webp" alt="Vớ Nam ICONDENIM Bold Logo ICDN">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Nam ICONDENIM Bold Logo ICDN</h6>
@@ -277,7 +277,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="../upload/img/DetailProduct/detailItem1.webp" alt="Vớ Low-Cut Nam ICONDENIM Combo Brand ICDN">
+                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem1.webp" alt="Vớ Low-Cut Nam ICONDENIM Combo Brand ICDN">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Low-Cut Nam ICONDENIM Combo Brand ICDN</h6>
@@ -287,7 +287,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="../upload/img/DetailProduct/detailItem2.webp" alt="Vớ Low-Cut Nam ICONDENIM Color Block">
+                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem2.webp" alt="Vớ Low-Cut Nam ICONDENIM Color Block">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Low-Cut Nam ICONDENIM Color Block</h6>
@@ -319,6 +319,6 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/DetailProduct.js"></script>
+    <script src="/WEB_BAN_THOI_TRANG/layout/js/DetailProduct.js"></script>
 </body>
 </html>
