@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý khách hàng - SR Store</title>
+    <!-- Bootstrap CSS -->
+    <link href="cssBootstrap/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/Admin.css">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="css/Responsive.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>SR STORE</h2>
+                <button class="btn d-md-none" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul class="nav-links">
+                <li data-page="dashboard">
+                    <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> <span class="nav-text">Dashboard</span></a>
+                </li>
+                <li data-page="products">
+                    <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> <span class="nav-text">Sản Phẩm</span></a>
+                </li>
+                <li data-page="orders">
+                    <a href="AdminOrder.html"><i class="fas fa-shopping-cart"></i> <span class="nav-text">Đơn Hàng</span></a>
+                </li>
+                <li class="active" data-page="customers">
+                    <a href="AdminCustomer.html"><i class="fas fa-users"></i> <span class="nav-text">Khách Hàng</span></a>
+                </li>
+                <li data-page="categories">
+                    <a href="AdminCategory.html"><i class="fas fa-tags"></i> <span class="nav-text">Danh Mục</span></a>
+                </li>
+                <li data-page="reports">
+                    <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> <span class="nav-text">Báo Cáo</span></a>
+                </li>
+                <li data-page="settings">
+                    <a href="AdminSetting.html"><i class="fas fa-cog"></i> <span class="nav-text">Cài Đặt</span></a>
+                </li>
+            </ul>
+            <div class="admin-info">
+                <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                <div>
+                    <p class="admin-name">Admin</p>
+                    <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="header">
+                <div class="d-flex align-items-center">
+                    <button class="btn d-md-none me-2" id="toggleSidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div class="header-right">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="profile">
+                        <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Customers Content -->
+            <div class="content" id="content-container">
+                <div class="page-content" id="customers-content">
+                    <!-- Desktop Table View (Hidden on Mobile) -->
+                    <div class="table-responsive d-none d-md-block">
+                        <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                            <h1>Quản lý khách hàng</h1>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i> Thêm khách hàng
+                            </button>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0">
+                                                <i class="fas fa-search text-muted"></i>
+                                            </span>
+                                            <input type="text" class="form-control border-start-0" placeholder="Tìm khách hàng...">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 d-flex justify-content-end">
+                                        <div class="filter-options d-flex gap-2">
+                                            <select class="form-select">
+                                                <option value="">Trạng thái</option>
+                                                <option value="active">Đang hoạt động</option>
+                                                <option value="inactive">Không hoạt động</option>
+                                            </select>
+                                            <select class="form-select">
+                                                <option value="">Nhóm khách hàng</option>
+                                                <option value="normal">Thường</option>
+                                                <option value="vip">VIP</option>
+                                            </select>
+                                            <select class="form-select">
+                                                <option value="">Sắp xếp theo</option>
+                                                <option value="name-asc">Tên (A-Z)</option>
+                                                <option value="name-desc">Tên (Z-A)</option>
+                                                <option value="date-newest">Mới nhất</option>
+                                                <option value="date-oldest">Cũ nhất</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <input type="checkbox" class="form-check-input">
+                                                </th>
+                                                <th>Tên khách hàng</th>
+                                                <th>Số điện thoại</th>
+                                                <th>Email</th>
+                                                <th>Trạng thái</th>
+                                                <th>Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" class="form-check-input">
+                                                </td>
+                                                <td>Nguyễn Văn A</td>
+                                                <td>0987654321</td>
+                                                <td>nguyenvana@example.com</td>
+                                                <td><span class="status completed">Đang hoạt động</span></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <button class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-primary" title="Sửa">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-danger" title="Xóa">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" class="form-check-input">
+                                                </td>
+                                                <td>Trần Thị B</td>
+                                                <td>0987654322</td>
+                                                <td>tranthib@example.com</td>
+                                                <td><span class="status completed">Đang hoạt động</span></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <button class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-primary" title="Sửa">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-danger" title="Xóa">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
+                                    <ul class="pagination">
+                                        <li class="page-item">
+                                            <a class="page-link" href="#" aria-label="Previous">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">10</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#" aria-label="Next">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile View (Hidden on Desktop) -->
+                    <div class="d-md-none">
+                        <div class="mobile-search-bar mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" placeholder="Tìm khách hàng...">
+                            </div>
+                        </div>
+
+                        <div class="mobile-actions mb-3">
+                            <button class="btn btn-primary w-100 mb-2">
+                                <i class="fas fa-plus me-1"></i> Thêm khách hàng
+                            </button>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-secondary flex-grow-1" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                                    <i class="fas fa-filter me-1"></i> Lọc
+                                </button>
+                                <button class="btn btn-outline-secondary flex-grow-1" type="button" data-bs-toggle="collapse" data-bs-target="#sortCollapse">
+                                    <i class="fas fa-sort me-1"></i> Sắp xếp
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Filters -->
+                        <div class="collapse mb-3" id="filterCollapse">
+                            <div class="card card-body">
+                                <select class="form-select mb-2">
+                                    <option value="">Trạng thái</option>
+                                    <option value="active">Đang hoạt động</option>
+                                    <option value="inactive">Không hoạt động</option>
+                                </select>
+                                <select class="form-select">
+                                    <option value="">Nhóm khách hàng</option>
+                                    <option value="normal">Thường</option>
+                                    <option value="vip">VIP</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Sort -->
+                        <div class="collapse mb-3" id="sortCollapse">
+                            <div class="card card-body">
+                                <select class="form-select">
+                                    <option value="">Sắp xếp theo</option>
+                                    <option value="name-asc">Tên (A-Z)</option>
+                                    <option value="name-desc">Tên (Z-A)</option>
+                                    <option value="date-newest">Mới nhất</option>
+                                    <option value="date-oldest">Cũ nhất</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Customer Cards -->
+                        <div class="customer-cards">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title mb-0">Nguyễn Văn A</h5>
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    </div>
+                                    <div class="customer-info">
+                                        <p class="mb-1"><i class="fas fa-phone me-2"></i>0987654321</p>
+                                        <p class="mb-1"><i class="fas fa-envelope me-2"></i>nguyenvana@example.com</p>
+                                        <p class="mb-2"><i class="fas fa-shopping-bag me-2"></i>Tổng đơn: 15</p>
+                                    </div>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <button class="btn btn-sm btn-outline-primary flex-grow-1">
+                                            <i class="fas fa-edit me-1"></i>Sửa
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger flex-grow-1">
+                                            <i class="fas fa-trash-alt me-1"></i>Xóa
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title mb-0">Trần Thị B</h5>
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    </div>
+                                    <div class="customer-info">
+                                        <p class="mb-1"><i class="fas fa-phone me-2"></i>0987654322</p>
+                                        <p class="mb-1"><i class="fas fa-envelope me-2"></i>tranthib@example.com</p>
+                                        <p class="mb-2"><i class="fas fa-shopping-bag me-2"></i>Tổng đơn: 8</p>
+                                    </div>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <button class="btn btn-sm btn-outline-primary flex-grow-1">
+                                            <i class="fas fa-edit me-1"></i>Sửa
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger flex-grow-1">
+                                            <i class="fas fa-trash-alt me-1"></i>Xóa
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-outline-primary w-100">
+                                <i class="fas fa-sync-alt me-1"></i>Tải thêm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS with Popper -->
+    <script src="jsBootstrap/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="js/Admin.js"></script>
+</body>
+</html> 

@@ -261,7 +261,9 @@ header {
 }
 
 #heroCarousel .carousel-item {
-    height: 500px;
+    height: 60vh; /* Use viewport height instead of fixed height */
+    min-height: 300px; /* Minimum height for very small screens */
+    max-height: 600px; /* Maximum height for large screens */
 }
 
 #heroCarousel .carousel-item img {
@@ -270,16 +272,87 @@ header {
     width: 100%;
 }
 
+.carousel-indicators {
+    margin-bottom: 1.5rem;
+}
+
 .carousel-indicators button {
-    width: 12px !important;
-    height: 12px !important;
+    width: 10px !important;
+    height: 10px !important;
     border-radius: 50% !important;
-    margin: 0 5px !important;
+    margin: 0 4px !important;
     background-color: rgba(255, 255, 255, 0.5) !important;
+    border: none !important;
+    transition: all 0.3s ease;
 }
 
 .carousel-indicators button.active {
     background-color: white !important;
+    transform: scale(1.2);
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#heroCarousel:hover .carousel-control-prev,
+#heroCarousel:hover .carousel-control-next {
+    opacity: 1;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+    #heroCarousel .carousel-item {
+        height: 55vh;
+    }
+}
+
+@media (max-width: 992px) {
+    #heroCarousel .carousel-item {
+        height: 50vh;
+    }
+}
+
+@media (max-width: 768px) {
+    #heroCarousel .carousel-item {
+        height: 45vh;
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+@media (max-width: 576px) {
+    #heroCarousel .carousel-item {
+        height: 40vh;
+    }
+    
+    .carousel-indicators {
+        margin-bottom: 1rem;
+    }
+    
+    .carousel-indicators button {
+        width: 8px !important;
+        height: 8px !important;
+        margin: 0 3px !important;
+    }
 }
 
 /* Section Styles */
@@ -730,6 +803,30 @@ section {
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
     }
+}
+
+/* Category Links */
+.category-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.category-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Product Links */
+.product-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.product-link:hover {
+    text-decoration: none;
+    color: inherit;
 }
 
 

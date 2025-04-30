@@ -1,0 +1,174 @@
+/* Mobile First Approach */
+@media (max-width: 767.98px) {
+    /* Sidebar */
+    .sidebar {
+        width: 100%;
+        transform: translateX(-100%);
+        z-index: 1050;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .sidebar .logo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* Header */
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+        margin-bottom: 1rem;
+    }
+
+    /* Page Header */
+    .page-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .page-header .btn {
+        width: 100%;
+    }
+
+    /* Filter Options */
+    .filter-options {
+        flex-direction: column;
+    }
+
+    .filter-options .form-select {
+        width: 100%;
+    }
+
+    /* Tables */
+    .table-responsive {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+        width: calc(100% + 2rem);
+    }
+
+    .table td, .table th {
+        white-space: nowrap;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Cards */
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+
+    /* Forms */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    /* Pagination */
+    .pagination {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    /* Sidebar */
+    .sidebar {
+        width: 200px;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 200px;
+    }
+
+    /* Filter Options */
+    .filter-options {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .filter-options .form-select {
+        flex: 1;
+        min-width: 150px;
+    }
+}
+
+/* Small Desktop */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    /* Sidebar */
+    .sidebar {
+        width: 220px;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 220px;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1200px) {
+    /* Container Max Width */
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .sidebar,
+    .header,
+    .action-buttons,
+    .btn,
+    .form-select,
+    .pagination {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .card {
+        break-inside: avoid;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    .table td,
+    .table th {
+        background-color: #fff !important;
+        border: 1px solid #ddd !important;
+    }
+} 

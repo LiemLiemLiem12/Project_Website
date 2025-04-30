@@ -1,53 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footer</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/WEB_BAN_THOI_TRANG/layout/css/Footer.css">    
-</head>
 
 <body>
     <!-- FOOTER SECTION -->
     <footer class="footer bg-black text-white py-4">
         <div class="container">
-            <!-- ĐĂNG KÍ NHẬN TIN + SOCIAL MEDIA ROW -->
-            <div class="row mb-4 pb-2 border-bottom border-secondary">
-                <!-- <div class="col-6">
-                    <h5 class="text-uppercase mb-3">ĐĂNG KÍ NHẬN TIN</h5>
-                    <div class="d-flex">
-                        <input type="email" class="form-control" id="emailSubscribe" placeholder="Email">
-                        <button type="button" class="btn text-white px-3" style="background-color: #212529;"
-                            id="btnSubscribe">
-                            <i class="bi bi-envelope-fill me-1"></i> ĐĂNG KÝ
-                        </button>
-                    </div>
-                    <div class="invalid-feedback" id="emailFeedback">Email không hợp lệ</div>
-                </div> -->
-                <div class="col-12 text-end">
-                    <div class="d-inline-block">
-                        <a href="https://www.youtube.com/@storehanghieu1608"
-                            class="text-white d-inline-flex justify-content-center align-items-center rounded me-1"
-                            style="background-color: #FF0000; width: 35px; height: 35px;">
-                            <i class="bi bi-youtube"></i>
-                        </a>
-                        <a href="https://www.instagram.com/RSStore"
-                            class="text-white d-inline-flex justify-content-center align-items-center rounded me-1"
-                            style="background-color: #C13584; width: 35px; height: 35px;">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://www.facebook.com/RSStore" class="text-white d-inline-flex justify-content-center align-items-center rounded"
-                            style="background-color: #4267B2; width: 35px; height: 35px;">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                    </div>
+             <!-- Newsletter -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <h2 class="newsletter-title">Đăng ký nhận bản tin</h2>
+                    <p class="newsletter-description">Nhận thông tin về sản phẩm mới, khuyến mãi hấp dẫn và các ưu đãi đặc biệt.</p>
+                    <form class="newsletter-form">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Nhập địa chỉ email của bạn" required>
+                            <button class="btn btn-subscribe" type="submit">Đăng ký</button>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </div>
+    </section>
+    
 
             <!-- MAIN FOOTER SECTIONS -->
             <div class="row">
@@ -75,12 +49,12 @@
                     </ul>
                     <div class="mt-3">
                         <a href="http://online.gov.vn/Home/WebDetails/121880">
-                            <img src="../upload/img/Footer/FooterBCT.webp" alt="Đã thông báo Bộ Công Thương" class="img-fluid mb-2"
+                            <img src="/ProjectWeb/upload/img/Footer/FooterBCT.webp" alt="Đã thông báo Bộ Công Thương" class="img-fluid mb-2"
                             style="max-width: 180px; background-color: rgba(255, 255, 255, 0); border-radius: 5px;">
                         </a>
                         <a href="https://www.dmca.com/Protection/Status.aspx?ID=9049de26-d97b-48dc-ab97-1e5fcb221fba&refurl=https://RSStore.com/">
                             <div>
-                                <img src="../upload/img/Footer/FooterProtected.png" alt="DMCA Protected" class="img-fluid"
+                                <img src="/ProjectWeb/upload/img/Footer/FooterProtected.png" alt="DMCA Protected" class="img-fluid"
                                     style="max-width: 180px; background-color: rgba(255, 255, 255, 0); border-radius: 5px;">
                             </div>
                         </a>   
@@ -145,11 +119,11 @@
                 <div class="col-md-4">
                     <h5 class="text-uppercase mb-3">PHƯƠNG THỨC THANH TOÁN</h5>
                     <div class="mb-4">
-                        <img src="../upload/img/Footer/ThanhToanSpay.webp" alt="Pay" class="img-fluid me-2"
+                        <img src="/ProjectWeb/upload/img/Footer/ThanhToanSpay.webp" alt="Pay" class="img-fluid me-2"
                             style="height: 30px; background-color: #cccccc00; border-radius: 4px;">
-                        <img src="../upload/img/Footer/ThanhToanVNPay.webp" alt="VNPay" class="img-fluid me-2"
+                        <img src="/ProjectWeb/upload/img/Footer/ThanhToanVNPay.webp" alt="VNPay" class="img-fluid me-2"
                             style="height: 30px; background-color: #cccccc00; border-radius: 4px;">
-                        <img src="../upload/img/Footer/ThanhToanCOD.webp" alt="COD" class="img-fluid"
+                        <img src="/ProjectWeb/upload/img/Footer/ThanhToanCOD.webp" alt="COD" class="img-fluid"
                             style="height: 30px; background-color: #cccccc00; border-radius: 4px;">
                     </div>
                     
@@ -158,17 +132,17 @@
                         <a href="https://www.youtube.com/@storehanghieu1608"
                             class="text-white d-inline-flex justify-content-center align-items-center rounded me-2"
                             style="background-color: #FF0000; width: 40px; height: 40px;">
-                            <i class="bi bi-youtube"></i>
+                            <i class="fab fa-youtube"></i>
                         </a>
                         <a href="https://www.instagram.com/RSStore"
                             class="text-white d-inline-flex justify-content-center align-items-center rounded me-2"
                             style="background-color: #C13584; width: 40px; height: 40px;">
-                            <i class="bi bi-instagram"></i>
+                            <i class="fab fa-instagram"></i>
                         </a>
                         <a href="https://www.facebook.com/RSStore" 
                             class="text-white d-inline-flex justify-content-center align-items-center rounded"
                             style="background-color: #4267B2; width: 40px; height: 40px;">
-                            <i class="bi bi-facebook"></i>
+                            <i class="fab fa-facebook-f"></i>
                         </a>
                     </div>
                 </div>
@@ -187,7 +161,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./js/Footer.js"></script>
+    <!-- Custom JS -->
+    <script src="/ProjectWeb/layout/js/Footer.js"></script>
 </body>
 
 </html>

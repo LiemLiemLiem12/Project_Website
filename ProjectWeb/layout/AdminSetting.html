@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt - SR Store</title>
+    <!-- Bootstrap CSS -->
+    <link href="cssBootstrap/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/Admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>SR STORE</h2>
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
+                </li>
+                <li>
+                    <a href="AdminOrder.html"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
+                </li>
+                <li>
+                    <a href="AdminCustomer.html"><i class="fas fa-users"></i> Khách Hàng</a>
+                </li>
+                <li>
+                    <a href="AdminCategory.html"><i class="fas fa-tags"></i> Danh Mục</a>
+                </li>
+                <li>
+                    <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> Báo Cáo</a>
+                </li>
+                <li class="active">
+                    <a href="AdminSetting.html"><i class="fas fa-cog"></i> Cài Đặt</a>
+                </li>
+            </ul>
+            <div class="admin-info">
+                <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                <div>
+                    <p class="admin-name">Admin</p>
+                    <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="header">
+                <div class="header-right">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="profile">
+                        <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Settings Content -->
+            <div class="content">
+                <div class="page-header">
+                    <h1>Cài đặt hệ thống</h1>
+                </div>
+
+                <!-- General Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Cài đặt chung</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">Tên cửa hàng</label>
+                                <input type="text" class="form-control" value="SR Store">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email liên hệ</label>
+                                <input type="email" class="form-control" value="contact@srstore.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" value="0123456789">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" rows="3">123 Đường ABC, Quận XYZ, TP.HCM</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Email Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Cài đặt email</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">SMTP Server</label>
+                                <input type="text" class="form-control" value="smtp.gmail.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">SMTP Port</label>
+                                <input type="number" class="form-control" value="587">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" value="system@srstore.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" value="********">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            <button type="button" class="btn btn-secondary">Kiểm tra kết nối</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Payment Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Cài đặt thanh toán</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                    <label class="form-check-label">Thanh toán khi nhận hàng (COD)</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                    <label class="form-check-label">Thanh toán qua VNPay</label>
+                                </div>
+                                <div class="mt-2">
+                                    <label class="form-label">Terminal ID</label>
+                                    <input type="text" class="form-control" value="VNPAY001">
+                                </div>
+                                <div class="mt-2">
+                                    <label class="form-label">Secret Key</label>
+                                    <input type="password" class="form-control" value="********">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                    <label class="form-check-label">Thanh toán qua Momo</label>
+                                </div>
+                                <div class="mt-2">
+                                    <label class="form-label">Partner Code</label>
+                                    <input type="text" class="form-control" value="MOMO001">
+                                </div>
+                                <div class="mt-2">
+                                    <label class="form-label">Access Key</label>
+                                    <input type="password" class="form-control" value="********">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Cài đặt bảo mật</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                    <label class="form-check-label">Xác thực 2 lớp</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" checked>
+                                    <label class="form-check-label">Tự động khóa tài khoản sau 5 lần đăng nhập sai</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Thời gian hết hạn phiên đăng nhập (phút)</label>
+                                <input type="number" class="form-control" value="30">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS with Popper -->
+    <script src="jsBootstrap/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="js/Admin.js"></script>
+</body>
+</html> 

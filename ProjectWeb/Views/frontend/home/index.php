@@ -1,25 +1,29 @@
-<?php    
-    view('frontend.partitions.frontend.header');
-?>
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>160STORE - Chuỗi Phân Phối Thời Trang Nam Chuẩn Hiệu</title>
+    <title>RSStore - Thời trang nam chính hãng</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/WEB_BAN_THOI_TRANG/layout/css/Home.css">
+ 
+    <link rel="stylesheet" href="/ProjectWeb/layout/css/Home.css">
+    <link rel="stylesheet" href="/ProjectWeb/layout/css/Footer.css">
 </head>
 <body>
+    <?php    
+        view('frontend.partitions.frontend.header');
+    ?>
+    <link rel="stylesheet" href="/ProjectWeb/layout/css/Header.css">
 
-     <!-- Hero Carousel -->
-     <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+
+    <!-- Hero Carousel -->
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -27,13 +31,13 @@
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="/Web_Ban_Thoi_Trang/upload/img/Home/Banner1.webp" class="d-block w-100" alt="ProCOOL™ - Mát lạnh giảm 10%">
+                <img src="upload/img/Home/Banner1.webp" class="d-block w-100" alt="ProCOOL™ - Mát lạnh giảm 10%">
             </div>
             <div class="carousel-item">
-                <img src="/Web_Ban_Thoi_Trang/upload/img/Home/Banner2.webp" class="d-block w-100" alt="ICON Denim - New Collection">
+                <img src="upload/img/Home/Banner2.webp" class="d-block w-100" alt="ICON Denim - New Collection">
             </div>
             <div class="carousel-item">
-                <img src="/Web_Ban_Thoi_Trang/upload/img/Home/Banner3.webp" class="d-block w-100" alt="Smart Jeans™ - Siêu co giãn">
+                <img src="upload/img/Home/Banner3.webp" class="d-block w-100" alt="Smart Jeans™ - Siêu co giãn">
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
@@ -51,30 +55,71 @@
         <h2 class="section-title">Sản phẩm nổi bật</h2>
         <div class="row">
             <!-- Product Card 1 -->
-            <?php foreach ($mostViewProducts as $product): ?>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <a href="index.php?controller=product&action=show&id=<?= $product['id'] ?>" class="product-card">
-                        <div class="product-image">
-                            <img src="<?= $product['image']; ?>" alt="<?= $product['name']; ?>">
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-title"><?= $product['name']; ?></h3>
-                            <p class="product-price"><?= number_format($product['price'], 0); ?>₫</p>
-                            <button class="btn-add-cart">Thêm vào giỏ</button>
-                        </div>
-                    </a>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item1.webp" alt="Áo Polo Nam Procool ICONDENIM Seam Sealing">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Polo Nam Procool ICONDENIM Seam Sealing</h3>
+                        <p class="product-price">329,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
+            
+            <!-- Product Card 2 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item2.webp" alt="Áo Thun Nam Procool ICONDENIM Seam Sealing">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam Procool ICONDENIM Seam Sealing</h3>
+                        <p class="product-price">299,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Card 3 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item3.webp" alt="Quần Jean Nam Procool ICONDENIM CoolMax Black Slim">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Quần Jean Nam Procool ICONDENIM CoolMax Black Slim</h3>
+                        <p class="product-price">549,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Card 4 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item4.webp" alt="Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim</h3>
+                        <p class="product-price">549,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
+    
+    <!-- Categories -->
     <div class="container">
         <h2 class="section-title">Danh mục sản phẩm</h2>
         <div class="row">
             <!-- Category 1 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Web_Ban_Thoi_Trang/upload/img/Home/item5.webp" alt="Áo Thun" class="category-image">
+                    <img src="upload/img/Home/item5.webp" alt="Áo Thun" class="category-image">
                     <div class="category-title">Áo Thun</div>
                 </div>
             </div>
@@ -82,7 +127,7 @@
             <!-- Category 2 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Web_Ban_Thoi_Trang/upload/img/Home/item6.webp" alt="Áo Polo" class="category-image">
+                    <img src="upload/img/Home/item6.webp" alt="Áo Polo" class="category-image">
                     <div class="category-title">Áo Polo</div>
                 </div>
             </div>
@@ -90,7 +135,7 @@
             <!-- Category 3 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Web_Ban_Thoi_Trang/upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
+                    <img src="upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
                     <div class="category-title">Quần Jean</div>
                 </div>
             </div>
@@ -98,7 +143,7 @@
               <!-- Category 2 -->
               <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Web_Ban_Thoi_Trang/upload/img/Home/item6.webp" alt="Áo Polo" class="category-image">
+                    <img src="upload/img/Home/item6.webp" alt="Áo Polo" class="category-image">
                     <div class="category-title">Áo Polo</div>
                 </div>
             </div>
@@ -106,49 +151,91 @@
             <!-- Category 3 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Web_Ban_Thoi_Trang/upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
+                    <img src="upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
                     <div class="category-title">Quần Jean</div>
                 </div>
             </div>
              <!-- Category 3 -->
              <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Web_Ban_Thoi_Trang/upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
+                    <img src="upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
                     <div class="category-title">Quần Jean</div>
                 </div>
             </div>
             <!-- Additional categories would go here -->
         </div>
     </div>
-
+    
+    <!-- Bestsellers -->
     <div class="container">
         <h2 class="section-title">Sản phẩm bán chạy</h2>
         <div class="row">
-             <!-- Product Card 1 -->
-             <?php foreach ($mostSaleProducts as $product): ?>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="<?= $product['image']; ?>" alt="<?= $product['name']; ?>">
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-title"><?= $product['name']; ?></h3>
-                            <p class="product-price"><?= number_format($product['price'], 0); ?>₫</p>
-                            <button class="btn-add-cart">Thêm vào giỏ</button>
-                        </div>
+            <!-- Product Card 1 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item8.webp" alt="Áo Thun Nam ICONDENIM Atheltics Champion">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Atheltics Champion</h3>
+                        <p class="product-price">299,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
+            
+            <!-- Product Card 2 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item9.webp" alt="Set Đồ Nam ICONDENIM Rugby Football">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Set Đồ Nam ICONDENIM Rugby Football</h3>
+                        <p class="product-price">799,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Card 3 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item10.webp" alt="Áo Polo Nam ICONDENIM Horizontal Stripped">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Polo Nam ICONDENIM Horizontal Stripped</h3>
+                        <p class="product-price">329,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Card 4 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item1.webp" alt="Áo Thun Nam ICONDENIM Edge Striped">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Edge Striped</h3>
+                        <p class="product-price">299,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+
             
         </div>
     </div>
-
-     <!-- Collections Banner -->
-     <div class="container">
+    
+    <!-- Collections Banner -->
+    <div class="container">
         <div class="row g-4 mt-4">
             <div class="col-md-6">
                 <div class="collection-card">
-                    <img src="/Web_Ban_Thoi_Trang/upload/img/Home/Banner4.webp" class="card-img" alt="ProCOOL™ Collection">
+                    <img src="upload/img/Home/Banner4.webp" class="card-img" alt="ProCOOL™ Collection">
                     <div class="collection-overlay">
                         <h3 class="collection-title">ProCOOL™ Collection</h3>
                         <p class="collection-description">Công nghệ vải mát lạnh, thoáng khí cao</p>
@@ -158,7 +245,7 @@
             </div>
             <div class="col-md-6">
                 <div class="collection-card">
-                    <img src="/Web_Ban_Thoi_Trang/upload/img/Home/Banner2.webp" class="card-img" alt="Smart Jeans™ Collection">
+                    <img src="upload/img/Home/Banner2.webp" class="card-img" alt="Smart Jeans™ Collection">
                     <div class="collection-overlay">
                         <h3 class="collection-title">Smart Jeans™ Collection</h3>
                         <p class="collection-description">Co giãn 360° thoải mái suốt ngày dài</p>
@@ -168,37 +255,126 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- New Arrivals -->
     <div class="container">
         <h2 class="section-title">Sản phẩm mới</h2>
         <div class="row">
             <!-- Product Card 1 -->
-            <?php foreach ($newProducts as $product): ?>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="<?= $product['image']; ?>" alt="<?= $product['name']; ?>">
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-title"><?= $product['name']; ?></h3>
-                            <p class="product-price"><?= number_format($product['price'], 0); ?>₫</p>
-                            <button class="btn-add-cart">Thêm vào giỏ</button>
-                        </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item2.webp" alt="Quần Short Jean Nam ICONDENIM Mid Blue Regular">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Quần Short Jean Nam ICONDENIM Mid Blue Regular</h3>
+                        <p class="product-price">359,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
+            
+            <!-- Product Card 2 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item3.webp" alt="Áo Thun Nam ICONDENIM Basic Form Regular">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Áo Thun Nam ICONDENIM Basic Form Regular</h3>
+                        <p class="product-price">199,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Card 3 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item4.webp" alt="Quần Tây Nam ICONDENIM Straight Neutral Basic">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Quần Tây Nam ICONDENIM Straight Neutral Basic</h3>
+                        <p class="product-price">499,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Card 4 -->
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="upload/img/Home/item5.webp" alt="Quần Short Kaki Nam ICONDENIM Garment Dye">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Quần Short Kaki Nam ICONDENIM Garment Dye</h3>
+                        <p class="product-price">359,000₫</p>
+                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
+    <!-- Features -->
+    <section class="features-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h3 class="feature-title">Giao hàng toàn quốc</h3>
+                        <p class="feature-description">Giao hàng nhanh chóng trên toàn quốc</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-undo"></i>
+                        </div>
+                        <h3 class="feature-title">Đổi trả miễn phí</h3>
+                        <p class="feature-description">Đổi trả sản phẩm trong 30 ngày</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h3 class="feature-title">Thanh toán an toàn</h3>
+                        <p class="feature-description">Nhiều phương thức thanh toán an toàn</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="feature-title">Hỗ trợ trực tuyến</h3>
+                        <p class="feature-description">Hỗ trợ 24/7 cho mọi thắc mắc</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+   
+    
+    <?php    
+        view('frontend.partitions.frontend.footer');
+    ?>
 
-    <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Custom JS -->
-    <script src="./js/Home.js"></script>
- 
+    <script src="/ProjectWeb/layout/js/Header.js"></script>
+    <script src="/ProjectWeb/layout/js/Home.js"></script>
+    <script src="/ProjectWeb/layout/js/Footer.js"></script>
 </body>
 </html>
-   <?php    
-    view('frontend.partitions.frontend.footer');
-    
-?>
