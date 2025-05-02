@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SR Store</title>
+    <!-- Bootstrap CSS -->
+    <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Admin.css">
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>SR STORE</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active">
+                    <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
+                </li>
+                <li>
+                    <a href="AdminOrder.html"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
+                </li>
+                <li>
+                    <a href="AdminCustomer.html"><i class="fas fa-users"></i> Khách Hàng</a>
+                </li>
+                <li>
+                    <a href="AdminCategory.html"><i class="fas fa-tags"></i> Danh Mục</a>
+                </li>
+                <li>
+                    <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> Báo Cáo</a>
+                </li>
+                <li>
+                    <a href="AdminSetting.html"><i class="fas fa-cog"></i> Cài Đặt</a>
+                </li>
+            </ul>
+            <div class="admin-info">
+                <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                <div>
+                    <p class="admin-name">Admin</p>
+                    <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="header">
+                <button class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-right">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="profile">
+                        <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="content">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon bg-primary">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <h3><?= $orderNumByMonth ?></h3>
+                                    <p>Đơn hàng mới</p>
+                                </div>
+                                <div class="stat-progress">
+                                    <?php
+                                    echo $orderPercentage >= 100 ?
+                                        '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($orderPercentage - 100) . '%' . '</span>' :
+                                        '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $orderPercentage . '%' . '</span>'
+                                        ?>
+                                    <small>So với tháng trước</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon bg-success">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <h3><?= $revenueByMonth ?></h3>
+                                    <p>Doanh thu</p>
+                                </div>
+                                <div class="stat-progress">
+                                    <?php
+                                    echo $revenuePercentage >= 100 ?
+                                        '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($revenuePercentage - 100) . '%' . '</span>' :
+                                        '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $revenuePercentage . '%' . '</span>'
+                                        ?>
+                                    <small>So với tháng trước</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon bg-warning">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <h3><?= $userByMonthDisplay ?></h3>
+                                    <p>Khách hàng mới</p>
+                                </div>
+                                <div class="stat-progress">
+                                    <?php
+                                    echo $userPercentage >= 100 ?
+                                        '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($userPercentage - 100) . '%' . '</span>' :
+                                        '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $userPercentage . '%' . '</span>'
+                                        ?>
+                                    <small>So với tháng trước</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon bg-info">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <h3>12.5K</h3>
+                                    <p>Lượt truy cập</p>
+                                </div>
+                                <div class="stat-progress">
+                                    <span class="text-danger"><i class="fas fa-arrow-down"></i> 3%</span>
+                                    <small>So với tháng trước</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Đơn hàng gần đây</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive-mobile">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Khách hàng</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày đặt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td data-label="Mã đơn hàng">#ORD001</td>
+                                        <td data-label="Khách hàng">Nguyễn Văn A</td>
+                                        <td data-label="Sản phẩm">Áo thun nam</td>
+                                        <td data-label="Tổng tiền">249.000đ</td>
+                                        <td data-label="Trạng thái"><span class="status completed">Hoàn thành</span>
+                                        </td>
+                                        <td data-label="Ngày đặt">24/03/2024</td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Mã đơn hàng">#ORD002</td>
+                                        <td data-label="Khách hàng">Trần Thị B</td>
+                                        <td data-label="Sản phẩm">Quần jean nam</td>
+                                        <td data-label="Tổng tiền">399.000đ</td>
+                                        <td data-label="Trạng thái"><span class="status pending">Đang xử lý</span></td>
+                                        <td data-label="Ngày đặt">24/03/2024</td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Mã đơn hàng">#ORD003</td>
+                                        <td data-label="Khách hàng">Lê Văn C</td>
+                                        <td data-label="Sản phẩm">Áo khoác nam</td>
+                                        <td data-label="Tổng tiền">599.000đ</td>
+                                        <td data-label="Trạng thái"><span class="status shipping">Đang giao</span></td>
+                                        <td data-label="Ngày đặt">23/03/2024</td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Mã đơn hàng">#ORD004</td>
+                                        <td data-label="Khách hàng">Phạm Thị D</td>
+                                        <td data-label="Sản phẩm">Áo sơ mi nam</td>
+                                        <td data-label="Tổng tiền">299.000đ</td>
+                                        <td data-label="Trạng thái"><span class="status cancelled">Đã hủy</span></td>
+                                        <td data-label="Ngày đặt">23/03/2024</td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Mã đơn hàng">#ORD005</td>
+                                        <td data-label="Khách hàng">Hoàng Văn E</td>
+                                        <td data-label="Sản phẩm">Quần tây nam</td>
+                                        <td data-label="Tổng tiền">459.000đ</td>
+                                        <td data-label="Trạng thái"><span class="status completed">Hoàn thành</span>
+                                        </td>
+                                        <td data-label="Ngày đặt">22/03/2024</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Products -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Sản phẩm bán chạy</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive-mobile">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th>Danh mục</th>
+                                        <th>Giá</th>
+                                        <th>Đã bán</th>
+                                        <th>Doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td data-label="Sản phẩm">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <div
+                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
+                                                    <img src="../upload/img/All-Product/item1.jpg" alt="Product"
+                                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                                </div>
+                                                <span style="font-size: 13px;">Áo thun nam basic</span>
+                                            </div>
+                                        </td>
+                                        <td data-label="Danh mục">Áo thun</td>
+                                        <td data-label="Giá">249.000đ</td>
+                                        <td data-label="Đã bán">120</td>
+                                        <td data-label="Doanh thu">29.880.000đ</td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Sản phẩm">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <div
+                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
+                                                    <img src="../upload/img/All-Product/item2.jpg" alt="Product"
+                                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                                </div>
+                                                <span style="font-size: 13px;">Quần jean nam slim fit</span>
+                                            </div>
+                                        </td>
+                                        <td data-label="Danh mục">Quần jean</td>
+                                        <td data-label="Giá">399.000đ</td>
+                                        <td data-label="Đã bán">85</td>
+                                        <td data-label="Doanh thu">33.915.000đ</td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Sản phẩm">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <div
+                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
+                                                    <img src="../upload/img/All-Product/item3.jpg" alt="Product"
+                                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                                </div>
+                                                <span style="font-size: 13px;">Áo sơ mi nam</span>
+                                            </div>
+                                        </td>
+                                        <td data-label="Danh mục">Áo sơ mi</td>
+                                        <td data-label="Giá">299.000đ</td>
+                                        <td data-label="Đã bán">75</td>
+                                        <td data-label="Doanh thu">22.425.000đ</td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Sản phẩm">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <div
+                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
+                                                    <img src="../upload/img/All-Product/item4.jpg" alt="Product"
+                                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                                </div>
+                                                <span style="font-size: 13px;">Áo khoác jean nam</span>
+                                            </div>
+                                        </td>
+                                        <td data-label="Danh mục">Áo khoác</td>
+                                        <td data-label="Giá">459.000đ</td>
+                                        <td data-label="Đã bán">60</td>
+                                        <td data-label="Doanh thu">27.540.000đ</td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Sản phẩm">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <div
+                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
+                                                    <img src="../upload/img/All-Product/item5.jpg" alt="Product"
+                                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                                </div>
+                                                <span style="font-size: 13px;">Quần tây nam</span>
+                                            </div>
+                                        </td>
+                                        <td data-label="Danh mục">Quần tây</td>
+                                        <td data-label="Giá">359.000đ</td>
+                                        <td data-label="Đã bán">55</td>
+                                        <td data-label="Doanh thu">19.745.000đ</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS with Popper -->
+    <script src="/Project_Website/ProjectWeb/layout/jsBootstrap/bootstrap.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
+    <script>
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>
