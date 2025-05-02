@@ -8,7 +8,7 @@ class UserModel extends BaseModel
         return $this->getScalar("
                 Select count(*) as 'Tong'
                 From " . self::TABLE . "
-                WHERE MONTH(CREATED_AT) = " . $month . " AND YEAR(CREATED_AT) = YEAR(CURDATE())
+                WHERE MONTH(CREATED_AT) = " . $month . " AND YEAR(CREATED_AT) = YEAR(CURDATE()) AND ROLE = 'user'
             ");
     }
 }

@@ -17,15 +17,12 @@ class BaseModel extends Database
 
         } else {
             $sql = "SELECT {$colums} FROM {$table} LIMIT {$limit}";
-
         }
         $query = $this->_query(sql: $sql);
         $data = [];
-
         while ($row = mysqli_fetch_assoc($query)) {
             array_push($data, $row);
         }
-
         return $data;
 
     }

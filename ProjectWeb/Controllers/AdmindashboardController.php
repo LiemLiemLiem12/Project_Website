@@ -3,15 +3,25 @@ class AdminDashboardController extends BaseController
 {
     private $orderModel;
     private $userModel;
+    private $visitModel;
     public function __construct()
     {
         $this->loadModel("UserModel");
         $this->loadModel("OrderModel");
+        $this->loadModel("VisitModel");
         $this->orderModel = new OrderModel();
         $this->userModel = new UserModel();
+        $this->visitModel = new VisitModel();
     }
     public function index()
     {
+        //Tính lượt truy cập
+        $visitByMonthDisplay = $this->visitModel->getNumByMonth(date('m'));
+        $currentVisit = $this->visitModel->getNumByMonth(date('m'));
+        $previousVisit = $this->visitModel->getNumByMonth(date('m') - 1);
+        $percentageVisit = $this->calPercentage($currentVisit, $previousVisit);
+
+        //Tính user
         $userByMonthDisplay = $this->userModel->getNumByMonth(date('m'));
         $currentUser = $this->userModel->getNumByMonth(date('m'));
         $previousUser = $this->userModel->getNumByMonth(date('m') - 1);
@@ -36,7 +46,10 @@ class AdminDashboardController extends BaseController
                 "revenueByMonth" => $revenueByMonthDisplay,
                 "revenuePercentage" => $percentageRevenue,
                 "userByMonthDisplay" => $userByMonthDisplay,
-                "userPercentage" => $percentageUser
+                "userPercentage" => $percentageUser,
+                "visitByMonthDisplay" => $visitByMonthDisplay,
+                "visitPercentage" => $percentageVisit,
+                "orderList" => $this->orderModel->getAll()
             ]
         );
     }

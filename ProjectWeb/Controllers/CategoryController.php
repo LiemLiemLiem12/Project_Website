@@ -1,6 +1,9 @@
 <?php
-class CategoryController extends BaseController{
+class CategoryController extends BaseController
+{
     private $categoryModel;
+    private $productModel;
+
 
     public function __construct()
     {
@@ -12,7 +15,7 @@ class CategoryController extends BaseController{
 
     public function index()
     {
-        $categories = $this->categoryModel->getAll(['*'],10001000);
+        $categories = $this->categoryModel->getAll(['*'], 10001000);
 
         return $this->view('frontend.categories.index', [
             'categories' => $categories,
@@ -23,11 +26,11 @@ class CategoryController extends BaseController{
         $categoryId = $_GET['id'] ?? null;
         // $categoriesMenu = $this->categoryModel->getCategoryForMenu();
         $category = $this->categoryModel->findById($categoryId);
-        $product = $this ->productModel->getByCategoryId($categoryId);
+        $product = $this->productModel->getByCategoryId($categoryId);
         $this->view('frontend.categories.show', [
             // 'menus' => $categoriesMenu,
             'category' => $category,
-            'products'=> $product,
+            'products' => $product,
         ]);
     }
 
@@ -38,9 +41,9 @@ class CategoryController extends BaseController{
     //     $this->categoryModel->updateData($id, $data);
     // }
 
-//     public function store()
+    //     public function store()
 //     {
-  
-  
-//     }
+
+
+    //     }
 }

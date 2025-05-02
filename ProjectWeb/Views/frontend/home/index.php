@@ -1,5 +1,24 @@
+<?php
+session_start(); // KHÔNG được quên dòng này!
+
+if (!isset($_SESSION['visited'])) {
+    // Đây là lượt truy cập mới trong phiên này
+    $_SESSION['visited'] = true;
+
+    // Ghi nhận vào cơ sở dữ liệu hoặc tăng biến đếm
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $visited_at = date(format: 'Y-m-d H:i:s');
+    // ví dụ SQL: INSERT INTO visit s (ip_address, visited_at) VALUES (...)
+    $vs = new VisitModel();
+    $vs->createSession($ip);
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,13 +30,14 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
- 
+
     <link rel="stylesheet" href="/ProjectWeb/layout/css/Home.css">
     <link rel="stylesheet" href="/ProjectWeb/layout/css/Footer.css">
 </head>
+
 <body>
-    <?php    
-        view('frontend.partitions.frontend.header');
+    <?php
+    view('frontend.partitions.frontend.header');
     ?>
     <link rel="stylesheet" href="/ProjectWeb/layout/css/Header.css">
 
@@ -25,7 +45,8 @@
     <!-- Hero Carousel -->
     <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+                aria-label="Slide 1"></button>
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
         </div>
@@ -49,7 +70,7 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-    
+
     <!-- Featured Products -->
     <div class="container">
         <h2 class="section-title">Sản phẩm nổi bật</h2>
@@ -67,7 +88,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 2 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
@@ -81,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 3 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
@@ -95,12 +116,13 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 4 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
                     <div class="product-image">
-                        <img src="upload/img/Home/item4.webp" alt="Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim">
+                        <img src="upload/img/Home/item4.webp"
+                            alt="Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim">
                     </div>
                     <div class="product-info">
                         <h3 class="product-title">Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim</h3>
@@ -111,7 +133,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Categories -->
     <div class="container">
         <h2 class="section-title">Danh mục sản phẩm</h2>
@@ -123,7 +145,7 @@
                     <div class="category-title">Áo Thun</div>
                 </div>
             </div>
-            
+
             <!-- Category 2 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
@@ -131,7 +153,7 @@
                     <div class="category-title">Áo Polo</div>
                 </div>
             </div>
-            
+
             <!-- Category 3 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
@@ -140,14 +162,14 @@
                 </div>
             </div>
 
-              <!-- Category 2 -->
-              <div class="col-lg-2 col-md-4 col-6">
+            <!-- Category 2 -->
+            <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
                     <img src="upload/img/Home/item6.webp" alt="Áo Polo" class="category-image">
                     <div class="category-title">Áo Polo</div>
                 </div>
             </div>
-            
+
             <!-- Category 3 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
@@ -155,8 +177,8 @@
                     <div class="category-title">Quần Jean</div>
                 </div>
             </div>
-             <!-- Category 3 -->
-             <div class="col-lg-2 col-md-4 col-6">
+            <!-- Category 3 -->
+            <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
                     <img src="upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
                     <div class="category-title">Quần Jean</div>
@@ -165,7 +187,7 @@
             <!-- Additional categories would go here -->
         </div>
     </div>
-    
+
     <!-- Bestsellers -->
     <div class="container">
         <h2 class="section-title">Sản phẩm bán chạy</h2>
@@ -183,7 +205,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 2 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
@@ -197,7 +219,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 3 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
@@ -211,7 +233,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 4 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
@@ -226,10 +248,10 @@
                 </div>
             </div>
 
-            
+
         </div>
     </div>
-    
+
     <!-- Collections Banner -->
     <div class="container">
         <div class="row g-4 mt-4">
@@ -255,7 +277,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- New Arrivals -->
     <div class="container">
         <h2 class="section-title">Sản phẩm mới</h2>
@@ -273,7 +295,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 2 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
@@ -287,7 +309,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 3 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
@@ -301,7 +323,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Card 4 -->
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="product-card">
@@ -317,7 +339,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Features -->
     <section class="features-section">
         <div class="container">
@@ -361,11 +383,11 @@
             </div>
         </div>
     </section>
-    
-   
-    
-    <?php    
-        view('frontend.partitions.frontend.footer');
+
+
+
+    <?php
+    view('frontend.partitions.frontend.footer');
     ?>
 
     <!-- Bootstrap JS Bundle with Popper -->
@@ -377,4 +399,5 @@
     <script src="/ProjectWeb/layout/js/Home.js"></script>
     <script src="/ProjectWeb/layout/js/Footer.js"></script>
 </body>
+
 </html>

@@ -148,11 +148,15 @@
                                     <i class="fas fa-eye"></i>
                                 </div>
                                 <div class="stat-details">
-                                    <h3>12.5K</h3>
+                                    <h3><?= $visitByMonthDisplay ?></h3>
                                     <p>Lượt truy cập</p>
                                 </div>
                                 <div class="stat-progress">
-                                    <span class="text-danger"><i class="fas fa-arrow-down"></i> 3%</span>
+                                    <?php
+                                    echo $visitPercentage >= 100 ?
+                                        '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($visitPercentage - 100) . '%' . '</span>' :
+                                        '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $visitPercentage . '%' . '</span>'
+                                        ?>
                                     <small>So với tháng trước</small>
                                 </div>
                             </div>
@@ -172,55 +176,49 @@
                                     <tr>
                                         <th>Mã đơn hàng</th>
                                         <th>Khách hàng</th>
-                                        <th>Sản phẩm</th>
                                         <th>Tổng tiền</th>
                                         <th>Trạng thái</th>
                                         <th>Ngày đặt</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    // print_r($orderList);
+                                    foreach ($orderList as $data) {
+                                        echo '
+                                        <tr>
+                                            <td data-label="Mã đơn hàng"> #ORD0' . $data['id_Order'] . '</td>
+                                            <td data-label="Khách hàng">' . $data['name'] . '</td>
+                                            <td data-label="Tổng tiền">' . $data['total_amount'] . '</td>';
+
+                                        if ($data['status'] === 'completed') {
+                                            echo '<td data-label="Trạng thái"><span class="status completed">Hoàn thành</span></td>';
+                                        } elseif ($data['status'] === 'pending') {
+                                            echo '<td data-label="Trạng thái"><span class="status pending">Đang xử lý</span></td>';
+                                        } elseif ($data['status'] === 'cancelled') {
+                                            echo '<td data-label="Trạng thái"><span class="status cancelled">Đã hủy</span></td>';
+                                        } elseif ($data['status'] === 'shipping') {
+                                            echo '<td data-label="Trạng thái"><span class="status shipping">Đang giao</span></td>';
+                                        } else {
+                                            echo '<td data-label="Trạng thái"><span class="status unknown">Không xác định</span></td>';
+                                        }
+
+                                        echo '
+                                            <td data-label="Ngày đặt">' . $data['created_at'] . '</td>
+                                        </tr>';
+
+                                    }
+
+                                    ?>
                                     <tr>
                                         <td data-label="Mã đơn hàng">#ORD001</td>
                                         <td data-label="Khách hàng">Nguyễn Văn A</td>
-                                        <td data-label="Sản phẩm">Áo thun nam</td>
                                         <td data-label="Tổng tiền">249.000đ</td>
                                         <td data-label="Trạng thái"><span class="status completed">Hoàn thành</span>
                                         </td>
                                         <td data-label="Ngày đặt">24/03/2024</td>
                                     </tr>
-                                    <tr>
-                                        <td data-label="Mã đơn hàng">#ORD002</td>
-                                        <td data-label="Khách hàng">Trần Thị B</td>
-                                        <td data-label="Sản phẩm">Quần jean nam</td>
-                                        <td data-label="Tổng tiền">399.000đ</td>
-                                        <td data-label="Trạng thái"><span class="status pending">Đang xử lý</span></td>
-                                        <td data-label="Ngày đặt">24/03/2024</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Mã đơn hàng">#ORD003</td>
-                                        <td data-label="Khách hàng">Lê Văn C</td>
-                                        <td data-label="Sản phẩm">Áo khoác nam</td>
-                                        <td data-label="Tổng tiền">599.000đ</td>
-                                        <td data-label="Trạng thái"><span class="status shipping">Đang giao</span></td>
-                                        <td data-label="Ngày đặt">23/03/2024</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Mã đơn hàng">#ORD004</td>
-                                        <td data-label="Khách hàng">Phạm Thị D</td>
-                                        <td data-label="Sản phẩm">Áo sơ mi nam</td>
-                                        <td data-label="Tổng tiền">299.000đ</td>
-                                        <td data-label="Trạng thái"><span class="status cancelled">Đã hủy</span></td>
-                                        <td data-label="Ngày đặt">23/03/2024</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Mã đơn hàng">#ORD005</td>
-                                        <td data-label="Khách hàng">Hoàng Văn E</td>
-                                        <td data-label="Sản phẩm">Quần tây nam</td>
-                                        <td data-label="Tổng tiền">459.000đ</td>
-                                        <td data-label="Trạng thái"><span class="status completed">Hoàn thành</span>
-                                        </td>
-                                        <td data-label="Ngày đặt">22/03/2024</td>
-                                    </tr>
+
                                 </tbody>
                             </table>
                         </div>
