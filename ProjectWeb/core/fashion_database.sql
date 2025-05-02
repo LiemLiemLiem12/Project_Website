@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 01, 2025 lúc 09:27 AM
+-- Thời gian đã tạo: Th5 02, 2025 lúc 08:19 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -81,7 +81,7 @@ INSERT INTO `category` (`id_Category`, `name`, `link`, `meta`, `hide`, `order`) 
 CREATE TABLE `order` (
   `id_Order` int(11) NOT NULL,
   `total_amount` int(11) NOT NULL,
-  `status` enum('pending','processing','shipped','delivered','canceled') DEFAULT 'pending',
+  `status` enum('pending','shipping','completed','cancelled') DEFAULT 'pending',
   `created_at` datetime DEFAULT current_timestamp(),
   `id_User` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -92,10 +92,15 @@ CREATE TABLE `order` (
 
 INSERT INTO `order` (`id_Order`, `total_amount`, `status`, `created_at`, `id_User`) VALUES
 (1, 315000, 'pending', '2025-05-01 14:25:49', 1),
-(2, 400000, 'processing', '2025-05-01 14:25:49', 2),
-(3, 595000, 'shipped', '2025-05-01 14:25:49', 3),
-(4, 427500, 'delivered', '2025-05-01 14:25:49', 4),
-(5, 225000, 'pending', '2025-05-01 14:25:49', 5);
+(2, 400000, 'completed', '2025-05-01 14:25:49', 2),
+(3, 595000, 'cancelled', '2025-05-01 14:25:49', 3),
+(4, 427500, 'cancelled', '2025-05-01 14:25:49', 4),
+(5, 225000, 'cancelled', '2025-05-01 14:25:49', 5),
+(6, 12, 'completed', '2025-05-02 18:56:30', 1),
+(7, 1000000, 'shipping', '2025-05-02 13:05:02', 3),
+(8, 1000000, 'pending', '2025-02-09 13:05:23', 3),
+(9, 10000000, 'completed', '2025-04-16 13:36:31', 5),
+(10, 10000000, 'completed', '2025-04-17 21:57:49', 1);
 
 -- --------------------------------------------------------
 
@@ -129,7 +134,7 @@ INSERT INTO `order_detail` (`id_Order_Detail`, `id_Order`, `id_Product`, `quanti
 --
 
 CREATE TABLE `product` (
-  `id_Product` int(11) NOT NULL,
+  `id_product` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
   `original_price` decimal(10,2) DEFAULT NULL,
@@ -143,19 +148,20 @@ CREATE TABLE `product` (
   `link` varchar(255) DEFAULT NULL,
   `meta` varchar(255) DEFAULT NULL,
   `hide` int(11) DEFAULT NULL,
-  `order` int(11) DEFAULT NULL
+  `order` int(11) DEFAULT NULL,
+  `click_count` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `product`
 --
 
-INSERT INTO `product` (`id_Product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `img`, `link`, `meta`, `hide`, `order`) VALUES
-(1, 'Áo sơ mi nam', 'Chất liệu cotton thoáng mát', 350000.00, 10, 315000.00, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 1, 'a1.jpg', 'a1.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1),
-(2, 'Quần jeans nữ', 'Form ôm body tôn dáng', 500000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 2, 'q1.jpg', 'q1.jpg', '/quan-jeans', 'quan-jeans', 0, 2),
-(3, 'Giày thể thao', 'Giày sneaker trẻ trung', 700000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 3, 'g1.jpg', 'g1.jpg', '/giay-sneaker', 'giay-sneaker', 0, 3),
-(4, 'Túi xách nữ', 'Túi da PU cao cấp', 450000.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 4, 't1.jpg', 't1.jpg', '/tui-xach', 'tui-xach', 0, 4),
-(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 1, 'a2.jpg', 'a2.jpg', '/ao-thun', 'ao-thun', 0, 5);
+INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `img`, `link`, `meta`, `hide`, `order`, `click_count`) VALUES
+(1, 'Áo sơ mi nam', 'Chất liệu cotton thoáng mát', 350000.00, 10, 315000.00, '2025-05-01 14:25:49', '2025-05-01 14:42:54', 1, 'a1.jpg', 'a1.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1, 20),
+(2, 'Quần jeans nữ', 'Form ôm body tôn dáng', 500000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-01 14:43:18', 2, 'q1.jpg', 'q1.jpg', '/quan-jeans', 'quan-jeans', 0, 2, 12),
+(3, 'Giày thể thao', 'Giày sneaker trẻ trung', 700000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-01 14:43:32', 3, 'g1.jpg', 'g1.jpg', '/giay-sneaker', 'giay-sneaker', 0, 3, 5),
+(4, 'Túi xách nữ', 'Túi da PU cao cấp', 450000.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-01 14:43:46', 4, 't1.jpg', 't1.jpg', '/tui-xach', 'tui-xach', 0, 4, 7),
+(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-01 14:43:59', 1, 'a2.jpg', 'a2.jpg', '/ao-thun', 'ao-thun', 0, 5, 30);
 
 -- --------------------------------------------------------
 
@@ -177,6 +183,7 @@ INSERT INTO `product_tag` (`id_Product`, `id_Tag`) VALUES
 (1, 4),
 (2, 2),
 (2, 5),
+(3, 1),
 (3, 3);
 
 -- --------------------------------------------------------
@@ -262,7 +269,33 @@ INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, 
 (2, 'Trần Thị B', 'b@example.com', '123456', '0900000002', 'Hồ Chí Minh', 'user', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
 (3, 'Lê Văn C', 'c@example.com', '123456', '0900000003', 'Đà Nẵng', 'admin', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
 (4, 'Phạm Thị D', 'd@example.com', '123456', '0900000004', 'Cần Thơ', 'user', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(5, 'Hoàng Văn E', 'e@example.com', '123456', '0900000005', 'Hải Phòng', 'user', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0);
+(5, 'Hoàng Văn E', 'e@example.com', '123456', '0900000005', 'Hải Phòng', 'user', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
+(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', '2025-04-15 21:59:36', '2025-05-02 22:00:43', NULL),
+(7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', '2025-04-16 08:00:00', '2025-05-02 22:01:25', NULL),
+(8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', '2025-04-16 09:15:00', '2025-05-02 22:01:25', NULL),
+(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', '2025-04-16 10:30:00', '2025-05-02 22:01:25', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `visits`
+--
+
+CREATE TABLE `visits` (
+  `id` int(11) NOT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `visited_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `visits`
+--
+
+INSERT INTO `visits` (`id`, `ip_address`, `visited_at`) VALUES
+(1, '', '2025-05-02 21:14:27'),
+(2, '::1', '2025-05-02 21:17:50'),
+(3, '127.0.0.1', '2025-05-02 21:22:12'),
+(4, '127.0.0.1', '2025-05-02 21:30:24');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -301,7 +334,7 @@ ALTER TABLE `order_detail`
 -- Chỉ mục cho bảng `product`
 --
 ALTER TABLE `product`
-  ADD PRIMARY KEY (`id_Product`),
+  ADD PRIMARY KEY (`id_product`),
   ADD KEY `idx_product_category` (`id_Category`);
 
 --
@@ -334,6 +367,12 @@ ALTER TABLE `user`
   ADD KEY `idx_user_email` (`email`);
 
 --
+-- Chỉ mục cho bảng `visits`
+--
+ALTER TABLE `visits`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
@@ -353,7 +392,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT cho bảng `order`
 --
 ALTER TABLE `order`
-  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT cho bảng `order_detail`
@@ -365,7 +404,7 @@ ALTER TABLE `order_detail`
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_Product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `review`
@@ -383,7 +422,13 @@ ALTER TABLE `tag`
 -- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT cho bảng `visits`
+--
+ALTER TABLE `visits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -419,8 +464,8 @@ ALTER TABLE `product`
 -- Các ràng buộc cho bảng `product_tag`
 --
 ALTER TABLE `product_tag`
-  ADD CONSTRAINT `product_tag_ibfk_1` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_Product`),
-  ADD CONSTRAINT `product_tag_ibfk_2` FOREIGN KEY (`id_Tag`) REFERENCES `tag` (`id_Tag`);
+  ADD CONSTRAINT `product_tag_ibfk_2` FOREIGN KEY (`id_Tag`) REFERENCES `tag` (`id_Tag`),
+  ADD CONSTRAINT `product_tag_product` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_Product`);
 
 --
 -- Các ràng buộc cho bảng `review`
