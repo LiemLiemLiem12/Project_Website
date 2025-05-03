@@ -14,7 +14,7 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="logo">
                 <h2>SR STORE</h2>
             </div>
@@ -54,6 +54,9 @@
         <div class="main-content">
             <!-- Top Header -->
             <header class="header">
+                <button class="mobile-menu-toggle d-md-none" type="button">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="header-right">
                     <div class="notification">
                         <i class="fas fa-bell"></i>
@@ -264,5 +267,24 @@
     <script src="jsBootstrap/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/Admin.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var menuToggle = document.querySelector('.mobile-menu-toggle');
+        var sidebar = document.getElementById('sidebar');
+        var navLinks = document.querySelectorAll('.sidebar .nav-links a');
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+        navLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 992 && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html> 

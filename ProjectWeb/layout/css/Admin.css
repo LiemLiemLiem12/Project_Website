@@ -411,6 +411,44 @@ body {
     .action-buttons {
         flex-direction: column;
     }
+
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        transform: none !important;
+        left: -250px;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.show {
+        left: 0;
+        transform: none !important;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* Header */
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+        margin-bottom: 1rem;
+    }
+
+    /* Tables */
+    .table-responsive {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .table td, .table th {
+        white-space: nowrap;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -650,4 +688,98 @@ body {
 
 #orderItemsTable tr:last-child td {
     border-bottom: none;
+}
+
+/* Customer Eye Button Style */
+.btn-view-customer {
+    background: #17a2b8;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(23,162,184,0.08);
+}
+.btn-view-customer:hover {
+    background: #138496;
+    color: #fff;
+}
+.btn-view-customer i {
+    font-size: 1.1rem;
+    color: #fff;
+    transition: opacity 0.2s;
+}
+.btn-view-customer.hide i {
+    color: #fff;
+    opacity: 0.4;
+    text-decoration: line-through;
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        left: 0;
+        transform: none !important;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 250px;
+    }
+}
+
+/* Small Desktop */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        left: 0;
+        transform: none !important;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 250px;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1200px) {
+    /* Container Max Width */
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* Hamburger menu for sidebar */
+.sidebar-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+    margin-right: 1rem;
+}
+.sidebar-toggle span {
+    display: block;
+    height: 4px;
+    width: 100%;
+    background: #2c3e50;
+    margin: 4px 0;
+    border-radius: 2px;
+    transition: 0.3s;
+}
+@media (max-width: 991.98px) {
+    .sidebar-toggle {
+        display: flex;
+    }
 }

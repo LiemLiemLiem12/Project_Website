@@ -52,6 +52,20 @@
 
         <!-- Main Content -->
         <div class="main-content">
+            <header class="header">
+                <button class="mobile-menu-toggle d-md-none" type="button">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-right">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="profile">
+                        <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                    </div>
+                </div>
+            </header>
             <div class="product-management">
                 <!-- Page Header -->
                 <div class="page-header d-flex justify-content-between align-items-center">
@@ -304,6 +318,51 @@
     <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
     <script>
     CKEDITOR.replace('productDesc'); // 'productDesc' là id của textarea
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var menuToggle = document.querySelector('.mobile-menu-toggle');
+    var sidebar = document.getElementById('sidebar');
+    var navLinks = document.querySelectorAll('.sidebar .nav-links a');
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+    }
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (window.innerWidth < 992 && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    });
+    // Nút mắt: ẩn/hiện sản phẩm (ẩn row hoặc đổi trạng thái)
+    document.querySelectorAll('.btn-view').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var row = btn.closest('tr');
+            if (!row) return;
+            // Toggle trạng thái ẩn/hiện
+            var isHidden = row.classList.toggle('product-hidden');
+            // Đổi icon mắt
+            var icon = btn.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            }
+            // Đổi trạng thái text nếu muốn
+            var statusCell = row.querySelector('.status');
+            if (statusCell) {
+                if (isHidden) {
+                    statusCell.textContent = 'Đã ẩn';
+                    statusCell.className = 'status inactive';
+                } else {
+                    statusCell.textContent = 'Còn hàng';
+                    statusCell.className = 'status completed';
+                }
+            }
+        });
+    });
+});
 </script>
 </body>
 </html> 
