@@ -54,11 +54,16 @@
         <div class="main-content">
             <div class="product-management">
                 <!-- Page Header -->
-                <div class="page-header">
-                    <h1>Quản lý Sản phẩm</h1>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Thêm sản phẩm
-                    </button>
+                <div class="page-header d-flex justify-content-between align-items-center">
+                    <h1 class="mb-0">Quản lý Sản phẩm</h1>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                            <i class="fas fa-plus"></i> Thêm sản phẩm
+                        </button>
+                        <button class="btn btn-danger" id="deleteSelectedBtn" disabled>
+                            <i class="fas fa-trash"></i> Xóa nhiều
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Filters Section -->
@@ -120,36 +125,185 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr class="product-row"
+                                data-id_product="SP001"
+                                data-name="Áo Thun Unisex"
+                                data-description="Áo thun unisex chất liệu cotton, thoáng mát."
+                                data-original_price="300000"
+                                data-discount_percent="10"
+                                data-current_price="270000"
+                                data-created_at="2024-05-01"
+                                data-updated_at="2024-05-10"
+                                data-id_category="Áo"
+                                data-main_image="../upload/img/products/sp1.jpg"
+                                data-img="../upload/img/products/sp1-2.jpg,../upload/img/products/sp1-3.jpg"
+                                data-link="/ao-thun-unisex"
+                                data-meta="ao-thun-unisex"
+                                data-hide="0"
+                                data-order="1"
+                                data-click_count="20"
+                                data-tags="ao,unisex"
+                                data-policy_return="../upload/img/policy_return.jpg"
+                                data-policy_warranty="../upload/img/policy_warranty.jpg"
+                            >
                                 <td><input type="checkbox" class="product-checkbox"></td>
                                 <td>SP001</td>
                                 <td><img src="../upload/img/products/sp1.jpg" alt="Product" width="50"></td>
                                 <td>Áo Thun Unisex</td>
                                 <td>Áo</td>
-                                <td>249.000đ</td>
+                                <td>270.000đ</td>
                                 <td>50</td>
                                 <td><span class="status completed">Còn hàng</span></td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-sm btn-info" title="Xem"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-sm btn-warning" title="Sửa"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-info btn-view" title="Ẩn/Hiện" data-hide="0">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning btn-edit" title="Sửa"><i class="fas fa-edit"></i></button>
                                     </div>
                                 </td>
                             </tr>
-                            <!-- More product rows... -->
+                            <!-- Thêm các sản phẩm khác tương tự -->
                         </tbody>
                     </table>
                 </div>
+
+
             </div>
         </div>
     </div>
 
+
+
+
+
+
+
+    <!-- Modal Thêm Sản Phẩm -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="addProductForm">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductModalLabel">Thêm Sản Phẩm Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="productTags" class="form-label">Tags</label>
+                    <div id="tagInputContainer" class="form-control d-flex flex-wrap align-items-center" style="min-height: 48px;">
+                      <input type="text" id="tagInput" class="border-0 flex-grow-1" placeholder="Nhập tag và nhấn Enter..." style="outline: none; min-width: 120px;">
+                    </div>
+                    <input type="hidden" name="productTags" id="productTags">
+                  </div>
+                <div class="mb-3">
+                    <label for="productImage" class="form-label">Hình Ảnh</label>
+                    <input type="file" class="form-control" id="productImage" name="productImage[]" accept="image/*" multiple>
+                    <div id="imagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                  </div>
+                <div class="mb-3">
+                <label for="productName" class="form-label">Tên Sản Phẩm</label>
+                <input type="text" class="form-control" id="productName" name="productName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="productDesc" class="form-label">Mô tả</label>
+                    <textarea class="form-control" id="productDesc" name="productDesc" rows="2"></textarea>
+                  </div>
+                <div class="mb-3">
+                <label for="productCategory" class="form-label">Danh Mục</label>
+                <select class="form-select" id="productCategory" name="productCategory" required>
+                    <option value="">Chọn danh mục</option>
+                    <option value="1">Áo</option>
+                    <option value="2">Quần</option>
+                    <option value="3">Giày</option>
+                    <option value="4">Phụ kiện</option>
+                    <option value="5">Khuyến mãi</option>
+                </select>
+                </div>
+                <div class="mb-3">
+                <label for="productPrice" class="form-label">Giá</label>
+                <input type="number" class="form-control" id="productPrice" name="productPrice" min="0" required>
+                </div>
+                <div class="mb-3">
+                <label for="productStatus" class="form-label">Trạng Thái</label>
+                <select class="form-select" id="productStatus" name="productStatus" required>
+                    <option value="0">Còn hàng</option>
+                    <option value="1">Hết hàng</option>
+                </select>
+                </div>
+                <div class="mb-3">
+                    <label for="policyReturn" class="form-label">Chính sách đổi trả (ảnh)</label>
+                    <input type="file" class="form-control" id="policyReturn" name="policyReturn" accept="image/*" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="policyWarranty" class="form-label">Chính sách bảo hành (ảnh)</label>
+                    <input type="file" class="form-control" id="policyWarranty" name="policyWarranty" accept="image/*" required>
+                  </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+            </div>
+            </form>
+        </div>
+        </div>
+    </div>
+    <!-- Modal Chi Tiết Sản Phẩm -->
+    <!-- Modal Chi Tiết Sản Phẩm -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productDetailModalLabel">Chi tiết sản phẩm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-5">
+              <img id="detailImage" src="" alt="Ảnh chính" class="img-fluid rounded border mb-2" style="max-height:220px;">
+              <div id="detailGallery" class="d-flex gap-2"></div>
+            </div>
+            <div class="col-md-7">
+              <h4 id="detailName"></h4>
+              <p><strong>Mã SP:</strong> <span id="detailCode"></span></p>
+              <p><strong>Danh mục:</strong> <span id="detailCategory"></span></p>
+              <p>
+                <strong>Giá:</strong>
+                <span id="detailOriginalPrice" style="text-decoration:line-through;color:gray"></span>
+                <span id="detailCurrentPrice" style="color:red;font-weight:bold"></span>
+                <span id="detailDiscount" class="badge bg-success"></span>
+              </p>
+              <p><strong>Tồn kho:</strong> <span id="detailStock"></span></p>
+              <p><strong>Trạng thái:</strong> <span id="detailStatus"></span></p>
+              <p><strong>Lượt xem:</strong> <span id="detailClick"></span></p>
+              <p><strong>Ngày tạo:</strong> <span id="detailCreated"></span></p>
+              <p><strong>Ngày cập nhật:</strong> <span id="detailUpdated"></span></p>
+              <p><strong>Link SEO:</strong> <span id="detailLink"></span></p>
+              <p><strong>Meta SEO:</strong> <span id="detailMeta"></span></p>
+              <p><strong>Thứ tự hiển thị:</strong> <span id="detailOrder"></span></p>
+              <p><strong>Tags:</strong> <span id="detailTags"></span></p>
+              <p><strong>Chính sách đổi trả:</strong><br><img id="detailPolicyReturn" src="" style="max-width:100px"></p>
+              <p><strong>Chính sách bảo hành:</strong><br><img id="detailPolicyWarranty" src="" style="max-width:100px"></p>
+              <p><strong>Mô tả:</strong></p>
+              <div id="detailDesc" class="border rounded p-2 bg-light"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     <!-- Bootstrap JS -->
     <script src="jsBootstrap/bootstrap.bundle.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom JS -->
     <script src="js/Admin.js"></script>
+
+    <!-- Ckeditor -->
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+    CKEDITOR.replace('productDesc'); // 'productDesc' là id của textarea
+</script>
 </body>
 </html> 

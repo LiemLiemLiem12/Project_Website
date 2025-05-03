@@ -217,4 +217,244 @@ function exportToPDF() {
     console.log('Exporting to PDF...');
 }
 
+document.getElementById('addProductForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Lấy dữ liệu từ form
+    const formData = new FormData(this);
+    // Demo: In ra console, thực tế sẽ gửi về server xử lý
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
+    // Đóng modal sau khi thêm (giả lập)
+    var addProductModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+    addProductModal.hide();
+    // Reset form
+    this.reset();
+    // Thông báo (demo)
+    alert('Đã thêm sản phẩm (demo, cần kết nối backend để lưu vào database)');
+});
 
+
+
+  // Kích hoạt nút xóa nhiều khi có checkbox được chọn
+  const checkboxes = document.querySelectorAll('.product-checkbox');
+  const deleteBtn = document.getElementById('deleteSelectedBtn');
+
+  function updateDeleteBtn() {
+    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+    deleteBtn.disabled = !anyChecked;
+  }
+
+  checkboxes.forEach(cb => cb.addEventListener('change', updateDeleteBtn));
+
+  // Xử lý khi nhấn nút xóa nhiều
+  deleteBtn.addEventListener('click', function() {
+    if (confirm('Bạn có chắc muốn xóa các sản phẩm đã chọn?')) {
+      // Lấy danh sách mã SP đã chọn
+      const selected = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.closest('tr').querySelector('td:nth-child(2)').textContent.trim());
+      // Demo: In ra console, thực tế sẽ gửi request xóa về backend
+      console.log('Xóa các sản phẩm:', selected);
+      alert('Đã xóa các sản phẩm (demo, cần kết nối backend để thực hiện xóa thực tế)');
+      // Reset checkbox và nút
+      checkboxes.forEach(cb => cb.checked = false);
+      updateDeleteBtn();
+    }
+  });
+
+
+
+
+
+// preview ảnh 
+
+document.getElementById('productImage').addEventListener('change', function(event) {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = ''; // Xóa preview cũ
+    const files = event.target.files;
+    if (files) {
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'rounded border';
+                    img.style.height = '60px';
+                    img.style.width = '60px';
+                    img.style.objectFit = 'cover';
+                    img.style.marginRight = '8px';
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+
+
+// Tagename
+const tagInput = document.getElementById('tagInput');
+const tagInputContainer = document.getElementById('tagInputContainer');
+const productTags = document.getElementById('productTags');
+let tags = [];
+
+function renderTags() {
+  // Xóa các tag cũ (trừ input)
+  tagInputContainer.querySelectorAll('.tag-item').forEach(e => e.remove());
+  tags.forEach((tag, idx) => {
+    const tagEl = document.createElement('span');
+    tagEl.className = 'tag-item';
+    tagEl.textContent = tag;
+    // Nút xóa
+    const removeBtn = document.createElement('span');
+    removeBtn.className = 'remove-tag';
+    removeBtn.textContent = '×';
+    removeBtn.onclick = () => {
+      tags.splice(idx, 1);
+      renderTags();
+    };
+    tagEl.appendChild(removeBtn);
+    tagInputContainer.insertBefore(tagEl, tagInput);
+  });
+  // Cập nhật input ẩn để submit form
+  productTags.value = tags.join(',');
+}
+
+tagInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim() !== '') {
+    e.preventDefault();
+    const newTag = this.value.trim();
+    if (!tags.includes(newTag)) {
+      tags.push(newTag);
+      renderTags();
+    }
+    this.value = '';
+  } else if (e.key === 'Backspace' && this.value === '' && tags.length > 0) {
+    // Xóa tag cuối khi backspace ở đầu input
+    tags.pop();
+    renderTags();
+  }
+});
+
+
+ // Hide
+document.querySelectorAll('.btn-view').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        // Lấy trạng thái hiện tại
+        let hide = btn.getAttribute('data-hide');
+        // Đảo trạng thái
+        hide = hide === "0" ? "1" : "0";
+        btn.setAttribute('data-hide', hide);
+
+        // Đổi icon
+        const icon = btn.querySelector('i');
+        if (hide === "1") {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            icon.style.opacity = "0.5";
+        } else {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            icon.style.opacity = "1";
+        }
+
+        // Tooltip cập nhật lại
+        btn.title = hide === "0" ? "Đang hiện (bấm để ẩn)" : "Đang ẩn (bấm để hiện)";
+
+        // TODO: Gửi AJAX về backend để cập nhật trường hide trong database
+    });
+
+    // Khởi tạo icon đúng trạng thái khi load trang
+    const icon = btn.querySelector('i');
+    if (btn.getAttribute('data-hide') === "1") {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+        icon.style.opacity = "0.5";
+    } else {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+        icon.style.opacity = "1";
+    }
+});
+
+
+// Chỉnh sửa btn
+document.querySelectorAll('.btn-edit').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        // Lấy dòng sản phẩm (tr)
+        const row = btn.closest('tr');
+        // Lấy dữ liệu từ data-attribute
+        document.getElementById('productName').value = row.getAttribute('data-name') || '';
+        // Nếu có các trường khác, điền tương tự:
+        // Hình ảnh: không thể fill file input, có thể show preview hoặc để trống
+        CKEDITOR.instances['productDesc'].setData(row.getAttribute('data-description') || '');
+        document.getElementById('productCategory').value = row.getAttribute('data-id_category') || '';
+        document.getElementById('productPrice').value = row.getAttribute('data-current_price') || '';
+        document.getElementById('productStatus').value = row.getAttribute('data-hide') || '0';
+        // ... điền các trường khác nếu có ...
+
+        // Mở modal thêm/sửa sản phẩm
+        var modal = new bootstrap.Modal(document.getElementById('addProductModal'));
+        modal.show();
+
+        // (Tùy chọn) Đổi tiêu đề modal thành "Chỉnh sửa sản phẩm"
+        document.getElementById('addProductModalLabel').textContent = "Chỉnh sửa Sản Phẩm";
+        // (Tùy chọn) Đổi nút submit thành "Cập nhật"
+        document.querySelector('#addProductForm button[type="submit"]').textContent = "Cập nhật sản phẩm";
+    });
+});
+
+// Khi mở modal thêm mới, reset lại tiêu đề/nút
+document.querySelector('[data-bs-target="#addProductModal"]').addEventListener('click', function() {
+    document.getElementById('addProductModalLabel').textContent = "Thêm Sản Phẩm Mới";
+    document.querySelector('#addProductForm button[type="submit"]').textContent = "Thêm sản phẩm";
+    // Reset form nếu cần
+    document.getElementById('addProductForm').reset();
+    CKEDITOR.instances['productDesc'].setData('');
+});
+
+document.querySelectorAll('.product-table tbody tr.product-row').forEach(function(row) {
+    row.addEventListener('dblclick', function() {
+        // Lấy dữ liệu từ data-attribute
+        document.getElementById('detailCode').textContent = row.getAttribute('data-id_product') || '';
+        document.getElementById('detailName').textContent = row.getAttribute('data-name') || '';
+        document.getElementById('detailCategory').textContent = row.getAttribute('data-id_category') || '';
+        document.getElementById('detailOriginalPrice').textContent = row.getAttribute('data-original_price') || '';
+        document.getElementById('detailCurrentPrice').textContent = row.getAttribute('data-current_price') || '';
+        document.getElementById('detailDiscount').textContent = row.getAttribute('data-discount_percent') ? '-' + row.getAttribute('data-discount_percent') + '%' : '';
+        document.getElementById('detailStock').textContent = row.getAttribute('data-stock') || '';
+        document.getElementById('detailStatus').textContent = row.getAttribute('data-hide') === "0" ? "Còn hàng" : "Hết hàng";
+        document.getElementById('detailClick').textContent = row.getAttribute('data-click_count') || '';
+        document.getElementById('detailCreated').textContent = row.getAttribute('data-created_at') || '';
+        document.getElementById('detailUpdated').textContent = row.getAttribute('data-updated_at') || '';
+        document.getElementById('detailLink').textContent = row.getAttribute('data-link') || '';
+        document.getElementById('detailMeta').textContent = row.getAttribute('data-meta') || '';
+        document.getElementById('detailOrder').textContent = row.getAttribute('data-order') || '';
+        document.getElementById('detailTags').textContent = row.getAttribute('data-tags') || '';
+        document.getElementById('detailPolicyReturn').src = row.getAttribute('data-policy_return') || '';
+        document.getElementById('detailPolicyWarranty').src = row.getAttribute('data-policy_warranty') || '';
+        document.getElementById('detailDesc').innerHTML = row.getAttribute('data-description') || '';
+        document.getElementById('detailImage').src = row.getAttribute('data-main_image') || '';
+        // Gallery ảnh phụ
+        const gallery = document.getElementById('detailGallery');
+        gallery.innerHTML = '';
+        const imgs = (row.getAttribute('data-img') || '').split(',');
+        imgs.forEach(src => {
+            if (src.trim()) {
+                const img = document.createElement('img');
+                img.src = src.trim();
+                img.className = 'rounded border';
+                img.style.height = '50px';
+                img.style.width = '50px';
+                img.style.objectFit = 'cover';
+                img.style.marginRight = '6px';
+                gallery.appendChild(img);
+            }
+        });
+        // Hiện modal
+        var modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+        modal.show();
+    });
+});
