@@ -23,7 +23,7 @@ class OrderModel extends BaseModel
     public function getAll()
     {
         return $this->getByQuery("
-            SELECT id_Order, name, total_amount, status, `order`.created_at 
+            SELECT id_Order, name, CONCAT(REPLACE(FORMAT(total_amount, 0), ',', '.'), 'đ') as total_amount, status, `order`.created_at 
             FROM `order` join `user` on `order`.id_User = user.id_User
             ORDER BY created_at desc LIMIT 5
         ");

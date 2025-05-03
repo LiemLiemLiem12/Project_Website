@@ -4,14 +4,17 @@ class AdminDashboardController extends BaseController
     private $orderModel;
     private $userModel;
     private $visitModel;
+    private $productModel;
     public function __construct()
     {
         $this->loadModel("UserModel");
         $this->loadModel("OrderModel");
         $this->loadModel("VisitModel");
+        $this->loadModel("ProductModel");
         $this->orderModel = new OrderModel();
         $this->userModel = new UserModel();
         $this->visitModel = new VisitModel();
+        $this->productModel = new ProductModel();
     }
     public function index()
     {
@@ -49,7 +52,8 @@ class AdminDashboardController extends BaseController
                 "userPercentage" => $percentageUser,
                 "visitByMonthDisplay" => $visitByMonthDisplay,
                 "visitPercentage" => $percentageVisit,
-                "orderList" => $this->orderModel->getAll()
+                "orderList" => $this->orderModel->getAll(),
+                "productTopSaleList" => $this->productModel->getTopSaleProduct()
             ]
         );
     }

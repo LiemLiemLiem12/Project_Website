@@ -210,15 +210,6 @@
                                     }
 
                                     ?>
-                                    <tr>
-                                        <td data-label="Mã đơn hàng">#ORD001</td>
-                                        <td data-label="Khách hàng">Nguyễn Văn A</td>
-                                        <td data-label="Tổng tiền">249.000đ</td>
-                                        <td data-label="Trạng thái"><span class="status completed">Hoàn thành</span>
-                                        </td>
-                                        <td data-label="Ngày đặt">24/03/2024</td>
-                                    </tr>
-
                                 </tbody>
                             </table>
                         </div>
@@ -243,86 +234,29 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td data-label="Sản phẩm">
-                                            <div style="display: flex; align-items: center; gap: 8px;">
-                                                <div
-                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
-                                                    <img src="../upload/img/All-Product/item1.jpg" alt="Product"
-                                                        style="width: 100%; height: 100%; object-fit: cover;">
-                                                </div>
-                                                <span style="font-size: 13px;">Áo thun nam basic</span>
-                                            </div>
-                                        </td>
-                                        <td data-label="Danh mục">Áo thun</td>
-                                        <td data-label="Giá">249.000đ</td>
-                                        <td data-label="Đã bán">120</td>
-                                        <td data-label="Doanh thu">29.880.000đ</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Sản phẩm">
-                                            <div style="display: flex; align-items: center; gap: 8px;">
-                                                <div
-                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
-                                                    <img src="../upload/img/All-Product/item2.jpg" alt="Product"
-                                                        style="width: 100%; height: 100%; object-fit: cover;">
-                                                </div>
-                                                <span style="font-size: 13px;">Quần jean nam slim fit</span>
-                                            </div>
-                                        </td>
-                                        <td data-label="Danh mục">Quần jean</td>
-                                        <td data-label="Giá">399.000đ</td>
-                                        <td data-label="Đã bán">85</td>
-                                        <td data-label="Doanh thu">33.915.000đ</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Sản phẩm">
-                                            <div style="display: flex; align-items: center; gap: 8px;">
-                                                <div
-                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
-                                                    <img src="../upload/img/All-Product/item3.jpg" alt="Product"
-                                                        style="width: 100%; height: 100%; object-fit: cover;">
-                                                </div>
-                                                <span style="font-size: 13px;">Áo sơ mi nam</span>
-                                            </div>
-                                        </td>
-                                        <td data-label="Danh mục">Áo sơ mi</td>
-                                        <td data-label="Giá">299.000đ</td>
-                                        <td data-label="Đã bán">75</td>
-                                        <td data-label="Doanh thu">22.425.000đ</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Sản phẩm">
-                                            <div style="display: flex; align-items: center; gap: 8px;">
-                                                <div
-                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
-                                                    <img src="../upload/img/All-Product/item4.jpg" alt="Product"
-                                                        style="width: 100%; height: 100%; object-fit: cover;">
-                                                </div>
-                                                <span style="font-size: 13px;">Áo khoác jean nam</span>
-                                            </div>
-                                        </td>
-                                        <td data-label="Danh mục">Áo khoác</td>
-                                        <td data-label="Giá">459.000đ</td>
-                                        <td data-label="Đã bán">60</td>
-                                        <td data-label="Doanh thu">27.540.000đ</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Sản phẩm">
-                                            <div style="display: flex; align-items: center; gap: 8px;">
-                                                <div
-                                                    style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
-                                                    <img src="../upload/img/All-Product/item5.jpg" alt="Product"
-                                                        style="width: 100%; height: 100%; object-fit: cover;">
-                                                </div>
-                                                <span style="font-size: 13px;">Quần tây nam</span>
-                                            </div>
-                                        </td>
-                                        <td data-label="Danh mục">Quần tây</td>
-                                        <td data-label="Giá">359.000đ</td>
-                                        <td data-label="Đã bán">55</td>
-                                        <td data-label="Doanh thu">19.745.000đ</td>
-                                    </tr>
+
+                                    <?php
+                                    foreach ($productTopSaleList as $data) {
+                                        echo '
+                                                <tr>
+                                                    <td data-label="Sản phẩm">
+                                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                                        <div
+                                                        style="width: 25px; height: 25px; flex-shrink: 0; border-radius: 4px; overflow: hidden;">
+                                                        <img src="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data["main_image"] . '" alt="Product"
+                                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                                        </div>
+                                                        <span style="font-size: 13px;">' . $data["name"] . '</span>
+                                                        </div>
+                                                    </td>
+                                                    <td data-label="Danh mục">' . $data['category_name'] . '</td>
+                                                    <td data-label="Giá">' . $data['current_price'] . '</td>
+                                                    <td data-label="Đã bán">' . $data['sumQuantity'] . '</td>
+                                                    <td data-label="Doanh thu">' . $data['sumRevenue'] . '</td>
+                                                </tr>
+                                            ';
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
