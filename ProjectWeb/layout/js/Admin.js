@@ -1,25 +1,29 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Sidebar toggle for mobile
-    const toggleSidebar = document.getElementById('toggleSidebar');
-    const closeSidebar = document.getElementById('closeSidebar');
     const sidebar = document.getElementById('sidebar');
-    
-    if (toggleSidebar) {
-        toggleSidebar.addEventListener('click', function() {
-            sidebar.classList.add('show');
+    const toggleBtn = document.getElementById('sidebarToggleBtn');
+    const closeBtn = document.getElementById('sidebarCloseBtn');
+    if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
         });
     }
-    
-    if (closeSidebar) {
-        closeSidebar.addEventListener('click', function() {
+    if (closeBtn && sidebar) {
+        closeBtn.addEventListener('click', function() {
             sidebar.classList.remove('show');
         });
     }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 991.98) {
+                sidebar.classList.remove('show');
+            }
+        });
+    });
     
     // Close sidebar when clicking outside
     document.addEventListener('click', function(event) {
         const isClickInside = sidebar.contains(event.target) || 
-                            (toggleSidebar && toggleSidebar.contains(event.target));
+                            (toggleBtn && toggleBtn.contains(event.target));
         
         if (!isClickInside && sidebar.classList.contains('show')) {
             sidebar.classList.remove('show');
@@ -647,20 +651,5 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    const toggleBtn = document.getElementById('sidebarToggleBtn');
-    if (toggleBtn && sidebar) {
-        toggleBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('show');
-        });
-    }
-    // Đóng sidebar khi click vào link (trên mobile)
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', function() {
-            if (window.innerWidth <= 991.98) {
-                sidebar.classList.remove('show');
-            }
-        });
-    });
 });
 

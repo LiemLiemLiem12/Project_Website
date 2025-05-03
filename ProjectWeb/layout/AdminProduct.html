@@ -18,6 +18,7 @@
             <div class="logo">
                 <h2>SR STORE</h2>
             </div>
+            <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
             <ul class="nav-links">
                 <li>
                     <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
@@ -52,9 +53,12 @@
 
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Top Header -->
             <header class="header">
-                <button class="mobile-menu-toggle d-md-none" type="button">
-                    <i class="fas fa-bars"></i>
+                <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
                 <div class="header-right">
                     <div class="notification">
@@ -122,64 +126,66 @@
 
                 <!-- Products Table -->
                 <div class="product-table">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <input type="checkbox" id="select-all">
-                                </th>
-                                <th>Mã SP</th>
-                                <th>Hình ảnh</th>
-                                <th>Tên sản phẩm</th>
-                                <th>Danh mục</th>
-                                <th>Giá</th>
-                                <th>Tồn kho</th>
-                                <th>Trạng thái</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="product-row"
-                                data-id_product="SP001"
-                                data-name="Áo Thun Unisex"
-                                data-description="Áo thun unisex chất liệu cotton, thoáng mát."
-                                data-original_price="300000"
-                                data-discount_percent="10"
-                                data-current_price="270000"
-                                data-created_at="2024-05-01"
-                                data-updated_at="2024-05-10"
-                                data-id_category="Áo"
-                                data-main_image="../upload/img/products/sp1.jpg"
-                                data-img="../upload/img/products/sp1-2.jpg,../upload/img/products/sp1-3.jpg"
-                                data-link="/ao-thun-unisex"
-                                data-meta="ao-thun-unisex"
-                                data-hide="0"
-                                data-order="1"
-                                data-click_count="20"
-                                data-tags="ao,unisex"
-                                data-policy_return="../upload/img/policy_return.jpg"
-                                data-policy_warranty="../upload/img/policy_warranty.jpg"
-                            >
-                                <td><input type="checkbox" class="product-checkbox"></td>
-                                <td>SP001</td>
-                                <td><img src="../upload/img/products/sp1.jpg" alt="Product" width="50"></td>
-                                <td>Áo Thun Unisex</td>
-                                <td>Áo</td>
-                                <td>270.000đ</td>
-                                <td>50</td>
-                                <td><span class="status completed">Còn hàng</span></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-info btn-view" title="Ẩn/Hiện" data-hide="0">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-warning btn-edit" title="Sửa"><i class="fas fa-edit"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Thêm các sản phẩm khác tương tự -->
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="select-all">
+                                    </th>
+                                    <th>Mã SP</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Giá</th>
+                                    <th>Tồn kho</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="product-row"
+                                    data-id_product="SP001"
+                                    data-name="Áo Thun Unisex"
+                                    data-description="Áo thun unisex chất liệu cotton, thoáng mát."
+                                    data-original_price="300000"
+                                    data-discount_percent="10"
+                                    data-current_price="270000"
+                                    data-created_at="2024-05-01"
+                                    data-updated_at="2024-05-10"
+                                    data-id_category="Áo"
+                                    data-main_image="../upload/img/products/sp1.jpg"
+                                    data-img="../upload/img/products/sp1-2.jpg,../upload/img/products/sp1-3.jpg"
+                                    data-link="/ao-thun-unisex"
+                                    data-meta="ao-thun-unisex"
+                                    data-hide="0"
+                                    data-order="1"
+                                    data-click_count="20"
+                                    data-tags="ao,unisex"
+                                    data-policy_return="../upload/img/policy_return.jpg"
+                                    data-policy_warranty="../upload/img/policy_warranty.jpg"
+                                >
+                                    <td><input type="checkbox" class="product-checkbox"></td>
+                                    <td>SP001</td>
+                                    <td><img src="../upload/img/products/sp1.jpg" alt="Product" width="50"></td>
+                                    <td>Áo Thun Unisex</td>
+                                    <td>Áo</td>
+                                    <td>270.000đ</td>
+                                    <td>50</td>
+                                    <td><span class="status completed">Còn hàng</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-info btn-view" title="Ẩn/Hiện" data-hide="0">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-warning btn-edit" title="Sửa"><i class="fas fa-edit"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Thêm các sản phẩm khác tương tự -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
 

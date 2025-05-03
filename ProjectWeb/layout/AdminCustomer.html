@@ -11,7 +11,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/Admin.css">
     <!-- Responsive CSS -->
-    <link rel="stylesheet" href="css/Responsive.css">
+    <!-- XÓA DÒNG NHÚNG Responsive.css này đi -->
 </head>
 <body>
     <div class="admin-container">
@@ -19,10 +19,8 @@
         <div class="sidebar" id="sidebar">
             <div class="logo">
                 <h2>SR STORE</h2>
-                <button class="btn d-md-none" id="closeSidebar">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
+            <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
             <ul class="nav-links">
                 <li data-page="dashboard">
                     <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> <span class="nav-text">Dashboard</span></a>
@@ -59,8 +57,10 @@
         <div class="main-content">
             <!-- Top Header -->
             <header class="header">
-                <button class="mobile-menu-toggle d-md-none" type="button">
-                    <i class="fas fa-bars"></i>
+                <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
                 <div class="header-right">
                     <div class="notification">
@@ -75,6 +75,41 @@
 
             <!-- Customers Content -->
             <div class="content" id="content-container">
+                <div class="page-header d-flex justify-content-between align-items-center">
+                    <h1 class="mb-0">Quản lý Khách hàng</h1>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" id="addCustomerBtn">
+                            <i class="fas fa-plus"></i> Thêm khách hàng
+                        </button>
+                        <button class="btn btn-danger" id="deleteSelectedCustomerBtn" disabled>
+                            <i class="fas fa-trash"></i> Xóa đã chọn
+                        </button>
+                    </div>
+                </div>
+                <div class="customer-filters mb-3">
+                    <div class="filter-row d-flex flex-wrap gap-2 align-items-center">
+                        <div class="filter-item flex-grow-1">
+                            <div class="search-box">
+                                <button type="button"><i class="fas fa-search"></i></button>
+                                <input type="text" placeholder="Tìm kiếm khách hàng..." id="searchCustomerInput">
+                            </div>
+                        </div>
+                        <div class="filter-item">
+                            <select class="filter-dropdown" id="filterStatus">
+                                <option value="">Trạng thái</option>
+                                <option value="active">Đang hoạt động</option>
+                                <option value="inactive">Ẩn</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <select class="filter-dropdown" id="sortCustomer">
+                                <option value="">Sắp xếp theo</option>
+                                <option value="name-asc">Tên (A-Z)</option>
+                                <option value="name-desc">Tên (Z-A)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div class="page-content" id="customers-content">
                     <div class="table-responsive">
                         <table class="table align-middle">
@@ -219,23 +254,8 @@
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var menuToggle = document.querySelector('.mobile-menu-toggle');
-        var sidebar = document.getElementById('sidebar');
-        var navLinks = document.querySelectorAll('.sidebar .nav-links a');
-        if (menuToggle && sidebar) {
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-        }
-        navLinks.forEach(function(link) {
-            link.addEventListener('click', function() {
-                if (window.innerWidth < 992 && sidebar.classList.contains('active')) {
-                    sidebar.classList.remove('active');
-                }
-            });
-        });
-    });
+    // Đảm bảo chỉ toggle class 'show' cho sidebar khi bấm hamburger
+    // Xóa mọi logic toggle class 'active' hoặc nút đóng sidebar riêng
     </script>
 </body>
 </html> 

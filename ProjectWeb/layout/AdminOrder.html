@@ -11,7 +11,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/Admin.css">
     <!-- Responsive CSS -->
-    <link rel="stylesheet" href="css/Responsive.css">
+    <!-- XÓA DÒNG NHÚNG Responsive.css này đi -->
 </head>
 <body>
     <div class="admin-container">
@@ -19,10 +19,8 @@
         <div class="sidebar" id="sidebar">
             <div class="logo">
                 <h2>SR STORE</h2>
-                <button class="btn d-md-none" id="closeSidebar">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
+            <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
             <ul class="nav-links">
                 <li data-page="dashboard">
                     <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> <span class="nav-text">Dashboard</span></a>
@@ -59,8 +57,10 @@
         <div class="main-content">
             <!-- Top Header -->
             <header class="header">
-                <button class="mobile-menu-toggle d-md-none" type="button">
-                    <i class="fas fa-bars"></i>
+                <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
                 <div class="header-right">
                     <div class="notification">
@@ -313,23 +313,8 @@
     <!-- Custom JavaScript -->
     <script src="js/Admin.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var menuToggle = document.querySelector('.mobile-menu-toggle');
-        var sidebar = document.getElementById('sidebar');
-        var navLinks = document.querySelectorAll('.sidebar .nav-links a');
-        if (menuToggle && sidebar) {
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-        }
-        navLinks.forEach(function(link) {
-            link.addEventListener('click', function() {
-                if (window.innerWidth < 992 && sidebar.classList.contains('active')) {
-                    sidebar.classList.remove('active');
-                }
-            });
-        });
-    });
+    // Đảm bảo chỉ toggle class 'show' cho sidebar khi bấm hamburger
+    // Xóa mọi logic toggle class 'active' hoặc nút đóng sidebar riêng
     </script>
 </body>
 </html> 
