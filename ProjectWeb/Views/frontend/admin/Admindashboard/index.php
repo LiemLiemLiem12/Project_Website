@@ -22,10 +22,10 @@
             </div>
             <ul class="nav-links">
                 <li class="active">
-                    <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+                    <a href="index.php?controller=admindashboard"><i class="fas fa-th-large"></i> Dashboard</a>
                 </li>
                 <li>
-                    <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
+                    <a href="index.php?controller=adminproduct"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
                 </li>
                 <li>
                     <a href="AdminOrder.html"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>

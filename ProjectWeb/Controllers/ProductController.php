@@ -1,61 +1,61 @@
-
 <?php
 
-class ProductController extends BaseController{
+class ProductController extends BaseController
+{
     private $productModel;
     public function __construct()
     {
-        $this-> loadModel('ProductModel');
-        $this->productModel= new ProductModel;
+        $this->loadModel('ProductModel');
+        $this->productModel = new ProductModel;
 
     }
     public function index()
     {
-        $product= $this->productModel->getAll(['id','name','image','price','description'],15,['column'=>'id','order'=>'desc']);
-        return $this -> view('frontend.products.index',[
-            'products'=>$product,
+        $product = $this->productModel->getAll(['id', 'name', 'image', 'price', 'description'], 15, ['column' => 'id', 'order' => 'desc']);
+        return $this->view('frontend.products.index', [
+            'products' => $product,
 
         ]);
     }
     public function show()
     {
         $productId = $_GET['id'] ?? null;
-        $productDetail = $this ->productModel->findById($productId);
+        $productDetail = $this->productModel->findById($productId);
         $this->view('frontend.products.show', [
             // 'menus' => $categoriesMenu,
-            
-            'productDetail'=> $productDetail,
+
+            'productDetail' => $productDetail,
         ]);
     }
     public function store()
     {
         $data = [
-            
-                'name' => 'Quần Tây Nam ICONDENIM Straight Neutral Basic',
-                'image' => '/WEB_BAN_THOI_TRANG/upload/img/Home/item4.webp',
-                'price' => 499000.00,
-                'description' => 'Quần Tây Nam ICONDENIM Straight Neutral Basic'
-            
+
+            'name' => 'Quần Tây Nam ICONDENIM Straight Neutral Basic',
+            'image' => '/WEB_BAN_THOI_TRANG/upload/img/Home/item4.webp',
+            'price' => 499000.00,
+            'description' => 'Quần Tây Nam ICONDENIM Straight Neutral Basic'
+
         ];
-        $this-> productModel->store($data);
-       
+        $this->productModel->store($data);
+
     }
     public function update()
     {
-        $id=$_GET['id'];
+        $id = $_GET['id'];
         $data = [
-            
+
             'name' => 'Quần Tây Nam ICONDENIM Straight Neutral Basic',
             'image' => '/WEB_BAN_THOI_TRANG/upload/img/Home/item4.webp',
             'price' => 52352345.00,
             'description' => 'Quần Tây Nam ICONDENIM Straight Neutral Basic'
-        
-    ];
-    $this-> productModel->updateData($id,$data);
+
+        ];
+        $this->productModel->updateData($id, $data);
     }
     public function delete()
     {
-        $id=$_GET['id'];
-        $this-> productModel->deleteData($id);
+        $id = $_GET['id'];
+        $this->productModel->deleteData($id);
     }
 }
