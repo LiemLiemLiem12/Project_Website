@@ -11,37 +11,38 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/Admin.css">
     <!-- Responsive CSS -->
-    <!-- XÓA DÒNG NHÚNG Responsive.css này đi -->
+
 </head>
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2>SR STORE</h2>
-            </div>
+            <div class="logo"><h2>SR STORE</h2></div>
             <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
             <ul class="nav-links">
-                <li data-page="dashboard">
-                    <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> <span class="nav-text">Dashboard</span></a>
+                <li>
+                    <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
                 </li>
-                <li data-page="products">
-                    <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> <span class="nav-text">Sản Phẩm</span></a>
+                <li>
+                    <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
                 </li>
-                <li class="active" data-page="orders">
-                    <a href="AdminOrder.html"><i class="fas fa-shopping-cart"></i> <span class="nav-text">Đơn Hàng</span></a>
+                <li>
+                    <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
                 </li>
-                <li data-page="customers">
-                    <a href="AdminCustomer.html"><i class="fas fa-users"></i> <span class="nav-text">Khách Hàng</span></a>
+                <li class="active">
+                    <a href="AdminOrder.html"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
                 </li>
-                <li data-page="categories">
-                    <a href="AdminCategory.html"><i class="fas fa-tags"></i> <span class="nav-text">Danh Mục</span></a>
+                <li>
+                    <a href="AdminCustomer.html"><i class="fas fa-users"></i> Khách Hàng</a>
                 </li>
-                <li data-page="reports">
-                    <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> <span class="nav-text">Báo Cáo</span></a>
+                <li>
+                    <a href="AdminCategory.html"><i class="fas fa-tags"></i> Danh Mục</a>
                 </li>
-                <li data-page="settings">
-                    <a href="AdminSetting.html"><i class="fas fa-cog"></i> <span class="nav-text">Cài Đặt</span></a>
+                <li>
+                    <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> Báo Cáo</a>
+                </li>
+                <li>
+                    <a href="AdminSetting.html"><i class="fas fa-cog"></i> Cài Đặt</a>
                 </li>
             </ul>
             <div class="admin-info">
@@ -52,27 +53,30 @@
                 </div>
             </div>
         </div>
-
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Header -->
             <header class="header">
                 <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right">
-                    <div class="notification">
+                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                    <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                         <i class="fas fa-bell"></i>
                         <span class="badge">3</span>
+                        <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; top: 120%; right: 0; width: 340px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border-radius: 8px; z-index: 9999;">
+                            <div style="padding: 12px 16px; border-bottom: 1px solid #eee; font-weight: 600;">Thông báo đơn hàng</div>
+                            <ul id="notificationList" style="list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto;"></ul>
+                            <div style="padding: 10px 0; text-align: center; border-top: 1px solid #eee;">
+                                <a href="#" style="color: #007bff; font-size: 14px; text-decoration: none;">Xem tất cả</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="profile">
                         <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
                     </div>
                 </div>
             </header>
-
             <!-- Orders Content -->
             <div class="content" id="content-container">
                 <div class="page-content" id="orders-content">
@@ -315,6 +319,95 @@
     <script>
     // Đảm bảo chỉ toggle class 'show' cho sidebar khi bấm hamburger
     // Xóa mọi logic toggle class 'active' hoặc nút đóng sidebar riêng
+    document.addEventListener('DOMContentLoaded', function() {
+        // Thông báo cứng về đơn hàng
+        const notifications = [
+            {
+                icon: 'fa-shopping-cart',
+                title: 'Đơn hàng mới',
+                content: 'Đơn hàng #ORD123 vừa được tạo.',
+                time: '3 phút trước'
+            },
+            {
+                icon: 'fa-times-circle',
+                title: 'Đơn hàng bị hủy',
+                content: 'Đơn hàng #ORD120 đã bị hủy bởi khách.',
+                time: '20 phút trước'
+            },
+            {
+                icon: 'fa-truck',
+                title: 'Đơn hàng đang giao',
+                content: 'Đơn hàng #ORD119 đang được giao cho khách.',
+                time: '1 giờ trước'
+            }
+        ];
+        const notificationList = document.getElementById('notificationList');
+        notificationList.innerHTML = notifications.map(n => `
+            <li class="notification-item">
+                <span class="notification-icon"><i class="fas ${n.icon}"></i></span>
+                <div class="notification-content">
+                    <div class="notification-title">${n.title}</div>
+                    <div>${n.content}</div>
+                    <div class="notification-time">${n.time}</div>
+                </div>
+            </li>
+        `).join('');
+        // Toggle dropdown
+        const bell = document.getElementById('notificationBell');
+        const dropdown = document.getElementById('notificationDropdown');
+        bell.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        // Click ngoài dropdown sẽ ẩn
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target) && e.target !== bell) {
+                dropdown.style.display = 'none';
+            }
+        });
+    });
     </script>
+    <!-- Thêm style cho dropdown thông báo -->
+    <style>
+    .notification-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+    .notification-dropdown::-webkit-scrollbar-thumb {
+        background: #eee;
+        border-radius: 4px;
+    }
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f3f3f3;
+        font-size: 15px;
+        transition: background 0.2s;
+    }
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+    .notification-item:hover {
+        background: #f7f7f7;
+    }
+    .notification-icon {
+        color: #4ca3ff;
+        font-size: 18px;
+        margin-top: 2px;
+    }
+    .notification-content {
+        flex: 1;
+    }
+    .notification-title {
+        font-weight: 600;
+        font-size: 15px;
+    }
+    .notification-time {
+        color: #888;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+    </style>
 </body>
 </html> 

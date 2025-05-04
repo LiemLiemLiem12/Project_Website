@@ -22,6 +22,7 @@ body {
 .admin-container {
     display: flex;
     min-height: 100vh;
+    width: 100%;
 }
 
 /* Sidebar */
@@ -80,10 +81,13 @@ body {
 
 /* Main Content */
 .main-content {
-    flex: 1;
     margin-left: 250px;
-    padding: 20px;
+    width: calc(100% - 250px);
+    padding: 0 24px;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: auto;
+    height: 100vh;
 }
 
 /* Page Header */
@@ -433,20 +437,14 @@ body {
 
 /* Header */
 .header {
-    background-color: #fff;
-    padding: 1rem;
-    margin: -1rem -1rem 1rem -1rem;
-    border-bottom: 1px solid #dee2e6;
+    width: 100%;
+    margin: 0;
+    padding: 1rem 0;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 999;
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .header-right {
@@ -1219,4 +1217,24 @@ img {
         height: 100vh !important;
         display: block !important;
     }
+}
+
+/* Đảm bảo modal Bootstrap nổi trên header */
+.modal-backdrop {
+    z-index: 2000 !important;
+}
+.modal {
+    z-index: 2000 !important;
+}
+.header {
+    z-index: 900 !important;
+}
+
+/* Đảm bảo modal/form luôn nổi trên header ở tất cả các file admin */
+.header {
+    z-index: 900 !important;
+}
+.modal,
+.modal-backdrop {
+    z-index: 3000 !important;
 } 

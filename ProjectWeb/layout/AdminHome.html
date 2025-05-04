@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý hiển thị trang chủ - SR Store</title>
+   
+    <style>
+        /* AdminHome riêng */
+        .admin-home-container { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); padding: 32px 28px; }
+        .section-card { border: 1px solid #e3e6ed; border-radius: 10px; margin-bottom: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .section-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px 10px 22px; }
+        .section-title { font-size: 1.2rem; font-weight: 600; }
+        .section-actions button { margin-left: 8px; }
+        .section-body { padding: 0 22px 18px 22px; }
+        .item-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+        .item-tag { background: #f1f3f7; border-radius: 6px; padding: 6px 14px; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+        .item-tag .fa { color: #888; cursor: pointer; }
+        .add-section-btn { margin-bottom: 24px; }
+        .modal .form-label { font-weight: 500; }
+        .modal .form-select, .modal .form-control { border-radius: 7px; }
+        .sortable-handle { cursor: grab; color: #aaa; margin-right: 8px; }
+        @media (max-width: 600px) {
+            .admin-home-container { padding: 12px 2px; }
+            .section-header, .section-body { padding: 10px 6px; }
+            .content { padding: 16px 2px; }
+        } 
+    </style>
+     <!-- Bootstrap CSS -->
+     <link href="cssBootstrap/bootstrap.min.css" rel="stylesheet">
+     <!-- Font Awesome -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <!-- Custom CSS -->
+     <link rel="stylesheet" href="css/Admin.css">
+</head>
+<body>
+<div class="admin-container">
+    <div class="sidebar" id="sidebar">
+        <div class="logo"><h2>SR STORE</h2></div>
+        <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
+        <ul class="nav-links">
+            <li>
+                <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+            </li>
+            <li class="active">
+                <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
+            </li>
+            <li>
+                <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
+            </li>
+            <li >
+                <a href="AdminOrder.html"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
+            </li>
+            <li>
+                <a href="AdminCustomer.html"><i class="fas fa-users"></i> Khách Hàng</a>
+            </li>
+            <li>
+                <a href="AdminCategory.html"><i class="fas fa-tags"></i> Danh Mục</a>
+            </li>
+            <li>
+                <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> Báo Cáo</a>
+            </li>
+            <li>
+                <a href="AdminSetting.html"><i class="fas fa-cog"></i> Cài Đặt</a>
+            </li>
+        </ul>
+        <div class="admin-info">
+            <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+            <div>
+                <p class="admin-name">Admin</p>
+                <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <header class="header">
+            <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div class="profile">
+                    <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                </div>
+            </div>
+        </header>
+        <div class="content">
+            <div class="admin-home-container">
+                <h2 class="mb-4">Quản lý vùng hiển thị trang chủ</h2>
+                <button class="btn btn-success add-section-btn" id="addSectionBtn"><i class="fas fa-plus"></i> Thêm vùng mới</button>
+                <div id="sectionsList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Thêm/Sửa Vùng -->
+<div class="modal fade" id="sectionModal" tabindex="-1" aria-labelledby="sectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="sectionForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="sectionModalLabel">Thêm vùng hiển thị</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Tên vùng hiển thị <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="sectionNameInput" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Loại vùng <span class="text-danger">*</span></label>
+            <select class="form-select" id="sectionTypeInput" required>
+              <option value="product">Sản phẩm</option>
+              <option value="category">Danh mục</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Chọn item hiển thị <span class="text-danger">*</span></label>
+            <div id="itemSelectList" class="d-flex flex-wrap gap-2"></div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Số lượng hiển thị</label>
+            <input type="number" class="form-control" id="sectionLimitInput" min="1" max="20" value="5">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Modal Thông báo -->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content notification-modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="notificationModalLabel">Thông báo sản phẩm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body p-0">
+        <ul id="notificationList" class="notification-list-modal"></ul>
+      </div>
+      <div class="modal-footer justify-content-center border-0 pt-0">
+        <a href="#" class="notification-viewall">Xem tất cả</a>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.notification-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+.notification-dropdown::-webkit-scrollbar-thumb {
+    background: #eee;
+    border-radius: 4px;
+}
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f3f3;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+.notification-item:last-child {
+    border-bottom: none;
+}
+.notification-item:hover {
+    background: #f7f7f7;
+}
+.notification-icon {
+    color: #4ca3ff;
+    font-size: 18px;
+    margin-top: 2px;
+}
+.notification-content {
+    flex: 1;
+}
+.notification-title {
+    font-weight: 600;
+    font-size: 15px;
+}
+.notification-time {
+    color: #888;
+    font-size: 12px;
+    margin-top: 2px;
+}
+.notification-modal-content {
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+    padding: 0;
+    min-width: 370px;
+}
+.notification-list-modal {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 340px;
+    overflow-y: auto;
+}
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 22px 14px 22px;
+    border-bottom: 1px solid #f3f3f3;
+    font-size: 15px;
+    background: #fff;
+    transition: background 0.2s;
+}
+.notification-item:last-child {
+    border-bottom: none;
+}
+.notification-item:hover {
+    background: #f7f7f7;
+}
+.notification-icon {
+    font-size: 22px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+.notification-icon.info { background: #e3f0ff; color: #2196f3; }
+.notification-icon.warning { background: #fff7e3; color: #ff9800; }
+.notification-icon.success { background: #e6f9f0; color: #00b894; }
+.notification-icon.danger { background: #ffeaea; color: #e74c3c; }
+.notification-icon.primary { background: #e3f0ff; color: #4ca3ff; }
+.notification-icon.default { background: #f1f3f7; color: #888; }
+.notification-content { flex: 1; }
+.notification-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; display: flex; align-items: center; }
+.notification-time { color: #888; font-size: 12px; margin-top: 2px; }
+.notification-viewall { color: #007bff; font-size: 15px; text-decoration: none; padding: 8px 0; display: block; }
+.notification-viewall:hover { text-decoration: underline; }
+</style>
+    <!-- Custom JavaScript -->
+    <script src="js/Admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Demo data
+const demoProducts = [
+    {id: 1, name: 'Áo Thun Nam Procool ICONDENIM Seam Sealing'},
+    {id: 2, name: 'Áo Polo Nam Procool ICONDENIM Seam Sealing'},
+    {id: 3, name: 'Quần Jean Nam Procool ICONDENIM CoolMax Black Slim'},
+    {id: 4, name: 'Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim'},
+    {id: 5, name: 'Set Đồ Nam ICONDENIM Rugby Football'},
+    {id: 6, name: 'Áo Thun Nam ICONDENIM Athletics Champion'},
+    {id: 7, name: 'Áo Polo Nam ICONDENIM Horizontal Striped'}
+];
+const demoCategories = [
+    {id: 1, name: 'Áo Thun'},
+    {id: 2, name: 'Áo Polo'},
+    {id: 3, name: 'Quần Jean'},
+    {id: 4, name: 'Phụ kiện'},
+    {id: 5, name: 'Áo Khoác'}
+];
+let sections = [
+    {
+        id: 1,
+        name: 'Sản phẩm nổi bật',
+        type: 'product',
+        items: [1,2,3],
+        limit: 4
+    },
+    {
+        id: 2,
+        name: 'Danh mục sản phẩm',
+        type: 'category',
+        items: [1,2,3,4],
+        limit: 6
+    },
+    {
+        id: 3,
+        name: 'Sản phẩm bán chạy',
+        type: 'product',
+        items: [6,5,7],
+        limit: 4
+    }
+];
+let editingSectionId = null;
+function renderSections() {
+    const list = document.getElementById('sectionsList');
+    list.innerHTML = '';
+    sections.forEach((section, idx) => {
+        const items = (section.type === 'product' ? demoProducts : demoCategories)
+            .filter(i => section.items.includes(i.id));
+        list.innerHTML += `
+        <div class="section-card" data-id="${section.id}">
+            <div class="section-header">
+                <div>
+                    <span class="sortable-handle"><i class="fas fa-grip-vertical"></i></span>
+                    <span class="section-title">${section.name}</span>
+                    <span class="badge bg-light text-dark ms-2">${section.type === 'product' ? 'Sản phẩm' : 'Danh mục'}</span>
+                </div>
+                <div class="section-actions">
+                    <button class="btn btn-sm btn-outline-primary btn-edit-section"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline-danger btn-delete-section"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="section-body">
+                <div><b>Số lượng hiển thị:</b> ${section.limit}</div>
+                <div class="item-list mt-2">
+                    ${items.map(i => `<span class="item-tag">${i.name}</span>`).join('')}
+                </div>
+            </div>
+        </div>`;
+    });
+    addSectionEventListeners();
+}
+function addSectionEventListeners() {
+    document.querySelectorAll('.btn-edit-section').forEach(btn => {
+        btn.onclick = function() {
+            const card = btn.closest('.section-card');
+            const id = +card.getAttribute('data-id');
+            openSectionModal(id);
+        };
+    });
+    document.querySelectorAll('.btn-delete-section').forEach(btn => {
+        btn.onclick = function() {
+            const card = btn.closest('.section-card');
+            const id = +card.getAttribute('data-id');
+            if(confirm('Bạn có chắc muốn xóa vùng này?')) {
+                sections = sections.filter(s => s.id !== id);
+                renderSections();
+            }
+        };
+    });
+    // Kéo thả sắp xếp thứ tự vùng (drag & drop)
+    let draggedIdx = null;
+    document.querySelectorAll('.section-card').forEach((card, idx) => {
+        card.draggable = true;
+        card.ondragstart = () => { draggedIdx = idx; };
+        card.ondragover = e => { e.preventDefault(); card.style.background = '#f0f4fa'; };
+        card.ondragleave = () => { card.style.background = '#fff'; };
+        card.ondrop = () => {
+            card.style.background = '#fff';
+            if(draggedIdx !== null && draggedIdx !== idx) {
+                const moved = sections.splice(draggedIdx, 1)[0];
+                sections.splice(idx, 0, moved);
+                renderSections();
+            }
+        };
+    });
+}
+function openSectionModal(id) {
+    const modal = new bootstrap.Modal(document.getElementById('sectionModal'));
+    const form = document.getElementById('sectionForm');
+    const nameInput = document.getElementById('sectionNameInput');
+    const typeInput = document.getElementById('sectionTypeInput');
+    const limitInput = document.getElementById('sectionLimitInput');
+    const itemSelectList = document.getElementById('itemSelectList');
+    let selectedItems = [];
+    if(id) {
+        const section = sections.find(s => s.id === id);
+        nameInput.value = section.name;
+        typeInput.value = section.type;
+        limitInput.value = section.limit;
+        selectedItems = [...section.items];
+        document.getElementById('sectionModalLabel').textContent = 'Chỉnh sửa vùng hiển thị';
+    } else {
+        nameInput.value = '';
+        typeInput.value = 'product';
+        limitInput.value = 5;
+        selectedItems = [];
+        document.getElementById('sectionModalLabel').textContent = 'Thêm vùng hiển thị';
+    }
+    renderItemSelect(typeInput.value, selectedItems);
+    typeInput.onchange = () => renderItemSelect(typeInput.value, selectedItems);
+    function renderItemSelect(type, selected) {
+        const data = type === 'product' ? demoProducts : demoCategories;
+        itemSelectList.innerHTML = data.map(i => `
+            <label class="form-check me-3 mb-2">
+                <input type="checkbox" class="form-check-input item-checkbox" value="${i.id}" ${selected.includes(i.id) ? 'checked' : ''}>
+                ${i.name}
+            </label>
+        `).join('');
+        itemSelectList.querySelectorAll('.item-checkbox').forEach(cb => {
+            cb.onchange = function() {
+                const val = +cb.value;
+                if(cb.checked) selectedItems.push(val);
+                else selectedItems = selectedItems.filter(x => x !== val);
+            };
+        });
+    }
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        const name = nameInput.value.trim();
+        const type = typeInput.value;
+        const limit = +limitInput.value;
+        if(!name || selectedItems.length === 0) {
+            alert('Vui lòng nhập tên và chọn ít nhất 1 item!');
+            return;
+        }
+        if(id) {
+            const idx = sections.findIndex(s => s.id === id);
+            sections[idx] = { id, name, type, items: [...selectedItems], limit };
+        } else {
+            const newId = Math.max(0, ...sections.map(s => s.id)) + 1;
+            sections.push({ id: newId, name, type, items: [...selectedItems], limit });
+        }
+        modal.hide();
+        renderSections();
+    };
+    modal.show();
+}
+document.getElementById('addSectionBtn').onclick = () => openSectionModal();
+renderSections();
+document.addEventListener('DOMContentLoaded', function() {
+    // Thông báo cứng về sản phẩm
+    const notifications = [
+        {
+            icon: 'fa-box',
+            type: 'primary',
+            title: 'Sản phẩm mới',
+            content: 'Áo thun Unisex vừa được thêm vào kho.',
+            time: '2 phút trước'
+        },
+        {
+            icon: 'fa-exclamation-triangle',
+            type: 'warning',
+            title: 'Tồn kho thấp',
+            content: 'Quần jean nam slim fit chỉ còn 5 sản phẩm.',
+            time: '10 phút trước'
+        },
+        {
+            icon: 'fa-tag',
+            type: 'info',
+            title: 'Khuyến mãi',
+            content: 'Sản phẩm Áo sơ mi nam đang giảm giá 20%.',
+            time: '1 giờ trước'
+        }
+    ];
+    const notificationList = document.getElementById('notificationList');
+    notificationList.innerHTML = notifications.map(n => `
+        <li class="notification-item">
+            <span class="notification-icon ${n.type}"><i class="fas ${n.icon}"></i></span>
+            <div class="notification-content">
+                <div class="notification-title">${n.title}</div>
+                <div>${n.content}</div>
+                <div class="notification-time">${n.time}</div>
+            </div>
+        </li>
+    `).join('');
+    // Khi nhấn chuông thì mở modal
+    const bell = document.getElementById('notificationBell');
+    const notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+    bell.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notificationModal.show();
+    });
+});
+</script>
+
+</body>
+</html> 

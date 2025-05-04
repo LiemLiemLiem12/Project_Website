@@ -15,13 +15,14 @@
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2>SR STORE</h2>
-            </div>
+            <div class="logo"><h2>SR STORE</h2></div>
             <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
             <ul class="nav-links">
                 <li>
                     <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
                 </li>
                 <li>
                     <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
@@ -50,28 +51,30 @@
                 </div>
             </div>
         </div>
-
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Header -->
             <header class="header">
                 <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right">
-                    <div class="notification">
+                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                    <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                         <i class="fas fa-bell"></i>
                         <span class="badge">3</span>
+                        <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; top: 120%; right: 0; width: 340px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border-radius: 8px; z-index: 9999;">
+                            <div style="padding: 12px 16px; border-bottom: 1px solid #eee; font-weight: 600;">Thông báo báo cáo</div>
+                            <ul id="notificationList" style="list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto;"></ul>
+                            <div style="padding: 10px 0; text-align: center; border-top: 1px solid #eee;">
+                                <a href="#" style="color: #007bff; font-size: 14px; text-decoration: none;">Xem tất cả</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="profile">
                         <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
                     </div>
                 </div>
             </header>
-
-            <!-- Reports Content -->
             <div class="content">
                 <div class="page-header">
                     <h1>Báo cáo thống kê</h1>
@@ -268,18 +271,200 @@
 
     <!-- Bootstrap JS with Popper -->
     <script src="jsBootstrap/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js plugin for chart labels -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <!-- Custom JavaScript -->
     <script src="js/Admin.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Khai báo biến toàn cục cho biểu đồ
+        let revenueChart = null;
+        let orderPieChart = null;
+        let isModalShown = false;
+
+        // Khởi tạo modal
+        const reportDetailModal = new bootstrap.Modal(document.getElementById('reportDetailModal'));
+
+        // Xử lý sự kiện click nút "Xem báo cáo"
+        const btnReport = document.querySelector('button.btn.btn-primary.w-100, button.btn.btn-primary');
+        if (btnReport) {
+            btnReport.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Cập nhật số liệu thống kê
+                updateStatistics();
+                
+                // Hiển thị modal
+                reportDetailModal.show();
+            });
+        }
+
+        // Hàm cập nhật số liệu thống kê
+        function updateStatistics() {
+            const stats = [
+                {
+                    revenue: '52.3M',
+                    revenueChange: '+12% so với tháng trước',
+                    revenueClass: 'text-success',
+                    orders: '180',
+                    ordersChange: '+20% so với tháng trước',
+                    ordersClass: 'text-success',
+                    customers: '320',
+                    customersChange: '+18% so với tháng trước',
+                    customersClass: 'text-success',
+                    conversion: '3.8%',
+                    conversionChange: '+0.6% so với tháng trước',
+                    conversionClass: 'text-success'
+                },
+                {
+                    revenue: '45.6M',
+                    revenueChange: '+8% so với tháng trước',
+                    revenueClass: 'text-success',
+                    orders: '150',
+                    ordersChange: '+12% so với tháng trước',
+                    ordersClass: 'text-success',
+                    customers: '280',
+                    customersChange: '+15% so với tháng trước',
+                    customersClass: 'text-success',
+                    conversion: '3.2%',
+                    conversionChange: '-2% so với tháng trước',
+                    conversionClass: 'text-danger'
+                }
+            ];
+
+            const stat = stats[Math.floor(Math.random() * stats.length)];
+            
+            // Cập nhật số liệu
+            document.querySelectorAll('.card-title.mb-0')[0].textContent = stat.revenue;
+            document.querySelectorAll('.text-success, .text-danger')[0].textContent = stat.revenueChange;
+            document.querySelectorAll('.card-title.mb-0')[1].textContent = stat.orders;
+            document.querySelectorAll('.text-success, .text-danger')[1].textContent = stat.ordersChange;
+            document.querySelectorAll('.card-title.mb-0')[2].textContent = stat.customers;
+            document.querySelectorAll('.text-success, .text-danger')[2].textContent = stat.customersChange;
+            document.querySelectorAll('.card-title.mb-0')[3].textContent = stat.conversion;
+            document.querySelectorAll('.text-success, .text-danger')[3].textContent = stat.conversionChange;
+            
+            const conversionChangeEl = document.querySelectorAll('.text-success, .text-danger')[3];
+            conversionChangeEl.className = stat.conversionClass;
+        }
+
+        // Xử lý sự kiện khi modal được hiển thị
+        document.getElementById('reportDetailModal').addEventListener('shown.bs.modal', function () {
+            if (isModalShown) return;
+            isModalShown = true;
+
+            // Hủy biểu đồ cũ nếu có
+            if (revenueChart) revenueChart.destroy();
+            if (orderPieChart) orderPieChart.destroy();
+
+            // Dữ liệu demo cho biểu đồ
+            const revenueData = {
+                labels: ['20/03', '21/03', '22/03', '23/03', '24/03'],
+                datasets: [{
+                    label: 'Doanh thu (triệu)',
+                    data: [8.2, 7.1, 7.8, 6.5, 7.5],
+                    borderColor: '#4ca3ff',
+                    backgroundColor: 'rgba(76,163,255,0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            };
+
+            const orderPieData = {
+                labels: ['Hoàn thành', 'Đang giao', 'Đã hủy', 'Đang xử lý'],
+                datasets: [{
+                    data: [60, 25, 10, 5],
+                    backgroundColor: ['#1dd1a1', '#4ca3ff', '#ff6b6b', '#feca57']
+                }]
+            };
+
+            // Vẽ biểu đồ đường
+            const ctxLine = document.getElementById('revenueLineChart').getContext('2d');
+            revenueChart = new Chart(ctxLine, {
+                type: 'line',
+                data: revenueData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        datalabels: {
+                            align: 'top',
+                            anchor: 'end',
+                            color: '#1976d2',
+                            font: { weight: 'bold', size: 14 },
+                            formatter: (value) => value
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+
+            // Vẽ biểu đồ tròn
+            const ctxPie = document.getElementById('orderPieChart').getContext('2d');
+            orderPieChart = new Chart(ctxPie, {
+                type: 'pie',
+                data: orderPieData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15
+                            }
+                        },
+                        datalabels: {
+                            color: '#222',
+                            font: { weight: 'bold', size: 16 },
+                            formatter: (value, context) => {
+                                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const percent = (value / total * 100).toFixed(1) + '%';
+                                return percent;
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        });
+
+        // Xử lý sự kiện khi modal bị đóng
+        document.getElementById('reportDetailModal').addEventListener('hidden.bs.modal', function () {
+            isModalShown = false;
+            // Hủy biểu đồ khi đóng modal
+            if (revenueChart) revenueChart.destroy();
+            if (orderPieChart) orderPieChart.destroy();
+        });
+
+        // Xử lý menu toggle và các sự kiện khác
         var menuToggle = document.querySelector('.mobile-menu-toggle');
         var sidebar = document.getElementById('sidebar');
         var navLinks = document.querySelectorAll('.sidebar .nav-links a');
+        
         if (menuToggle && sidebar) {
             menuToggle.addEventListener('click', function() {
                 sidebar.classList.toggle('active');
             });
         }
+        
         navLinks.forEach(function(link) {
             link.addEventListener('click', function() {
                 if (window.innerWidth < 992 && sidebar.classList.contains('active')) {
@@ -287,7 +472,125 @@
                 }
             });
         });
+
+        // Xử lý thông báo
+        const notifications = [
+            {
+                icon: 'fa-chart-bar',
+                title: 'Báo cáo doanh thu',
+                content: 'Doanh thu ngày 24/03 đạt 12.5M.',
+                time: '10 phút trước'
+            },
+            {
+                icon: 'fa-shopping-cart',
+                title: 'Đơn hàng mới',
+                content: 'Có 8 đơn hàng mới trong ngày hôm nay.',
+                time: '30 phút trước'
+            },
+            {
+                icon: 'fa-user-plus',
+                title: 'Khách hàng mới',
+                content: 'Có 3 khách hàng mới đăng ký.',
+                time: '1 giờ trước'
+            }
+        ];
+
+        const notificationList = document.getElementById('notificationList');
+        notificationList.innerHTML = notifications.map(n => `
+            <li class="notification-item">
+                <span class="notification-icon"><i class="fas ${n.icon}"></i></span>
+                <div class="notification-content">
+                    <div class="notification-title">${n.title}</div>
+                    <div>${n.content}</div>
+                    <div class="notification-time">${n.time}</div>
+                </div>
+            </li>
+        `).join('');
+
+        // Toggle dropdown thông báo
+        const bell = document.getElementById('notificationBell');
+        const dropdown = document.getElementById('notificationDropdown');
+        
+        bell.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target) && e.target !== bell) {
+                dropdown.style.display = 'none';
+            }
+        });
     });
     </script>
+    <!-- Thêm style cho dropdown thông báo -->
+    <style>
+    .notification-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+    .notification-dropdown::-webkit-scrollbar-thumb {
+        background: #eee;
+        border-radius: 4px;
+    }
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f3f3f3;
+        font-size: 15px;
+        transition: background 0.2s;
+    }
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+    .notification-item:hover {
+        background: #f7f7f7;
+    }
+    .notification-icon {
+        color: #4ca3ff;
+        font-size: 18px;
+        margin-top: 2px;
+    }
+    .notification-content {
+        flex: 1;
+    }
+    .notification-title {
+        font-weight: 600;
+        font-size: 15px;
+    }
+    .notification-time {
+        color: #888;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+    </style>
+    <!-- Modal Chi Tiết Báo Cáo -->
+    <div class="modal fade" id="reportDetailModal" tabindex="-1" aria-labelledby="reportDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportDetailModalLabel">Chi tiết báo cáo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <h6>Doanh thu theo ngày</h6>
+                            <div style="height: 300px;">
+                                <canvas id="revenueLineChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <h6>Tỷ lệ đơn hàng theo trạng thái</h6>
+                            <div style="height: 300px;">
+                                <canvas id="orderPieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 

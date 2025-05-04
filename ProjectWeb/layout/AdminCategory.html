@@ -10,33 +10,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/Admin.css">
-    <style>
-        /* Base styles */
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-            width: 100%;
-        }
-        /* XÓA TOÀN BỘ CÁC @media liên quan sidebar/mobile ở đây để tránh xung đột với Admin.css */
-    </style>
 </head>
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2>SR STORE</h2>
-            </div>
+            <div class="logo"><h2>SR STORE</h2></div>
             <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
             <ul class="nav-links">
                 <li>
                     <a href="AdminDashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
                 </li>
                 <li>
                     <a href="AdminProduct.html"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
@@ -65,38 +51,44 @@
                 </div>
             </div>
         </div>
-
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Header -->
             <header class="header">
                 <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right">
-                    <div class="notification">
+                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                    <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                         <i class="fas fa-bell"></i>
                         <span class="badge">3</span>
+                        <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; top: 120%; right: 0; width: 340px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border-radius: 8px; z-index: 9999;">
+                            <div style="padding: 12px 16px; border-bottom: 1px solid #eee; font-weight: 600;">Thông báo danh mục</div>
+                            <ul id="notificationList" style="list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto;"></ul>
+                            <div style="padding: 10px 0; text-align: center; border-top: 1px solid #eee;">
+                                <a href="#" style="color: #007bff; font-size: 14px; text-decoration: none;">Xem tất cả</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="profile">
                         <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
                     </div>
                 </div>
             </header>
-
             <!-- Categories Content -->
             <div class="content">
                 <div class="page-header">
                     <h1>Quản lý danh mục</h1>
-                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Thêm danh mục</button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" id="addCategoryBtn"><i class="fas fa-plus"></i> Thêm danh mục</button>
+                        <button class="btn btn-danger" id="deleteSelectedCategoryBtn" disabled><i class="fas fa-trash"></i> Xóa đã chọn</button>
+                    </div>
                 </div>
 
                 <div class="card">
                     <div class="card-body">
-                        <div class="row g-3 mb-3">
-                            <div class="col-12 col-md-6">
+                        <div class="row g-3 mb-3 align-items-center filter-row">
+                            <div class="col-12 col-md-6 col-lg-4 mb-2 mb-lg-0">
                                 <div class="input-group">
                                     <span class="input-group-text bg-white">
                                         <i class="fas fa-search"></i>
@@ -104,21 +96,21 @@
                                     <input type="text" class="form-control" placeholder="Tìm kiếm danh mục...">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6">
-                                <div class="filter-options">
-                                    <select class="form-select">
-                                        <option value="">Trạng thái</option>
-                                        <option value="active">Đang hoạt động</option>
-                                        <option value="inactive">Không hoạt động</option>
-                                    </select>
-                                    <select class="form-select">
-                                        <option value="">Sắp xếp theo</option>
-                                        <option value="name-asc">Tên (A-Z)</option>
-                                        <option value="name-desc">Tên (Z-A)</option>
-                                        <option value="products-asc">Số sản phẩm (Thấp-Cao)</option>
-                                        <option value="products-desc">Số sản phẩm (Cao-Thấp)</option>
-                                    </select>
-                                </div>
+                            <div class="col-12 col-md-3 col-lg-4 mb-2 mb-lg-0">
+                                <select class="form-select">
+                                    <option value="">Trạng thái</option>
+                                    <option value="active">Đang hoạt động</option>
+                                    <option value="inactive">Không hoạt động</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-3 col-lg-4">
+                                <select class="form-select">
+                                    <option value="">Sắp xếp theo</option>
+                                    <option value="name-asc">Tên (A-Z)</option>
+                                    <option value="name-desc">Tên (Z-A)</option>
+                                    <option value="products-asc">Số sản phẩm (Thấp-Cao)</option>
+                                    <option value="products-desc">Số sản phẩm (Cao-Thấp)</option>
+                                </select>
                             </div>
                         </div>
 
@@ -148,7 +140,6 @@
                                         <td>
                                             <div class="action-buttons">
                                                 <button class="btn btn-sm btn-info btn-edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-danger btn-delete"><i class="fas fa-trash"></i></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -164,7 +155,6 @@
                                         <td>
                                             <div class="action-buttons">
                                                 <button class="btn btn-sm btn-info btn-edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-danger btn-delete"><i class="fas fa-trash"></i></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -180,7 +170,6 @@
                                         <td>
                                             <div class="action-buttons">
                                                 <button class="btn btn-sm btn-info btn-edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-danger btn-delete"><i class="fas fa-trash"></i></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -196,7 +185,6 @@
                                         <td>
                                             <div class="action-buttons">
                                                 <button class="btn btn-sm btn-info btn-edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-danger btn-delete"><i class="fas fa-trash"></i></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -212,7 +200,6 @@
                                         <td>
                                             <div class="action-buttons">
                                                 <button class="btn btn-sm btn-info btn-edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-danger btn-delete"><i class="fas fa-trash"></i></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -249,6 +236,8 @@
     <script src="jsBootstrap/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/Admin.js"></script>
+    <!-- CKEditor CDN -->
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         var menuToggle = document.querySelector('.mobile-menu-toggle');
@@ -266,7 +255,225 @@
                 }
             });
         });
+
+        // Modal Thêm/Chỉnh sửa Danh Mục
+        var addCategoryBtn = document.getElementById('addCategoryBtn');
+        var categoryModal = new bootstrap.Modal(document.getElementById('categoryModal'));
+        var categoryForm = document.getElementById('categoryForm');
+        var categoryModalLabel = document.getElementById('categoryModalLabel');
+        var nameInput = document.getElementById('categoryNameInput');
+        var descInput = document.getElementById('categoryDescriptionInput');
+        var imageInput = document.getElementById('categoryImageInput');
+        var statusInput = document.getElementById('categoryStatusInput');
+        var editingRow = null;
+
+        // Khởi tạo CKEditor cho textarea mô tả
+        CKEDITOR.replace('categoryDescriptionInput');
+
+        addCategoryBtn.addEventListener('click', function() {
+            categoryForm.reset();
+            categoryModalLabel.textContent = 'Thêm danh mục';
+            editingRow = null;
+            CKEDITOR.instances['categoryDescriptionInput'].setData('');
+            categoryModal.show();
+        });
+
+        // Xử lý nút chỉnh sửa
+        document.querySelectorAll('.btn-edit').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var row = btn.closest('tr');
+                editingRow = row;
+                var name = row.querySelector('td:nth-child(3)').textContent.trim();
+                var desc = row.querySelector('td:nth-child(4)').textContent.trim();
+                var status = row.querySelector('td:nth-child(6) .status').textContent.includes('Đang hoạt động') ? 'active' : 'inactive';
+                // Giả lập không fill ảnh
+                nameInput.value = name;
+                CKEDITOR.instances['categoryDescriptionInput'].setData(desc);
+                statusInput.value = status;
+                categoryModalLabel.textContent = 'Chỉnh sửa danh mục';
+                categoryModal.show();
+            });
+        });
+
+        // Xử lý chọn checkbox và bật/tắt nút xóa đã chọn
+        var checkboxes = document.querySelectorAll('.category-checkbox');
+        var selectAll = document.getElementById('select-all');
+        var deleteSelectedBtn = document.getElementById('deleteSelectedCategoryBtn');
+        function updateDeleteBtn() {
+            var checked = document.querySelectorAll('.category-checkbox:checked').length;
+            deleteSelectedBtn.disabled = checked === 0;
+        }
+        checkboxes.forEach(function(cb) {
+            cb.addEventListener('change', updateDeleteBtn);
+        });
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                checkboxes.forEach(function(cb) { cb.checked = selectAll.checked; });
+                updateDeleteBtn();
+            });
+        }
+        // Xử lý sự kiện xóa đã chọn (demo: alert)
+        deleteSelectedBtn.addEventListener('click', function() {
+            var checkedRows = Array.from(document.querySelectorAll('.category-checkbox:checked'));
+            if (checkedRows.length === 0) return;
+            var names = checkedRows.map(cb => cb.closest('tr').querySelector('td:nth-child(3)').textContent.trim());
+            if (confirm('Bạn có chắc muốn xóa các danh mục: ' + names.join(', ') + '?')) {
+                // TODO: Gọi API hoặc xóa trên giao diện
+                alert('Đã xóa: ' + names.join(', '));
+            }
+        });
+
+        // Thông báo cứng về danh mục
+        const notifications = [
+            {
+                icon: 'fa-tags',
+                title: 'Danh mục mới',
+                content: 'Danh mục "Áo khoác" vừa được thêm.',
+                time: '5 phút trước'
+            },
+            {
+                icon: 'fa-exclamation-circle',
+                title: 'Sắp hết sản phẩm',
+                content: 'Danh mục "Phụ kiện" chỉ còn 2 sản phẩm.',
+                time: '20 phút trước'
+            },
+            {
+                icon: 'fa-eye-slash',
+                title: 'Danh mục bị ẩn',
+                content: 'Danh mục "Quần jean" đã bị ẩn khỏi trang chủ.',
+                time: '1 giờ trước'
+            }
+        ];
+        const notificationList = document.getElementById('notificationList');
+        notificationList.innerHTML = notifications.map(n => `
+            <li class="notification-item">
+                <span class="notification-icon"><i class="fas ${n.icon}"></i></span>
+                <div class="notification-content">
+                    <div class="notification-title">${n.title}</div>
+                    <div>${n.content}</div>
+                    <div class="notification-time">${n.time}</div>
+                </div>
+            </li>
+        `).join('');
+        // Toggle dropdown
+        const bell = document.getElementById('notificationBell');
+        const dropdown = document.getElementById('notificationDropdown');
+        bell.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        // Click ngoài dropdown sẽ ẩn
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target) && e.target !== bell) {
+                dropdown.style.display = 'none';
+            }
+        });
     });
     </script>
+
+    <!-- Modal Thêm Danh Mục -->
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalLabel">Thêm danh mục</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="categoryForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Tên danh mục <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" id="categoryNameInput" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Mô tả</label>
+                            <textarea class="form-control" name="description" id="categoryDescriptionInput"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Ảnh</label>
+                            <input type="file" class="form-control" name="image" id="categoryImageInput">
+                        </div>
+                        <div class="mb-3">
+                            <label>Trạng thái</label>
+                            <select class="form-select" name="status" id="categoryStatusInput">
+                                <option value="active">Đang hoạt động</option>
+                                <option value="inactive">Không hoạt động</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-success">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thêm style cho dropdown thông báo -->
+    <style>
+    .notification-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+    .notification-dropdown::-webkit-scrollbar-thumb {
+        background: #eee;
+        border-radius: 4px;
+    }
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f3f3f3;
+        font-size: 15px;
+        transition: background 0.2s;
+    }
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+    .notification-item:hover {
+        background: #f7f7f7;
+    }
+    .notification-icon {
+        color: #4ca3ff;
+        font-size: 18px;
+        margin-top: 2px;
+    }
+    .notification-content {
+        flex: 1;
+    }
+    .notification-title {
+        font-weight: 600;
+        font-size: 15px;
+    }
+    .notification-time {
+        color: #888;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+    /* Chỉ áp dụng cho filter ở trang danh mục */
+    .main-content .filter-row {
+        gap: 0;
+        margin-bottom: 24px;
+    }
+    .main-content .filter-row > div {
+        display: flex;
+        align-items: center;
+    }
+    .main-content .filter-row .input-group,
+    .main-content .filter-row .form-select {
+        width: 100%;
+    }
+    @media (max-width: 991.98px) {
+        .main-content .filter-row > div {
+            margin-bottom: 12px;
+        }
+    }
+    @media (min-width: 992px) {
+        .main-content .filter-row > div {
+            margin-bottom: 0;
+        }
+    }
+    </style>
 </body>
 </html> 
