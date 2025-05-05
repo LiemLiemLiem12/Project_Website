@@ -3,10 +3,13 @@
 class ProductController extends BaseController
 {
     private $productModel;
+    private $categoryModel;
     public function __construct()
     {
         $this->loadModel('ProductModel');
+        $this->loadModel('CategoryModel');
         $this->productModel = new ProductModel;
+        $this->categoryModel = new CategoryModel();
 
     }
     public function index()

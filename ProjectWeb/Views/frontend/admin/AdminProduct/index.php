@@ -59,7 +59,8 @@
                 <div class="page-header d-flex justify-content-between align-items-center">
                     <h1 class="mb-0">Quản lý Sản phẩm</h1>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                        <button class="btn btn-primary" id="btn-add-product" data-bs-toggle="modal"
+                            data-bs-target="#addProductModal">
                             <i class="fas fa-plus"></i> Thêm sản phẩm
                         </button>
                         <button class="btn btn-danger" id="deleteSelectedBtn" disabled>
@@ -76,11 +77,11 @@
                                 <button type="button">
                                     <i class="fas fa-search"></i>
                                 </button>
-                                <input type="text" placeholder="Tìm kiếm sản phẩm...">
+                                <input id="searchInputProduct" type="text" placeholder="Tìm kiếm sản phẩm...">
                             </div>
                         </div>
                         <div class="filter-item">
-                            <select class="filter-dropdown">
+                            <select class="filter-dropdown" id="filter-dropdown-product">
                                 <option value="">Danh mục</option>
                                 <option value="ao">Áo</option>
                                 <option value="quan">Quần</option>
@@ -89,7 +90,7 @@
                             </select>
                         </div>
                         <div class="filter-item">
-                            <select class="filter-dropdown">
+                            <select class="filter-dropdown" id="filter-dropdown-status-product">
                                 <option value="">Trạng thái</option>
                                 <option value="con-hang">Còn hàng</option>
                                 <option value="het-hang">Hết hàng</option>
@@ -97,7 +98,7 @@
                             </select>
                         </div>
                         <div class="filter-item">
-                            <select class="filter-dropdown">
+                            <select class="filter-dropdown" id="filter-dropdown-sort-product">
                                 <option value="">Sắp xếp theo</option>
                                 <option value="moi-nhat">Mới nhất</option>
                                 <option value="cu-nhat">Cũ nhất</option>
@@ -110,7 +111,7 @@
 
                 <!-- Products Table -->
                 <div class="product-table">
-                    <table class="table">
+                    <table id="table-product" class="table">
                         <thead>
                             <tr>
                                 <th>
@@ -133,7 +134,7 @@
                                     <tr class="product-row" data-id_product="' . $data['id_product'] . '" data-name="' . $data['product_name'] . '"
                                         data-description="' . $data['description'] . '"
                                         data-original_price="' . $data['original_price'] . '" data-discount_percent="' . $data['discount_percent'] . '" data-current_price="' . $data['current_price'] . '"
-                                        data-created_at="' . $data['created_at'] . '" data-updated_at="' . $data['updated_at'] . '" data-id_category="' . $data['category_name'] . '"
+                                        data-created_at="' . $data['created_at'] . '" data-updated_at="' . $data['updated_at'] . '" data-id_category="' . $data['category_name'] . '" id_category = "' . $data['id_Category'] . '"
                                         data-main_image="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '"
                                         data-img="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img2'] . ',/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img3'] . '"
                                         data-link="' . $data['link'] . '" data-meta="' . $data['meta'] . '" data-hide="' . $data['hide'] . '" data-order="' . $data['order'] . '"
@@ -162,7 +163,7 @@
                                 echo '
                                         <td>
                                             <div class="action-buttons">
-                                                <button class="btn btn-sm btn-info btn-view-order" title="Ẩn/Hiện" data-hide="0">
+                                                <button class="btn btn-sm btn-info btn-view" title="Ẩn/Hiện" data-hide="0">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-warning btn-edit" title="Sửa"><i
@@ -194,7 +195,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <form id="addProductForm">
+                <form class="need-validation" id="addProductForm" novalidate>
                     <div class="modal-header">
                         <h5 class="modal-title" id="addProductModalLabel">Thêm Sản Phẩm Mới</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
@@ -207,66 +208,172 @@
                                 style="min-height: 48px;">
                                 <input type="text" id="tagInput" class="border-0 flex-grow-1"
                                     placeholder="Nhập tag và nhấn Enter..." style="outline: none; min-width: 120px;">
+
                             </div>
                             <input type="hidden" name="productTags" id="productTags">
+                            <div class="invalid-feedback">Vui lòng nhập tag cho sản phẩm</div>
                         </div>
                         <div class="mb-3">
                             <label for="productImage" class="form-label">Hình Ảnh</label>
                             <input type="file" class="form-control" id="productImage" name="productImage[]"
-                                accept="image/*" multiple>
+                                accept="image/*" multiple required>
                             <div id="imagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                            <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
                         </div>
                         <div class="mb-3">
                             <label for="productName" class="form-label">Tên Sản Phẩm</label>
-                            <input type="text" class="form-control" id="productName" name="productName" required>
+                            <input type="text" class="form-control" id="productName" name="productName" required
+                                pattern="[A-Za-zÀ-ÿ\s]+" maxlength="1000" minlength="4">
+                            <div class="invalid-feedback">Vui lòng nhập tên sản phẩm hợp lệ (không có số).</div>
                         </div>
                         <div class="mb-3">
                             <label for="productDesc" class="form-label">Mô tả</label>
                             <textarea class="form-control" id="productDesc" name="productDesc" rows="2"></textarea>
+                            <small id="wordCount" class="form-text text-muted">0/2000 từ</small>
+                            <div id="productDescError" class="text-danger small mt-1 d-none">Mô tả phải từ 10 đến 1000
+                                ký tự.</div>
                         </div>
                         <div class="mb-3">
                             <label for="productCategory" class="form-label">Danh Mục</label>
                             <select class="form-select" id="productCategory" name="productCategory" required>
                                 <option value="">Chọn danh mục</option>
-                                <option value="1">Áo</option>
-                                <option value="2">Quần</option>
-                                <option value="3">Giày</option>
-                                <option value="4">Phụ kiện</option>
-                                <option value="5">Khuyến mãi</option>
+                                <?php
+                                foreach ($categoryList as $data) {
+                                    echo '
+                                            <option value="' . $data['id_Category'] . '">' . $data['name'] . '</option>
+                                        ';
+                                }
+                                ?>
                             </select>
+                            <div class="invalid-feedback">Vui lòng chọn danh mục</div>
                         </div>
                         <div class="mb-3">
                             <label for="productPrice" class="form-label">Giá</label>
                             <input type="number" class="form-control" id="productPrice" name="productPrice" min="0"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productStatus" class="form-label">Trạng Thái</label>
-                            <select class="form-select" id="productStatus" name="productStatus" required>
-                                <option value="0">Còn hàng</option>
-                                <option value="1">Hết hàng</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="policyReturn" class="form-label">Chính sách đổi trả (ảnh)</label>
-                            <input type="file" class="form-control" id="policyReturn" name="policyReturn"
-                                accept="image/*" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="policyWarranty" class="form-label">Chính sách bảo hành (ảnh)</label>
-                            <input type="file" class="form-control" id="policyWarranty" name="policyWarranty"
-                                accept="image/*" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
-                    </div>
+                                max="10000000" required>
+                            <div class="invalid-feedback">Vui lòng nhập giá hợp lệ (0<< 10.000.000đ)</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="productStock" class="form-label">Tồn Kho</label>
+                                <input type="number" class="form-control" id="productStock" name="productStock" min="0"
+                                    required>
+                                <div class="invalid-feedback">Vui lòng nhập số lượng tồn kho hợp lệ (0<<
+                                        10.000.000đ)</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="policyReturn" class="form-label">Chính sách đổi trả (ảnh)</label>
+                                    <input type="file" class="form-control" id="policyReturn" name="policyReturn"
+                                        accept="image/*" required>
+                                    <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="policyWarranty" class="form-label">Chính sách bảo hành (ảnh)</label>
+                                    <input type="file" class="form-control" id="policyWarranty" name="policyWarranty"
+                                        accept="image/*" required>
+                                    <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+                            </div>
                 </form>
             </div>
         </div>
     </div>
-    <!-- Modal Chi Tiết Sản Phẩm -->
+    <!-- Modal Sửa Sản Phẩm -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <form class="need-validation" id="addProductForm" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addProductModalLabel">Thêm Sản Phẩm Mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="productTags" class="form-label">Tags</label>
+                            <div id="tagInputContainer" class="form-control d-flex flex-wrap align-items-center"
+                                style="min-height: 48px;">
+                                <input type="text" id="tagInput" class="border-0 flex-grow-1"
+                                    placeholder="Nhập tag và nhấn Enter..." style="outline: none; min-width: 120px;">
+
+                            </div>
+                            <input type="hidden" name="productTags" id="productTags">
+                            <div class="invalid-feedback">Vui lòng nhập tag cho sản phẩm</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">Hình Ảnh</label>
+                            <input type="file" class="form-control" id="productImage" name="productImage[]"
+                                accept="image/*" multiple required>
+                            <div id="imagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                            <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Tên Sản Phẩm</label>
+                            <input type="text" class="form-control" id="productName" name="productName" required
+                                pattern="[A-Za-zÀ-ÿ\s]+" maxlength="1000" minlength="4">
+                            <div class="invalid-feedback">Vui lòng nhập tên sản phẩm hợp lệ (không có số).</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDesc" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="productDesc" name="productDesc" rows="2"></textarea>
+                            <small id="wordCount" class="form-text text-muted">0/2000 từ</small>
+                            <div id="productDescError" class="text-danger small mt-1 d-none">Mô tả phải từ 10 đến 1000
+                                ký tự.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCategory" class="form-label">Danh Mục</label>
+                            <select class="form-select" id="productCategory" name="productCategory" required>
+                                <option value="">Chọn danh mục</option>
+                                <?php
+                                foreach ($categoryList as $data) {
+                                    echo '
+                                            <option value="' . $data['id_Category'] . '">' . $data['name'] . '</option>
+                                        ';
+                                }
+                                ?>
+                            </select>
+                            <div class="invalid-feedback">Vui lòng chọn danh mục</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productPrice" class="form-label">Giá</label>
+                            <input type="number" class="form-control" id="productPrice" name="productPrice" min="0"
+                                max="10000000" required>
+                            <div class="invalid-feedback">Vui lòng nhập giá hợp lệ (0<< 10.000.000đ)</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="productStock" class="form-label">Tồn Kho</label>
+                                <input type="number" class="form-control" id="productStock" name="productStock" min="0"
+                                    required>
+                                <div class="invalid-feedback">Vui lòng nhập số lượng tồn kho hợp lệ (0<<
+                                        10.000.000đ)</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="policyReturn" class="form-label">Chính sách đổi trả (ảnh)</label>
+                                    <input type="file" class="form-control" id="policyReturn" name="policyReturn"
+                                        accept="image/*" required>
+                                    <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="policyWarranty" class="form-label">Chính sách bảo hành (ảnh)</label>
+                                    <input type="file" class="form-control" id="policyWarranty" name="policyWarranty"
+                                        accept="image/*" required>
+                                    <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+                            </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- Modal Chi Tiết Sản Phẩm -->
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel"
         aria-hidden="true">
@@ -324,7 +431,7 @@
     <!-- Ckeditor -->
     <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
     <script>
-        CKEDITOR.replace('productDesc'); // 'productDesc' là id của textarea
+        // CKEDITOR.replace('productDesc'); // 'productDesc' là id của textarea
     </script>
 </body>
 

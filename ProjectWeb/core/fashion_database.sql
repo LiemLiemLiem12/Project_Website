@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 02, 2025 lúc 08:19 PM
+-- Thời gian đã tạo: Th5 04, 2025 lúc 11:25 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -100,7 +100,9 @@ INSERT INTO `order` (`id_Order`, `total_amount`, `status`, `created_at`, `id_Use
 (7, 1000000, 'shipping', '2025-05-02 13:05:02', 3),
 (8, 1000000, 'pending', '2025-02-09 13:05:23', 3),
 (9, 10000000, 'completed', '2025-04-16 13:36:31', 5),
-(10, 10000000, 'completed', '2025-04-17 21:57:49', 1);
+(10, 10000000, 'completed', '2025-04-17 21:57:49', 1),
+(11, 10000000, 'completed', '2025-05-03 13:01:01', 8),
+(12, 10000000, 'completed', '2025-03-19 13:36:06', 6);
 
 -- --------------------------------------------------------
 
@@ -109,9 +111,8 @@ INSERT INTO `order` (`id_Order`, `total_amount`, `status`, `created_at`, `id_Use
 --
 
 CREATE TABLE `order_detail` (
-  `id_Order_Detail` int(11) NOT NULL,
-  `id_Order` int(11) DEFAULT NULL,
-  `id_Product` int(11) DEFAULT NULL,
+  `id_Order` int(11) NOT NULL,
+  `id_Product` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `sub_total` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -120,12 +121,16 @@ CREATE TABLE `order_detail` (
 -- Đang đổ dữ liệu cho bảng `order_detail`
 --
 
-INSERT INTO `order_detail` (`id_Order_Detail`, `id_Order`, `id_Product`, `quantity`, `sub_total`) VALUES
-(1, 1, 1, 1, 315000.00),
-(2, 2, 2, 1, 400000.00),
-(3, 3, 3, 1, 595000.00),
-(4, 4, 4, 1, 427500.00),
-(5, 5, 5, 1, 225000.00);
+INSERT INTO `order_detail` (`id_Order`, `id_Product`, `quantity`, `sub_total`) VALUES
+(1, 1, 1, 315000.00),
+(2, 2, 1, 400000.00),
+(3, 3, 1, 595000.00),
+(4, 4, 1, 427500.00),
+(5, 5, 1, 225000.00),
+(6, 1, 5, 400000.00),
+(9, 2, 10, 400000.00),
+(10, 3, 20, 400000.00),
+(12, 5, 100000, 400000.00);
 
 -- --------------------------------------------------------
 
@@ -144,47 +149,30 @@ CREATE TABLE `product` (
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `id_Category` int(11) DEFAULT NULL,
   `main_image` varchar(255) DEFAULT NULL,
-  `img` varchar(255) DEFAULT NULL,
   `link` varchar(255) DEFAULT NULL,
   `meta` varchar(255) DEFAULT NULL,
   `hide` int(11) DEFAULT NULL,
   `order` int(11) DEFAULT NULL,
-  `click_count` int(11) DEFAULT NULL
+  `click_count` int(11) DEFAULT NULL,
+  `store` int(11) NOT NULL DEFAULT 0,
+  `img2` varchar(255) NOT NULL,
+  `img3` varchar(255) NOT NULL,
+  `tag` text NOT NULL,
+  `CSDoiTra` varchar(255) NOT NULL,
+  `CSGiaoHang` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `product`
 --
 
-INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `img`, `link`, `meta`, `hide`, `order`, `click_count`) VALUES
-(1, 'Áo sơ mi nam', 'Chất liệu cotton thoáng mát', 350000.00, 10, 315000.00, '2025-05-01 14:25:49', '2025-05-01 14:42:54', 1, 'a1.jpg', 'a1.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1, 20),
-(2, 'Quần jeans nữ', 'Form ôm body tôn dáng', 500000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-01 14:43:18', 2, 'q1.jpg', 'q1.jpg', '/quan-jeans', 'quan-jeans', 0, 2, 12),
-(3, 'Giày thể thao', 'Giày sneaker trẻ trung', 700000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-01 14:43:32', 3, 'g1.jpg', 'g1.jpg', '/giay-sneaker', 'giay-sneaker', 0, 3, 5),
-(4, 'Túi xách nữ', 'Túi da PU cao cấp', 450000.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-01 14:43:46', 4, 't1.jpg', 't1.jpg', '/tui-xach', 'tui-xach', 0, 4, 7),
-(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-01 14:43:59', 1, 'a2.jpg', 'a2.jpg', '/ao-thun', 'ao-thun', 0, 5, 30);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `product_tag`
---
-
-CREATE TABLE `product_tag` (
-  `id_Product` int(11) NOT NULL,
-  `id_Tag` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `product_tag`
---
-
-INSERT INTO `product_tag` (`id_Product`, `id_Tag`) VALUES
-(1, 1),
-(1, 4),
-(2, 2),
-(2, 5),
-(3, 1),
-(3, 3);
+INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `link`, `meta`, `hide`, `order`, `click_count`, `store`, `img2`, `img3`, `tag`, `CSDoiTra`, `CSGiaoHang`) VALUES
+(1, 'Áo sơ mi nam', 'Chất liệu cotton thoáng mát', 350000.00, 10, 315000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 1, 'item1.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1, 20, 10, 'item1.webp', 'item1.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
+(2, 'Quần jeans nữ', 'Form ôm body tôn dáng', 500000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 2, 'item2.jpg', '/quan-jeans', 'quan-jeans', 0, 2, 12, 10, 'item2.webp', 'item2.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
+(3, 'Giày thể thao', 'Giày sneaker trẻ trung', 700000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 3, 'item3.jpg', '/giay-sneaker', 'giay-sneaker', 0, 3, 5, 0, 'item3.webp', 'item3.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
+(4, 'Túi xách nữ', 'Túi da PU cao cấp', 450000.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 4, 'item4.jpg', '/tui-xach', 'tui-xach', 0, 4, 7, 10, 'item4.webp', 'item4.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
+(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 1, 'item5.jpg', '/ao-thun', 'ao-thun', 0, 5, 30, 0, 'item5.webp', 'item5.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
+(6, 'Quần KAKI', 'Mô tả quần kaki', 400000.00, 10, 360000.00, '2025-05-04 13:59:31', '2025-05-04 13:59:31', 2, 'item1.jpg', '/item1', 'quan-kaki', 0, 5, 0, 20, 'item1.webp', 'item1.webp', 'quan', '', '');
 
 -- --------------------------------------------------------
 
@@ -214,32 +202,6 @@ INSERT INTO `review` (`id`, `id_User`, `id_Product`, `rate`, `comment`, `created
 (3, 3, 3, 3.5, 'Hơi chật so với size', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 'r3.jpg', 1),
 (4, 4, 4, 4, 'Giao hàng nhanh, đóng gói kỹ', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 'r4.jpg', 1),
 (5, 5, 5, 5, 'Áo thun chất lượng tốt', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 'r5.jpg', 1);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `tag`
---
-
-CREATE TABLE `tag` (
-  `id_Tag` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `slug` varchar(255) DEFAULT NULL,
-  `id_Product` varchar(255) DEFAULT NULL,
-  `type` int(11) DEFAULT NULL,
-  `status` tinyint(4) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `tag`
---
-
-INSERT INTO `tag` (`id_Tag`, `name`, `slug`, `id_Product`, `type`, `status`) VALUES
-(1, 'Mới về', 'moi-ve', '1', 1, 1),
-(2, 'Bán chạy', 'ban-chay', '2', 1, 1),
-(3, 'Giảm giá', 'giam-gia', '3', 1, 1),
-(4, 'Thời trang nam', 'thoi-trang-nam', '1', 2, 1),
-(5, 'Thời trang nữ', 'thoi-trang-nu', '2', 2, 1);
 
 -- --------------------------------------------------------
 
@@ -326,7 +288,7 @@ ALTER TABLE `order`
 -- Chỉ mục cho bảng `order_detail`
 --
 ALTER TABLE `order_detail`
-  ADD PRIMARY KEY (`id_Order_Detail`),
+  ADD PRIMARY KEY (`id_Order`,`id_Product`),
   ADD KEY `idx_order_detail_order` (`id_Order`),
   ADD KEY `idx_order_detail_product` (`id_Product`);
 
@@ -338,25 +300,12 @@ ALTER TABLE `product`
   ADD KEY `idx_product_category` (`id_Category`);
 
 --
--- Chỉ mục cho bảng `product_tag`
---
-ALTER TABLE `product_tag`
-  ADD PRIMARY KEY (`id_Product`,`id_Tag`),
-  ADD KEY `id_Tag` (`id_Tag`);
-
---
 -- Chỉ mục cho bảng `review`
 --
 ALTER TABLE `review`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_review_user` (`id_User`),
   ADD KEY `idx_review_product` (`id_Product`);
-
---
--- Chỉ mục cho bảng `tag`
---
-ALTER TABLE `tag`
-  ADD PRIMARY KEY (`id_Tag`);
 
 --
 -- Chỉ mục cho bảng `user`
@@ -392,31 +341,19 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT cho bảng `order`
 --
 ALTER TABLE `order`
-  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT cho bảng `order_detail`
---
-ALTER TABLE `order_detail`
-  MODIFY `id_Order_Detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `review`
 --
 ALTER TABLE `review`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT cho bảng `tag`
---
-ALTER TABLE `tag`
-  MODIFY `id_Tag` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `user`
@@ -459,13 +396,6 @@ ALTER TABLE `order_detail`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`id_Category`) REFERENCES `category` (`id_Category`);
-
---
--- Các ràng buộc cho bảng `product_tag`
---
-ALTER TABLE `product_tag`
-  ADD CONSTRAINT `product_tag_ibfk_2` FOREIGN KEY (`id_Tag`) REFERENCES `tag` (`id_Tag`),
-  ADD CONSTRAINT `product_tag_product` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_Product`);
 
 --
 -- Các ràng buộc cho bảng `review`

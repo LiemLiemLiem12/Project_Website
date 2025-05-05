@@ -1,7 +1,7 @@
 <?php
 class ProductModel extends BaseModel
 {
-  const TABLE = 'products';
+  const TABLE = 'product';
   // Lấy tất cả dữ liệu từ bản
   public function getAll($select = ['*'], $limit, $orderBys = [])
   {
@@ -51,8 +51,48 @@ class ProductModel extends BaseModel
   public function getProductList_AdminProduct()
   {
     $sql = "
-        Select id_product, main_image, p.name as product_name, c.name category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3
+        Select id_product, main_image, p.name as product_name, c.id_Category, c.name category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3
         from product p join category c on p.id_Category = c.id_Category
+    ";
+    return $this->getByQuery($sql);
+  }
+
+  public function getProductList_AdminProduct_newest()
+  {
+    $sql = "
+        Select id_product, main_image, p.name as product_name, c.id_category, c.name category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3
+        from product p join category c on p.id_Category = c.id_Category
+        order by p.created_at desc
+    ";
+    return $this->getByQuery($sql);
+  }
+
+  public function getProductList_AdminProduct_oldest()
+  {
+    $sql = "
+        Select id_product, main_image, p.name as product_name, c.id_category, c.name category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3
+        from product p join category c on p.id_Category = c.id_Category
+        order by p.created_at asc
+    ";
+    return $this->getByQuery($sql);
+  }
+
+  public function getProductList_AdminProduct_priceASC()
+  {
+    $sql = "
+        Select id_product, main_image, p.name as product_name, c.id_category, c.name category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3
+        from product p join category c on p.id_Category = c.id_Category
+        order by p.current_price asc
+    ";
+    return $this->getByQuery($sql);
+  }
+
+  public function getProductList_AdminProduct_priceDESC()
+  {
+    $sql = "
+        Select id_product, main_image, p.name as product_name, c.id_category, c.name category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3
+        from product p join category c on p.id_Category = c.id_Category
+        order by p.current_price desc
     ";
     return $this->getByQuery($sql);
   }

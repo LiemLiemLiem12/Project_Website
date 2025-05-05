@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    productSearching()
+    addProduct()
+    
     // Handle sidebar navigation
     const navLinks = document.querySelectorAll('.nav-links li');
     const contentViews = document.querySelectorAll('.page-content');
@@ -227,23 +230,86 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Product Form Submit ---
     if (document.getElementById('addProductForm')) {
-        document.getElementById('addProductForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Lấy dữ liệu từ form
-            const formData = new FormData(this);
-            // Demo: In ra console, thực tế sẽ gửi về server xử lý
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value);
+        const form = document.getElementById('addProductForm');
+        const countWord = document.getElementById('wordCount');
+        
+        function countWords(str) {
+            // Loại bỏ tất cả thẻ HTML
+            let text = str.replace(/<[^>]*>/g, '').trim();
+            // Chia văn bản thành mảng từ dựa trên khoảng trắng
+            
+            return text.length;
+        }
+        
+        CKEDITOR.replace('productDesc');
+
+        CKEDITOR.instances.productDesc.on('change', function () {
+            let content = CKEDITOR.instances.productDesc.getData();
+            countWord.textContent = `${countWords(content)}/2000`;
+            if (countWords(content) > 2000) {
+                console.log('hello')
+                countWord.style.setProperty('color', 'red', 'important');
+            } else {
+                countWord.style.setProperty('color', 'black', 'important'); // Hoặc màu khác tùy thích
             }
-            // Đóng modal sau khi thêm (giả lập)
-            var addProductModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
-            addProductModal.hide();
-            // Reset form
-            this.reset();
-            // Thông báo (demo)
-            alert('Đã thêm sản phẩm (demo, cần kết nối backend để lưu vào database)');
         });
-    }
+        
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Ngăn gửi mặc định
+            CKEDITOR.instances.productDesc.updateElement();
+            const productDesc = document.getElementById('productDesc')
+            const content = productDesc.value.trim()
+            const errorDiv = document.getElementById('productDescError');
+            if (countWords(content) < 10 || countWords(content) > 1000) {
+                productDesc.setCustomValidity('Mô tả phải từ 10 đến 1000 ký tự');
+                errorDiv.classList.remove('d-none');
+              } else {
+                productDesc.setCustomValidity('');
+                errorDiv.classList.add('d-none');
+              }
+      
+          if (!form.checkValidity()) {
+            // Nếu form không hợp lệ, hiển thị lỗi bằng Bootstrap
+            form.classList.add('was-validated');
+            return;
+          }
+      
+          // ✅ Form hợp lệ → xử lý dữ liệu
+          const formData = new FormData(this);
+      
+        //   for (let [key, value] of formData.entries()) {
+        //     console.log(key, value);
+        //   }
+          
+          fetch('?controller=adminproduct&action=add',{
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (!response.ok) throw new Error('Thêm thất bại');
+            return response.text();
+          })
+          .then(data => {
+            console.log(data)
+            const addProductModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+            if (addProductModal) addProductModal.hide();
+        
+            // Reset form + reset trạng thái validate
+            this.reset();
+            this.classList.remove('was-validated');
+            
+            document.getElementById('table-product').innerHTML = data
+            // Thông báo
+            alert('✅ Đã thêm sản phẩm thành công');
+          })
+          .catch(error => {
+            console.error('❌ Lỗi gửi dữ liệu:', error);
+            alert('❌ Lỗi gửi dữ liệu: ' + error.message);
+          })
+          // Đóng modal (giả lập)
+        });
+      }
+      
 
     // --- Product Checkbox Delete ---
     if (document.querySelectorAll('.product-checkbox').length && document.getElementById('deleteSelectedBtn')) {
@@ -632,24 +698,276 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Product Edit Button Logic ---
-    if (document.querySelector('.product-table')) {
-        document.querySelectorAll('.btn-edit').forEach(function(editBtn) {
-            editBtn.addEventListener('click', function() {
-                const row = editBtn.closest('tr.product-row');
-                if (!row) return;
-                document.getElementById('addProductModalLabel').textContent = 'Chỉnh sửa Sản Phẩm';
-                document.getElementById('productName').value = row.getAttribute('data-name') || '';
-                document.getElementById('productCategory').value = row.getAttribute('data-id_category') || '';
-                document.getElementById('productPrice').value = row.getAttribute('data-current_price') || '';
-                document.getElementById('productStatus').value = row.getAttribute('data-hide') || '0';
-                if (window.CKEDITOR && CKEDITOR.instances['productDesc']) {
-                    CKEDITOR.instances['productDesc'].setData(row.getAttribute('data-description') || '');
-                }
-                // ... fill các trường khác nếu có ...
-                var modal = new bootstrap.Modal(document.getElementById('addProductModal'));
-                modal.show();
+    // if (document.querySelector('.product-table')) {
+    //     document.querySelectorAll('.btn-edit').forEach(function(editBtn) {
+    //         editBtn.addEventListener('click', function() {
+    //             const row = editBtn.closest('tr.product-row');
+    //             if (!row) return;
+    //             document.getElementById('addProductModalLabel').textContent = 'Chỉnh sửa Sản Phẩm';
+    //             document.getElementById('productName').value = row.getAttribute('data-name') || '';
+    //             document.getElementById('productCategory').value = row.getAttribute('data-id_category') || '';
+    //             document.getElementById('productPrice').value = row.getAttribute('data-current_price') || '';
+    //             if (window.CKEDITOR && CKEDITOR.instances['productDesc']) {
+    //                 CKEDITOR.instances['productDesc'].setData(row.getAttribute('data-description') || '');
+    //             }
+    //             // ... fill các trường khác nếu có ...
+    //             var modal = new bootstrap.Modal(document.getElementById('addProductModal'));
+    //             modal.show();
+    //         });
+    //     });
+    // }
+    document.querySelector('.product-table').addEventListener('click', function(e) {
+        const btnView = e.target.closest('.btn-view')
+        const btnEdit = e.target.closest('.btn-edit')
+        const checkboxAll = e.target.closest('#select-all')
+        const tagInputContainer = document.getElementById('tagInputContainer');
+        const tagInput = document.getElementById('tagInput');
+
+
+        function renderTags() {
+            tagInputContainer.querySelectorAll('.tag-item').forEach(e => e.remove());
+            tags.forEach((tag, idx) => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag-item';
+                tagEl.textContent = tag;
+                const removeBtn = document.createElement('span');
+                removeBtn.className = 'remove-tag';
+                removeBtn.textContent = '×';
+                removeBtn.onclick = () => {
+                    tags.splice(idx, 1);
+                    renderTags();
+                };
+                tagEl.appendChild(removeBtn);
+                tagInputContainer.insertBefore(tagEl, tagInput);
             });
+            productTags.value = tags.join(',');
+        }
+
+        if(btnView) {
+            var row = btnView.closest('tr');
+            if (!row) return;
+    
+            // Toggle trạng thái ẩn/hiện
+            var isHidden = row.classList.toggle('product-hidden');
+            // Đổi icon mắt
+            var icon = btnView.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            }
+            // Đổi trạng thái text nếu muốn
+            var statusCell = row.querySelector('.status');
+            if (statusCell) {
+                if (isHidden) {
+                    statusCell.textContent = 'Đã ẩn';
+                    statusCell.className = 'status cancelled';
+                } else {
+                    statusCell.textContent = 'Còn hàng';
+                    statusCell.className = 'status completed';
+                }
+            }
+        }else if(btnEdit) {
+            const row = btnEdit.closest('tr.product-row');
+            var tags = []
+            if (!row) return;
+            document.getElementById('addProductModalLabel').textContent = 'Chỉnh sửa Sản Phẩm';
+            document.getElementById('productName').value = row.getAttribute('data-name') || '';
+            document.getElementById('productCategory').value = row.getAttribute('id_category') || '';
+            document.getElementById('productPrice').value = parseInt((row.getAttribute('data-current_price')).replace(/[đ.]/g, '')) || 0;
+            document.getElementById('productStock').value = parseInt(row.getAttribute('data-stock')) || 0;
+            document.getElementById('productTags').value = row.getAttribute('data-tags') || '';
+            tags = row.getAttribute('data-tags').replace(/\s+/g, '').replace(/-/g, ' ').split(',')
+            renderTags()
+
+            let dataImg = row.getAttribute('data-img')
+            let toArray = dataImg.split(',')
+            arrayImg = [
+                row.getAttribute('data-main_image'),
+                toArray[0], 
+                toArray[1]
+            ]
+            
+            const preview = document.getElementById('imagePreview')
+            preview.innerHTML = ''
+            arrayImg.forEach(source => {
+                const img = document.createElement('img');
+                            img.src = source;
+                            img.className = 'rounded border';
+                            img.style.height = '60px';
+                            img.style.width = '60px';
+                            img.style.objectFit = 'cover';
+                            img.style.marginRight = '8px';
+                            preview.appendChild(img);
+            });
+
+            if (window.CKEDITOR && CKEDITOR.instances['productDesc']) {
+                CKEDITOR.instances['productDesc'].setData(row.getAttribute('data-description') || '');
+            }
+
+            document.getElementById('productImage').removeAttribute('required')
+            document.getElementById('policyWarranty').removeAttribute('required')
+            document.getElementById('policyReturn').removeAttribute('required')
+
+            // ... fill các trường khác nếu có ...
+            var modal = new bootstrap.Modal(document.getElementById('addProductModal'));
+            modal.show();
+        }else if(checkboxAll) {
+            const checkboxes = document.querySelectorAll('.order-checkbox, .product-checkbox, .category-checkbox, .customer-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = checkboxAll.checked;
+            });
+        }
+    });
+
+    
+      
+
+    function addProduct() {
+        document.getElementById('btn-add-product').addEventListener('click', function () {
+            const modal = document.getElementById('addProductModal');
+            const form = document.getElementById('addProductForm');
+            const descError = document.getElementById('productDescError')
+            descError.classList.add('d-none')
+            form.classList.remove('was-validated')
+
+        // Reset tất cả các input, select, textarea
+        modal.querySelectorAll('input, select, textarea').forEach(function (el) {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                el.checked = false;
+            } else {
+                el.value = '';
+            }
         });
+
+        // Nếu dùng CKEditor
+        if (window.CKEDITOR && CKEDITOR.instances['productDesc']) {
+            CKEDITOR.instances['productDesc'].setData('');
+        }
+
+        modal.querySelectorAll('input[type="file"]').forEach(function(fileInput) {
+            // Tạo một bản sao của input file
+            const newFileInput = fileInput.cloneNode(true);
+            // Thay thế phần tử cũ bằng phần tử mới
+            fileInput.parentNode.replaceChild(newFileInput, fileInput);
+            preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            // Gán lại sự kiện change cho input mới
+           
+        });
+        document.getElementById('productImage').addEventListener('change', function(event) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = ''; // Xóa ảnh cũ trong preview
+            const files = event.target.files;
+            if (files) {
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'rounded border';
+                            img.style.height = '60px';
+                            img.style.width = '60px';
+                            img.style.objectFit = 'cover';
+                            img.style.marginRight = '8px';
+                            preview.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+        // Đặt lại tiêu đề modal nếu cần
+        document.getElementById('addProductModalLabel').textContent = 'Thêm sản phẩm';
+        })
+    }
+    
+
+    function productSearching() {
+    //Code để tìm kiếm trong trang product
+        const input = document.getElementById('searchInputProduct')
+        const table = document.getElementById('table-product')
+        const rows = table.getElementsByTagName('tr')
+        const category = document.getElementById('filter-dropdown-product').addEventListener('change', function () {
+            const selectedCategory = this.value
+            for(let i = 1; i < rows.length; i ++) {
+                const categoryCell = rows[i].getElementsByTagName("td")[4];
+                const categoryText = normalizeText2Meta(categoryCell.textContent);
+                if (selectedCategory === "" || categoryText === selectedCategory) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+
+            
+        })
+
+        const status = document.getElementById('filter-dropdown-status-product').addEventListener('change', function () {
+            const selectedStatus = this.value
+            for(let i = 1; i < rows.length; i ++) {
+                const selectedCell = rows[i].getElementsByTagName("td")[7];
+                const selectedText = normalizeText2Meta(selectedCell.textContent);
+                console.log(selectedText)
+                if (selectedStatus === "" || selectedText === selectedStatus) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        })
+        const sort = document.getElementById('filter-dropdown-sort-product').addEventListener('change', function () {
+            const selectedStatus = this.value
+            fetch('?controller=adminproduct&action=sort', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'sortBy=' + encodeURIComponent(selectedStatus)
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('table-product').innerHTML = data;
+            });
+        })
+
+        input.addEventListener("keyup", function () {
+            const filter = normalizeText(input.value);
+            for (let i = 1; i < rows.length; i++) { // Bỏ qua hàng tiêu đề (i = 0)
+            const cells = rows[i].getElementsByTagName("td");
+            let match = false;
+        
+            for (let j = 0; j < cells.length; j++) {
+                const text = normalizeText(cells[j].textContent);
+                if (text.includes(filter)) {
+                match = true;
+                break;
+                }
+            }
+        
+            rows[i].style.display = match ? "" : "none";
+        }})
+
+        
+
+
+
+        function normalizeText(text) {
+            return text
+              .normalize("NFD")                   // Tách dấu ra khỏi ký tự gốc
+              .replace(/[\u0300-\u036f]/g, "")   // Xóa dấu
+              .toLowerCase(); 
+        }
+
+        function normalizeText2Meta(text) {
+            return text
+              .normalize("NFD")                   // Tách dấu ra khỏi ký tự gốc
+              .replace(/[\u0300-\u036f]/g, "")   // Xóa dấu
+              .toLowerCase().replace(" ", "-"); 
+        }
+
+
     }
 });
 

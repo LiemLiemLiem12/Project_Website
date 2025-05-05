@@ -2,12 +2,14 @@
 class AdminproductController extends BaseController
 {
     private $productModel;
+    private $categoryModel;
 
     public function __construct()
     {
         $this->loadModel("ProductModel");
-
+        $this->loadModel('CategoryModel');
         $this->productModel = new ProductModel();
+        $this->categoryModel = new CategoryModel();
     }
 
     public function index()
@@ -16,9 +18,175 @@ class AdminproductController extends BaseController
             "frontend.admin.AdminProduct.index",
 
             [
-                "productList" => $this->productModel->getProductList_AdminProduct()
+                "productList" => $this->productModel->getProductList_AdminProduct(),
+                "categoryList" => $this->categoryModel->getAll(['name', 'id_Category'], 10000)
             ]
         );
     }
+
+    public function sort()
+    {
+        $sortBy = $_POST['sortBy'] ?? '';
+        switch ($sortBy) {
+            case 'moi-nhat':
+                $this->view(
+                    "frontend.admin.AdminProduct.sort",
+                    [
+                        "productList" => $this->productModel->getProductList_AdminProduct_newest()
+                    ]
+                );
+                break;
+            case 'cu-nhat':
+                $this->view(
+                    "frontend.admin.AdminProduct.sort",
+                    [
+                        "productList" => $this->productModel->getProductList_AdminProduct_oldest()
+                    ]
+                );
+                break;
+            case 'gia-tang':
+                $this->view(
+                    "frontend.admin.AdminProduct.sort",
+                    [
+                        "productList" => $this->productModel->getProductList_AdminProduct_priceASC()
+                    ]
+                );
+                break;
+            case 'gia-giam':
+                $this->view(
+                    "frontend.admin.AdminProduct.sort",
+                    [
+                        "productList" => $this->productModel->getProductList_AdminProduct_priceDESC()
+                    ]
+                );
+                break;
+            default:
+                $this->view(
+                    "frontend.admin.AdminProduct.sort",
+
+                    [
+                        "productList" => $this->productModel->getProductList_AdminProduct()
+                    ]
+                );
+                break;
+        }
+    }
+
+    private function copyFile($image)
+    {
+        $fileName = basename($image['name']);
+        $fileTmpName = $image['tmp_name'];
+        $fileError = $image['error'];
+
+        if ($fileError === UPLOAD_ERR_OK) {
+            $targetDirectory = './upload/img/DetailProduct/';
+            $newFileName = $fileName;
+            $targetPath = $targetDirectory . $newFileName;
+            $count = 1;
+
+            // Tránh trùng tên file
+            while (file_exists($targetPath)) {
+                $newFileName = $count . "_" . $fileName;
+                $targetPath = $targetDirectory . $newFileName;
+                $count++;
+            }
+
+            if (move_uploaded_file($fileTmpName, $targetPath)) {
+                return $newFileName; // ✅ Trả về tên file đã lưu
+            } else {
+                echo "❌ Có lỗi xảy ra khi tải lên file: " . $fileName;
+                http_response_code(500);
+                exit;
+            }
+        } else {
+            http_response_code(400);
+            echo "❌ File không hợp lệ hoặc lỗi khi upload: " . $fileName;
+            exit;
+        }
+    }
+
+
+    public function add()
+    {
+        // Kiểm tra sự tồn tại của tất cả các trường trước
+        if (isset($_POST['productName'], $_POST['productDesc'], $_POST['productCategory'], $_POST['productPrice'], $_POST['productStock'], $_FILES['productImage'], $_FILES['policyReturn'], $_FILES['policyWarranty'])) {
+            // Nếu tất cả các trường đều có dữ liệu, gán giá trị cho các biến
+            $productName = $_POST['productName'];
+            $productDesc = $_POST['productDesc'];
+            $productCategory = $_POST['productCategory'];
+            $productPrice = $_POST['productPrice'];
+            $productStock = $_POST['productStock'];
+            $productImage = $_FILES['productImage'];
+            $policyReturn = $_FILES['policyReturn'];
+            $policyWarranty = $_FILES['policyWarranty'];
+            $productTags = $_POST['productTags'];
+        } else {
+            echo "Không có dữ liệu nào được gửi lên!";
+            return;
+        }
+
+        $main_img = [];
+        for ($i = 0; $i < count($productImage['name']); $i++) {
+            $fileName = $productImage['name'][$i];
+            $fileTmpName = $productImage['tmp_name'][$i];
+            $fileError = $productImage['error'][$i];
+
+            if ($fileError === UPLOAD_ERR_OK) {
+                $targetDirectory = './upload/img/All-Product/';
+                $targetPath = $targetDirectory . basename($fileName);
+                $count = 1;
+
+                // Kiểm tra nếu file đã tồn tại, thêm số đếm vào tên file
+                while (file_exists($targetPath)) {
+                    $fileName = $count . "_" . basename($fileName);
+                    $targetPath = $targetDirectory . $fileName;
+                    $count++;
+                }
+
+                if (move_uploaded_file($fileTmpName, $targetPath)) {
+                    $main_img[] = $fileName;
+                } else {
+                    http_response_code(500);
+                    echo "Có lỗi xảy ra khi tải lên file: " . $fileName;
+                }
+            } else {
+                http_response_code(400);
+                echo "Lỗi tải lên file: " . $fileName . " với mã lỗi: " . $fileError;
+                return;
+            }
+        }
+
+        $warranty = $this->copyFile($policyWarranty);
+        $return = $this->copyFile($policyReturn);
+        $productTags = str_replace(' ', '-', $productTags);
+        // try {
+        // Nếu tất cả dữ liệu hợp lệ, gọi phương thức tạo sản phẩm
+
+        $this->productModel->store([
+            "name" => $productName,
+            "description" => $productDesc,
+            "id_Category" => $productCategory,
+            "original_price" => $productPrice,
+            "current_price" => $productPrice,
+            "store" => $productStock,
+            "CSGiaoHang" => $warranty,
+            "CSDoiTra" => $return,
+            "main_image" => $main_img[0],
+            "img2" => $main_img[1],
+            "img3" => $main_img[2],
+            "tag" => $productTags,
+        ]);
+        // Nếu thêm thành công, hiển thị lại danh sách sản phẩm
+        $this->view(
+            "frontend.admin.AdminProduct.sort",
+            [
+                "productList" => $this->productModel->getProductList_AdminProduct()
+            ]
+        );
+        // } catch (Exception $exception) {
+        //     echo "Lỗi: " . $exception->getMessage();
+        // }
+    }
+
 }
 ?>
