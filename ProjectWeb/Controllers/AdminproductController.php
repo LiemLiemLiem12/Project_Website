@@ -125,6 +125,10 @@ class AdminproductController extends BaseController
             return;
         }
 
+        $size_M_Quantity = isset($_POST['Size_M_quantity']) ? $_POST['Size_M_quantity'] : 0;
+        $size_L_Quantity = isset($_POST['Size_L_quantity']) ? $_POST['Size_L_quantity'] : 0;
+        $size_XL_Quantity = isset($_POST['Size_XL_quantity']) ? $_POST['Size_XL_quantity'] : 0;
+
         $main_img = [];
         for ($i = 0; $i < count($productImage['name']); $i++) {
             $fileName = $productImage['name'][$i];
@@ -175,6 +179,100 @@ class AdminproductController extends BaseController
             "img2" => $main_img[1],
             "img3" => $main_img[2],
             "tag" => $productTags,
+            "M" => $size_M_Quantity,
+            "L" => $size_L_Quantity,
+            "XL" => $size_XL_Quantity,
+        ]);
+        // Nếu thêm thành công, hiển thị lại danh sách sản phẩm
+        $this->view(
+            "frontend.admin.AdminProduct.sort",
+            [
+                "productList" => $this->productModel->getProductList_AdminProduct()
+            ]
+        );
+        // } catch (Exception $exception) {
+        //     echo "Lỗi: " . $exception->getMessage();
+        // }
+    }
+
+    public function edit()
+    {
+        // Kiểm tra sự tồn tại của tất cả các trường trước
+        if (isset($_POST['productName'], $_POST['productDesc'], $_POST['productCategory'], $_POST['productPrice'], $_POST['productStock'], $_FILES['productImage'], $_FILES['policyReturn'], $_FILES['policyWarranty'])) {
+            // Nếu tất cả các trường đều có dữ liệu, gán giá trị cho các biến
+            $productName = $_POST['productName'];
+            $productDesc = $_POST['productDesc'];
+            $productCategory = $_POST['productCategory'];
+            $productPrice = $_POST['productPrice'];
+            $productStock = $_POST['productStock'];
+            $productImage = $_FILES['productImage'];
+            $policyReturn = $_FILES['policyReturn'];
+            $policyWarranty = $_FILES['policyWarranty'];
+            $productTags = $_POST['productTags'];
+            $productID = $_POST['productID'];
+
+        } else {
+            echo "Không có dữ liệu nào được gửi lên!";
+            http_response_code(404);
+            exit;
+        }
+
+
+        $size_M_Quantity = isset($_POST['Size_M_quantity']) ? $_POST['Size_M_quantity'] : 0;
+        $size_L_Quantity = isset($_POST['Size_L_quantity']) ? $_POST['Size_L_quantity'] : 0;
+        $size_XL_Quantity = isset($_POST['Size_XL_quantity']) ? $_POST['Size_XL_quantity'] : 0;
+        $main_img = [];
+        for ($i = 0; $i < count($productImage['name']); $i++) {
+            $fileName = $productImage['name'][$i];
+            $fileTmpName = $productImage['tmp_name'][$i];
+            $fileError = $productImage['error'][$i];
+
+            if ($fileError === UPLOAD_ERR_OK) {
+                $targetDirectory = './upload/img/All-Product/';
+                $targetPath = $targetDirectory . basename($fileName);
+                $count = 1;
+
+                // Kiểm tra nếu file đã tồn tại, thêm số đếm vào tên file
+                while (file_exists($targetPath)) {
+                    $fileName = $count . "_" . basename($fileName);
+                    $targetPath = $targetDirectory . $fileName;
+                    $count++;
+                }
+
+                if (move_uploaded_file($fileTmpName, $targetPath)) {
+                    $main_img[] = $fileName;
+                } else {
+                    // Nếu lỗi khi di chuyển file, chỉ thông báo và tiếp tục vòng lặp
+                    continue;  // Tiếp tục với file tiếp theo
+                }
+            } else {
+                // Nếu có lỗi trong quá trình tải lên file (upload error), thông báo và bỏ qua file này
+                continue;  // Tiếp tục với file tiếp theo
+            }
+        }
+
+        $warranty = $this->copyFile($policyWarranty);
+        $return = $this->copyFile($policyReturn);
+        $productTags = str_replace(' ', '-', $productTags);
+        // try {
+        // Nếu tất cả dữ liệu hợp lệ, gọi phương thức tạo sản phẩm
+
+        $this->productModel->updateDataForProduct($productID, [
+            "name" => $productName,
+            "description" => $productDesc,
+            "id_Category" => $productCategory,
+            "original_price" => $productPrice,
+            "current_price" => $productPrice,
+            "store" => $productStock,
+            "CSGiaoHang" => $warranty,
+            "CSDoiTra" => $return,
+            "main_image" => $main_img[0],
+            "img2" => $main_img[1],
+            "img3" => $main_img[2],
+            "tag" => $productTags,
+            "M" => $size_M_Quantity,
+            "L" => $size_L_Quantity,
+            "XL" => $size_XL_Quantity,
         ]);
         // Nếu thêm thành công, hiển thị lại danh sách sản phẩm
         $this->view(

@@ -2,6 +2,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.getElementById('sidebarToggleBtn');
     const closeBtn = document.getElementById('sidebarCloseBtn');
+
+    setUpCheckbox('Size_M', 'Size_M_quantity');
+    setUpCheckbox('Size_L', 'Size_L_quantity');
+    setUpCheckbox('Size_XL', 'Size_XL_quantity');
+
     if (toggleBtn && sidebar) {
         toggleBtn.addEventListener('click', function() {
             sidebar.classList.toggle('show');
@@ -247,67 +252,66 @@ document.addEventListener('DOMContentLoaded', function() {
             let content = CKEDITOR.instances.productDesc.getData();
             countWord.textContent = `${countWords(content)}/2000`;
             if (countWords(content) > 2000) {
-                console.log('hello')
                 countWord.style.setProperty('color', 'red', 'important');
             } else {
                 countWord.style.setProperty('color', 'black', 'important'); // Hoặc màu khác tùy thích
             }
         });
         
-        form.addEventListener('submit', function (e) {
-            e.preventDefault(); // Ngăn gửi mặc định
-            CKEDITOR.instances.productDesc.updateElement();
-            const productDesc = document.getElementById('productDesc')
-            const content = productDesc.value.trim()
-            const errorDiv = document.getElementById('productDescError');
-            if (countWords(content) < 10 || countWords(content) > 1000) {
-                productDesc.setCustomValidity('Mô tả phải từ 10 đến 1000 ký tự');
-                errorDiv.classList.remove('d-none');
-              } else {
-                productDesc.setCustomValidity('');
-                errorDiv.classList.add('d-none');
-              }
+        // form.addEventListener('submit', function (e) {
+        //     e.preventDefault(); // Ngăn gửi mặc định
+        //     CKEDITOR.instances.productDesc.updateElement();
+        //     const productDesc = document.getElementById('productDesc')
+        //     const content = productDesc.value.trim()
+        //     const errorDiv = document.getElementById('productDescError');
+        //     if (countWords(content) < 10 || countWords(content) > 1000) {
+        //         productDesc.setCustomValidity('Mô tả phải từ 10 đến 1000 ký tự');
+        //         errorDiv.classList.remove('d-none');
+        //       } else {
+        //         productDesc.setCustomValidity('');
+        //         errorDiv.classList.add('d-none');
+        //       }
       
-          if (!form.checkValidity()) {
-            // Nếu form không hợp lệ, hiển thị lỗi bằng Bootstrap
-            form.classList.add('was-validated');
-            return;
-          }
-      
-          // ✅ Form hợp lệ → xử lý dữ liệu
-          const formData = new FormData(this);
-      
-        //   for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
+        //   if (!form.checkValidity()) {
+        //     // Nếu form không hợp lệ, hiển thị lỗi bằng Bootstrap
+        //     form.classList.add('was-validated');
+        //     return;
         //   }
+      
+        //   // ✅ Form hợp lệ → xử lý dữ liệu
+        //   const formData = new FormData(this);
+      
+        // //   for (let [key, value] of formData.entries()) {
+        // //     console.log(key, value);
+        // //   }
           
-          fetch('?controller=adminproduct&action=add',{
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (!response.ok) throw new Error('Thêm thất bại');
-            return response.text();
-          })
-          .then(data => {
-            console.log(data)
-            const addProductModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
-            if (addProductModal) addProductModal.hide();
+        //   fetch('?controller=adminproduct&action=add',{
+        //     method: 'POST',
+        //     body: formData
+        //   })
+        //   .then(response => {
+        //     if (!response.ok) throw new Error('Thêm thất bại');
+        //     return response.text();
+        //   })
+        //   .then(data => {
+        //     console.log(data)
+        //     const addProductModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+        //     if (addProductModal) addProductModal.hide();
         
-            // Reset form + reset trạng thái validate
-            this.reset();
-            this.classList.remove('was-validated');
+        //     // Reset form + reset trạng thái validate
+        //     this.reset();
+        //     this.classList.remove('was-validated');
             
-            document.getElementById('table-product').innerHTML = data
-            // Thông báo
-            alert('✅ Đã thêm sản phẩm thành công');
-          })
-          .catch(error => {
-            console.error('❌ Lỗi gửi dữ liệu:', error);
-            alert('❌ Lỗi gửi dữ liệu: ' + error.message);
-          })
-          // Đóng modal (giả lập)
-        });
+        //     document.getElementById('table-product').innerHTML = data
+        //     // Thông báo
+        //     alert('✅ Đã thêm sản phẩm thành công');
+        //   })
+        //   .catch(error => {
+        //     console.error('❌ Lỗi gửi dữ liệu:', error);
+        //     alert('❌ Lỗi gửi dữ liệu: ' + error.message);
+        //   })
+        //   // Đóng modal (giả lập)
+        // });
       }
       
 
@@ -401,51 +405,51 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Product Double Click Row ---
-    if (document.querySelectorAll('.product-table tbody tr.product-row').length) {
-        document.querySelectorAll('.product-table tbody tr.product-row').forEach(function(row) {
-            row.addEventListener('dblclick', function() {
-                // Lấy dữ liệu từ data-attribute
-                document.getElementById('detailCode').textContent = row.getAttribute('data-id_product') || '';
-                document.getElementById('detailName').textContent = row.getAttribute('data-name') || '';
-                document.getElementById('detailCategory').textContent = row.getAttribute('data-id_category') || '';
-                document.getElementById('detailOriginalPrice').textContent = row.getAttribute('data-original_price') || '';
-                document.getElementById('detailCurrentPrice').textContent = row.getAttribute('data-current_price') || '';
-                document.getElementById('detailDiscount').textContent = row.getAttribute('data-discount_percent') ? '-' + row.getAttribute('data-discount_percent') + '%' : '';
-                document.getElementById('detailStock').textContent = row.getAttribute('data-stock') || '';
-                document.getElementById('detailStatus').textContent = row.getAttribute('data-hide') === "0" ? "Còn hàng" : "Hết hàng";
-                document.getElementById('detailClick').textContent = row.getAttribute('data-click_count') || '';
-                document.getElementById('detailCreated').textContent = row.getAttribute('data-created_at') || '';
-                document.getElementById('detailUpdated').textContent = row.getAttribute('data-updated_at') || '';
-                document.getElementById('detailLink').textContent = row.getAttribute('data-link') || '';
-                document.getElementById('detailMeta').textContent = row.getAttribute('data-meta') || '';
-                document.getElementById('detailOrder').textContent = row.getAttribute('data-order') || '';
-                document.getElementById('detailTags').textContent = row.getAttribute('data-tags') || '';
-                document.getElementById('detailPolicyReturn').src = row.getAttribute('data-policy_return') || '';
-                document.getElementById('detailPolicyWarranty').src = row.getAttribute('data-policy_warranty') || '';
-                document.getElementById('detailDesc').innerHTML = row.getAttribute('data-description') || '';
-                document.getElementById('detailImage').src = row.getAttribute('data-main_image') || '';
-                // Gallery ảnh phụ
-                const gallery = document.getElementById('detailGallery');
-                gallery.innerHTML = '';
-                const imgs = (row.getAttribute('data-img') || '').split(',');
-                imgs.forEach(src => {
-                    if (src.trim()) {
-                        const img = document.createElement('img');
-                        img.src = src.trim();
-                        img.className = 'rounded border';
-                        img.style.height = '50px';
-                        img.style.width = '50px';
-                        img.style.objectFit = 'cover';
-                        img.style.marginRight = '6px';
-                        gallery.appendChild(img);
-                    }
-                });
-                // Hiện modal
-                var modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
-                modal.show();
-            });
-        });
-    }
+    // if (document.querySelectorAll('.product-table tbody tr.product-row').length) {
+    //     document.querySelectorAll('.product-table tbody tr.product-row').forEach(function(row) {
+    //         row.addEventListener('dblclick', function() {
+    //             // Lấy dữ liệu từ data-attribute
+    //             document.getElementById('detailCode').textContent = row.getAttribute('data-id_product') || '';
+    //             document.getElementById('detailName').textContent = row.getAttribute('data-name') || '';
+    //             document.getElementById('detailCategory').textContent = row.getAttribute('data-id_category') || '';
+    //             document.getElementById('detailOriginalPrice').textContent = row.getAttribute('data-original_price') || '';
+    //             document.getElementById('detailCurrentPrice').textContent = row.getAttribute('data-current_price') || '';
+    //             document.getElementById('detailDiscount').textContent = row.getAttribute('data-discount_percent') ? '-' + row.getAttribute('data-discount_percent') + '%' : '';
+    //             document.getElementById('detailStock').textContent = row.getAttribute('data-stock') || '';
+    //             document.getElementById('detailStatus').textContent = row.getAttribute('data-hide') === "0" ? "Còn hàng" : "Hết hàng";
+    //             document.getElementById('detailClick').textContent = row.getAttribute('data-click_count') || '';
+    //             document.getElementById('detailCreated').textContent = row.getAttribute('data-created_at') || '';
+    //             document.getElementById('detailUpdated').textContent = row.getAttribute('data-updated_at') || '';
+    //             document.getElementById('detailLink').textContent = row.getAttribute('data-link') || '';
+    //             document.getElementById('detailMeta').textContent = row.getAttribute('data-meta') || '';
+    //             document.getElementById('detailOrder').textContent = row.getAttribute('data-order') || '';
+    //             document.getElementById('detailTags').textContent = row.getAttribute('data-tags') || '';
+    //             document.getElementById('detailPolicyReturn').src = row.getAttribute('data-policy_return') || '';
+    //             document.getElementById('detailPolicyWarranty').src = row.getAttribute('data-policy_warranty') || '';
+    //             document.getElementById('detailDesc').innerHTML = row.getAttribute('data-description') || '';
+    //             document.getElementById('detailImage').src = row.getAttribute('data-main_image') || '';
+    //             // Gallery ảnh phụ
+    //             const gallery = document.getElementById('detailGallery');
+    //             gallery.innerHTML = '';
+    //             const imgs = (row.getAttribute('data-img') || '').split(',');
+    //             imgs.forEach(src => {
+    //                 if (src.trim()) {
+    //                     const img = document.createElement('img');
+    //                     img.src = src.trim();
+    //                     img.className = 'rounded border';
+    //                     img.style.height = '50px';
+    //                     img.style.width = '50px';
+    //                     img.style.objectFit = 'cover';
+    //                     img.style.marginRight = '6px';
+    //                     gallery.appendChild(img);
+    //                 }
+    //             });
+    //             // Hiện modal
+    //             var modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+    //             modal.show();
+    //         });
+    //     });
+    // }
 
     // AdminOrder specific functions
     function initializeAdminOrder() {
@@ -716,13 +720,64 @@ document.addEventListener('DOMContentLoaded', function() {
     //         });
     //     });
     // }
+
+    document.querySelector('.product-table').addEventListener('dblclick', function(e) {
+        const row = e.target.closest('tr.product-row')
+
+        function decodeHtmlEntities(encodedString) {
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = encodedString;
+            return tempDiv.textContent || tempDiv.innerText;
+        }
+
+        if(row) {
+            document.getElementById('detailCode').textContent = row.getAttribute('data-id_product') || '';
+            document.getElementById('detailName').textContent = row.getAttribute('data-name') || '';
+            document.getElementById('detailCategory').textContent = row.getAttribute('data-id_category') || '';
+            document.getElementById('detailOriginalPrice').textContent = row.getAttribute('data-original_price') || '';
+            document.getElementById('detailCurrentPrice').textContent = row.getAttribute('data-current_price') || '';
+            document.getElementById('detailDiscount').textContent = row.getAttribute('data-discount_percent') ? '-' + row.getAttribute('data-discount_percent') + '%' : '';
+            document.getElementById('detailStock').textContent = row.getAttribute('data-stock') || '';
+            document.getElementById('detailStatus').textContent = row.getAttribute('data-hide') === "0" ? "Còn hàng" : "Hết hàng";
+            document.getElementById('detailClick').textContent = row.getAttribute('data-click_count') || '';
+            document.getElementById('detailCreated').textContent = row.getAttribute('data-created_at') || '';
+            document.getElementById('detailUpdated').textContent = row.getAttribute('data-updated_at') || '';
+            document.getElementById('detailLink').textContent = row.getAttribute('data-link') || '';
+            document.getElementById('detailMeta').textContent = row.getAttribute('data-meta') || '';
+            document.getElementById('detailOrder').textContent = row.getAttribute('data-order') || '';
+            document.getElementById('detailTags').textContent = row.getAttribute('data-tags') || '';
+            document.getElementById('detailPolicyReturn').src = row.getAttribute('data-policy_return') || '';
+            document.getElementById('detailPolicyWarranty').src = row.getAttribute('data-policy_warranty') || '';
+            document.getElementById('detailDesc').textContent = atob(row.getAttribute('data-description')) || '';
+            document.getElementById('detailImage').src = row.getAttribute('data-main_image') || '';
+            // Gallery ảnh phụ
+            const gallery = document.getElementById('detailGallery');
+            gallery.innerHTML = '';
+            const imgs = (row.getAttribute('data-img') || '').split(',');
+            imgs.forEach(src => {
+                if (src.trim()) {
+                    const img = document.createElement('img');
+                    img.src = src.trim();
+                    img.className = 'rounded border';
+                    img.style.height = '50px';
+                    img.style.width = '50px';
+                    img.style.objectFit = 'cover';
+                    img.style.marginRight = '6px';
+                    gallery.appendChild(img);
+                }
+            });
+            // Hiện modal
+            var modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+            modal.show();
+        }
+    })
+
     document.querySelector('.product-table').addEventListener('click', function(e) {
         const btnView = e.target.closest('.btn-view')
         const btnEdit = e.target.closest('.btn-edit')
         const checkboxAll = e.target.closest('#select-all')
         const tagInputContainer = document.getElementById('tagInputContainer');
         const tagInput = document.getElementById('tagInput');
-
 
         function renderTags() {
             tagInputContainer.querySelectorAll('.tag-item').forEach(e => e.remove());
@@ -767,6 +822,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }else if(btnEdit) {
+            const form = document.getElementById('addProductForm')
+            
+
             const row = btnEdit.closest('tr.product-row');
             var tags = []
             if (!row) return;
@@ -799,15 +857,138 @@ document.addEventListener('DOMContentLoaded', function() {
                             img.style.marginRight = '8px';
                             preview.appendChild(img);
             });
-
+            const tmpPreview = preview.innerHTML;
             if (window.CKEDITOR && CKEDITOR.instances['productDesc']) {
-                CKEDITOR.instances['productDesc'].setData(row.getAttribute('data-description') || '');
+                CKEDITOR.instances['productDesc'].setData(atob(row.getAttribute('data-description')) || '');
             }
 
             document.getElementById('productImage').removeAttribute('required')
             document.getElementById('policyWarranty').removeAttribute('required')
             document.getElementById('policyReturn').removeAttribute('required')
 
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Ngăn gửi mặc định
+                CKEDITOR.instances.productDesc.updateElement();
+                const productDesc = document.getElementById('productDesc')
+                const content = productDesc.value.trim()
+                
+                const image = document.getElementById('productImage')
+                const files = image.files;
+                const isValid = files.length === 3 && [...files].every(file => file.type.startsWith('image/'));
+                if(tmpPreview != document.getElementById('imagePreview').innerHTML) {
+                    if (!isValid) {
+                        image.setCustomValidity('Bạn phải chọn đúng 3 ảnh');
+                      } else {
+                        image.setCustomValidity(''); 
+                      }
+                }else {
+                    image.setCustomValidity('');
+                }
+                const errorDiv = document.getElementById('productDescError');
+                if (countWords(content) < 10 || countWords(content) > 1000) {
+                    productDesc.setCustomValidity('Mô tả phải từ 10 đến 1000 ký tự');
+                    errorDiv.classList.remove('d-none');
+                  } else {
+                    productDesc.setCustomValidity('');
+                    errorDiv.classList.add('d-none');
+                  }
+          
+              if (!form.checkValidity()) {
+                // Nếu form không hợp lệ, hiển thị lỗi bằng Bootstrap
+                form.classList.add('was-validated');
+                return;
+              }
+          
+              // ✅ Form hợp lệ → xử lý dữ liệu
+              const formData = new FormData(this);
+                const arrayImgFile = [];
+
+                async function createFileFromImageUrl(url) {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    const fileName = url.split('/').pop();
+                    const file = new File([blob], fileName, { type: blob.type });
+                    return file;
+                }
+
+                const processSubmit = async () => {
+                if (document.getElementById('policyReturn').files.length == 0) {
+                    const returnFile = await createFileFromImageUrl(
+                        row.getAttribute('data-policy_return')
+                    );
+                    formData.set('policyReturn', returnFile);
+                }
+
+                if (document.getElementById('policyWarranty').files.length == 0) {
+                    const warrantyFile = await createFileFromImageUrl(
+                        row.getAttribute('data-policy_warranty')
+                    );
+                    formData.set('policyWarranty', warrantyFile);
+                }
+
+                // Xử lý các ảnh phụ
+                await Promise.all(
+                    arrayImg.map(async (url) => {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    const fileName = url.split('/').pop();
+                    const file = new File([blob], fileName, { type: blob.type });
+                    arrayImgFile.push(file);
+                    })
+                );
+
+                if (image.files.length == 0) {
+                    arrayImgFile.forEach(file => {
+                    formData.append('productImage[]', file);
+                    });
+                }
+
+                formData.append('productID', row.getAttribute('data-id_product'));
+
+                // Kiểm tra dữ liệu
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+
+                // Gửi dữ liệu
+                fetch('?controller=adminproduct&action=edit', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Sửa thất bại: ${text}`);
+                    });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log(data);
+                    const addProductModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+                    if (addProductModal) addProductModal.hide();
+
+                    this.reset();
+                    this.classList.remove('was-validated');
+                    document.getElementById('table-product').innerHTML = data;
+
+                    alert('✅ Đã sửa sản phẩm thành công');
+                })
+                .catch(error => {
+                    console.error('❌ Lỗi gửi dữ liệu:', error);
+                    alert('❌ Lỗi gửi dữ liệu: ' + error.message);
+                });
+                };
+
+                // Gọi hàm xử lý chính
+                processSubmit();
+
+              
+              
+              
+              
+            });
             // ... fill các trường khác nếu có ...
             var modal = new bootstrap.Modal(document.getElementById('addProductModal'));
             modal.show();
@@ -827,8 +1008,112 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('addProductModal');
             const form = document.getElementById('addProductForm');
             const descError = document.getElementById('productDescError')
+            document.getElementById('productImage').setAttribute('required', '')
+            document.getElementById('policyWarranty').setAttribute('required', '')
+            document.getElementById('policyReturn').setAttribute('required', '')
+
+            const inputQuantity = document.querySelectorAll('input[type="number"][id^="Size_"]');
+            inputQuantity.forEach(element => {
+                element.value = '';
+                element.disabled = true;
+            })
             descError.classList.add('d-none')
             form.classList.remove('was-validated')
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Ngăn gửi mặc định
+                CKEDITOR.instances.productDesc.updateElement();
+                const productDesc = document.getElementById('productDesc')
+                const content = productDesc.value.trim()
+                const errorDiv = document.getElementById('productDescError');
+
+                const image = document.getElementById('productImage')
+                const files = image.files;
+
+                const Size_M = document.getElementById('Size_M');
+                const Size_L = document.getElementById('Size_L');
+                const Size_XL = document.getElementById('Size_XL');
+
+                const Size_M_quantity = Size_M.checked ? parseInt(document.getElementById('Size_M_quantity').value) || 0 : 0;
+                const Size_L_quantity = Size_L.checked ? parseInt(document.getElementById('Size_L_quantity').value) || 0 : 0;
+                const Size_XL_quantity = Size_XL.checked ? parseInt(document.getElementById('Size_XL_quantity').value) || 0 : 0;
+                totalSizeQuantity = Size_M_quantity + Size_L_quantity + Size_XL_quantity
+                const productStock = parseInt(document.getElementById('productStock').value) || 0;
+
+                const size_Validator = document.getElementById('size_total_validator')
+
+                const size_Feedback = size_Validator.nextElementSibling; // Lấy div.invalid-feedback kế tiếp
+            
+                // Kiểm tra xem có ít nhất một size được chọn không
+                const anySizeChecked = Size_M.checked || Size_L.checked || Size_XL.checked;
+                
+                if (!anySizeChecked) {
+                    size_Validator.setCustomValidity('Vui lòng chọn ít nhất một size');
+                    size_Feedback.textContent = 'Vui lòng chọn ít nhất một size';
+                } else if (totalSizeQuantity !== productStock) {
+                    size_Validator.setCustomValidity('Tổng số lượng các size phải bằng tồn kho tổng');
+                    size_Feedback.textContent = 'Tổng số lượng các size phải bằng tồn kho tổng';
+                } else {
+                    size_Validator.setCustomValidity('');
+                    size_Feedback.textContent = '';
+                }
+
+
+                const isValid = files.length === 3 && [...files].every(file => file.type.startsWith('image/'));
+                if (!isValid) {
+                    image.setCustomValidity('Bạn phải chọn đúng 3 ảnh');
+                  } else {
+                    image.setCustomValidity(''); 
+                  }
+                  
+                if (countWords(content) < 10 || countWords(content) > 1000) {
+                    productDesc.setCustomValidity('Mô tả phải từ 10 đến 1000 ký tự');
+                    errorDiv.classList.remove('d-none');
+                  } else {
+                    productDesc.setCustomValidity('');
+                    errorDiv.classList.add('d-none');
+                  }
+          
+              if (!form.checkValidity()) {
+                // Nếu form không hợp lệ, hiển thị lỗi bằng Bootstrap
+                form.classList.add('was-validated');
+                return;
+              }
+          
+              // ✅ Form hợp lệ → xử lý dữ liệu
+              const formData = new FormData(this);
+          
+              for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+              }
+              
+              fetch('?controller=adminproduct&action=add',{
+                method: 'POST',
+                body: formData
+              })
+              .then(response => {
+                if (!response.ok) throw new Error('Thêm thất bại');
+                return response.text();
+              })
+              .then(data => {
+                console.log(data)
+                const addProductModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+                if (addProductModal) addProductModal.hide();
+            
+                // Reset form + reset trạng thái validate
+                this.reset();
+                this.classList.remove('was-validated');
+                
+                document.getElementById('table-product').innerHTML = data
+                // Thông báo
+                alert('✅ Đã thêm sản phẩm thành công');
+              })
+              .catch(error => {
+                console.error('❌ Lỗi gửi dữ liệu:', error);
+                alert('❌ Lỗi gửi dữ liệu: ' + error.message);
+              })
+              // Đóng modal (giả lập)
+            });
 
         // Reset tất cả các input, select, textarea
         modal.querySelectorAll('input, select, textarea').forEach(function (el) {
@@ -969,5 +1254,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     }
+
+    function setUpCheckbox(checkboxID, inputID) {
+        const checkbox = document.getElementById(checkboxID);
+        const input = document.getElementById(inputID);
+
+        checkbox.addEventListener('change', function() {
+            if(this.checked) {
+                input.disabled = false;
+                input.value = 0;
+            } else {
+                input.disabled = true;
+                input.value = '';
+            }
+        })
+    }
+    
+
 });
 

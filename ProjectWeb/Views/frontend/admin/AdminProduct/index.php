@@ -132,7 +132,7 @@
                             foreach ($productList as $data) {
                                 echo '
                                     <tr class="product-row" data-id_product="' . $data['id_product'] . '" data-name="' . $data['product_name'] . '"
-                                        data-description="' . $data['description'] . '"
+                                        data-description="' . base64_encode($data['description']) . '"
                                         data-original_price="' . $data['original_price'] . '" data-discount_percent="' . $data['discount_percent'] . '" data-current_price="' . $data['current_price'] . '"
                                         data-created_at="' . $data['created_at'] . '" data-updated_at="' . $data['updated_at'] . '" data-id_category="' . $data['category_name'] . '" id_category = "' . $data['id_Category'] . '"
                                         data-main_image="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '"
@@ -218,12 +218,13 @@
                             <input type="file" class="form-control" id="productImage" name="productImage[]"
                                 accept="image/*" multiple required>
                             <div id="imagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
-                            <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
+                            <div class="invalid-feedback">Vui lòng chọn đủ 3 ảnh</div>
                         </div>
                         <div class="mb-3">
                             <label for="productName" class="form-label">Tên Sản Phẩm</label>
                             <input type="text" class="form-control" id="productName" name="productName" required
-                                pattern="[A-Za-zÀ-ÿ\s]+" maxlength="1000" minlength="4">
+                                pattern="^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểẾỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸỳỵỷỹ\s]+$"
+                                maxlength="1000" minlength="4">
                             <div class="invalid-feedback">Vui lòng nhập tên sản phẩm hợp lệ (không có số).</div>
                         </div>
                         <div class="mb-3">
@@ -255,35 +256,83 @@
                             </div>
                             <div class="mb-3">
                                 <label for="productStock" class="form-label">Tồn Kho</label>
-                                <input type="number" class="form-control" id="productStock" name="productStock" min="0"
-                                    required>
-                                <div class="invalid-feedback">Vui lòng nhập số lượng tồn kho hợp lệ (0<<
-                                        10.000.000đ)</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="policyReturn" class="form-label">Chính sách đổi trả (ảnh)</label>
-                                    <input type="file" class="form-control" id="policyReturn" name="policyReturn"
-                                        accept="image/*" required>
-                                    <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="policyWarranty" class="form-label">Chính sách bảo hành (ảnh)</label>
-                                    <input type="file" class="form-control" id="policyWarranty" name="policyWarranty"
-                                        accept="image/*" required>
-                                    <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
+                                <input type="number" class="form-control mb-3" id="productStock" name="productStock"
+                                    min="0" required>
+                                <div class="invalid-feedback mt-3">Vui lòng nhập số lượng tồn kho hợp lệ</div>
 
+                                <div class="d-flex flex-column ms-0 w-25">
+                                    <!-- Size M -->
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="w-50 d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input me-2" id="Size_M"
+                                                name="Size_M">
+                                            <label for="Size_M" class="form-label mb-0">Size M</label>
+                                        </div>
+                                        <div class="w-50">
+                                            <input type="number" class="form-control" id="Size_M_quantity"
+                                                name="Size_M_quantity" min="0" max="10000000" disabled>
+                                        </div>
+                                    </div>
+
+                                    <!-- Size L -->
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="w-50 d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input me-2" id="Size_L"
+                                                name="Size_L">
+                                            <label for="Size_L" class="form-label mb-0">Size L</label>
+                                        </div>
+                                        <div class="w-50">
+                                            <input type="number" class="form-control" id="Size_L_quantity"
+                                                name="Size_L_quantity" min="0" max="10000000" disabled>
+                                        </div>
+                                    </div>
+
+                                    <!-- Size XL -->
+                                    <div class="d-flex align-items-center">
+                                        <div class="w-50 d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input me-2" id="Size_XL"
+                                                name="Size_XL">
+                                            <label for="Size_XL" class="form-label mb-0">Size XL</label>
+                                        </div>
+                                        <div class="w-50">
+                                            <input type="number" class="form-control" id="Size_XL_quantity"
+                                                name="Size_XL_quantity" min="0" max="10000000" disabled>
+                                        </div>
+                                    </div>
+
+                                    <input type="text" id="size_total_validator" hidden>
+                                    <div class="invalid-feedback"></div>
                                 </div>
+
+
+
+
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+
+                            <div class="mb-3">
+                                <label for="policyReturn" class="form-label">Chính sách đổi trả (ảnh)</label>
+                                <input type="file" class="form-control" id="policyReturn" name="policyReturn"
+                                    accept="image/*" required>
+                                <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
                             </div>
+                            <div class="mb-3">
+                                <label for="policyWarranty" class="form-label">Chính sách bảo hành (ảnh)</label>
+                                <input type="file" class="form-control" id="policyWarranty" name="policyWarranty"
+                                    accept="image/*" required>
+                                <div class="invalid-feedback">Vui lòng nhập ảnh hợp lệ</div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+                        </div>
                 </form>
             </div>
         </div>
     </div>
     <!-- Modal Sửa Sản Phẩm -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel"
+    <!-- <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -373,7 +422,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Modal Chi Tiết Sản Phẩm -->
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel"
         aria-hidden="true">

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 04, 2025 lúc 11:25 AM
+-- Thời gian đã tạo: Th5 07, 2025 lúc 09:02 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -153,26 +153,29 @@ CREATE TABLE `product` (
   `meta` varchar(255) DEFAULT NULL,
   `hide` int(11) DEFAULT NULL,
   `order` int(11) DEFAULT NULL,
-  `click_count` int(11) DEFAULT NULL,
+  `click_count` int(11) DEFAULT 0,
   `store` int(11) NOT NULL DEFAULT 0,
   `img2` varchar(255) NOT NULL,
   `img3` varchar(255) NOT NULL,
   `tag` text NOT NULL,
   `CSDoiTra` varchar(255) NOT NULL,
-  `CSGiaoHang` varchar(255) NOT NULL
+  `CSGiaoHang` varchar(255) NOT NULL,
+  `M` int(11) NOT NULL DEFAULT 0,
+  `L` int(11) NOT NULL DEFAULT 0,
+  `XL` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `product`
 --
 
-INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `link`, `meta`, `hide`, `order`, `click_count`, `store`, `img2`, `img3`, `tag`, `CSDoiTra`, `CSGiaoHang`) VALUES
-(1, 'Áo sơ mi nam', 'Chất liệu cotton thoáng mát', 350000.00, 10, 315000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 1, 'item1.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1, 20, 10, 'item1.webp', 'item1.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
-(2, 'Quần jeans nữ', 'Form ôm body tôn dáng', 500000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 2, 'item2.jpg', '/quan-jeans', 'quan-jeans', 0, 2, 12, 10, 'item2.webp', 'item2.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
-(3, 'Giày thể thao', 'Giày sneaker trẻ trung', 700000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 3, 'item3.jpg', '/giay-sneaker', 'giay-sneaker', 0, 3, 5, 0, 'item3.webp', 'item3.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
-(4, 'Túi xách nữ', 'Túi da PU cao cấp', 450000.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 4, 'item4.jpg', '/tui-xach', 'tui-xach', 0, 4, 7, 10, 'item4.webp', 'item4.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
-(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 1, 'item5.jpg', '/ao-thun', 'ao-thun', 0, 5, 30, 0, 'item5.webp', 'item5.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp'),
-(6, 'Quần KAKI', 'Mô tả quần kaki', 400000.00, 10, 360000.00, '2025-05-04 13:59:31', '2025-05-04 13:59:31', 2, 'item1.jpg', '/item1', 'quan-kaki', 0, 5, 0, 20, 'item1.webp', 'item1.webp', 'quan', '', '');
+INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `link`, `meta`, `hide`, `order`, `click_count`, `store`, `img2`, `img3`, `tag`, `CSDoiTra`, `CSGiaoHang`, `M`, `L`, `XL`) VALUES
+(1, 'Áo sơ mi nam BỰ HONWwwwww', '<p><strong>none</strong></p>\r\n\r\n<table border=\"1\" cellpadding=\"1\" cellspacing=\"1\" style=\"width:500px\">\r\n	<tbody>\r\n		<tr>\r\n			<td>&nbsp;</td>\r\n			<td>&nbsp;</td>\r\n		</tr>\r\n		<tr>\r\n			<td>&nbsp;</td>\r\n			<td>&nbsp;</td>\r\n		</tr>\r\n		<tr>\r\n			<td>&nbsp;</td>\r\n			<td>&nbsp;</td>\r\n		</tr>\r\n	</tbody>\r\n</table>\r\n\r\n<p>&nbsp;</p>\r\n', 123456.00, 10, 123456.00, '2025-05-01 14:25:49', '2025-05-06 21:49:07', 4, '1_6_5_4_3_2_1__a76f4802-679e-4ab5-a961-ec8cca3c3e49.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1, 20, 123, '1_6_5_4_3_2_1_ngya.png', '1_6_5_4_3_2_1_ODOT.png', 'tag-tag', '1_3_2_1_doitra_1.webp', '1_3_2_1_cs_giaohanh.webp', 0, 0, 0),
+(2, 'JEAN FEMALE', '<p>Form &ocirc;m body t&ocirc;n d&aacute;ng</p>\r\n', 400000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-06 18:02:46', 1, '1_2_1_item2.webp', '/quan-jeans', 'quan-jeans', 0, 2, 12, 10, '1_1_item2.webp', '1_1_item2.jpg', 'ao-thun,ao-somi,quan-tay', 'buffet.png', '1_3_cs_giaohanh.webp', 0, 0, 0),
+(3, 'Giày thể thao', '<p>Gi&agrave;y sneaker trẻ trung</p>\r\n', 595000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-06 18:20:31', 3, '2_1_bruh.png', '/giay-sneaker', 'giay-sneaker', 0, 3, 5, 0, '2_1_really.png', 'Whiskers Meme Sticker Aegean Cat PNG - Free Download.jpg', 'ao-thun,ao-somi,quan-tay', '4_doitra_1.webp', '4_cs_giaohanh.webp', 0, 0, 0),
+(4, 'Túi xách', '<p>T&uacute;i da PU cao cấp</p>\r\n', 427500.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-06 15:54:20', 1, '1_item4.jpg', '/tui-xach', 'tui-xach', 0, 4, 7, 10, '1_item4.webp', '2_1_item4.webp', 'ao-thun,ao-somi,quan-tay', '2_doitra_1.webp', '2_cs_giaohanh.webp', 0, 0, 0),
+(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 1, 'item5.jpg', '/ao-thun', 'ao-thun', 0, 5, 30, 0, 'item5.webp', 'item5.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp', 0, 0, 0),
+(6, 'Quần KAKI', 'Mô tả quần kaki', 400000.00, 10, 360000.00, '2025-05-04 13:59:31', '2025-05-04 13:59:31', 2, 'item1.jpg', '/item1', 'quan-kaki', 0, 5, 0, 20, 'item1.webp', 'item1.webp', 'quan', '', '', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -347,7 +350,7 @@ ALTER TABLE `order`
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT cho bảng `review`
