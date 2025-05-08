@@ -286,5 +286,45 @@ class AdminproductController extends BaseController
         // }
     }
 
+    public function delete()
+    {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        if (is_array($data)) {
+            foreach ($data as $id) {
+                $this->productModel->updateDataForProduct($id, [
+                    "hide" => 1
+                ]);
+            }
+        } else {
+            echo 'Lỗi truyền dữ liệu';
+            http_response_code(404);
+        }
+
+        $this->view(
+            "frontend.admin.AdminProduct.sort",
+            [
+                "productList" => $this->productModel->getProductList_AdminProduct()
+            ]
+        );
+    }
+
+    public function upload()
+    {
+        if (isset($_FILES['upload'])) {
+            $file = $_FILES['upload'];
+            $target = './upload/img/Description_img/' . basename($file['name']);
+
+            if (move_uploaded_file($file['tmp_name'], $target)) {
+                $funcNum = $_GET['CKEditorFuncNum'];
+                $url = './upload/img/Description_img/' . basename($file['name']);
+                $message = 'Tải ảnh lên thành công';
+                echo "<script>window.parent.CKEDITOR.tools.callFunction($funcNum, '$url', '$message');</script>";
+            } else {
+                echo 'Không thể tải ảnh lên.';
+            }
+        }
+    }
+
 }
 ?>

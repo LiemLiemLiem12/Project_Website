@@ -25,7 +25,7 @@
                                         data-main_image="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '"
                                         data-img="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img2'] . ',/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img3'] . '"
                                         data-link="' . $data['link'] . '" data-meta="' . $data['meta'] . '" data-hide="' . $data['hide'] . '" data-order="' . $data['order'] . '"
-                                        data-click_count="' . $data['click_count'] . '" data-tags="' . $data['tag'] . '"
+                                        data-click_count="' . $data['click_count'] . '" data-tags="' . $data['tag'] . '" data-M-quantity = "' . $data['M'] . '" data-L-quantity = "' . $data['L'] . '" data-XL-quantity = "' . $data['XL'] . '"
                                         data-policy_return="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSDoiTra'] . '"
                                         data-policy_warranty="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSGiaoHang'] . '" data-stock="' . $data['store'] . '">
                                         <td><input type="checkbox" class="product-checkbox"></td>
@@ -50,9 +50,6 @@
             echo '
                                         <td>
                                             <div class="action-buttons">
-                                                <button class="btn btn-sm btn-info btn-view" title="Ẩn/Hiện" data-hide="0">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
                                                 <button class="btn btn-sm btn-warning btn-edit" title="Sửa"><i
                                                         class="fas fa-edit"></i></button>
                                             </div>

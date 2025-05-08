@@ -16,13 +16,19 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
+
         <div class="sidebar" id="sidebar">
             <div class="logo">
                 <h2>SR STORE</h2>
             </div>
+            <button class="sidebar-close d-md-none" id="sidebarCloseBtn"
+                aria-label="Đóng menu"><span>&times;</span></button>
             <ul class="nav-links">
                 <li>
                     <a href="index.php?controller=admindashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
                 </li>
                 <li class="active">
                     <a href="index.php?controller=adminproduct"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
@@ -138,7 +144,7 @@
                                         data-main_image="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '"
                                         data-img="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img2'] . ',/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img3'] . '"
                                         data-link="' . $data['link'] . '" data-meta="' . $data['meta'] . '" data-hide="' . $data['hide'] . '" data-order="' . $data['order'] . '"
-                                        data-click_count="' . $data['click_count'] . '" data-tags="' . $data['tag'] . '"
+                                        data-click_count="' . $data['click_count'] . '" data-tags="' . $data['tag'] . '" data-M-quantity = "' . $data['M'] . '" data-L-quantity = "' . $data['L'] . '" data-XL-quantity = "' . $data['XL'] . '"
                                         data-policy_return="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSDoiTra'] . '"
                                         data-policy_warranty="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSGiaoHang'] . '" data-stock="' . $data['store'] . '">
                                         <td><input type="checkbox" class="product-checkbox"></td>
@@ -163,9 +169,6 @@
                                 echo '
                                         <td>
                                             <div class="action-buttons">
-                                                <button class="btn btn-sm btn-info btn-view" title="Ẩn/Hiện" data-hide="0">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
                                                 <button class="btn btn-sm btn-warning btn-edit" title="Sửa"><i
                                                         class="fas fa-edit"></i></button>
                                             </div>
@@ -191,8 +194,8 @@
 
 
     <!-- Modal Thêm Sản Phẩm -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="addProductModal" aria-labelledby="addProductModalLabel" aria-hidden="true"
+        data-bs-focus="false">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <form class="need-validation" id="addProductForm" novalidate>
@@ -229,7 +232,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="productDesc" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="productDesc" name="productDesc" rows="2"></textarea>
+                            <textarea class="form-control" id="productDesc" name="productDesc" rows="2"
+                                aria-hidden="false"></textarea>
                             <small id="wordCount" class="form-text text-muted">0/2000 từ</small>
                             <div id="productDescError" class="text-danger small mt-1 d-none">Mô tả phải từ 10 đến 1000
                                 ký tự.</div>
@@ -450,6 +454,9 @@
                                 <span id="detailDiscount" class="badge bg-success"></span>
                             </p>
                             <p><strong>Tồn kho:</strong> <span id="detailStock"></span></p>
+                            <p><strong>Size M:</strong> <span id="M_quantity"></span></p>
+                            <p><strong>Size L:</strong> <span id="L_quantity"></span></p>
+                            <p><strong>Size XL:</strong> <span id="XL_quantity"></span></p>
                             <p><strong>Trạng thái:</strong> <span id="detailStatus"></span></p>
                             <p><strong>Lượt xem:</strong> <span id="detailClick"></span></p>
                             <p><strong>Ngày tạo:</strong> <span id="detailCreated"></span></p>
@@ -478,7 +485,7 @@
     <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
 
     <!-- Ckeditor -->
-    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/4.22.1/full-all/ckeditor.js"></script>
     <script>
         // CKEDITOR.replace('productDesc'); // 'productDesc' là id của textarea
     </script>

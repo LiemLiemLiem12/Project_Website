@@ -16,13 +16,18 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="logo">
                 <h2>SR STORE</h2>
             </div>
+            <button class="sidebar-close d-md-none" id="sidebarCloseBtn"
+                aria-label="Đóng menu"><span>&times;</span></button>
             <ul class="nav-links">
                 <li class="active">
                     <a href="index.php?controller=admindashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
                 </li>
                 <li>
                     <a href="index.php?controller=adminproduct"><i class="fas fa-tshirt"></i> Sản Phẩm</a>

@@ -3,6 +3,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleBtn = document.getElementById('sidebarToggleBtn');
     const closeBtn = document.getElementById('sidebarCloseBtn');
 
+    //fix anh
+    // (function() {
+    //     // Lưu lại tham chiếu đến modal (thay 'addProductModal' bằng ID modal của bạn)
+    //     var modalElement = document.getElementById('addProductModal');
+        
+    //     // Hàm để đảm bảo tiêu điểm luôn ở trong modal
+    //     function enforceFocus() {
+    //         // Gỡ bỏ sự kiện focusin nếu đã đăng ký trước đó
+    //         document.removeEventListener('focusin', onFocusIn);
+    
+    //         // Thêm sự kiện focusin để kiểm tra tiêu điểm mỗi khi có thay đổi
+    //         document.addEventListener('focusin', onFocusIn);
+    //     }
+    
+    //     // Hàm kiểm tra và xử lý tiêu điểm
+    //     function onFocusIn(e) {
+    //         // Kiểm tra nếu tiêu điểm không phải là trong modal hoặc CKEditor
+    //         if (
+    //             modalElement !== e.target && 
+    //             !modalElement.contains(e.target) && 
+    //             !e.target.closest('.cke_dialog') && 
+    //             !e.target.closest('.cke')
+    //         ) {
+    //             // Đưa tiêu điểm trở lại modal
+    //             modalElement.focus();
+    //         }
+    //     }
+    
+    //     // Khi modal được mở, gọi hàm enforceFocus
+    //     modalElement.style.display = 'block'; // Hoặc sử dụng cách mở modal khác
+    //     enforceFocus(); // Đảm bảo tiêu điểm được giữ trong modal
+    // })();
+    
+
     setUpCheckbox('Size_M', 'Size_M_quantity');
     setUpCheckbox('Size_L', 'Size_L_quantity');
     setUpCheckbox('Size_XL', 'Size_XL_quantity');
@@ -246,7 +280,24 @@ document.addEventListener('DOMContentLoaded', function() {
             return text.length;
         }
         
-        CKEDITOR.replace('productDesc');
+        CKEDITOR.replace('productDesc', {
+            removePlugins: 'image2',            // ❌ Loại bỏ image2
+            extraPlugins: 'image',              // ✅ Thêm plugin image cũ
+            uploadUrl: '?controller=Adminproduct&action=upload',
+            filebrowserImageUploadUrl: '?controller=Adminproduct&action=upload',
+            filebrowserUploadMethod: 'form',
+            allowedContent: true                // Cho phép tất cả HTML (bao gồm width, height, alt,...)
+        });
+
+        CKEDITOR.replace('test2', {
+            removePlugins: 'image2',            // ❌ Loại bỏ image2
+            extraPlugins: 'image',              // ✅ Thêm plugin image cũ
+            uploadUrl: '?controller=Adminproduct&action=upload',
+            filebrowserImageUploadUrl: '?controller=Adminproduct&action=upload',
+            filebrowserUploadMethod: 'form',
+            allowedContent: true                // Cho phép tất cả HTML (bao gồm width, height, alt,...)
+        });
+
 
         CKEDITOR.instances.productDesc.on('change', function () {
             let content = CKEDITOR.instances.productDesc.getData();
@@ -326,12 +377,26 @@ document.addEventListener('DOMContentLoaded', function() {
         checkboxes.forEach(cb => cb.addEventListener('change', updateDeleteBtn));
         deleteBtn.addEventListener('click', function() {
             if (confirm('Bạn có chắc muốn xóa các sản phẩm đã chọn?')) {
-                const selected = Array.from(checkboxes)
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.closest('tr').querySelector('td:nth-child(2)').textContent.trim());
-                console.log('Xóa các sản phẩm:', selected);
-                alert('Đã xóa các sản phẩm (demo, cần kết nối backend để thực hiện xóa thực tế)');
-                checkboxes.forEach(cb => cb.checked = false);
+                let arrayIDDelete = []
+                checkboxes.forEach((element) => {
+                    if(element.checked) {
+                        arrayIDDelete.push (element.closest('tr').getAttribute('data-id_product'))
+                    }
+                })
+
+                fetch('?controller=Adminproduct&action=delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(arrayIDDelete)
+                }).then(response => response.text())
+                .then(data => {
+                    document.getElementById('table-product').innerHTML = data
+                })
+                .catch(error => {
+                    alert("Lỗi khi xóa sản phẩm: " + error)
+                })
                 updateDeleteBtn();
             }
         });
@@ -738,6 +803,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('detailCurrentPrice').textContent = row.getAttribute('data-current_price') || '';
             document.getElementById('detailDiscount').textContent = row.getAttribute('data-discount_percent') ? '-' + row.getAttribute('data-discount_percent') + '%' : '';
             document.getElementById('detailStock').textContent = row.getAttribute('data-stock') || '';
+            document.getElementById('M_quantity').textContent = row.getAttribute('data-M-quantity') || 0;
+            document.getElementById('L_quantity').textContent = row.getAttribute('data-L-quantity') || 0;
+            document.getElementById('XL_quantity').textContent = row.getAttribute('data-XL-quantity') || 0;
             document.getElementById('detailStatus').textContent = row.getAttribute('data-hide') === "0" ? "Còn hàng" : "Hết hàng";
             document.getElementById('detailClick').textContent = row.getAttribute('data-click_count') || '';
             document.getElementById('detailCreated').textContent = row.getAttribute('data-created_at') || '';
@@ -748,7 +816,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('detailTags').textContent = row.getAttribute('data-tags') || '';
             document.getElementById('detailPolicyReturn').src = row.getAttribute('data-policy_return') || '';
             document.getElementById('detailPolicyWarranty').src = row.getAttribute('data-policy_warranty') || '';
-            document.getElementById('detailDesc').textContent = atob(row.getAttribute('data-description')) || '';
+            document.getElementById('detailDesc').textContent = decodeURIComponent(escape(atob(row.getAttribute('data-description')))) || '';
             document.getElementById('detailImage').src = row.getAttribute('data-main_image') || '';
             // Gallery ảnh phụ
             const gallery = document.getElementById('detailGallery');
@@ -778,7 +846,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkboxAll = e.target.closest('#select-all')
         const tagInputContainer = document.getElementById('tagInputContainer');
         const tagInput = document.getElementById('tagInput');
-
+        
         function renderTags() {
             tagInputContainer.querySelectorAll('.tag-item').forEach(e => e.remove());
             tags.forEach((tag, idx) => {
@@ -822,10 +890,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }else if(btnEdit) {
+            const row = btnEdit.closest('tr.product-row');
             const form = document.getElementById('addProductForm')
+            const Size_M = document.getElementById('Size_M')
+            const Size_L = document.getElementById('Size_L')
+            const Size_XL = document.getElementById('Size_XL')
+            var Size_M_quantity = document.getElementById('Size_M_quantity')
+            var Size_L_quantity = document.getElementById('Size_L_quantity')
+            var Size_XL_quantity = document.getElementById('Size_XL_quantity')
+
             
 
-            const row = btnEdit.closest('tr.product-row');
+            Size_M.checked = true
+            Size_L.checked = true
+            Size_XL.checked = true
+
+            Size_M_quantity.disabled = false
+            Size_L_quantity.disabled = false
+            Size_XL_quantity.disabled = false
+
+            
             var tags = []
             if (!row) return;
             document.getElementById('addProductModalLabel').textContent = 'Chỉnh sửa Sản Phẩm';
@@ -834,6 +918,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('productPrice').value = parseInt((row.getAttribute('data-current_price')).replace(/[đ.]/g, '')) || 0;
             document.getElementById('productStock').value = parseInt(row.getAttribute('data-stock')) || 0;
             document.getElementById('productTags').value = row.getAttribute('data-tags') || '';
+            Size_M_quantity.value = row.getAttribute('data-M-quantity')
+            Size_L_quantity.value = row.getAttribute('data-L-quantity')
+            Size_XL_quantity.value = row.getAttribute('data-XL-quantity')
             tags = row.getAttribute('data-tags').replace(/\s+/g, '').replace(/-/g, ' ').split(',')
             renderTags()
 
@@ -859,7 +946,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const tmpPreview = preview.innerHTML;
             if (window.CKEDITOR && CKEDITOR.instances['productDesc']) {
-                CKEDITOR.instances['productDesc'].setData(atob(row.getAttribute('data-description')) || '');
+                const base64 = row.getAttribute('data-description') || '';
+                const decoded = decodeURIComponent(escape(atob(base64)));
+                CKEDITOR.instances['productDesc'].setData(decoded);
             }
 
             document.getElementById('productImage').removeAttribute('required')
@@ -872,7 +961,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 CKEDITOR.instances.productDesc.updateElement();
                 const productDesc = document.getElementById('productDesc')
                 const content = productDesc.value.trim()
-                
+
+                const size_Validator = document.getElementById('size_total_validator')
+                Size_M_quantity = document.getElementById('Size_M_quantity')
+                Size_L_quantity = document.getElementById('Size_L_quantity')
+                Size_XL_quantity = document.getElementById('Size_XL_quantity')
+                const size_Feedback = size_Validator.nextElementSibling; // Lấy div.invalid-feedback kế tiếp
+                const totalSizeQuantity = 
+                    Number(Size_M_quantity.value) +
+                    Number(Size_L_quantity.value) +
+                    Number(Size_XL_quantity.value);            // Kiểm tra xem có ít nhất một size được chọn không
+                const anySizeChecked = Size_M.checked || Size_L.checked || Size_XL.checked;
+                let productStock = Number(document.getElementById('productStock').value);
+                if (!anySizeChecked) {
+                    size_Validator.setCustomValidity('Vui lòng chọn ít nhất một size');
+                    size_Feedback.textContent = 'Vui lòng chọn ít nhất một size';
+                } else if (totalSizeQuantity !== productStock) {
+                    console.log(totalSizeQuantity + " " + productStock)
+                    size_Validator.setCustomValidity('Tổng số lượng các size phải bằng tồn kho tổng');
+                    size_Feedback.textContent = 'Tổng số lượng các size phải bằng tồn kho tổng';
+                } else {
+                    size_Validator.setCustomValidity('');
+                    size_Feedback.textContent = '';
+                }
                 const image = document.getElementById('productImage')
                 const files = image.files;
                 const isValid = files.length === 3 && [...files].every(file => file.type.startsWith('image/'));
@@ -997,6 +1108,11 @@ document.addEventListener('DOMContentLoaded', function() {
             checkboxes.forEach(checkbox => {
                 checkbox.checked = checkboxAll.checked;
             });
+            if(document.getElementById('deleteSelectedBtn').disabled == true) {
+                document.getElementById('deleteSelectedBtn').disabled = false
+            }else {
+                document.getElementById('deleteSelectedBtn').disabled = true
+            }
         }
     });
 
@@ -1083,9 +1199,9 @@ document.addEventListener('DOMContentLoaded', function() {
               // ✅ Form hợp lệ → xử lý dữ liệu
               const formData = new FormData(this);
           
-              for (let [key, value] of formData.entries()) {
-                console.log(key, value);
-              }
+            //   for (let [key, value] of formData.entries()) {
+            //     console.log(key, value);
+            //   }
               
               fetch('?controller=adminproduct&action=add',{
                 method: 'POST',
@@ -1096,7 +1212,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.text();
               })
               .then(data => {
-                console.log(data)
                 const addProductModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
                 if (addProductModal) addProductModal.hide();
             
