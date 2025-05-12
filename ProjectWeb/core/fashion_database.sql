@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 07, 2025 lúc 09:02 PM
+-- Thời gian đã tạo: Th5 12, 2025 lúc 10:09 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -81,28 +81,32 @@ INSERT INTO `category` (`id_Category`, `name`, `link`, `meta`, `hide`, `order`) 
 CREATE TABLE `order` (
   `id_Order` int(11) NOT NULL,
   `total_amount` int(11) NOT NULL,
-  `status` enum('pending','shipping','completed','cancelled') DEFAULT 'pending',
+  `status` enum('pending','shipping','completed','cancelled','waitConfirm') DEFAULT 'pending',
   `created_at` datetime DEFAULT current_timestamp(),
-  `id_User` int(11) DEFAULT NULL
+  `id_User` int(11) DEFAULT NULL,
+  `payment_by` varchar(255) NOT NULL,
+  `hide` int(11) NOT NULL DEFAULT 0,
+  `note` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `order`
 --
 
-INSERT INTO `order` (`id_Order`, `total_amount`, `status`, `created_at`, `id_User`) VALUES
-(1, 315000, 'pending', '2025-05-01 14:25:49', 1),
-(2, 400000, 'completed', '2025-05-01 14:25:49', 2),
-(3, 595000, 'cancelled', '2025-05-01 14:25:49', 3),
-(4, 427500, 'cancelled', '2025-05-01 14:25:49', 4),
-(5, 225000, 'cancelled', '2025-05-01 14:25:49', 5),
-(6, 12, 'completed', '2025-05-02 18:56:30', 1),
-(7, 1000000, 'shipping', '2025-05-02 13:05:02', 3),
-(8, 1000000, 'pending', '2025-02-09 13:05:23', 3),
-(9, 10000000, 'completed', '2025-04-16 13:36:31', 5),
-(10, 10000000, 'completed', '2025-04-17 21:57:49', 1),
-(11, 10000000, 'completed', '2025-05-03 13:01:01', 8),
-(12, 10000000, 'completed', '2025-03-19 13:36:06', 6);
+INSERT INTO `order` (`id_Order`, `total_amount`, `status`, `created_at`, `id_User`, `payment_by`, `hide`, `note`) VALUES
+(1, 315000, 'completed', '2025-05-01 14:25:49', 1, 'COD', 0, 'Giao giờ hành chính'),
+(2, 400000, 'completed', '2025-05-01 14:25:49', 2, 'COD', 0, 'Giao giờ hành chính'),
+(3, 595000, 'cancelled', '2025-05-01 14:25:49', 3, 'COD', 0, 'Giao giờ hành chính'),
+(4, 427500, 'cancelled', '2025-05-01 14:25:49', 4, 'COD', 0, 'Giao giờ hành chính'),
+(5, 225000, 'completed', '2025-05-01 14:25:49', 5, 'COD', 0, 'Giao giờ hành chính'),
+(6, 12, 'cancelled', '2025-05-02 18:56:30', 1, 'COD', 0, 'Giao giờ hành chính'),
+(7, 1000000, 'completed', '2025-05-02 13:05:02', 3, 'COD', 0, 'Giao giờ hành chính'),
+(8, 1000000, 'cancelled', '2025-02-09 13:05:23', 3, 'COD', 0, 'Giao giờ hành chính'),
+(9, 10000000, 'shipping', '2025-04-16 13:36:31', 5, 'COD', 0, 'Giao giờ hành chính'),
+(10, 10000000, 'waitConfirm', '2025-04-17 21:57:49', 1, 'COD', 0, 'Giao giờ hành chính'),
+(11, 10000000, 'completed', '2025-05-03 13:01:01', 8, 'COD', 0, 'Giao giờ hành chính'),
+(12, 10000000, 'waitConfirm', '2025-03-19 13:36:06', 6, 'COD', 0, 'Giao giờ hành chính'),
+(13, 1000000, 'waitConfirm', '2025-05-11 21:50:51', 5, 'MOMO', 0, 'Giao giờ hành chính');
 
 -- --------------------------------------------------------
 
@@ -129,6 +133,7 @@ INSERT INTO `order_detail` (`id_Order`, `id_Product`, `quantity`, `sub_total`) V
 (5, 5, 1, 225000.00),
 (6, 1, 5, 400000.00),
 (9, 2, 10, 400000.00),
+(10, 2, 10, 400000.00),
 (10, 3, 20, 400000.00),
 (12, 5, 100000, 400000.00);
 
@@ -170,12 +175,13 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `link`, `meta`, `hide`, `order`, `click_count`, `store`, `img2`, `img3`, `tag`, `CSDoiTra`, `CSGiaoHang`, `M`, `L`, `XL`) VALUES
-(1, 'Áo sơ mi nam BỰ HONWwwwww', '<p><strong>none</strong></p>\r\n\r\n<table border=\"1\" cellpadding=\"1\" cellspacing=\"1\" style=\"width:500px\">\r\n	<tbody>\r\n		<tr>\r\n			<td>&nbsp;</td>\r\n			<td>&nbsp;</td>\r\n		</tr>\r\n		<tr>\r\n			<td>&nbsp;</td>\r\n			<td>&nbsp;</td>\r\n		</tr>\r\n		<tr>\r\n			<td>&nbsp;</td>\r\n			<td>&nbsp;</td>\r\n		</tr>\r\n	</tbody>\r\n</table>\r\n\r\n<p>&nbsp;</p>\r\n', 123456.00, 10, 123456.00, '2025-05-01 14:25:49', '2025-05-06 21:49:07', 4, '1_6_5_4_3_2_1__a76f4802-679e-4ab5-a961-ec8cca3c3e49.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1, 20, 123, '1_6_5_4_3_2_1_ngya.png', '1_6_5_4_3_2_1_ODOT.png', 'tag-tag', '1_3_2_1_doitra_1.webp', '1_3_2_1_cs_giaohanh.webp', 0, 0, 0),
-(2, 'JEAN FEMALE', '<p>Form &ocirc;m body t&ocirc;n d&aacute;ng</p>\r\n', 400000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-06 18:02:46', 1, '1_2_1_item2.webp', '/quan-jeans', 'quan-jeans', 0, 2, 12, 10, '1_1_item2.webp', '1_1_item2.jpg', 'ao-thun,ao-somi,quan-tay', 'buffet.png', '1_3_cs_giaohanh.webp', 0, 0, 0),
-(3, 'Giày thể thao', '<p>Gi&agrave;y sneaker trẻ trung</p>\r\n', 595000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-06 18:20:31', 3, '2_1_bruh.png', '/giay-sneaker', 'giay-sneaker', 0, 3, 5, 0, '2_1_really.png', 'Whiskers Meme Sticker Aegean Cat PNG - Free Download.jpg', 'ao-thun,ao-somi,quan-tay', '4_doitra_1.webp', '4_cs_giaohanh.webp', 0, 0, 0),
-(4, 'Túi xách', '<p>T&uacute;i da PU cao cấp</p>\r\n', 427500.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-06 15:54:20', 1, '1_item4.jpg', '/tui-xach', 'tui-xach', 0, 4, 7, 10, '1_item4.webp', '2_1_item4.webp', 'ao-thun,ao-somi,quan-tay', '2_doitra_1.webp', '2_cs_giaohanh.webp', 0, 0, 0),
-(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-03 17:39:11', 1, 'item5.jpg', '/ao-thun', 'ao-thun', 0, 5, 30, 0, 'item5.webp', 'item5.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp', 0, 0, 0),
-(6, 'Quần KAKI', 'Mô tả quần kaki', 400000.00, 10, 360000.00, '2025-05-04 13:59:31', '2025-05-04 13:59:31', 2, 'item1.jpg', '/item1', 'quan-kaki', 0, 5, 0, 20, 'item1.webp', 'item1.webp', 'quan', '', '', 0, 0, 0);
+(1, 'Áo sơ mi nam BỰ HONWwwwww', '<p><img alt=\"Map\" src=\"./upload/img/Description_img/Untitled_snapshot_05-06-2025_22_16_39.jpeg\" style=\"border-width: 2px; border-style: solid; float: right; width: 200px; height: 113px;\" /><em><strong>Xin ch&agrave;o c&aacute;c bạn</strong></em></p>\n', 123456.00, 10, 123456.00, '2025-05-01 14:25:49', '2025-05-08 17:44:13', 4, '1_6_5_4_3_2_1__a76f4802-679e-4ab5-a961-ec8cca3c3e49.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1, 20, 100, '1_6_5_4_3_2_1_ODOT.png', '1_6_5_4_3_2_1_ngya.png', 'tag-tag', '1_3_2_1_doitra_1.webp', '1_3_2_1_cs_giaohanh.webp', 90, 5, 5),
+(2, 'JEAN FEMALE', '<p>Form &ocirc;m body t&ocirc;n d&aacute;ng</p>\r\n', 400000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-08 15:17:26', 1, '1_2_1_item2.webp', '/quan-jeans', 'quan-jeans', 0, 2, 12, 10, '1_1_item2.webp', '1_1_item2.jpg', 'ao-thun,ao-somi,quan-tay', 'buffet.png', '1_3_cs_giaohanh.webp', 0, 0, 0),
+(3, 'Giày thể thao', '<p>Gi&agrave;y sneaker trẻ trung</p>\r\n', 595000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-08 15:17:26', 3, '2_1_bruh.png', '/giay-sneaker', 'giay-sneaker', 0, 3, 5, 0, '2_1_really.png', 'Whiskers Meme Sticker Aegean Cat PNG - Free Download.jpg', 'ao-thun,ao-somi,quan-tay', '4_doitra_1.webp', '4_cs_giaohanh.webp', 0, 0, 0),
+(4, 'Túi xách', '<p>T&uacute;i da PU cao cấp</p>\r\n', 427500.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-08 15:17:26', 1, '1_item4.jpg', '/tui-xach', 'tui-xach', 0, 4, 7, 10, '1_item4.webp', '2_1_item4.webp', 'ao-thun,ao-somi,quan-tay', '2_doitra_1.webp', '2_cs_giaohanh.webp', 0, 0, 0),
+(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-08 15:17:26', 1, 'item5.jpg', '/ao-thun', 'ao-thun', 0, 5, 30, 0, 'item5.webp', 'item5.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp', 0, 0, 0),
+(6, 'Quần KAKI', 'Mô tả quần kaki', 400000.00, 10, 360000.00, '2025-05-04 13:59:31', '2025-05-08 15:17:26', 2, 'item1.jpg', '/item1', 'quan-kaki', 0, 5, 0, 20, 'item1.webp', 'item1.webp', 'quan', '', '', 0, 0, 0),
+(32, 'CHiec ao thun', '<p>ccwqcwqcwqwqqc</p>\r\n', 1000000.00, NULL, 1000000.00, '2025-05-08 13:15:28', '2025-05-08 15:17:26', 1, '1_2_1_1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', NULL, NULL, 0, NULL, 0, 13, '1_2_1_1_160_ao_thun_486-11_048e677a305a4d288f3a40f83e0cd12b_1024x1024.jpg', '1_2_1_1_160_ao_thun_486-7_192a8a84946943ba809cf83eda40e528_1024x1024.jpg', 'tagf-tag', '1_2_1_1_Untitled_snapshot_05-06-2025_23_35_55.jpeg', '1_2_2_Untitled_snapshot_05-06-2025_23_35_55.jpeg', 8, 5, 0);
 
 -- --------------------------------------------------------
 
@@ -344,13 +350,13 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT cho bảng `order`
 --
 ALTER TABLE `order`
-  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT cho bảng `review`

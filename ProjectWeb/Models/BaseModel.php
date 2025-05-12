@@ -67,6 +67,23 @@ class BaseModel extends Database
         $this->_query($sql);
     }
 
+    public function updateForOrder($table, $id, $data)
+    {
+        $dataSets = [];  // Initialize an empty array to store the key-value pairs for updating
+        // Loop through the data array to build the key-value pairs for the update query
+        foreach ($data as $key => $val) {
+            // For each pair, create a string like 'column = value' and add it to the dataSets array
+            array_push($dataSets, "{$key} = '{$val}'");
+        }
+        // Combine all the key-value pairs with commas to create the SET part of the SQL query
+        $dataSetString = implode(',', $dataSets);
+
+        // Build the complete SQL query string to update the record in the database
+        $sql = "UPDATE `{$table}` SET {$dataSetString} WHERE id_Order = {$id}";
+        // Execute the query
+        $this->_query($sql);
+    }
+
     public function updateForProduct($table, $id, $data)
     {
         $dataSets = [];  // Initialize an empty array to store the key-value pairs for updating

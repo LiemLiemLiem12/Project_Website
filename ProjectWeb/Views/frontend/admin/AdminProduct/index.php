@@ -34,7 +34,7 @@
                     <a href="index.php?controller=adminproduct"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
                 </li>
                 <li>
-                    <a href="AdminOrder.html"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
+                    <a href="index.php?controller=adminorder"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
                 </li>
                 <li>
                     <a href="AdminCustomer.html"><i class="fas fa-users"></i> Khách Hàng</a>
