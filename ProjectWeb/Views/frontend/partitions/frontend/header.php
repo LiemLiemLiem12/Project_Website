@@ -150,55 +150,46 @@
         </div>
 
         <!-- Navigation menu -->
-        <div class="main-nav">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <nav class="navbar navbar-expand-lg navbar-light">
-                            <div class="collapse navbar-collapse" id="navbarMain">
-                                <ul class="navbar-nav mx-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/hang-moi">
-                                            <i class="fas fa-tshirt me-1"></i>HÀNG MỚI
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/san-pham">
-                                            SẢN PHẨM
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/ao-nam">
-                                            ÁO NAM
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/quan-nam">
-                                            QUẦN NAM
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/phu-kien">
-                                            PHỤ KIỆN
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/khuyen-mai">
-                                            KHUYẾN MÃI
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/tin-tuc">
-                                            TIN TỨC
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </nav>
+      <div class="main-nav">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <div class="collapse navbar-collapse" id="navbarMain">
+                        <ul class="navbar-nav mx-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php">
+                                    <i class="fas fa-home me-1"></i>TRANG CHỦ
+                                </a>
+                            </li>
+                            <?php 
+                            // Khởi tạo controller để lấy danh mục
+                            require_once('Controllers/CategoryController.php');
+                            $categoryController = new CategoryController();
+                            $categories = $categoryController->getHeaderCategories();
+                            
+                            // Hiển thị các danh mục từ database
+                            foreach($categories as $category): 
+                                // Chỉ hiển thị các danh mục không bị ẩn (hide = 0 hoặc NULL)
+                                if(!isset($category['hide']) || $category['hide'] == 0):
+                            ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<?='index.php?controller=category&action=show&id='.$category['id_Category'] ?>">
+                                        <?= strtoupper($category['name']) ?>
+                                    </a>
+                                </li>
+                            <?php 
+                                endif;
+                            endforeach; 
+                            ?>
+                           
+                        </ul>
                     </div>
-                </div>
+                </nav>
             </div>
         </div>
+    </div>
+</div>
     </header>
 
     <!-- Main content placeholder -->
@@ -228,3 +219,4 @@
     </script>
 </body>
 </html>
+<!-- Navigation menu -->

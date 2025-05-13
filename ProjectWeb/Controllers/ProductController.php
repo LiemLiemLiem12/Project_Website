@@ -5,9 +5,11 @@ class ProductController extends BaseController
     private $productModel;
     public function __construct()
     {
+        parent::__construct();
+        
+        // Sau đó mới khởi tạo các model riêng của ProductController
         $this->loadModel('ProductModel');
-        $this->productModel = new ProductModel;
-
+        $this->productModel = new ProductModel();
     }
     public function index()
     {

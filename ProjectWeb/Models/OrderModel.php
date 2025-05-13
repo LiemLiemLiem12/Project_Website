@@ -173,5 +173,16 @@ class OrderModel extends BaseModel
     {
         return $this->updateForOrder(self::TABLE, $id, $data);
     }
+    /**
+ * Get categories for menu display
+ */
+public function getCategoriesForMenu()
+{
+    $sql = "SELECT id_Category, name, link, meta FROM " . self::TABLE . " 
+            WHERE hide = 0 OR hide IS NULL
+            ORDER BY `order` ASC";
+    
+    return $this->getByQuery($sql);
+}
 }
 ?>

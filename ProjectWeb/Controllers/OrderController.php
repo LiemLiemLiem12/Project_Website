@@ -3,22 +3,24 @@ class OrderController extends BaseController
 {
     private $productModel;
     private $orderModel;
-
+    private $userModel;
+   
     public function __construct()
     {
-        // Start session if not already started
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        // Luôn gọi constructor của lớp cha trước tiên
+        parent::__construct();
         
-        // Load necessary models
-        $this->loadModel('ProductModel');
-        $this->productModel = new ProductModel;
-        
-        // Load OrderModel if needed
+        // Sau đó mới load các model cụ thể cho controller này
         $this->loadModel('OrderModel');
-        $this->orderModel = new OrderModel;
+        $this->loadModel('ProductModel');
+        $this->loadModel('UserModel');
+        
+        // Khởi tạo các đối tượng model
+        $this->orderModel = new OrderModel();
+        $this->productModel = new ProductModel();
+        $this->userModel = new UserModel();
     }
+    
 
     /**
      * Display the Order/Checkout page

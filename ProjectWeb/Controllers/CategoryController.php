@@ -1,340 +1,269 @@
 <?php
-class CartController extends BaseController
-{
-    private $productModel;
-    private $cartModel;
+class CategoryController extends BaseController
+{    protected $categoryModel;
+    protected $productModel;
 
     public function __construct()
     {
-        // Khởi động session để lưu trữ giỏ hàng
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-        
-        // Load các model cần thiết
-        $this->loadModel('ProductModel');
-        $this->productModel = new ProductModel;
-        
-        // Có thể thêm CartModel nếu cần lưu trữ vào database
-        // $this->loadModel('CartModel');
-        // $this->cartModel = new CartModel;
+        parent::__construct();
+    
+    // Load ProductModel (nhưng không load lại CategoryModel)
+    $this->loadModel('ProductModel');
+    $this->productModel = new ProductModel();
     }
 
     /**
-     * Hiển thị trang giỏ hàng
-     * Tương tự như việc mở tủ để xem những gì bạn đã chuẩn bị để mua
+     * Display a listing of all categories
      */
     public function index()
     {
-        // Lấy dữ liệu giỏ hàng từ session
-        $cart = $_SESSION['cart'] ?? [];
-        $cartItems = [];
-        $total = 0;
-
-        // Nếu giỏ hàng không rỗng, lấy thông tin chi tiết của từng sản phẩm
-        if (!empty($cart)) {
-            foreach ($cart as $productId => $item) {
-                // Lấy thông tin sản phẩm từ database
-                $product = $this->productModel->findById($productId);
-                
-                if ($product) {
-                    // Kết hợp thông tin sản phẩm với thông tin trong giỏ hàng
-                    $cartItem = [
-                        'product' => $product,
-                        'quantity' => $item['quantity'],
-                        'size' => $item['size'] ?? 'M',
-                        'subtotal' => $product['current_price'] * $item['quantity']
-                    ];
-                    
-                    $cartItems[] = $cartItem;
-                    $total += $cartItem['subtotal'];
-                }
-            }
-        }
-
-        // Truyền dữ liệu đến view
-        $this->view('frontend.cart.index', [
-            'cartItems' => $cartItems,
-            'total' => $total,
-            'itemCount' => count($cartItems)
+        // Get all visible categories ordered by their defined order
+        $categories = $this->categoryModel->getAll(['id_Category', 'name', 'link', 'meta'], 100, [
+            'column' => '`order`', 
+            'order' => 'asc'
+        ]);
+        
+        return $this->view('frontend.categories._detail', [
+            'categories' => $categories
         ]);
     }
 
     /**
-     * Thêm sản phẩm vào giỏ hàng
-     * Giống như việc đặt một món hàng vào giỏ mua sắm
+     * Display a specific category and its products
      */
-    public function add()
+    public function show()
     {
-        // Lấy thông tin từ request
-        $productId = $_GET['id'] ?? null;
-        $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
-        $size = $_GET['size'] ?? 'M';
-
-        // Kiểm tra tính hợp lệ của dữ liệu
-        if (!$productId || $quantity <= 0) {
-            $this->redirectWithMessage('index.php?controller=product&action=show&id=' . $productId, 
-                'Thông tin sản phẩm không hợp lệ!', 'error');
-            return;
-        }
-
-        // Lấy thông tin sản phẩm từ database
-        $product = $this->productModel->findById($productId);
+        $categoryId = $_GET['id'] ?? null;
         
-        if (!$product) {
-            $this->redirectWithMessage('index.php', 
-                'Sản phẩm không tồn tại!', 'error');
-            return;
+        if (!$categoryId) {
+            // Redirect to categories list if no ID provided
+            header('Location: index.php?controller=category&action=index');
+            exit();
         }
-
-        // Kiểm tra số lượng sản phẩm có sẵn
-        $availableQuantity = $product[$size] ?? 0;
         
-        if ($quantity > $availableQuantity) {
-            $this->redirectWithMessage('index.php?controller=product&action=show&id=' . $productId, 
-                'Số lượng yêu cầu vượt quá số lượng có sẵn!', 'error');
-            return;
+        // Get the category details
+        $category = $this->categoryModel->findById($categoryId);
+        
+        if (!$category || $category['hide'] == 1) {
+            // Handle category not found or hidden
+            return $this->view('frontend.errors.404', [
+                'message' => 'Danh mục không tồn tại hoặc đã bị ẩn'
+            ]);
         }
-
-        // Khởi tạo giỏ hàng nếu chưa có
-        if (!isset($_SESSION['cart'])) {
-            $_SESSION['cart'] = [];
-        }
-
-        // Tạo key duy nhất cho từng sản phẩm với size khác nhau
-        $itemKey = $productId . '_' . $size;
-
-        // Nếu sản phẩm đã có trong giỏ, tăng số lượng
-        if (isset($_SESSION['cart'][$itemKey])) {
-            $currentQuantity = $_SESSION['cart'][$itemKey]['quantity'];
-            $newQuantity = $currentQuantity + $quantity;
-            
-            // Kiểm tra lại số lượng sau khi cộng thêm
-            if ($newQuantity > $availableQuantity) {
-                $this->redirectWithMessage('index.php?controller=cart&action=index', 
-                    'Tổng số lượng vượt quá số hàng có sẵn!', 'error');
-                return;
-            }
-            
-            $_SESSION['cart'][$itemKey]['quantity'] = $newQuantity;
-        } else {
-            // Nếu chưa có, thêm mới vào giỏ
-            $_SESSION['cart'][$itemKey] = [
-                'product_id' => $productId,
-                'quantity' => $quantity,
-                'size' => $size,
-                'added_at' => time()
-            ];
-        }
-
-        // Chuyển hướng với thông báo thành công
-        $this->redirectWithMessage('index.php?controller=cart&action=index', 
-            'Đã thêm sản phẩm vào giỏ hàng!', 'success');
+        
+        // Get products in this category
+        $products = $this->productModel->getByCategoryId($categoryId);
+        
+        return $this->view('frontend.categories._detail', [
+            'category' => $category,
+            'products' => $products
+        ]);
     }
 
     /**
-     * Cập nhật số lượng sản phẩm trong giỏ hàng
-     * Giống như việc thay đổi số lượng món hàng trong giỏ
+     * Admin functionality to create a new category
+     */
+    public function create()
+    {
+        // Check if user is admin
+        // This would use your authentication system
+        
+        return $this->view('frontend.admin.categories.create');
+    }
+
+    /**
+     * Admin functionality to store a new category
+     */
+    public function store()
+    {
+        // Check if user is admin
+        // This would use your authentication system
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'name' => $_POST['name'] ?? '',
+                'link' => $_POST['link'] ?? '',
+                'meta' => $_POST['meta'] ?? '',
+                'hide' => isset($_POST['hide']) ? 1 : 0,
+                'order' => $_POST['order'] ?? 0
+            ];
+            
+            // Validation
+            if (empty($data['name'])) {
+                $_SESSION['error'] = 'Tên danh mục không được để trống';
+                return $this->view('frontend.admin.categories.create', ['data' => $data]);
+            }
+            
+            // Generate link and meta if not provided
+            if (empty($data['link'])) {
+                $data['link'] = '/' . $this->toSlug($data['name']);
+            }
+            
+            if (empty($data['meta'])) {
+                $data['meta'] = $this->toSlug($data['name']);
+            }
+            
+            // Store the category
+            $result = $this->categoryModel->store($data);
+            
+            if ($result) {
+                $_SESSION['success'] = 'Đã tạo danh mục thành công';
+                header('Location: index.php?controller=category&action=index');
+                exit();
+            } else {
+                $_SESSION['error'] = 'Có lỗi xảy ra, vui lòng thử lại';
+                return $this->view('frontend.admin.categories.create', ['data' => $data]);
+            }
+        }
+    }
+
+    /**
+     * Admin functionality to edit a category
+     */
+    public function edit()
+    {
+        // Check if user is admin
+        // This would use your authentication system
+        
+        $categoryId = $_GET['id'] ?? null;
+        
+        if (!$categoryId) {
+            $_SESSION['error'] = 'ID danh mục không hợp lệ';
+            header('Location: index.php?controller=category&action=index');
+            exit();
+        }
+        
+        $category = $this->categoryModel->findById($categoryId);
+        
+        if (!$category) {
+            $_SESSION['error'] = 'Danh mục không tồn tại';
+            header('Location: index.php?controller=category&action=index');
+            exit();
+        }
+        
+        return $this->view('frontend.admin.categories.edit', [
+            'category' => $category
+        ]);
+    }
+
+    /**
+     * Admin functionality to update a category
      */
     public function update()
     {
-        $itemKey = $_POST['item_key'] ?? null;
-        $newQuantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 0;
-
-        if (!$itemKey || !isset($_SESSION['cart'][$itemKey])) {
-            $this->redirectWithMessage('index.php?controller=cart&action=index', 
-                'Sản phẩm không tồn tại trong giỏ hàng!', 'error');
-            return;
-        }
-
-        // Nếu số lượng là 0, xóa sản phẩm khỏi giỏ
-        if ($newQuantity <= 0) {
-            unset($_SESSION['cart'][$itemKey]);
-            $this->redirectWithMessage('index.php?controller=cart&action=index', 
-                'Đã xóa sản phẩm khỏi giỏ hàng!', 'success');
-            return;
-        }
-
-        // Kiểm tra số lượng có sẵn
-        $cartItem = $_SESSION['cart'][$itemKey];
-        $product = $this->productModel->findById($cartItem['product_id']);
-        $availableQuantity = $product[$cartItem['size']] ?? 0;
-
-        if ($newQuantity > $availableQuantity) {
-            $this->redirectWithMessage('index.php?controller=cart&action=index', 
-                'Số lượng yêu cầu vượt quá số hàng có sẵn!', 'error');
-            return;
-        }
-
-        // Cập nhật số lượng
-        $_SESSION['cart'][$itemKey]['quantity'] = $newQuantity;
+        // Check if user is admin
+        // This would use your authentication system
         
-        $this->redirectWithMessage('index.php?controller=cart&action=index', 
-            'Đã cập nhật số lượng sản phẩm!', 'success');
-    }
-
-    /**
-     * Xóa sản phẩm khỏi giỏ hàng
-     * Giống như việc lấy một món hàng ra khỏi giỏ
-     */
-    public function remove()
-    {
-        $itemKey = $_GET['item'] ?? null;
-
-        if (!$itemKey || !isset($_SESSION['cart'][$itemKey])) {
-            $this->redirectWithMessage('index.php?controller=cart&action=index', 
-                'Sản phẩm không tồn tại trong giỏ hàng!', 'error');
-            return;
-        }
-
-        unset($_SESSION['cart'][$itemKey]);
-        
-        $this->redirectWithMessage('index.php?controller=cart&action=index', 
-            'Đã xóa sản phẩm khỏi giỏ hàng!', 'success');
-    }
-
-    /**
-     * Xóa toàn bộ giỏ hàng
-     * Giống như việc đổ sạch giỏ hàng
-     */
-    public function clear()
-    {
-        $_SESSION['cart'] = [];
-        
-        $this->redirectWithMessage('index.php?controller=cart&action=index', 
-            'Đã xóa toàn bộ giỏ hàng!', 'success');
-    }
-
-    /**
-     * Xử lý "Mua ngay"
-     * Thêm sản phẩm vào giỏ và chuyển ngay đến trang thanh toán
-     */
-    public function buynow()
-    {
-        // Thực hiện như hàm add
-        $productId = $_GET['id'] ?? null;
-        $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
-        $size = $_GET['size'] ?? 'M';
-
-        // Xóa giỏ hàng hiện tại (vì mua ngay)
-        $_SESSION['cart'] = [];
-
-        // Thêm sản phẩm vào giỏ hàng mới
-        if ($productId) {
-            $itemKey = $productId . '_' . $size;
-            $_SESSION['cart'][$itemKey] = [
-                'product_id' => $productId,
-                'quantity' => $quantity,
-                'size' => $size,
-                'added_at' => time()
-            ];
-        }
-
-        // Chuyển thẳng đến checkout
-        header('Location: index.php?controller=checkout&action=index');
-        exit;
-    }
-
-    /**
-     * Chuyển đến trang thanh toán
-     * Giống như việc đến quầy thu ngân
-     */
-    public function checkout()
-    {
-        // Kiểm tra giỏ hàng có sản phẩm không
-        if (empty($_SESSION['cart'])) {
-            $this->redirectWithMessage('index.php?controller=cart&action=index', 
-                'Giỏ hàng của bạn đang trống!', 'error');
-            return;
-        }
-
-        // Tính tổng tiền
-        $total = $this->calculateTotal();
-
-        // Chuyển đến trang checkout
-        header('Location: index.php?controller=checkout&action=index');
-        exit;
-    }
-
-    /**
-     * Hàm helper để tính tổng tiền giỏ hàng
-     */
-    private function calculateTotal()
-    {
-        $total = 0;
-        $cart = $_SESSION['cart'] ?? [];
-
-        foreach ($cart as $item) {
-            $product = $this->productModel->findById($item['product_id']);
-            if ($product) {
-                $total += $product['current_price'] * $item['quantity'];
-            }
-        }
-
-        return $total;
-    }
-
-    /**
-     * Hàm helper để chuyển hướng với thông báo
-     */
-    private function redirectWithMessage($url, $message, $type = 'info')
-    {
-        $_SESSION['flash_message'] = [
-            'type' => $type,
-            'message' => $message
-        ];
-        
-        header("Location: " . $url);
-        exit;
-    }
-
-    /**
-     * Lấy số lượng items trong giỏ hàng (cho hiển thị ở header)
-     */
-    public function getCartCount()
-    {
-        $count = 0;
-        $cart = $_SESSION['cart'] ?? [];
-        
-        foreach ($cart as $item) {
-            $count += $item['quantity'];
-        }
-        
-        return $count;
-    }
-
-    /**
-     * Lấy dữ liệu giỏ hàng (AJAX)
-     */
-    public function getCartData()
-    {
-        header('Content-Type: application/json');
-        
-        $cart = $_SESSION['cart'] ?? [];
-        $cartItems = [];
-        $total = 0;
-
-        foreach ($cart as $itemKey => $item) {
-            $product = $this->productModel->findById($item['product_id']);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $categoryId = $_POST['id'] ?? null;
             
-            if ($product) {
-                $subtotal = $product['current_price'] * $item['quantity'];
-                $cartItems[] = [
-                    'key' => $itemKey,
-                    'product' => $product,
-                    'quantity' => $item['quantity'],
-                    'size' => $item['size'],
-                    'subtotal' => $subtotal
-                ];
-                $total += $subtotal;
+            if (!$categoryId) {
+                $_SESSION['error'] = 'ID danh mục không hợp lệ';
+                header('Location: index.php?controller=category&action=index');
+                exit();
+            }
+            
+            $data = [
+                'name' => $_POST['name'] ?? '',
+                'link' => $_POST['link'] ?? '',
+                'meta' => $_POST['meta'] ?? '',
+                'hide' => isset($_POST['hide']) ? 1 : 0,
+                'order' => $_POST['order'] ?? 0
+            ];
+            
+            // Validation
+            if (empty($data['name'])) {
+                $_SESSION['error'] = 'Tên danh mục không được để trống';
+                return $this->redirect("index.php?controller=category&action=edit&id={$categoryId}");
+            }
+            
+            // Generate link and meta if not provided
+            if (empty($data['link'])) {
+                $data['link'] = '/' . $this->toSlug($data['name']);
+            }
+            
+            if (empty($data['meta'])) {
+                $data['meta'] = $this->toSlug($data['name']);
+            }
+            
+            // Update the category
+            $result = $this->categoryModel->updateData($categoryId, $data);
+            
+            if ($result) {
+                $_SESSION['success'] = 'Cập nhật danh mục thành công';
+                header('Location: index.php?controller=category&action=index');
+                exit();
+            } else {
+                $_SESSION['error'] = 'Có lỗi xảy ra, vui lòng thử lại';
+                return $this->redirect("index.php?controller=category&action=edit&id={$categoryId}");
             }
         }
-
-        echo json_encode([
-            'items' => $cartItems,
-            'total' => $total,
-            'count' => array_sum(array_column($cartItems, 'quantity'))
-        ]);
-        exit;
     }
+
+    /**
+     * Admin functionality to delete a category
+     */
+    public function delete()
+    {
+        // Check if user is admin
+        // This would use your authentication system
+        
+        $categoryId = $_GET['id'] ?? null;
+        
+        if (!$categoryId) {
+            $_SESSION['error'] = 'ID danh mục không hợp lệ';
+            header('Location: index.php?controller=category&action=index');
+            exit();
+        }
+        
+        // Check if category has products
+        $products = $this->productModel->getByCategoryId($categoryId);
+        
+        if (count($products) > 0) {
+            $_SESSION['error'] = 'Không thể xóa danh mục này vì có sản phẩm liên quan';
+            header('Location: index.php?controller=category&action=index');
+            exit();
+        }
+        
+        // Delete the category
+        $result = $this->categoryModel->deleteData($categoryId);
+        
+        if ($result) {
+            $_SESSION['success'] = 'Xóa danh mục thành công';
+        } else {
+            $_SESSION['error'] = 'Có lỗi xảy ra, vui lòng thử lại';
+        }
+        
+        header('Location: index.php?controller=category&action=index');
+        exit();
+    }
+
+    /**
+     * Convert a string to a slug (URL-friendly string)
+     */
+    private function toSlug($string)
+    {
+        $string = preg_replace('~[^\pL\d]+~u', '-', $string);
+        $string = iconv('utf-8', 'us-ascii//TRANSLIT', $string);
+        $string = preg_replace('~[^-\w]+~', '', $string);
+        $string = trim($string, '-');
+        $string = preg_replace('~-+~', '-', $string);
+        $string = strtolower($string);
+        return $string;
+    }
+
+    /**
+     * Helper method to redirect with error message
+     */
+    private function redirect($url)
+    {
+        header("Location: {$url}");
+        exit();
+    }
+    public function getHeaderCategories()
+{
+    return $this->categoryModel->getCategoriesForMenu();
 }
+}
+
+?>

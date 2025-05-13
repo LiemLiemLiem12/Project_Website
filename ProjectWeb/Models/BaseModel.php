@@ -6,6 +6,7 @@ class BaseModel extends Database
     public function __construct()
     {
         $this->connect = $this->connect();
+        
     }
     // Lấy tất cả dữ liệu từ bản
     public function all($table, $select = ['*'], $limit, $orderBys = [])

@@ -1,6 +1,6 @@
 <?php
 class AdminCustomerModel {
-    private $conn;
+    public $conn;
     public function __construct() {
         $this->conn = new mysqli('localhost', 'root', '', 'fashion_database');
         if ($this->conn->connect_error) {

@@ -5,9 +5,11 @@ class CartController extends BaseController
 
     public function __construct()
     {
-        // Load ProductModel
+         parent::__construct();
+        
+        // Sau đó khởi tạo các model riêng
         $this->loadModel('ProductModel');
-        $this->productModel = new ProductModel;
+        $this->productModel = new ProductModel();
     }
 
     // Display Cart Page
