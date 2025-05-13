@@ -118,4 +118,60 @@ class OrderModel extends BaseModel
     {
         return mysqli_real_escape_string($this->connect, $value);
     }
+
+
+    public function getAll_AdminOrder()
+    {
+        return $this->getByQuery("
+            SELECT id_Order, u.name, o.created_at, CONCAT(REPLACE(FORMAT(total_amount, 0), ',', '.'), 'đ') as total_amount, payment_by, status, o.hide, note
+            FROM `order` o join user u on o.id_User = u.id_User
+            WHERE o.hide = 0
+        ");
+    }
+
+    public function getAll_AdminOrder_newest()
+    {
+        return $this->getByQuery("
+            SELECT id_Order, u.name, o.created_at, CONCAT(REPLACE(FORMAT(total_amount, 0), ',', '.'), 'đ') as total_amount, payment_by, status, o.hide, note
+            FROM `order` o join user u on o.id_User = u.id_User
+            WHERE o.hide = 0
+            ORDER BY o.created_at DESC
+        ");
+    }
+
+    public function getAll_AdminOrder_oldest()
+    {
+        return $this->getByQuery("
+            SELECT id_Order, u.name, o.created_at, CONCAT(REPLACE(FORMAT(total_amount, 0), ',', '.'), 'đ') as total_amount, payment_by, status, o.hide, note
+            FROM `order` o join user u on o.id_User = u.id_User
+            WHERE o.hide = 0
+            ORDER BY o.created_at ASC
+        ");
+    }
+
+    public function getAll_AdminOrder_total_high()
+    {
+        return $this->getByQuery("
+            SELECT id_Order, u.name, o.created_at, CONCAT(REPLACE(FORMAT(total_amount, 0), ',', '.'), 'đ') as total_amount, payment_by, status, o.hide, note
+            FROM `order` o join user u on o.id_User = u.id_User
+            WHERE o.hide = 0
+            ORDER BY o.total_amount DESC
+        ");
+    }
+
+    public function getAll_AdminOrder_total_low()
+    {
+        return $this->getByQuery("
+            SELECT id_Order, u.name, o.created_at, CONCAT(REPLACE(FORMAT(total_amount, 0), ',', '.'), 'đ') as total_amount, payment_by, status, o.hide, note
+            FROM `order` o join user u on o.id_User = u.id_User
+            WHERE o.hide = 0
+            ORDER BY o.total_amount ASC
+        ");
+    }
+
+    public function updateOrder($id, $data)
+    {
+        return $this->updateForOrder(self::TABLE, $id, $data);
+    }
 }
+?>

@@ -288,6 +288,11 @@ body {
     color: #155724;
 }
 
+.status.waitConfirm {
+    background-color: #fff3cd;
+    color: #ff9100;
+}
+
 .status.pending {
     background-color: #fff3cd;
     color: #856404;
@@ -828,6 +833,10 @@ body {
 }
 .table {
     min-width: 800px;
+}
+
+table#orderItemsTable {
+    min-width: 700px !important;
 }
 
 .sidebar-close {

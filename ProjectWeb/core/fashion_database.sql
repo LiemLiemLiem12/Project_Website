@@ -75,38 +75,20 @@ CREATE TABLE `order` (
   `total_amount` int(11) NOT NULL,
   `payment_method` varchar(50) DEFAULT NULL,
   `shipping_method` varchar(50) DEFAULT NULL,
-  `status` enum('pending','shipping','completed','cancelled') DEFAULT 'pending',
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `id_User` int(11) DEFAULT NULL,
-  `fullname` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `phone` varchar(50) DEFAULT NULL,
-  `address` text DEFAULT NULL,
   `note` text DEFAULT NULL,
-  `subtotal` decimal(10,2) DEFAULT NULL,
   `shipping_fee` decimal(10,2) DEFAULT NULL,
-  `discount_code` varchar(50) DEFAULT NULL,
-  `discount_amount` decimal(10,2) DEFAULT NULL
+  `status` enum('pending','shipping','completed','cancelled','waitConfirm') DEFAULT 'pending',
+  `hide` int(11) NOT NULL DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `order`
 --
 
-INSERT INTO `order` (`id_Order`, `order_number`, `total_amount`, `payment_method`, `shipping_method`, `status`, `created_at`, `updated_at`, `id_User`, `fullname`, `email`, `phone`, `address`, `note`, `subtotal`, `shipping_fee`, `discount_code`, `discount_amount`) VALUES
-(1, NULL, 315000, NULL, NULL, 'pending', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(2, NULL, 400000, NULL, NULL, 'completed', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(3, NULL, 595000, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(4, NULL, 427500, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(5, NULL, 225000, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(6, NULL, 12, NULL, NULL, 'completed', '2025-05-02 18:56:30', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(7, NULL, 1000000, NULL, NULL, 'shipping', '2025-05-02 13:05:02', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(8, NULL, 1000000, NULL, NULL, 'pending', '2025-02-09 13:05:23', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(9, NULL, 10000000, NULL, NULL, 'completed', '2025-04-16 13:36:31', '2025-05-13 02:51:10', 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(10, NULL, 10000000, NULL, NULL, 'completed', '2025-04-17 21:57:49', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(11, NULL, 10000000, NULL, NULL, 'completed', '2025-05-03 13:01:01', '2025-05-13 02:51:10', 8, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(12, NULL, 10000000, NULL, NULL, 'completed', '2025-03-19 13:36:06', '2025-05-13 02:51:10', 6, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
 
 -- --------------------------------------------------------
 
@@ -365,7 +347,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT cho bảng `order`
 --
 ALTER TABLE `order`
-  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `product`

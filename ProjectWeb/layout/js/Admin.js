@@ -618,47 +618,47 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- AdminOrder Double Click Row ---
-    if (document.querySelector('tr[data-order-id]')) {
-        document.querySelectorAll('tr[data-order-id]').forEach(function(row) {
-            row.addEventListener('dblclick', function() {
-                // Lấy thông tin từ các ô trong dòng
-                const orderId = row.getAttribute('data-order-id');
-                const tds = row.querySelectorAll('td');
-                // Demo dữ liệu chi tiết
-                document.getElementById('orderId').textContent = orderId;
-                document.getElementById('orderDate').textContent = tds[3]?.textContent.trim() || '';
-                document.getElementById('orderStatus').textContent = tds[6]?.textContent.trim() || '';
-                document.getElementById('orderTotal').textContent = tds[4]?.textContent.trim() || '';
-                // Thông tin khách hàng (demo)
-                document.getElementById('customerName').textContent = tds[2]?.textContent.trim() || '';
-                document.getElementById('customerEmail').textContent = 'khachhang@email.com';
-                document.getElementById('customerPhone').textContent = '0901234567';
-                document.getElementById('customerAddress').textContent = '123 Đường ABC, Quận 1, TP.HCM';
-                // Thông tin thanh toán (demo)
-                document.getElementById('paymentMethod').textContent = tds[5]?.textContent.trim() || '';
-                document.getElementById('orderNote').textContent = 'Giao giờ hành chính';
-                // Sản phẩm đặt (demo)
-                const itemsTable = document.getElementById('orderItemsTable');
-                itemsTable.innerHTML = `
-                    <tr>
-                        <td>Áo thun nam</td>
-                        <td>2</td>
-                        <td>250,000đ</td>
-                        <td>500,000đ</td>
-                    </tr>
-                    <tr>
-                        <td>Quần jeans nữ</td>
-                        <td>1</td>
-                        <td>499,000đ</td>
-                        <td>499,000đ</td>
-                    </tr>
-                `;
-                // Hiện modal
-                var modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
-                modal.show();
-            });
-        });
-    }
+    // if (document.querySelector('tr[data-order-id]')) {
+    //     document.querySelectorAll('tr[data-order-id]').forEach(function(row) {
+    //         row.addEventListener('dblclick', function() {
+    //             // Lấy thông tin từ các ô trong dòng
+    //             const orderId = row.getAttribute('data-order-id');
+    //             const tds = row.querySelectorAll('td');
+    //             // Demo dữ liệu chi tiết
+    //             document.getElementById('orderId').textContent = orderId;
+    //             document.getElementById('orderDate').textContent = tds[3]?.textContent.trim() || '';
+    //             document.getElementById('orderStatus').textContent = tds[6]?.textContent.trim() || '';
+    //             document.getElementById('orderTotal').textContent = tds[4]?.textContent.trim() || '';
+    //             // Thông tin khách hàng (demo)
+    //             document.getElementById('customerName').textContent = tds[2]?.textContent.trim() || '';
+    //             document.getElementById('customerEmail').textContent = 'khachhang@email.com';
+    //             document.getElementById('customerPhone').textContent = '0901234567';
+    //             document.getElementById('customerAddress').textContent = '123 Đường ABC, Quận 1, TP.HCM';
+    //             // Thông tin thanh toán (demo)
+    //             document.getElementById('paymentMethod').textContent = tds[5]?.textContent.trim() || '';
+    //             document.getElementById('orderNote').textContent = 'Giao giờ hành chính';
+    //             // Sản phẩm đặt (demo)
+    //             const itemsTable = document.getElementById('orderItemsTable');
+    //             itemsTable.innerHTML = `
+    //                 <tr>
+    //                     <td>Áo thun nam</td>
+    //                     <td>2</td>
+    //                     <td>250,000đ</td>
+    //                     <td>500,000đ</td>
+    //                 </tr>
+    //                 <tr>
+    //                     <td>Quần jeans nữ</td>
+    //                     <td>1</td>
+    //                     <td>499,000đ</td>
+    //                     <td>499,000đ</td>
+    //                 </tr>
+    //             `;
+    //             // Hiện modal
+    //             var modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+    //             modal.show();
+    //         });
+    //     });
+    // }
 
     // --- Customer Checkbox Delete ---
     if (document.getElementById('deleteSelectedCustomerBtn')) {
@@ -1058,9 +1058,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('productID', row.getAttribute('data-id_product'));
 
                 // Kiểm tra dữ liệu
-                for (let [key, value] of formData.entries()) {
-                    console.log(key, value);
-                }
+                // for (let [key, value] of formData.entries()) {
+                //     console.log(key, value);
+                // }
 
                 // Gửi dữ liệu
                 fetch('?controller=adminproduct&action=edit', {
@@ -1384,6 +1384,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
     }
+
+
     
 
 });
