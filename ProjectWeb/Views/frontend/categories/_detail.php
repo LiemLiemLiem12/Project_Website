@@ -10,7 +10,7 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/WEB_BAN_THOI_TRANG/layout/css/AllProduct.css">
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/AllProduct.css">
 </head>
 
 <body>
@@ -26,7 +26,7 @@
         
         <!-- Hero Banner -->
         <div class="hero-banner">
-            <img src="/WEB_BAN_THOI_TRANG/upload/img/All-Product/Banner1.webp" alt="Collection Banner" class="img-fluid">
+            <img src="/Project_Website/ProjectWeb/upload/img/All-Product/Banner1.webp" alt="Collection Banner" class="img-fluid">
         </div>
 
         <div class="row">

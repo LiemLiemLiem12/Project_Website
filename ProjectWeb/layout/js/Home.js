@@ -1,3 +1,27 @@
+// Đợi DOM load xong trước khi chạy
+document.addEventListener('DOMContentLoaded', function() {
+    // Lấy tất cả product cards
+    const productCards = document.querySelectorAll('.product-card');
+    
+    // Thêm sự kiện click cho mỗi card
+    productCards.forEach(function(card) {
+        card.addEventListener('click', function(event) {
+            // Nếu click vào nút "Thêm vào giỏ", không chuyển trang
+            if (event.target.classList.contains('btn-add-cart')) {
+                // Xử lý thêm vào giỏ hàng ở đây (nếu cần)
+                return;
+            }
+            
+            // Lấy ID sản phẩm từ data attribute
+            const productId = this.dataset.productId;
+            
+            // Chuyển trang
+            if (productId) {
+                window.location.href = 'index.php?controller=product&action=show&id=' + productId;
+            }
+        });
+    });
+});
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize carousel functionality
     initCarousel();
@@ -11,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize category selection
     initCategoryNav();
 
+    
     // Sample product data
     const productData = [
         {

@@ -1,703 +1,342 @@
-/* 
- * Header.css - Main header styling for RSStore
- * This file contains all styles for the main header, navigation, and related components
- * Improved with better spacing and alignment
- */
+/* ProjectWeb/layout/css/Header.css */
 
- :root {
-    /* Color scheme */
-    --primary-color: #1a1a1a;
-    --secondary-color: #ffffff;
-    --dark-color: #484848;
-    --light-color: #f9f9f9;
-    --gray-color: #767676;
-    --light-gray: #e4e4e4;
-    --border-color: #ebebeb;    
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    
-    /* Sizing variables */
-    --header-height: 60px;
-    --mobile-header-height: 50px;
-    --top-banner-height: 0px;
-    
-    /* Other variables */
-    --transition-speed: 0.3s;
-    --container-padding: 15px;
-    --navbar-spacing: 20px;
-}
+/* --- Biến màu và kích thước cơ bản --- */
+:root {
+    --header-primary-color: #007bff; /* Màu xanh dương chủ đạo của Bootstrap */
+    --header-secondary-color: #6c757d; /* Màu xám phụ của Bootstrap */
+    --header-light-bg: #f8f9fa;       /* Nền sáng */
+    --header-dark-bg: #343a40;        /* Nền tối */
+    --header-text-light: #f8f9fa;
+    --header-text-dark: #212529;
+    --header-border-color: #dee2e6;
+    --header-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 
-/* General Reset & Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    --top-banner-height: 35px;
+    --main-header-height-desktop: 70px;
+    --main-header-height-mobile: 60px;
+    --main-nav-height: 50px;
+    --mobile-search-height: 50px;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    color: var(--dark-color);
-    line-height: 1.6;
-    padding-top: var(--header-height);
-    overflow-x: hidden;
+    /* Sẽ được cập nhật bằng JavaScript để tránh nội dung bị che bởi header cố định */
+    padding-top: 150px; /* Giá trị tạm thời, JS sẽ tính toán chính xác */
+    transition: padding-top 0.3s ease-out;
 }
 
-@media (max-width: 767.98px) {
-    body {
-        padding-top: calc(var(--mobile-header-height) + var(--top-banner-height) + 56px);
-    }
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-    transition: all var(--transition-speed) ease;
-}
-
-ul {
-    list-style: none;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Top Banner */
+/* --- Top Banner --- */
 .top-banner {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    font-size: 14px;
-    font-weight: 500;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1030;
+    background-color: var(--header-primary-color);
+    color: var(--header-text-light);
+    font-size: 0.875rem;
     height: var(--top-banner-height);
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-}
-
-.top-banner-carousel {
-    display: flex;
-    width: 100%;
-    white-space: nowrap;
-    position: relative;
-}
-
-.banner-scroll {
-    display: flex;
-    animation: scrollBanner 20s linear infinite;
-    padding-left: 100%;
-}
-
-.top-banner-item {
-    flex: 0 0 auto;
-    padding: 0 20px;
-    opacity: 1;
-    display: block;
-}
-
-@keyframes scrollBanner {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
-}
-
-/* Pause animation on hover */
-.top-banner:hover .banner-scroll {
-    animation-play-state: paused;
-}
-
-/* Header */
-header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: var(--header-height);
-    background: linear-gradient(to right, var(--primary-color), #2c2c2c);
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1035; /* Cao nhất */
+    box-shadow: var(--header-box-shadow);
+}
+.top-banner-carousel p {
+    margin-bottom: 0;
 }
 
-header.scrolled {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* --- Main Header (Logo, Search, Actions) --- */
+header { /* Thẻ <header> */
+    background-color: #ffffff;
+    position: fixed;
+    /* top: var(--top-banner-height); JS sẽ đặt giá trị này */
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    box-shadow: var(--header-box-shadow);
+    border-bottom: 1px solid var(--header-border-color);
 }
 
-.header-hidden {
-    transform: translateY(-100%);
-}
-
-/* Main Header */
-.main-header {
-    padding: 5px 0;
-    height: 100%;
-}
-
-.main-header .container-fluid {
-    height: 100%;
-}
-
-.main-header .row {
-    height: 100%;
+.main-header { /* class .main-header */
+    min-height: var(--main-header-height-desktop);
     align-items: center;
-}
-
-.main-header .col-md-3,
-.main-header .col-md-6,
-.main-header .col-6,
-.main-header .col-4,
-.main-header .col-2 {
-    padding: 10px;
-}
-
-@media (max-width: 767.98px) {
-    .main-header {
-        height: var(--mobile-header-height);
-    }
-}
-
-/* Logo */
-.logo {
-    display: block;
-    text-align: center;
+    padding: 0.5rem 0;
 }
 
 .logo img {
-    max-height: 40px;
-    display: inline-block;
-    transition: all 0.3s ease;
+    max-height: 55px; /* Điều chỉnh nếu cần */
+    transition: max-height 0.3s ease;
 }
 
-header.scrolled .logo img {
-    height: 35px;
-}
-
-/* Search Container */
 .search-container {
-    position: relative;
-    max-width: 500px;
-    margin: 0 auto;
+    display: flex;
+    width: 100%; /* Ensure it can take up space */
+    max-width: 850px; /* Default max-width for larger screens, adjust as needed */
+    margin: 0 auto; /* Center it in its container if parent allows */
+}
+
+.search-container form {
+    display: flex;
+    width: 100%;
 }
 
 .search-input {
-    width: 100%;
-    padding: 8px 35px 8px 15px;
-    border: none;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    border: 1px solid var(--header-border-color);
+    padding: 0.5rem 0.75rem;
+    flex-grow: 1;
+    border-radius: 0.25rem 0 0 0.25rem;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 200px; /* Minimum width to prevent it from becoming too small */
 }
-
-.search-input::placeholder {
-    color: rgba(255,255,255,0.7);
+.search-input:focus {
+    outline: none;
+    border-color: var(--header-primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
-
 .search-button {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.7);
+    background-color: var(--header-primary-color);
+    color: white;
+    border: 1px solid var(--header-primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0 0.25rem 0.25rem 0;
     cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.search-button:hover {
+    background-color: #0056b3; /* Darker blue */
 }
 
-/* Mobile search */
-.mobile-search {
-    border-bottom: 1px solid var(--border-color);
-    display: none;
-}
-
-@media (max-width: 767.98px) {
-    .mobile-search {
-        display: block;
-    }
-}
-
-/* User actions */
 .header-action {
-    position: relative;
+    margin-left: 1rem;
 }
-
-.d-flex.justify-content-end {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    height: 100%;
-}
-
-.action-link {
-    color: #fff;
-    font-size: 14px;
+.header-action .action-link {
+    color: var(--header-text-dark);
+    text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 8px;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
-
-.action-link i {
-    font-size: 18px;
+.header-action .action-link:hover {
+    color: var(--header-primary-color);
+    background-color: var(--header-light-bg);
 }
-
+.header-action .action-link i {
+    font-size: 1.3rem;
+    margin-right: 0.3rem;
+}
 .cart-count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #007bff;
-    color: #fff;
-    font-size: 10px;
-    padding: 2px 5px;
+    background-color: #dc3545; /* Bootstrap danger color */
+    color: white;
     border-radius: 50%;
-}
-
-/* Dropdown menus */
-.account-dropdown, 
-.cart-dropdown {
+    padding: 2px 6px;
+    font-size: 0.7rem;
     position: absolute;
-    top: 100%;
-    right: 0;
-    width: 300px;
-    background-color: var(--secondary-color);
-    border-radius: 4px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition: all var(--transition-speed) ease;
-    z-index: 1000;
-    padding: 0;
-    margin-top: 10px;
+    top: 0px;
+    right: 0px;
+    line-height: 1;
+    font-weight: bold;
 }
 
-.dropdown-content {
-    padding: 15px;
-}
-
-.dropdown-header {
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-}
-
-.dropdown-header h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.dropdown-body {
-    padding: 5px 0;
-}
-
-.header-action.position-relative.dropdown:hover .account-dropdown,
-.header-action.position-relative.dropdown:hover .cart-dropdown {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.empty-cart {
-    padding: 20px 0;
-}
-
-.empty-cart img {
-    max-width: 80px;
-    margin-bottom: 10px;
-}
-
-.empty-cart p {
-    color: var(--gray-color);
-    margin: 0;
-}
-
-.cart-summary {
-    border-top: 1px solid var(--border-color);
-    padding-top: 15px;
-    margin-top: 15px;
-}
-
-/* Navigation */
-.navbar {
-    padding: 0;
-    background: transparent;
-}
-
-.navbar-nav {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-item {
-    padding: 0 15px;
-}
-
-.nav-link {
-    color: #fff !important;
-    font-size: 13px;
+/* Dropdowns (Account, Cart) - Thêm style nếu cần, Bootstrap đã có sẵn */
+.account-dropdown .dropdown-header, .cart-dropdown .dropdown-header {
+    font-size: 1rem;
     font-weight: 500;
-    text-transform: uppercase;
-    padding: 10px 0 !important;
-    position: relative;
 }
-
-.nav-link:after {
-    content: '';
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: #007bff;
-    transition: width 0.3s;
+.account-dropdown .dropdown-item, .cart-dropdown .dropdown-item {
+    font-size: 0.9rem;
 }
-
-.nav-link:hover {
-    color: #007bff !important;
-}
-
-.nav-link:hover:after {
-    width: 100%;
-}
-
-.navbar-toggler {
-    color: #fff;
-    border: none;
-    padding: 15px;
-}
-
-.navbar-toggler i {
-    font-size: 24px;
-    color: var(--dark-color);
-}
-
-/* Megamenu */
-.megamenu {
-    padding: 20px;
-}
-
-.megamenu h6 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-}
-
-.megamenu .nav-link {
-    padding: 5px 0;
-    font-weight: normal;
-}
-
-/* Media Queries */
-@media (max-width: 991.98px) {
-    .nav-item {
-        padding: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .nav-link {
-        padding: 8px 15px !important;
-    }
-    
-    .action-link span {
-        display: none;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .navbar-collapse {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 80%;
-        height: 100vh;
-        background-color: var(--secondary-color);
-        z-index: 1050;
-        transform: translateX(-100%);
-        transition: transform var(--transition-speed) ease;
-        display: block !important;
-        padding: 20px;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        overflow-y: auto;
-    }
-    
-    .navbar-collapse.show {
-        transform: translateX(0);
-    }
-    
-    .navbar-nav {
-        flex-direction: column;
-        justify-content: flex-start;
-    }
-    
-    .nav-item {
-        padding: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .megamenu {
-        position: static;
-        width: 100%;
-        padding: 10px 0 10px 15px;
-        box-shadow: none;
-    }
-    
-    .dropdown-menu {
-        position: static;
-        width: 100%;
-        padding: 5px 0 5px 15px;
-        margin-top: 0;
-        box-shadow: none;
-        border: none;
-        background-color: transparent;
-    }
-    
-    .account-dropdown,
-    .cart-dropdown {
-        width: 290px;
-        right: -70px;
-    }
-    
-    .account-dropdown::before,
-    .cart-dropdown::before {
-        right: 80px;
-    }
-}
-
-/* Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-/* Notification system */
-.notification-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    max-width: 300px;
-}
-
-.notification {
-    background-color: white;
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    margin-bottom: 10px;
-    overflow: hidden;
-    animation: slideIn 0.3s ease forwards;
-    display: flex;
-    align-items: center;
-    padding: 15px;
-}
-
-.notification-icon {
-    margin-right: 15px;
-    font-size: 20px;
-    color: var(--primary-color);
-}
-
-.notification-content {
-    flex: 1;
-}
-
-.notification-title {
-    font-weight: 600;
-    margin-bottom: 3px;
-}
-
-.notification-message {
-    font-size: 13px;
-}
-
-.notification-close {
-    color: var(--gray-color);
-    font-size: 16px;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-.notification-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    background-color: var(--primary-color);
-    width: 100%;
-    animation: progress 3s linear forwards;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes progress {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 0%;
-    }
-}
-
-/* Dropdown menus */
-.dropdown-menu {
-    margin-top: 0;
-    border: none;
-    border-radius: 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.dropdown-item {
-    padding: 8px 20px;
+.account-dropdown .form-control, .cart-dropdown .form-control {
     font-size: 0.9rem;
 }
 
-.dropdown-item:hover {
-    background: #f5f5f5;
-}
-
-/* Mobile styles */
-@media (max-width: 991.98px) {
-    .navbar-toggler {
-        padding: 4px 8px;
-        font-size: 14px;
-        color: #fff;
-        border-color: rgba(255,255,255,0.3);
-    }
-
-    .navbar-collapse {
-        background: #333;
-    }
-
-    .dropdown-menu {
-        background: #444;
-        padding: 0;
-    }
-
-    .dropdown-item {
-        color: #fff;
-        border-bottom: 1px solid #555;
-    }
-
-    .dropdown-item:hover {
-        background: #555;
-        color: #fff;
-    }
-}
-
-/* Header Position */
-body {
-    margin: 0;
-    padding: 0;
-    padding-top: 140px; /* Thêm padding-top bằng chiều cao của header */
-}
-
-header {
+/* --- Mobile Search Bar (ẩn trên desktop) --- */
+.mobile-search { /* class .mobile-search */
+    background-color: #ffffff;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--header-border-color);
     position: fixed;
-    top: 0;
+    /* top: ... JS sẽ đặt giá trị này */
     left: 0;
-    right: 0;
-    z-index: 1000;
-    background: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
+    width: 100%;
+    z-index: 1025; /* Dưới main header, trên main-nav */
+    box-shadow: var(--header-box-shadow);
 }
 
-header.scrolled {
-    transform: translateY(-50%); /* Ẩn phần trên của header khi cuộn */
+/* --- Main Navigation --- */
+.main-nav { /* class .main-nav */
+    background-color: var(--header-dark-bg);
+    min-height: var(--main-nav-height);
+    display: flex;
+    align-items: center;
+    position: fixed;
+    /* top: ... JS sẽ đặt giá trị này */
+    left: 0;
+    width: 100%;
+    z-index: 1020; /* Dưới cùng trong các thanh cố định */
+    box-shadow: var(--header-box-shadow);
 }
-
-.main-header {
-    background-color: #fff;
-    padding: 10px 0;
-}
-
-.navbar {
+.main-nav .navbar { /* Thẻ nav bên trong .main-nav */
     padding: 0;
-    background-color: #fff;
+    width:100%;
 }
-
-.navbar-nav {
-    width: 100%;
-    justify-content: center;
-}
-
-.nav-item {
-    padding: 0 15px;
-}
-
-.nav-link {
-    color: #333 !important;
-    font-weight: 500;
+.main-nav .navbar-nav .nav-item .nav-link {
+    color: var(--header-text-light);
+    padding: 0.8rem 1.2rem; /* Tăng padding */
+    font-size: 0.9rem;
     text-transform: uppercase;
-    font-size: 14px;
-    padding: 15px 0 !important;
-    position: relative;
+    font-weight: 500;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    border-radius: 0.25rem; /* Bo góc nhẹ cho link */
+    margin: 0 0.2rem; /* Khoảng cách nhỏ giữa các item */
+}
+.main-nav .navbar-nav .nav-item .nav-link:hover,
+.main-nav .navbar-nav .nav-item .nav-link.active {
+    background-color: var(--header-primary-color);
+    color: white;
+}
+.main-nav .navbar-nav .nav-item .nav-link i {
+    margin-right: 0.5rem;
 }
 
-.nav-link:after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: #007bff;
-    transition: width 0.3s ease;
+/* Mobile Menu Button (.navbar-toggler) */
+.navbar-toggler {
+    border: 1px solid var(--header-secondary-color);
+    padding: 0.25rem 0.5rem;
+}
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(33, 37, 41, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
-.nav-link:hover:after {
-    width: 100%;
-}
+/* --- Responsive: 4 Breakpoints --- */
 
-/* Mobile Responsive */
+/* LG (Desktop lớn >= 992px) - Bootstrap default, ít thay đổi */
+
+/* MD (Desktop nhỏ / Tablet ngang < 992px) */
 @media (max-width: 991.98px) {
-    body {
-        padding-top: var(--mobile-header-height);
+    .main-header {
+        min-height: calc(var(--main-header-height-desktop) - 10px); /* Giảm nhẹ chiều cao */
     }
+    .logo img {
+        max-height: 50px;
+    }
+    .search-container { 
+        max-width: 700px; /* Adjusted width for medium screens */
+    }
+    .main-nav .navbar-collapse { /* Menu xổ xuống */
+        position: absolute;
+        top: 100%; /* Ngay dưới thanh .main-nav */
+        left: 0;
+        width: 100%;
+        background-color: var(--header-dark-bg);
+        border-top: 1px solid var(--header-primary-color);
+        box-shadow: 0 8px 10px rgba(0,0,0,0.15);
+        max-height: calc(100vh - var(--main-nav-height) - var(--main-header-height-desktop) - var(--top-banner-height)); /* Giới hạn chiều cao */
+        overflow-y: auto;
+    }
+    .main-nav .navbar-nav .nav-item {
+        width:100%;
+    }
+    .main-nav .navbar-nav .nav-item .nav-link {
+        padding: 0.9rem 1.5rem;
+        margin:0;
+        border-radius: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .main-nav .navbar-nav .nav-item:last-child .nav-link {
+        border-bottom: none;
+    }
+}
 
-    header {
-        height: var(--mobile-header-height);
+/* SM (Tablet đứng / Mobile ngang < 768px) */
+@media (max-width: 767.98px) {
+    .main-header {
+        min-height: var(--main-header-height-mobile);
     }
+    /* Mobile search is now primary, hide desktop search if preferred */
+    .main-header .search-container {
+        /* display: none; /* Optionally hide if mobile search is always visible */
+        max-width: 100%; /* Take full width when it's the only search */
+    }
+     .mobile-search .search-container { /* Style the mobile specific search bar */
+        max-width: 95%; /* Example: use most of the width */
+        margin: 0 auto;
+    }
+    .logo img {
+        max-height: 45px;
+    }
+    .header-action .action-link span.d-none.d-lg-inline-block {
+        display: none !important; /* Ẩn chữ, chỉ giữ icon */
+    }
+     .header-action .action-link i {
+        margin-right: 0;
+    }
+    .header-action {
+        margin-left: 0.5rem; /* Giảm khoảng cách */
+    }
+    /* .search-container trong .main-header (col-md-6) sẽ bị ẩn do class d-none d-md-block */
+    /* .mobile-search sẽ hiện ra */
+}
 
-    .navbar-toggler {
-        padding: 4px 8px;
-        font-size: 14px;
-        color: #fff;
-        border-color: rgba(255,255,255,0.3);
+/* XS (Mobile đứng < 576px) */
+@media (max-width: 575.98px) {
+    .top-banner {
+        font-size: 0.75rem; /* Chữ nhỏ hơn trên màn hình rất nhỏ */
     }
+    .main-header {
+        padding: 0.25rem 0;
+    }
+    .logo img {
+        max-height: 40px; /* Logo nhỏ hơn nữa */
+    }
+    .main-header .search-container { /* Ensure it's not too wide here if not hidden */
+         max-width: 100%;
+    }
+     .mobile-search .search-container { /* Mobile search for very small screens */
+        max-width: 98%;
+    }
+     .header-action .action-link i {
+        font-size: 1.1rem;
+    }
+     .header-action {
+        margin-left: 0.25rem;
+    }
+    .account-dropdown, .cart-dropdown { /* Dropdown chiếm toàn màn hình hơn */
+        width: 280px; /* Hoặc 90vw */
+        right: -15px !important; /* Điều chỉnh vị trí */
+    }
+    .main-nav .navbar-nav .nav-item .nav-link {
+        font-size: 0.85rem;
+        padding: 0.8rem 1.2rem;
+    }
+}
 
-    .nav-item {
-        padding: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
+/* Styling for the new header layout with integrated logo and brand text */
+.desktop-logo-img {
+  max-height: 40px; /* Adjusted height for desktop inline logo */
+}
 
-    .nav-link {
-        padding: 8px 15px !important;
-    }
+.rs-store-brand-text {
+  font-weight: 600; /* Bolder text */
+  color: var(--header-text-dark);
+  font-size: 1.25rem; /* Slightly larger brand text */
+  white-space: nowrap; /* Prevent text from wrapping */
+  line-height: 1; /* Align better with logo and search */
+}
 
-    .search-input {
-        padding: 6px 30px 6px 12px;
-    }
+/* Ensure the search container in the new layout takes up remaining space */
+.d-none.d-md-flex.align-items-center > .search-container {
+  flex-grow: 1;
+  max-width: 550px; /* Adjusted max-width for a more balanced look */
+}
+
+/* Specific styling for mobile logo if needed, using existing class structure */
+/* The general .logo img rules might cover mobile, but this is more specific */
+.main-header .col-6.d-md-none .logo img {
+  max-height: 50px; /* Ensure mobile logo is still a good size, adjust if needed from previous 45px/40px */
 }

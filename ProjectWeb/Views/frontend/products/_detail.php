@@ -1,3 +1,16 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $productId = $_POST['product_id'] ?? null;
+    $quantity = $_POST['quantity'] ?? 1;
+
+    // Thêm vào giỏ (ví dụ đơn giản với $_SESSION)
+    $_SESSION['cart'][$productId] = $quantity;
+
+    echo json_encode(['success' => true]);
+    exit;   
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -6,7 +19,7 @@
     <title><?= $productDetail['name'];?> - 160STORE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link rel="stylesheet" href="/WEB_BAN_THOI_TRANG/layout/css/DetailProduct.css">
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/DetailProduct.css">
 </head>
 <body>
     <div class="container mt-4">
@@ -21,14 +34,14 @@
             <!-- Product Images - Left side -->
             <div class="col-md-6">
                 <div class="product-main-image-container mb-3">
-                    <img id="mainProductImage" src="<?= $productDetail['image'];?>" class="product-main-image" alt="<?= $productDetail['name'];?>">
+                    <img id="mainProductImage" src="/Project_Website/ProjectWeb/upload/img/Home/<?= $productDetail['main_image'];?>" class="product-main-image" alt="<?= $productDetail['name'];?>">
                 </div>
                 <div class="product-thumbnails-wrapper">
                     <div class="product-thumbnails-container">
-                        <img src="<?= $productDetail['image'];?>" class="product-thumbnail img-thumbnail active" alt="Thumbnail 1">
-                        <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem2.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 2">
-                        <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem3.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 3">
-                        <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem4.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 4">
+                        <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $productDetail['main_image'];?>" class="product-thumbnail img-thumbnail active" alt="Thumbnail 1">
+                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem2.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 2">
+                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem3.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 3">
+                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem4.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 4">
                     </div>
                 </div>
                 
@@ -52,57 +65,73 @@
                     <h1 class="product-main-title"><?= $productDetail['name'];?></h1>
                     
                     <!-- Product Code -->
-                    <div class="product-code">
-                        <span>Loại: </span> | <span>MSP: VFID0098-03</span>
-                    </div>
-                    
+                  
                     <!-- Price -->
                     <div class="d-flex align-items-center mb-4">
-                        <span class="current-price me-2" id="totalPrice"><?= $productDetail['price_sale'];?></span>
-                        <span class="original-price text-decoration-line-through"><?= $productDetail['price'];?></span>
-                    </div>
+                    <?php
+                        $originalPrice = (float)$productDetail['original_price']; 
+                        $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
+                        $totalPrice =(float)$productDetail['current_price'] * $quantity;
+                  
+                    ?>
+                    <span class="current-price me-2" id="totalPrice">
+                          <?= number_format($totalPrice, 0, ',', '.'); ?>₫
+                    </span>
+                    <?php if ((float)$productDetail['discount_percent'] > 0): ?>
+                        <span class="original-price text-decoration-line-through"><?= number_format($originalPrice* $quantity, 0, ',', '.'); ?>₫</span>
+                    <?php endif; ?>
+                </div>
 
-                    <!-- Promo Section -->
-                    <div class="promo-section mb-4">
-                        <h4 class="promo-title">KHUYẾN MÃI - ƯU ĐÃI</h4>
-                        <ul class="promo-list">
-                            <li><i class="fas fa-tag"></i> Nhập mã <strong>APR10</strong> GIẢM 10% TỐI ĐA 10K</li>
-                            <li><i class="fas fa-tag"></i> Nhập mã <strong>APR30</strong> GIẢM 30K ĐƠN TỪ 599K</li>
-                            <li><i class="fas fa-tag"></i> Nhập mã <strong>APR70</strong> GIẢM 70K ĐƠN TỪ 999K</li>
-                            <li><i class="fas fa-tag"></i> Nhập mã <strong>APR100</strong> GIẢM 100K ĐƠN TỪ 1199K</li>
-                            <li><i class="fas fa-shipping-fast"></i> <strong>FREESHIP</strong> đơn từ 250K</li>
-                        </ul>
-                        
-                        <!-- Promo Code Buttons -->
-                        <div class="available-promos">
-                            <h5 class="available-promos-title">Mã giảm giá bạn có thể sử dụng:</h5>
-                            <div class="d-flex flex-wrap">
-                                <button class="promo-code-btn me-2 mb-2">APR10</button>
-                                <button class="promo-code-btn me-2 mb-2">APR30</button>
-                                <button class="promo-code-btn me-2 mb-2">APR70</button>
-                                <button class="promo-code-btn mb-2">APR100</button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Color Selection -->
-                    <div class="mb-4">
-                        <div class="fw-bold mb-3">Màu sắc:</div>
-                        <div class="d-flex">
-                            <div class="color-option active" data-color="white">
-                                <div class="color-box color-white"></div>
-                                <span>Trắng</span>
+                 
+                 <?php
+                    // Lấy thông tin số lượng cho mỗi size
+                    // Giả sử bạn đã có $productDetail chứa thông tin sản phẩm
+                    $sizeInfo = [
+                        'M' => [
+                            'quantity' => (int)$productDetail['M'],
+                            'label' => 'M'
+                        ],
+                        'L' => [
+                            'quantity' => (int)$productDetail['L'],
+                            'label' => 'L'
+                        ],
+                        'XL' => [
+                            'quantity' => (int)$productDetail['XL'],
+                            'label' => 'XL'
+                        ]
+                    ];
+
+                    // Lọc ra chỉ những size có hàng (quantity > 0)
+                    $availableSizes = array_filter($sizeInfo, function($size) {
+                        return $size['quantity'] > 0;
+                    });
+                ?>
+                 
+                 <!-- Size Selection -->
+                <div class="mb-4">
+                    <div class="fw-bold mb-3">Kích thước:</div>
+                    <div class="d-flex">
+                        <?php 
+                        // Kiểm tra nếu có size nào có sẵn
+                        if (!empty($availableSizes)): 
+                            foreach ($availableSizes as $sizeCode => $sizeData): 
+                        ?>
+                            <div class="size-option" data-size="<?= $sizeCode ?>" data-quantity="<?= $sizeData['quantity'] ?>">
+                                <div class="size-box">
+                                    <span><?= $sizeData['label'] ?></span>
+                                </div>
+                            
                             </div>
-                            <div class="color-option" data-color="black">
-                                <div class="color-box color-black"></div>
-                                <span>Đen</span>
-                            </div>
-                            <div class="color-option" data-color="gray">
-                                <div class="color-box color-gray"></div>
-                                <span>Xám</span>
-                            </div>
-                        </div>
+                        <?php 
+                            endforeach;
+                        else:
+                            // Hiển thị khi không có size nào có sẵn
+                        ?>
+                            <p class="text-dark">Sản phẩm hiện tại không có size nào.</p>
+                        <?php endif; ?>
                     </div>
+                </div> 
 
                     <!-- Quantity Selection -->
                     <div class="mb-4">
@@ -117,11 +146,14 @@
                     <!-- Action Buttons -->
                     <div class="d-grid gap-2 mb-4">
                         <div class="row g-2">
-                            <div class="col-6">
-                                <button class="btn btn-primary w-100 buy-now-btn" type="button">MUA NGAY</button>
-                            </div>
-                            <div class="col-6">
-                                <button id="addToCartBtn" class="btn btn-outline-dark w-100" type="button">THÊM VÀO GIỎ</button>
+                                                        
+                             <button id="buyNowBtn" class="btn btn-outline-dark w-100 buy-now " type="button" data-id="<?= $productDetail['id_product'] ?>">MUA NGAY</button>
+                           
+                            <!-- THÊM VÀO GIỎ - Gửi bằng JS -->
+                            <button id="addToCartBtn" class="btn btn-outline-dark w-100" type="button" data-id="<?= $productDetail['id_product'] ?>">THÊM VÀO GIỎ</button>
+
+
+
                             </div>
                         </div>
                     </div>
@@ -162,7 +194,7 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem2.webp" alt="Product Detail" class="img-fluid rounded">
+                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem2.webp" alt="Product Detail" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
@@ -170,14 +202,14 @@
             <div id="giao-hang" class="tab-content">
                 <h2>Chính Sách Giao Hàng</h2>
                 <div class="text-center">
-                    <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/cs_giaohanh.webp" alt="Chính sách giao hàng" class="img-fluid">
+                    <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/cs_giaohanh.webp" alt="Chính sách giao hàng" class="img-fluid">
                 </div>
             </div>
 
             <div id="doi-hang" class="tab-content">
                 <h2>Chính Sách Đổi Hàng</h2>
                 <div class="text-center">
-                    <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/doitra_1.webp" alt="Chính sách đổi hàng" class="img-fluid">
+                    <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/doitra_1.webp" alt="Chính sách đổi hàng" class="img-fluid">
                 </div>
             </div>
         </div>
@@ -247,7 +279,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem3.webp" alt="Vớ Lười Nam ICONDENIM Twinline">
+                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem3.webp" alt="Vớ Lười Nam ICONDENIM Twinline">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Lười Nam ICONDENIM Twinline</h6>
@@ -257,7 +289,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem4.webp" alt="Vớ Crew Nam ICONDENIM Office Stride">
+                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem4.webp" alt="Vớ Crew Nam ICONDENIM Office Stride">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Crew Nam ICONDENIM Office Stride</h6>
@@ -267,7 +299,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem5.webp" alt="Vớ Nam ICONDENIM Bold Logo ICDN">
+                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem5.webp" alt="Vớ Nam ICONDENIM Bold Logo ICDN">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Nam ICONDENIM Bold Logo ICDN</h6>
@@ -277,7 +309,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem1.webp" alt="Vớ Low-Cut Nam ICONDENIM Combo Brand ICDN">
+                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem1.webp" alt="Vớ Low-Cut Nam ICONDENIM Combo Brand ICDN">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Low-Cut Nam ICONDENIM Combo Brand ICDN</h6>
@@ -287,7 +319,7 @@
                         <div class="related-product-card">
                             <span class="badge-new">Hàng Mới</span>
                             <div class="product-image-container">
-                                <img src="/WEB_BAN_THOI_TRANG/upload/img/DetailProduct/detailItem2.webp" alt="Vớ Low-Cut Nam ICONDENIM Color Block">
+                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem2.webp" alt="Vớ Low-Cut Nam ICONDENIM Color Block">
                             </div>
                             <div class="product-info-container">
                                 <h6>Vớ Low-Cut Nam ICONDENIM Color Block</h6>
@@ -319,6 +351,6 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/WEB_BAN_THOI_TRANG/layout/js/DetailProduct.js"></script>
+    <script src="/Project_Website/ProjectWeb/layout/js/DetailProduct.js"></script>
 </body>
 </html>
