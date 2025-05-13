@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý danh mục - SR Store</title>
+    <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Admin.css">
+    <style>
+    .status.completed {
+        background: #d4f5e9;
+        color: #2e7d32;
+        border-radius: 16px;
+        padding: 2px 12px;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .status.inactive {
+        background: #e0e0e0;
+        color: #757575;
+        border-radius: 16px;
+        padding: 2px 12px;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .search-box {
+    position: relative;
+}
+.search-box input {
+    width: 100%;
+    padding-left: 36px;
+}
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none; /* Đảm bảo click vào icon vẫn focus được input */
+}
+.filter-row {
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.filter-item {
+    min-width: 160px;
+}
+.search-box input {
+    width: 100%;
+    min-width: 120px;
+    padding-left: 36px;
+    box-sizing: border-box;
+}
+.notification-list-modal {
+    padding: 0;
+    margin: 0;
+}
+.notification-item-modal {
+    transition: background 0.2s;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    display: flex;
+    align-items: start;
+}
+.notification-item-modal:hover {
+    background: #f5f7fa;
+}
+.notification-icon-modal {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #1976d2;
+    margin-right: 12px;
+}
+.notification-title-modal {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+.notification-desc-modal {
+    font-size: 15px;
+    margin-bottom: 2px;
+    color: #444;
+}
+.notification-time-modal {
+    font-size: 13px;
+    color: #aaa;
+}
+    </style>
+</head>
+<body>
+<div class="admin-container">
+<?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
+
+       
+    <div class="main-content">
+        <header class="header">
+                <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                    <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
+                        <!-- <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                        <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; top: 120%; right: 0; width: 340px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border-radius: 8px; z-index: 9999;">
+                            <div style="padding: 12px 16px; border-bottom: 1px solid #eee; font-weight: 600;">Thông báo danh mục</div>
+                            <ul id="notificationList" style="list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto;"></ul>
+                            <div style="padding: 10px 0; text-align: center; border-top: 1px solid #eee;">
+                                <a href="#" style="color: #007bff; font-size: 14px; text-decoration: none;">Xem tất cả</a>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="profile">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                    </div>
+                </div>
+        </header>
+        <div class="content" id="content-container">
+            <div class="page-header d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">Quản lý Danh mục</h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" id="addCategoryBtn">
+                        <i class="fas fa-plus"></i> Thêm danh mục
+                    </button>
+                    <button class="btn btn-danger" id="deleteSelectedBtn" disabled>
+                        <i class="fas fa-trash"></i> Xóa đã chọn
+                    </button>
+                </div>
+            </div>
+    <div class="category-filters mb-3">
+    <div class="filter-row d-flex flex-row flex-wrap gap-2 align-items-center">
+        <div class="filter-item flex-grow-1" style="min-width:220px;">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Tìm kiếm danh mục..." id="searchCategoryInput" class="form-control" style="width:100%;padding-left:36px;" autocomplete="off">
+            </div>
+        </div>
+        <div class="filter-item">
+            <select class="filter-dropdown form-select" id="filterStatus">
+                <option value="" <?= empty($status) ? 'selected' : '' ?>>Trạng thái</option>
+                <option value="active" <?= ($status ?? '') == 'active' ? 'selected' : '' ?>>Đang hoạt động</option>
+                <option value="inactive" <?= ($status ?? '') == 'inactive' ? 'selected' : '' ?>>Ẩn</option>
+            </select>
+        </div>
+        <div class="filter-item">
+            <select class="filter-dropdown form-select" id="sortCategory">
+                <option value="" <?= empty($sort) ? 'selected' : '' ?>>Sắp xếp theo</option>
+                <option value="name-asc" <?= ($sort ?? '') == 'name-asc' ? 'selected' : '' ?>>Tên (A-Z)</option>
+                <option value="name-desc" <?= ($sort ?? '') == 'name-desc' ? 'selected' : '' ?>>Tên (Z-A)</option>
+            </select>
+        </div>
+    </div>
+</div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all-category" class="form-check-input"></th>
+                            <th>Tên danh mục</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                        <?php foreach ($categories as $category): ?>
+                        <tr data-category-id="<?= $category['ID'] ?>">
+                            <td>
+                                <input type="checkbox" class="form-check-input category-checkbox" data-id="<?= $category['ID'] ?>">
+                            </td>
+                            <td><?= htmlspecialchars($category['name']) ?></td>
+                            <td>
+                                <span class="status <?= ($category['hide'] ?? 0) ? 'inactive' : 'completed' ?>">
+                                    <?= ($category['hide'] ?? 0) ? 'Ẩn' : 'Đang hoạt động' ?>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info btn-view-category" data-id="<?= $category['ID'] ?>" data-hide="<?= $category['hide'] ?? 0 ?>" title="<?= ($category['hide'] ?? 0) ? 'Hiện' : 'Ẩn' ?>">
+                                        <i class="fas <?= ($category['hide'] ?? 0) ? 'fa-eye-slash' : 'fa-eye' ?>"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-primary btn-edit-category" title="Sửa" data-id="<?= $category['ID'] ?>">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php
+            // Ensure $limit, $total, and $page are set before using them for pagination
+            $currentPage = $page ?? 1;
+            $currentLimit = $limit ?? 5; // Default limit if not set
+            $totalItems = $total ?? 0;
+            $totalPages = ($currentLimit > 0 && $totalItems > 0) ? ceil($totalItems / $currentLimit) : 0;
+            
+            if ($totalPages > 1): ?>
+            <nav>
+              <ul class="pagination justify-content-center">
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                  <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
+                    <a class="page-link" href="index.php?controller=admincategory&status=<?= urlencode($status ?? '') ?>&sort=<?= urlencode($sort ?? '') ?>&page=<?= $i ?>"><?= $i ?></a>
+                  </li>
+                <?php endfor; ?>
+              </ul>
+            </nav>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Danh mục -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalTitle">Thêm danh mục mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Tên danh mục</label>
+                        <input type="text" class="form-control" id="categoryName" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="categoryHide">
+                        <label class="form-check-label" for="categoryHide">Ẩn danh mục</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="saveCategory">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xác nhận xóa -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmMessage">Bạn có chắc chắn muốn xóa danh mục này không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Helper function to escape HTML special characters
+function htmlspecialchars(str) {
+    if (typeof str !== 'string') {
+        return '';
+    }
+    return str.replace(/[&<>"']/g, function (match) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[match];
+    });
+}
+
+// Hàm hỗ trợ gửi request JSON
+function sendJsonRequest(url, method, data) {
+    return fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: data ? JSON.stringify(data) : null
+    })
+    .then(response => {
+        // Kiểm tra response
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        // Kiểm tra content-type
+        const contentType = response.headers.get('content-type');
+        if (!contentType || contentType.indexOf('application/json') === -1) {
+            return response.text().then(text => {
+                console.error('Phản hồi không phải JSON:', text);
+                throw new Error('Phản hồi không phải JSON, nhận được: ' + text.substring(0, 100));
+            });
+        }
+        
+        return response.json();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle sidebar
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+    }
+    
+    if (sidebarCloseBtn) {
+        sidebarCloseBtn.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+        });
+    }
+
+    // Notification dropdown
+    const notificationBell = document.getElementById('notificationBell');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    if (notificationBell && notificationDropdown) {
+        notificationBell.addEventListener('click', function(event) {
+            event.stopPropagation();
+            const isCurrentlyDisplayed = notificationDropdown.style.display === 'block';
+            notificationDropdown.style.display = isCurrentlyDisplayed ? 'none' : 'block';
+            
+            if (!isCurrentlyDisplayed) { // Only load if opening
+                loadNotifications();
+            }
+        });
+        
+        document.addEventListener('click', function(event) {
+            if (notificationDropdown && !notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+    }
+
+    // Load notifications
+    function loadNotifications() {
+        sendJsonRequest('index.php?controller=admincategory&action=getRecentCategoryNotifications', 'GET')
+            .then(data => {
+                const notificationList = document.getElementById('notificationList');
+                notificationList.innerHTML = ''; // Clear previous notifications
+                
+                if (data.length === 0) {
+                    notificationList.innerHTML = '<li style="padding: 16px; text-align: center;">Không có thông báo mới</li>';
+                    return;
+                }
+                
+                data.forEach(notification => {
+                    const item = document.createElement('li');
+                    item.className = 'notification-item-modal';
+                    
+                    let formattedDate = 'Không rõ thời gian';
+                    if (notification.created_at) {
+                        try {
+                            const date = new Date(notification.created_at);
+                            // Check if date is valid
+                            if (!isNaN(date.getTime())) {
+                               formattedDate = date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+                            }
+                        } catch (e) {
+                            console.error("Error formatting date:", e, "for notification:", notification.created_at);
+                        }
+                    }
+                    
+                    item.innerHTML = `
+                        <div class="notification-icon-modal">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div>
+                            <div class="notification-title-modal">${htmlspecialchars(notification.title || '')}</div>
+                            <div class="notification-desc-modal">${htmlspecialchars(notification.content || '')}</div>
+                            <div class="notification-time-modal">${formattedDate}</div>
+                        </div>
+                    `;
+                     if (notification.link) {
+                         item.addEventListener('click', () => { window.location.href = notification.link; });
+                    }
+                    notificationList.appendChild(item);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading notifications:', error);
+                const notificationList = document.getElementById('notificationList');
+                if(notificationList) notificationList.innerHTML = '<li style="padding: 16px; text-align: center; color: red;">Lỗi tải thông báo</li>';
+            });
+    }
+
+    // Filter categories
+    const filterStatusEl = document.getElementById('filterStatus'); // Renamed for clarity
+    const sortCategoryEl = document.getElementById('sortCategory');
+    
+    if (filterStatusEl) {
+        filterStatusEl.addEventListener('change', applyFilters);
+    }
+    
+    if (sortCategoryEl) {
+        sortCategoryEl.addEventListener('change', applyFilters);
+    }
+    
+    function applyFilters() {
+        const statusVal = filterStatusEl ? filterStatusEl.value : '';
+        const sortVal = sortCategoryEl ? sortCategoryEl.value : '';
+        window.location.href = `index.php?controller=admincategory&status=${encodeURIComponent(statusVal)}&sort=${encodeURIComponent(sortVal)}`;
+    }
+
+    // Search categories
+    const searchInput = document.getElementById('searchCategoryInput');
+    let searchTimeout;
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(searchCategories, 500);
+        });
+    }
+    
+    function searchCategories() {
+        const keyword = searchInput.value.trim();
+        const paginationNav = document.querySelector('nav .pagination');
+
+        if (keyword.length === 0) {
+            location.reload(); // Reload to show all with pagination
+            return;
+        }
+        
+        sendJsonRequest(`index.php?controller=admincategory&action=search&keyword=${encodeURIComponent(keyword)}`, 'GET')
+            .then(data => {
+                const tableBody = document.getElementById('categoryTableBody');
+                tableBody.innerHTML = ''; 
+                
+                if (paginationNav) paginationNav.style.display = 'none'; // Hide pagination for search results
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Không tìm thấy danh mục nào.</td></tr>';
+                    return;
+                }
+                
+                data.forEach(category => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-category-id', category.ID);
+                    
+                    const isHidden = category.hide == 1; // Use strict comparison for clarity
+                    row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="form-check-input category-checkbox" data-id="${category.ID}">
+                        </td>
+                        <td>${htmlspecialchars(category.name)}</td>
+                        <td>
+                            <span class="status ${isHidden ? 'inactive' : 'completed'}">
+                                ${isHidden ? 'Ẩn' : 'Đang hoạt động'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-info btn-view-category" data-id="${category.ID}" data-hide="${category.hide || 0}" title="${isHidden ? 'Hiện' : 'Ẩn'}">
+                                    <i class="fas ${isHidden ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary btn-edit-category" title="Sửa" data-id="${category.ID}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                attachEventListeners(); // Re-attach event listeners for newly created buttons
+            })
+            .catch(error => {
+                console.error('Error searching categories:', error);
+                const tableBody = document.getElementById('categoryTableBody');
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Có lỗi xảy ra khi tìm kiếm.</td></tr>';
+                if (paginationNav) paginationNav.style.display = 'flex'; // Show pagination again if search error
+            });
+    }
+
+    // Select all categories
+    const selectAllCheckbox = document.getElementById('select-all-category');
+    
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.category-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateDeleteSelectedButton();
+        });
+    }
+    
+    function updateDeleteSelectedButton() {
+        const selectedCheckboxes = document.querySelectorAll('.category-checkbox:checked');
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+        
+        if (deleteSelectedBtn) {
+            deleteSelectedBtn.disabled = selectedCheckboxes.length === 0;
+        }
+    }
+    
+    document.addEventListener('change', function(event) { // Listen on document for dynamically added checkboxes
+        if (event.target.classList.contains('category-checkbox')) {
+            updateDeleteSelectedButton();
+        }
+    });
+
+    const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+    const deleteConfirmModalEl = document.getElementById('deleteConfirmModal');
+    const deleteConfirmModal = deleteConfirmModalEl ? new bootstrap.Modal(deleteConfirmModalEl) : null;
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    const deleteConfirmMessageEl = document.getElementById('deleteConfirmMessage');
+
+
+    // Thay đổi đoạn mã xử lý nút deleteSelectedBtn
+if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirmMessageEl) {
+    deleteSelectedBtn.addEventListener('click', function() {
+        const selectedIds = Array.from(document.querySelectorAll('.category-checkbox:checked'))
+            .map(checkbox => checkbox.getAttribute('data-id'));
+        
+        if (selectedIds.length === 0) return;
+        
+        // Kiểm tra xem có đang xóa tất cả mục trên trang không
+        const totalItemsOnPage = document.querySelectorAll('.category-checkbox').length;
+        const isRemovingAllItems = totalItemsOnPage === selectedIds.length;
+        const currentPage = parseInt(new URLSearchParams(window.location.search).get('page') || 1);
+        
+        let confirmMessage = `Bạn có chắc chắn muốn xóa ${selectedIds.length} danh mục đã chọn không?`;
+        if (isRemovingAllItems && currentPage > 1) {
+            confirmMessage += ` Bạn sẽ được chuyển về trang trước đó.`;
+        }
+        
+        deleteConfirmMessageEl.textContent = confirmMessage;
+        deleteConfirmModal.show();
+        
+        const confirmHandler = function() {
+            deleteCategories(selectedIds);
+            deleteConfirmModal.hide();
+            confirmDeleteBtn.removeEventListener('click', confirmHandler);
+        };
+        confirmDeleteBtn.addEventListener('click', confirmHandler);
+    });
+}
+    
+    function deleteCategories(ids) {
+    // Lấy thông tin trang hiện tại và số lượng item trên trang
+    const currentPage = parseInt(new URLSearchParams(window.location.search).get('page') || 1);
+    const status = new URLSearchParams(window.location.search).get('status') || '';
+    const sort = new URLSearchParams(window.location.search).get('sort') || '';
+    
+    // Đếm số item trên trang và số item được chọn để xóa
+    const totalItemsOnPage = document.querySelectorAll('.category-checkbox').length;
+    const isRemovingAllItems = totalItemsOnPage === ids.length;
+    
+    sendJsonRequest('index.php?controller=admincategory&action=deleteSelected', 'POST', { ids })
+        .then(data => {
+            if (data.success) {
+                alert('Đã xóa thành công!');
+                
+                // Kiểm tra nếu đã xóa tất cả items trên trang và đang không ở trang 1
+                if (isRemovingAllItems && currentPage > 1) {
+                    // Lấy thông tin phân trang từ phản hồi
+                    const pagination = data.pagination || {};
+                    const maxPage = pagination.maxPage || 1;
+                    
+                    // Nếu trang hiện tại lớn hơn tổng số trang sau khi xóa, chuyển đến trang tối đa mới
+                    if (currentPage > maxPage) {
+                        window.location.href = `index.php?controller=admincategory&status=${encodeURIComponent(status)}&sort=${encodeURIComponent(sort)}&page=${maxPage}`;
+                        return;
+                    }
+                }
+                
+                // Nếu không cần chuyển trang, chỉ tải lại trang hiện tại
+                location.reload();
+            } else {
+                alert(data.message || 'Có lỗi xảy ra khi xóa danh mục.');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting categories:', error);
+            alert('Lỗi kết nối khi xóa danh mục. Chi tiết: ' + error.message);
+        });
+}
+
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+    const categoryModalEl = document.getElementById('categoryModal');
+    const categoryModal = categoryModalEl ? new bootstrap.Modal(categoryModalEl) : null;
+    const categoryForm = document.getElementById('categoryForm');
+    const categoryModalTitle = document.getElementById('categoryModalTitle');
+    const categoryIdInput = document.getElementById('categoryId');
+    const categoryNameInput = document.getElementById('categoryName');
+    const categoryHideCheckbox = document.getElementById('categoryHide');
+    
+    if (addCategoryBtn && categoryModal && categoryForm && categoryModalTitle && categoryIdInput && categoryNameInput && categoryHideCheckbox) {
+        addCategoryBtn.addEventListener('click', function() {
+            categoryModalTitle.textContent = 'Thêm danh mục mới';
+            categoryForm.reset();
+            categoryIdInput.value = '';
+            categoryModal.show();
+        });
+    }
+
+    const saveBtn = document.getElementById('saveCategory');
+    if (saveBtn && categoryModal && categoryIdInput && categoryNameInput && categoryHideCheckbox) {
+        saveBtn.addEventListener('click', function() {
+            const id = categoryIdInput.value;
+            const name = categoryNameInput.value.trim();
+            const hide = categoryHideCheckbox.checked ? 1 : 0;
+            
+            if (!name) {
+                alert('Vui lòng nhập tên danh mục.');
+                categoryNameInput.focus();
+                return;
+            }
+            
+            const categoryData = { name, hide };
+            let url = 'index.php?controller=admincategory&action=addCategory';
+            
+            if (id) {
+                categoryData.id = id;
+                url = 'index.php?controller=admincategory&action=updateCategory';
+            }
+            
+            sendJsonRequest(url, 'POST', categoryData)
+                .then(data => {
+                    if (data.success) {
+                        categoryModal.hide();
+                        alert(id ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục mới!');
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra khi lưu danh mục.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saving category:', error);
+                    alert('Lỗi kết nối khi lưu danh mục. Chi tiết: ' + error.message);
+                });
+        });
+    }
+
+    function attachEventListeners() {
+        document.querySelectorAll('.btn-view-category').forEach(button => {
+            // Remove existing listener to prevent duplicates if attachEventListeners is called multiple times on the same elements
+            // This is a simple way; a more robust solution might involve checking if a listener already exists or using a flag.
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+
+            newButton.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const currentHide = parseInt(this.getAttribute('data-hide'));
+                const newHide = currentHide ? 0 : 1;
+                
+                const icon = this.querySelector('i');
+                const originalIconClass = newHide === 1 ? 'fa-eye' : 'fa-eye-slash'; // Icon before action
+                const newIconClass = newHide === 1 ? 'fa-eye-slash' : 'fa-eye';      // Icon after action
+                const originalTitle = newHide === 1 ? 'Ẩn' : 'Hiện';                 // Title before action
+                const newTitle = newHide === 1 ? 'Hiện' : 'Ẩn';                     // Title after action
+
+                // Optimistic UI update
+                if(icon) {
+                    icon.classList.remove(originalIconClass);
+                    icon.classList.add(newIconClass);
+                }
+                this.setAttribute('title', newTitle);
+                // data-hide will be updated after successful fetch or reverted on failure
+
+                sendJsonRequest('index.php?controller=admincategory&action=toggleHide', 'POST', { id, hide: newHide })
+                    .then(data => {
+                        if (data.success) {
+                            this.setAttribute('data-hide', newHide.toString()); // Update data-hide on success
+                            const row = this.closest('tr');
+                            if (row) {
+                                const statusSpan = row.querySelector('td .status');
+                                if (statusSpan) {
+                                    statusSpan.textContent = newHide === 1 ? 'Ẩn' : 'Đang hoạt động';
+                                    statusSpan.className = `status ${newHide === 1 ? 'inactive' : 'completed'}`;
+                                }
+                            }
+                        } else {
+                            alert('Có lỗi xảy ra khi thay đổi trạng thái danh mục.');
+                            // Revert UI on failure
+                            if(icon) {
+                                icon.classList.remove(newIconClass);
+                                icon.classList.add(originalIconClass);
+                            }
+                            this.setAttribute('title', originalTitle);
+                            // data-hide remains currentHide (original)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error toggling category visibility:', error);
+                        alert('Lỗi kết nối khi thay đổi trạng thái: ' + error.message);
+                        // Revert UI on error
+                        if(icon) {
+                            icon.classList.remove(newIconClass);
+                            icon.classList.add(originalIconClass);
+                        }
+                        this.setAttribute('title', originalTitle);
+                    });
+            });
+        });
+
+        document.querySelectorAll('.btn-edit-category').forEach(button => {
+            const newButton = button.cloneNode(true); // Similar to above, prevent duplicate listeners
+            button.parentNode.replaceChild(newButton, button);
+
+            newButton.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                
+                sendJsonRequest(`index.php?controller=admincategory&action=getCategory&id=${id}`, 'GET')
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                            return;
+                        }
+                        if (categoryModal && categoryForm && categoryModalTitle && categoryIdInput && categoryNameInput && categoryHideCheckbox) {
+                            categoryModalTitle.textContent = 'Sửa danh mục';
+                            categoryIdInput.value = data.ID;
+                            categoryNameInput.value = data.name;
+                            categoryHideCheckbox.checked = data.hide == 1;
+                            categoryModal.show();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error getting category details:', error);
+                        alert('Lỗi tải thông tin danh mục: ' + error.message);
+                    });
+            });
+        });
+        
+        updateDeleteSelectedButton(); // Ensure delete button state is correct
+        const selectAllCategoryCheckbox = document.getElementById('select-all-category');
+        if (selectAllCategoryCheckbox) { // Reset select-all checkbox
+             selectAllCategoryCheckbox.checked = document.querySelectorAll('.category-checkbox:checked').length === document.querySelectorAll('.category-checkbox').length && document.querySelectorAll('.category-checkbox').length > 0;
+        }
+    }
+
+    // Initial call to attach event listeners
+    attachEventListeners();
+});
+</script>
+</body>
+</html>
