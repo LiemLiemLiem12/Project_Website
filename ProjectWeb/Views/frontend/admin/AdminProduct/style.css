@@ -1,0 +1,431 @@
+/* CSS Responsive cho AdminProduct */
+
+/* Tinh chỉnh bảng cho tất cả kích thước màn hình */
+.table-responsive-product {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive-product .table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/* Cài đặt card cho desktop (≥ 992px) */
+@media (min-width: 992px) {
+    .header {
+        top: 0;
+        left: 250px;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .main-content {
+        margin-left: 250px;
+        padding-top: 70px;
+    }
+    
+    .product-management {
+        padding: 1.5rem;
+    }
+    
+    .filter-row {
+        gap: 1rem;
+    }
+}
+
+/* Responsive cho desktop lớn (≥ 1200px) */
+@media (min-width: 1200px) {
+    .product-management {
+        padding: 2rem;
+    }
+    
+    .filter-row {
+        gap: 1.5rem;
+    }
+}
+
+/* Responsive cho tablet lớn và desktop nhỏ (≥ 768px and < 992px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .product-management {
+        padding: 1.25rem;
+    }
+    
+    .filter-row {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .filter-item {
+        width: calc(33.333% - 0.75rem);
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* Responsive cho tablet nhỏ (≥ 576px and < 768px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .page-header {
+        padding: 1rem 0;
+    }
+    
+    .filter-row {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .filter-item {
+        width: calc(50% - 0.5rem);
+        margin-bottom: 0.75rem;
+    }
+    
+    .product-table {
+        padding: 1rem;
+    }
+    
+    .table-responsive-product .table {
+        min-width: 800px;
+        white-space: nowrap;
+    }
+    
+    /* Điều chỉnh kích thước ô */
+    .table th, 
+    .table td {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Size container trong modal */
+    .d-flex.flex-column.ms-0.w-25 {
+        width: 50% !important;
+    }
+}
+
+/* Responsive cho màn hình nhỏ nhất (Mobile - dưới 576px) */
+@media (max-width: 575.98px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+    
+    .page-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .page-header .d-flex.gap-2 {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .page-header .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-filters {
+        padding: 0.75rem;
+    }
+    
+    .filter-row {
+        flex-direction: column;
+    }
+    
+    .filter-item {
+        width: 100%;
+        margin-bottom: 0.75rem;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .filter-dropdown {
+        width: 100%;
+    }
+    
+    /* Responsive cho bảng sản phẩm */
+    .product-table {
+        margin-top: 1rem;
+        padding: 0.75rem;
+    }
+    
+    .product-table table {
+        min-width: 0 !important;
+    }
+    
+    /* Ẩn header của bảng trên mobile */
+    .product-table thead {
+        display: none;
+    }
+    
+    /* Hiển thị mỗi dòng như một card */
+    .product-table tr {
+        display: block;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        width: 100%;
+    }
+    
+    /* Hiển thị các cell */
+    .product-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 5px;
+        border-bottom: 1px solid #eee;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: right;
+    }
+    
+    /* Hiển thị ô checkbox đầu tiên */
+    .product-table td:first-child {
+        padding: 0.25rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    /* Xử lý đặc biệt cho ô hình ảnh */
+    .product-table td:nth-child(3) { 
+        flex-direction: column; 
+        align-items: flex-start; 
+    }
+    .product-table td:nth-child(3):before { 
+        content: "Hình ảnh:"; 
+        font-weight: bold; 
+        margin-bottom: 0.5rem; 
+    }
+    
+    /* CSS chung cho các nhãn */
+    .product-table td:before {
+        font-weight: bold;
+        text-align: left;
+        float: left;
+        width: 40%;
+        padding-right: 10px;
+    }
+    
+    /* Đặt nội dung cho các nhãn */
+    .product-table td:nth-child(2):before { content: "Mã SP:"; }
+    .product-table td:nth-child(4):before { content: "Tên sản phẩm:"; }
+    .product-table td:nth-child(5):before { content: "Danh mục:"; }
+    .product-table td:nth-child(6):before { content: "Giá:"; }
+    .product-table td:nth-child(7):before { content: "Tồn kho:"; }
+    .product-table td:nth-child(8):before { content: "Trạng thái:"; }
+    .product-table td:nth-child(9):before { content: "Thao tác:"; }
+    
+    /* CSS đặc biệt cho tên sản phẩm */
+    .product-table td:nth-child(4) {
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    
+    /* Giá trị tên sản phẩm và các giá trị khác */
+    .product-table td > span,
+    .product-table td:nth-child(4) {
+        max-width: 60%;
+        text-align: right;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Điều chỉnh nút trong bảng */
+    .action-buttons {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+    
+    /* Modal thêm sản phẩm */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    #tagInputContainer {
+        min-height: 60px;
+    }
+    
+    /* Size container trong modal */
+    .d-flex.flex-column.ms-0.w-25 {
+        width: 100% !important;
+    }
+    
+    /* Tinh chỉnh ảnh sản phẩm */
+    .product-table td img {
+        max-width: 40px;
+        max-height: 40px;
+    }
+    
+    /* Điều chỉnh form trong modal */
+    #imagePreview {
+        justify-content: center;
+    }
+    
+    #imagePreview img {
+        max-width: 80px;
+        max-height: 80px;
+    }
+    
+    .modal-title {
+        font-size: 1.1rem;
+    }
+    
+    .modal-footer {
+        padding: 0.75rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    /* Bọc nội dung tên sản phẩm vào span */
+    .product-table td:nth-child(4) span,
+    .product-table td:nth-child(4) {
+        max-width: 50%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: right;
+        margin-left: auto;
+    }
+}
+
+/* Chung cho tất cả màn hình dưới desktop */
+@media (max-width: 991.98px) {
+    .header {
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding-top: 70px;
+    }
+    
+    .filter-row {
+        flex-wrap: wrap;
+    }
+    
+    .modal-dialog.modal-lg {
+        max-width: 95%;
+        margin: 0.5rem auto;
+    }
+}
+
+/* Responsive cho màn hình extra small (≤ 390px) */
+@media (max-width: 390px) {
+    .page-header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .product-table td {
+        font-size: 0.85rem;
+    }
+    
+    .action-buttons .btn {
+        padding: 0.15rem 0.4rem;
+    }
+    
+    .action-buttons .btn i {
+        font-size: 0.8rem;
+    }
+    
+    .status {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .modal-body {
+        padding: 0.75rem;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        font-size: 0.85rem;
+    }
+}
+
+/* CSS cho hình ảnh sản phẩm */
+.product-table td img {
+    border-radius: 4px;
+    border: 1px solid #eee;
+    object-fit: cover;
+}
+
+/* CSS cho trạng thái */
+.status {
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    display: inline-block;
+    font-weight: 500;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+/* CSS cho bảng sản phẩm */
+.table th {
+    text-align: left;
+    white-space: nowrap;
+    padding: 0.75rem;
+    vertical-align: middle;
+}
+
+.table td {
+    text-align: left;
+    vertical-align: middle;
+    padding: 0.75rem;
+}
+
+.table th:nth-child(4), .table td:nth-child(4) {
+    min-width: 180px; /* Đảm bảo cột tên sản phẩm đủ rộng */
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table th:last-child, .table td:last-child {
+    text-align: center; /* Căn giữa cột thao tác */
+    white-space: nowrap;
+}
+
+.product-name {
+    display: inline-block;
+}
+
+/* CSS đặc biệt cho ô tên sản phẩm */
+.product-table td:nth-child(4) {
+    overflow: hidden;
+}
+
+/* For desktop */
+.product-table td:nth-child(4) {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+

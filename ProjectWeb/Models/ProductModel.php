@@ -106,7 +106,7 @@ class ProductModel extends BaseModel
   {
     return $this->updateForProduct(self::TABLE, $id, $data);
   }
-
+  
 
 }
 ?>

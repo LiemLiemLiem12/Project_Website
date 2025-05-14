@@ -167,7 +167,7 @@
     </style>
     
     <div class="logo"><h2>SR STORE</h2></div>
-    <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
+        <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
     <ul class="nav-links">
         <li class="<?= $controllerName === 'AdmindashboardController' ? 'active' : '' ?>">
             <a href="index.php?controller=admindashboard"><i class="fas fa-th-large"></i> Dashboard</a>

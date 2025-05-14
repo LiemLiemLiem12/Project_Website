@@ -10,56 +10,33 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/Views/frontend/admin/AdminProduct/style.css">
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Admin.css">
 </head>
 
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
-
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2>SR STORE</h2>
-            </div>
-            <button class="sidebar-close d-md-none" id="sidebarCloseBtn"
-                aria-label="Đóng menu"><span>&times;</span></button>
-            <ul class="nav-links">
-                <li>
-                    <a href="index.php?controller=admindashboard"><i class="fas fa-th-large"></i> Dashboard</a>
-                </li>
-                <li>
-                    <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
-                </li>
-                <li class="active">
-                    <a href="index.php?controller=adminproduct"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
-                </li>
-                <li>
-                    <a href="index.php?controller=adminorder"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
-                </li>
-                <li>
-                    <a href="AdminCustomer.html"><i class="fas fa-users"></i> Khách Hàng</a>
-                </li>
-                <li>
-                    <a href="AdminCategory.html"><i class="fas fa-tags"></i> Danh Mục</a>
-                </li>
-                <li>
-                    <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> Báo Cáo</a>
-                </li>
-                <li>
-                    <a href="AdminSetting.html"><i class="fas fa-cog"></i> Cài Đặt</a>
-                </li>
-            </ul>
-            <div class="admin-info">
-                <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
-                <div>
-                    <p class="admin-name">Admin</p>
-                    <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-                </div>
-            </div>
-        </div>
+        <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
 
         <!-- Main Content -->
         <div class="main-content">
+         <!-- Top Header -->
+         <header class="header">
+                <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                    <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
+                    </div>
+                    <div class="profile">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                    </div>
+                </div>
+            </header>
+
             <div class="product-management">
                 <!-- Page Header -->
                 <div class="page-header d-flex justify-content-between align-items-center">
@@ -117,69 +94,71 @@
 
                 <!-- Products Table -->
                 <div class="product-table">
-                    <table id="table-product" class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <input type="checkbox" id="select-all">
-                                </th>
-                                <th>Mã SP</th>
-                                <th>Hình ảnh</th>
-                                <th>Tên sản phẩm</th>
-                                <th>Danh mục</th>
-                                <th>Giá</th>
-                                <th>Tồn kho</th>
-                                <th>Trạng thái</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            foreach ($productList as $data) {
-                                echo '
-                                    <tr class="product-row" data-id_product="' . $data['id_product'] . '" data-name="' . $data['product_name'] . '"
-                                        data-description="' . base64_encode($data['description']) . '"
-                                        data-original_price="' . $data['original_price'] . '" data-discount_percent="' . $data['discount_percent'] . '" data-current_price="' . $data['current_price'] . '"
-                                        data-created_at="' . $data['created_at'] . '" data-updated_at="' . $data['updated_at'] . '" data-id_category="' . $data['category_name'] . '" id_category = "' . $data['id_Category'] . '"
-                                        data-main_image="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '"
-                                        data-img="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img2'] . ',/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img3'] . '"
-                                        data-link="' . $data['link'] . '" data-meta="' . $data['meta'] . '" data-hide="' . $data['hide'] . '" data-order="' . $data['order'] . '"
-                                        data-click_count="' . $data['click_count'] . '" data-tags="' . $data['tag'] . '" data-M-quantity = "' . $data['M'] . '" data-L-quantity = "' . $data['L'] . '" data-XL-quantity = "' . $data['XL'] . '"
-                                        data-policy_return="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSDoiTra'] . '"
-                                        data-policy_warranty="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSGiaoHang'] . '" data-stock="' . $data['store'] . '">
-                                        <td><input type="checkbox" class="product-checkbox"></td>
-                                        <td>' . $data['id_product'] . '</td>
-                                        <td><img src="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '" alt="Product" width="50"></td>
-                                        <td>' . $data['product_name'] . '</td>
-                                        <td>' . $data['category_name'] . '</td>
-                                        <td>' . $data['current_price'] . '</td>
-                                        <td>' . $data['store'] . '</td>';
+                    <div class="table-responsive-product">
+                        <table id="table-product" class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="select-all">
+                                    </th>
+                                    <th>Mã SP</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Giá</th>
+                                    <th>Tồn kho</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                foreach ($productList as $data) {
+                                    echo '
+                                        <tr class="product-row" data-id_product="' . $data['id_product'] . '" data-name="' . $data['product_name'] . '"
+                                            data-description="' . base64_encode($data['description']) . '"
+                                            data-original_price="' . $data['original_price'] . '" data-discount_percent="' . $data['discount_percent'] . '" data-current_price="' . $data['current_price'] . '"
+                                            data-created_at="' . $data['created_at'] . '" data-updated_at="' . $data['updated_at'] . '" data-id_category="' . $data['category_name'] . '" id_category = "' . $data['id_Category'] . '"
+                                            data-main_image="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '"
+                                            data-img="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img2'] . ',/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img3'] . '"
+                                            data-link="' . $data['link'] . '" data-meta="' . $data['meta'] . '" data-hide="' . $data['hide'] . '" data-order="' . $data['order'] . '"
+                                            data-click_count="' . $data['click_count'] . '" data-tags="' . $data['tag'] . '" data-M-quantity = "' . $data['M'] . '" data-L-quantity = "' . $data['L'] . '" data-XL-quantity = "' . $data['XL'] . '"
+                                            data-policy_return="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSDoiTra'] . '"
+                                            data-policy_warranty="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSGiaoHang'] . '" data-stock="' . $data['store'] . '">
+                                            <td><input type="checkbox" class="product-checkbox"></td>
+                                            <td>' . $data['id_product'] . '</td>
+                                            <td><img src="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '" alt="Product" width="50"></td>
+                                            <td>' . $data['product_name'] . '</td>
+                                            <td>' . $data['category_name'] . '</td>
+                                            <td>' . $data['current_price'] . '</td>
+                                            <td>' . $data['store'] . '</td>';
 
-                                if ((int) $data['store'] == 0) {
+                                    if ((int) $data['store'] == 0) {
+                                        echo '
+                                                    <td><span class="status cancelled">Hết hàng</span></td>
+                                                ';
+                                    } else {
+                                        echo '
+                                                    <td><span class="status completed">Còn hàng</span></td>
+                                                ';
+                                    }
+
+
                                     echo '
-                                                <td><span class="status cancelled">Hết hàng</span></td>
-                                            ';
-                                } else {
-                                    echo '
-                                                <td><span class="status completed">Còn hàng</span></td>
-                                            ';
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button class="btn btn-sm btn-warning btn-edit" title="Sửa"><i
+                                                            class="fas fa-edit"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                ';
                                 }
-
-
-                                echo '
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-warning btn-edit" title="Sửa"><i
-                                                        class="fas fa-edit"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                            ';
-                            }
-                            ?>
-                            <!-- Thêm các sản phẩm khác tương tự -->
-                        </tbody>
-                    </table>
+                                ?>
+                                <!-- Thêm các sản phẩm khác tương tự -->
+                            </tbody>
+                        </table>
+                    </div> 
                 </div>
 
 
@@ -483,10 +462,27 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom JS -->
     <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
-
+                                   console.log('Toggle button:', document.getElementById('sidebarToggleBtn'));
     <!-- Ckeditor -->
     <script src="https://cdn.ckeditor.com/4.22.1/full-all/ckeditor.js"></script>
     <script>
+        
+        document.addEventListener('DOMContentLoaded', function() {
+           // Lấy phần tử sidebar và nút toggle
+           const sidebar = document.getElementById('sidebar');
+           const toggleBtn = document.getElementById('sidebarToggleBtn');
+           
+           console.log('Toggle button:', toggleBtn);
+           console.log('Sidebar:', sidebar);
+           
+           // Gắn sự kiện click cho nút toggle
+           if (toggleBtn && sidebar) {
+               toggleBtn.addEventListener('click', function() {
+                   console.log('Toggle button clicked');
+                   sidebar.classList.toggle('show');
+               });
+           }
+       });
         // CKEDITOR.replace('productDesc'); // 'productDesc' là id của textarea
     </script>
 </body>

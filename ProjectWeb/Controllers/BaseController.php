@@ -8,11 +8,11 @@ class BaseController
      * + path name: folderName.fileName
      * + Lấy từ sau thư mục Views
      */
-    //  public function __construct()
-    // {
-    //     $this->loadModel('CategoryModel');
-    //     $this->categoryModel = new CategoryModel();
-    // }
+     public function __construct()
+    {
+        $this->loadModel('CategoryModel');
+        $this->categoryModel = new CategoryModel();
+    }
     public function view($viewPath, array $data = [])
     {
         //    if (!isset($data['headerCategories'])) {
