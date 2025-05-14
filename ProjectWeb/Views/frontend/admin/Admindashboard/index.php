@@ -11,11 +11,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Admin.css">
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/Views/frontend/admin/Admindashboard/style.css">
 </head>
 
 <body>
     <div class="admin-container">
-        <!-- Sidebar -->
+        <!-- Sidebar
         <div class="sidebar" id="sidebar">
             <div class="logo">
                 <h2>SR STORE</h2>
@@ -57,20 +58,21 @@
             </div>
         </div>
 
+        <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="main-content">
             <!-- Top Header -->
             <header class="header">
-                <button class="mobile-menu-toggle">
-                    <i class="fas fa-bars"></i>
+                <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
-                <div class="header-right">
-                    <div class="notification">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge">3</span>
+                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                    <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                     </div>
                     <div class="profile">
-                        <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
                     </div>
                 </div>
             </header>
@@ -89,17 +91,19 @@
                                 <div class="stat-icon bg-primary">
                                     <i class="fas fa-shopping-cart"></i>
                                 </div>
-                                <div class="stat-details">
-                                    <h3><?= $orderNumByMonth ?></h3>
-                                    <p>Đơn hàng mới</p>
-                                </div>
-                                <div class="stat-progress">
-                                    <?php
-                                    echo $orderPercentage >= 100 ?
-                                        '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($orderPercentage - 100) . '%' . '</span>' :
-                                        '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $orderPercentage . '%' . '</span>'
-                                        ?>
-                                    <small>So với tháng trước</small>
+                                <div class="stat-content">
+                                    <div class="stat-details">
+                                        <h3><?= $orderNumByMonth ?></h3>
+                                        <p>Đơn hàng mới</p>
+                                    </div>
+                                    <div class="stat-progress">
+                                        <?php
+                                        echo $orderPercentage >= 100 ?
+                                            '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($orderPercentage - 100) . '%' . '</span>' :
+                                            '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $orderPercentage . '%' . '</span>'
+                                            ?>
+                                        <small>So với tháng trước</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -110,17 +114,19 @@
                                 <div class="stat-icon bg-success">
                                     <i class="fas fa-dollar-sign"></i>
                                 </div>
-                                <div class="stat-details">
-                                    <h3><?= $revenueByMonth ?></h3>
-                                    <p>Doanh thu</p>
-                                </div>
-                                <div class="stat-progress">
-                                    <?php
-                                    echo $revenuePercentage >= 100 ?
-                                        '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($revenuePercentage - 100) . '%' . '</span>' :
-                                        '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $revenuePercentage . '%' . '</span>'
-                                        ?>
-                                    <small>So với tháng trước</small>
+                                <div class="stat-content">
+                                    <div class="stat-details">
+                                        <h3><?= $revenueByMonth ?></h3>
+                                        <p>Doanh thu</p>
+                                    </div>
+                                    <div class="stat-progress">
+                                        <?php
+                                        echo $revenuePercentage >= 100 ?
+                                            '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($revenuePercentage - 100) . '%' . '</span>' :
+                                            '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $revenuePercentage . '%' . '</span>'
+                                            ?>
+                                        <small>So với tháng trước</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -131,17 +137,19 @@
                                 <div class="stat-icon bg-warning">
                                     <i class="fas fa-users"></i>
                                 </div>
-                                <div class="stat-details">
-                                    <h3><?= $userByMonthDisplay ?></h3>
-                                    <p>Khách hàng mới</p>
-                                </div>
-                                <div class="stat-progress">
-                                    <?php
-                                    echo $userPercentage >= 100 ?
-                                        '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($userPercentage - 100) . '%' . '</span>' :
-                                        '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $userPercentage . '%' . '</span>'
-                                        ?>
-                                    <small>So với tháng trước</small>
+                                <div class="stat-content">
+                                    <div class="stat-details">
+                                        <h3><?= $userByMonthDisplay ?></h3>
+                                        <p>Khách hàng mới</p>
+                                    </div>
+                                    <div class="stat-progress">
+                                        <?php
+                                        echo $userPercentage >= 100 ?
+                                            '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($userPercentage - 100) . '%' . '</span>' :
+                                            '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $userPercentage . '%' . '</span>'
+                                            ?>
+                                        <small>So với tháng trước</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -152,17 +160,19 @@
                                 <div class="stat-icon bg-info">
                                     <i class="fas fa-eye"></i>
                                 </div>
-                                <div class="stat-details">
-                                    <h3><?= $visitByMonthDisplay ?></h3>
-                                    <p>Lượt truy cập</p>
-                                </div>
-                                <div class="stat-progress">
-                                    <?php
-                                    echo $visitPercentage >= 100 ?
-                                        '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($visitPercentage - 100) . '%' . '</span>' :
-                                        '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $visitPercentage . '%' . '</span>'
-                                        ?>
-                                    <small>So với tháng trước</small>
+                                <div class="stat-content">
+                                    <div class="stat-details">
+                                        <h3><?= $visitByMonthDisplay ?></h3>
+                                        <p>Lượt truy cập</p>
+                                    </div>
+                                    <div class="stat-progress">
+                                        <?php
+                                        echo $visitPercentage >= 100 ?
+                                            '<span class="text-success"><i class="fas fa-arrow-up"></i> ' . ($visitPercentage - 100) . '%' . '</span>' :
+                                            '<span class="text-danger"><i class="fas fa-arrow-down"></i> ' . $visitPercentage . '%' . '</span>'
+                                            ?>
+                                        <small>So với tháng trước</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -275,11 +285,6 @@
     <script src="/Project_Website/ProjectWeb/layout/jsBootstrap/bootstrap.js"></script>
     <!-- Custom JavaScript -->
     <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
-    <script>
-        document.querySelector('.mobile-menu-toggle').addEventListener('click', function () {
-            document.querySelector('.sidebar').classList.toggle('active');
-        });
-    </script>
 </body>
 
 </html>
