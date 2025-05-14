@@ -49,12 +49,12 @@
                     </ul>
                     <div class="mt-3">
                         <a href="http://online.gov.vn/Home/WebDetails/121880">
-                            <img src="/ProjectWeb/upload/img/Footer/FooterBCT.webp" alt="Đã thông báo Bộ Công Thương" class="img-fluid mb-2"
+                            <img src="/Project_Website/ProjectWeb/upload/img/Footer/FooterBCT.webp" alt="Đã thông báo Bộ Công Thương" class="img-fluid mb-2"
                             style="max-width: 180px; background-color: rgba(255, 255, 255, 0); border-radius: 5px;">
                         </a>
                         <a href="https://www.dmca.com/Protection/Status.aspx?ID=9049de26-d97b-48dc-ab97-1e5fcb221fba&refurl=https://RSStore.com/">
                             <div>
-                                <img src="/ProjectWeb/upload/img/Footer/FooterProtected.png" alt="DMCA Protected" class="img-fluid"
+                                <img src="/Project_Website/ProjectWeb/upload/img/Footer/FooterProtected.png" alt="DMCA Protected" class="img-fluid"
                                     style="max-width: 180px; background-color: rgba(255, 255, 255, 0); border-radius: 5px;">
                             </div>
                         </a>   
@@ -119,11 +119,11 @@
                 <div class="col-md-4">
                     <h5 class="text-uppercase mb-3">PHƯƠNG THỨC THANH TOÁN</h5>
                     <div class="mb-4">
-                        <img src="/ProjectWeb/upload/img/Footer/ThanhToanSpay.webp" alt="Pay" class="img-fluid me-2"
+                        <img src="/Project_Website/ProjectWeb/upload/img/Footer/ThanhToanSpay.webp" alt="Pay" class="img-fluid me-2"
                             style="height: 30px; background-color: #cccccc00; border-radius: 4px;">
-                        <img src="/ProjectWeb/upload/img/Footer/ThanhToanVNPay.webp" alt="VNPay" class="img-fluid me-2"
+                        <img src="/Project_Website/ProjectWeb/upload/img/Footer/ThanhToanVNPay.webp" alt="VNPay" class="img-fluid me-2"
                             style="height: 30px; background-color: #cccccc00; border-radius: 4px;">
-                        <img src="/ProjectWeb/upload/img/Footer/ThanhToanCOD.webp" alt="COD" class="img-fluid"
+                        <img src="/Project_Website/ProjectWeb/upload/img/Footer/ThanhToanCOD.webp" alt="COD" class="img-fluid"
                             style="height: 30px; background-color: #cccccc00; border-radius: 4px;">
                     </div>
                     
@@ -162,7 +162,7 @@
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
-    <script src="/ProjectWeb/layout/js/Footer.js"></script>
+    <script src="/Project_Website/ProjectWeb/layout/js/Footer.js"></script>
 </body>
 
 </html>

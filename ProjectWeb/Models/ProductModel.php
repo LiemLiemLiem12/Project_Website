@@ -29,7 +29,7 @@ class ProductModel extends BaseModel
   }
   public function getByCategoryId($categoryId)
   {
-    $sql = "SELECT * FROM " . self::TABLE . " WHERE category_id={$categoryId}";
+    $sql = "SELECT * FROM " . self::TABLE . " WHERE id_category={$categoryId}";
     return $this->getByQuery($sql);
   }
   public function getTopSaleProduct()

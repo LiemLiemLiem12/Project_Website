@@ -3,18 +3,17 @@
 class ProductController extends BaseController
 {
     private $productModel;
-    private $categoryModel;
     public function __construct()
     {
+        parent::__construct();
+        
+        // Sau đó mới khởi tạo các model riêng của ProductController
         $this->loadModel('ProductModel');
-        $this->loadModel('CategoryModel');
-        $this->productModel = new ProductModel;
-        $this->categoryModel = new CategoryModel();
-
+        $this->productModel = new ProductModel();
     }
     public function index()
     {
-        $product = $this->productModel->getAll(['id', 'name', 'image', 'price', 'description'], 15, ['column' => 'id', 'order' => 'desc']);
+        $product = $this->productModel->getAll(['*'], 15, ['column' => 'id', 'order' => 'desc']);
         return $this->view('frontend.products.index', [
             'products' => $product,
 

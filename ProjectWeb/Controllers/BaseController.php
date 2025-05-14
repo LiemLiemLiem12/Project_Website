@@ -8,17 +8,33 @@ class BaseController
      * + path name: folderName.fileName
      * + Lấy từ sau thư mục Views
      */
+    //  public function __construct()
+    // {
+    //     $this->loadModel('CategoryModel');
+    //     $this->categoryModel = new CategoryModel();
+    // }
     public function view($viewPath, array $data = [])
     {
+        //    if (!isset($data['headerCategories'])) {
+        //     $data['headerCategories'] = $this->getHeaderCategories();
+        // }
         foreach($data as $key=>$value){
             $$key=$value;
         }
         return require(self::VIEW_FOLDER_NAME . '/' . str_replace('.', '/', $viewPath) . '.php');
     }
-
+   protected function getHeaderCategories()
+    {
+        return $this->categoryModel->getCategoriesForMenu();
+    }
 protected function loadModel($modelPath)
 {
-    require(self::MODEL_FOLDER_NAME . '/' . $modelPath . '.php');
+    $filePath = self::MODEL_FOLDER_NAME . '/' . $modelPath . '.php';
+    // Chỉ load file nếu lớp chưa tồn tại
+    $className = str_replace('.php', '', basename($modelPath));
+    if (!class_exists($className)) {
+        require($filePath);
+    }
 }
 
 

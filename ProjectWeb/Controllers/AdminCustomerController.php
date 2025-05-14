@@ -2,7 +2,7 @@
 require_once './Models/AdminCustomerModel.php';
 
 class AdminCustomerController {
-    private $customerModel;
+    protected $customerModel;
 
     public function __construct() {
         $this->customerModel = new AdminCustomerModel();

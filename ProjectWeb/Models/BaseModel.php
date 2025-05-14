@@ -6,6 +6,7 @@ class BaseModel extends Database
     public function __construct()
     {
         $this->connect = $this->connect();
+        
     }
     // Lấy tất cả dữ liệu từ bản
     public function all($table, $select = ['*'], $limit, $orderBys = [])
@@ -29,7 +30,7 @@ class BaseModel extends Database
     // Lấy dựa vào ID
     public function find($table, $id)
     {
-        $sql = "SELECT * FROM {$table} WHERE ID={$id} LIMIT 1";
+        $sql = "SELECT * FROM {$table} WHERE id_product={$id} LIMIT 1";
         $query = $this->_query($sql);
         return mysqli_fetch_assoc($query);
 
@@ -111,7 +112,7 @@ class BaseModel extends Database
     }
 
 
-    private function _query($sql)
+    public function _query($sql)
     {
         return mysqli_query($this->connect, $sql);
     }

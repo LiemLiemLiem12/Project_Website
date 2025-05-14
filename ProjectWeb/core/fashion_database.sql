@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 12, 2025 lúc 10:09 AM
+-- Thời gian đã tạo: Th5 13, 2025 lúc 07:54 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.0.30
+-- Phiên bản PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `fashion_database`
+-- Cơ sở dữ liệu: `fashion_database1`
 --
 
 -- --------------------------------------------------------
@@ -35,17 +35,6 @@ CREATE TABLE `cart` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `cart`
---
-
-INSERT INTO `cart` (`id`, `id_User`, `id_Product`, `quantity`, `created_at`) VALUES
-(1, 1, 2, 2, '2025-05-01 14:25:49'),
-(2, 2, 3, 1, '2025-05-01 14:25:49'),
-(3, 3, 5, 3, '2025-05-01 14:25:49'),
-(4, 4, 1, 1, '2025-05-01 14:25:49'),
-(5, 5, 4, 2, '2025-05-01 14:25:49');
-
 -- --------------------------------------------------------
 
 --
@@ -55,6 +44,7 @@ INSERT INTO `cart` (`id`, `id_User`, `id_Product`, `quantity`, `created_at`) VAL
 CREATE TABLE `category` (
   `id_Category` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `link` varchar(255) DEFAULT NULL,
   `meta` varchar(255) DEFAULT NULL,
   `hide` int(11) DEFAULT NULL,
@@ -65,12 +55,12 @@ CREATE TABLE `category` (
 -- Đang đổ dữ liệu cho bảng `category`
 --
 
-INSERT INTO `category` (`id_Category`, `name`, `link`, `meta`, `hide`, `order`) VALUES
-(1, 'Áo', '/ao', 'ao-thoi-trang', 0, 1),
-(2, 'Quần', '/quan', 'quan-dep', 0, 2),
-(3, 'Giày', '/giay', 'giay-thoi-trang', 0, 3),
-(4, 'Phụ kiện', '/phu-kien', 'phu-kien', 0, 4),
-(5, 'Khuyến mãi', '/sale', 'khuyen-mai', 0, 5);
+INSERT INTO `category` (`id_Category`, `name`, `image`, `link`, `meta`, `hide`, `order`) VALUES
+(1, 'Áo', NULL, '/ao', 'ao-thoi-trang', 0, 1),
+(2, 'Quần', NULL, '/quan', 'quan-dep', 0, 2),
+(3, 'Giày', NULL, '/giay', 'giay-thoi-trang', 0, 3),
+(4, 'Phụ kiện', NULL, '/phu-kien', 'phu-kien', 0, 4),
+(5, 'Khuyến mãi', NULL, '/sale', 'khuyen-mai', 0, 5);
 
 -- --------------------------------------------------------
 
@@ -80,33 +70,34 @@ INSERT INTO `category` (`id_Category`, `name`, `link`, `meta`, `hide`, `order`) 
 
 CREATE TABLE `order` (
   `id_Order` int(11) NOT NULL,
-  `total_amount` int(11) NOT NULL,
-  `status` enum('pending','shipping','completed','cancelled','waitConfirm') DEFAULT 'pending',
+  `order_number` varchar(50) DEFAULT NULL,
+  `total_amount` decimal(10,2) DEFAULT NULL,
+  `payment_by` varchar(50) DEFAULT NULL,
+  `shipping_method` varchar(50) DEFAULT NULL,
+  `status` enum('pending','shipping','completed','cancelled','waitConfirm') DEFAULT 'waitConfirm',
   `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `id_User` int(11) DEFAULT NULL,
-  `payment_by` varchar(255) NOT NULL,
-  `hide` int(11) NOT NULL DEFAULT 0,
-  `note` text NOT NULL
+  `note` text DEFAULT NULL,
+  `shipping_fee` decimal(10,2) DEFAULT NULL,
+  `hide` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `order`
 --
 
-INSERT INTO `order` (`id_Order`, `total_amount`, `status`, `created_at`, `id_User`, `payment_by`, `hide`, `note`) VALUES
-(1, 315000, 'completed', '2025-05-01 14:25:49', 1, 'COD', 0, 'Giao giờ hành chính'),
-(2, 400000, 'completed', '2025-05-01 14:25:49', 2, 'COD', 0, 'Giao giờ hành chính'),
-(3, 595000, 'cancelled', '2025-05-01 14:25:49', 3, 'COD', 0, 'Giao giờ hành chính'),
-(4, 427500, 'cancelled', '2025-05-01 14:25:49', 4, 'COD', 0, 'Giao giờ hành chính'),
-(5, 225000, 'completed', '2025-05-01 14:25:49', 5, 'COD', 0, 'Giao giờ hành chính'),
-(6, 12, 'cancelled', '2025-05-02 18:56:30', 1, 'COD', 0, 'Giao giờ hành chính'),
-(7, 1000000, 'completed', '2025-05-02 13:05:02', 3, 'COD', 0, 'Giao giờ hành chính'),
-(8, 1000000, 'cancelled', '2025-02-09 13:05:23', 3, 'COD', 0, 'Giao giờ hành chính'),
-(9, 10000000, 'shipping', '2025-04-16 13:36:31', 5, 'COD', 0, 'Giao giờ hành chính'),
-(10, 10000000, 'waitConfirm', '2025-04-17 21:57:49', 1, 'COD', 0, 'Giao giờ hành chính'),
-(11, 10000000, 'completed', '2025-05-03 13:01:01', 8, 'COD', 0, 'Giao giờ hành chính'),
-(12, 10000000, 'waitConfirm', '2025-03-19 13:36:06', 6, 'COD', 0, 'Giao giờ hành chính'),
-(13, 1000000, 'waitConfirm', '2025-05-11 21:50:51', 5, 'MOMO', 0, 'Giao giờ hành chính');
+INSERT INTO `order` (`id_Order`, `order_number`, `total_amount`, `payment_by`, `shipping_method`, `status`, `created_at`, `updated_at`, `id_User`, `note`, `shipping_fee`, `hide`) VALUES
+(1, NULL, 315000.00, NULL, NULL, 'pending', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 1, NULL, NULL, 0),
+(2, NULL, 400000.00, NULL, NULL, 'completed', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 2, NULL, NULL, 0),
+(3, NULL, 595000.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 3, NULL, NULL, 0),
+(4, NULL, 427500.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 4, NULL, NULL, 0),
+(5, NULL, 225000.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 5, NULL, NULL, 0),
+(6, NULL, 12.00, NULL, NULL, 'completed', '2025-05-02 18:56:30', '2025-05-13 02:51:10', 1, NULL, NULL, 0),
+(7, NULL, 1000000.00, NULL, NULL, 'shipping', '2025-05-02 13:05:02', '2025-05-13 02:51:10', 3, NULL, NULL, 0),
+(8, NULL, 1000000.00, NULL, NULL, 'pending', '2025-02-09 13:05:23', '2025-05-13 02:51:10', 3, NULL, NULL, 0),
+(9, NULL, 10000000.00, NULL, NULL, 'completed', '2025-04-16 13:36:31', '2025-05-13 02:51:10', 5, NULL, NULL, 0),
+(10, NULL, 10000000.00, NULL, NULL, 'completed', '2025-04-17 21:57:49', '2025-05-13 02:51:10', 1, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -118,24 +109,9 @@ CREATE TABLE `order_detail` (
   `id_Order` int(11) NOT NULL,
   `id_Product` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
+  `size` varchar(10) DEFAULT NULL,
   `sub_total` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `order_detail`
---
-
-INSERT INTO `order_detail` (`id_Order`, `id_Product`, `quantity`, `sub_total`) VALUES
-(1, 1, 1, 315000.00),
-(2, 2, 1, 400000.00),
-(3, 3, 1, 595000.00),
-(4, 4, 1, 427500.00),
-(5, 5, 1, 225000.00),
-(6, 1, 5, 400000.00),
-(9, 2, 10, 400000.00),
-(10, 2, 10, 400000.00),
-(10, 3, 20, 400000.00),
-(12, 5, 100000, 400000.00);
 
 -- --------------------------------------------------------
 
@@ -175,13 +151,49 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `link`, `meta`, `hide`, `order`, `click_count`, `store`, `img2`, `img3`, `tag`, `CSDoiTra`, `CSGiaoHang`, `M`, `L`, `XL`) VALUES
-(1, 'Áo sơ mi nam BỰ HONWwwwww', '<p><img alt=\"Map\" src=\"./upload/img/Description_img/Untitled_snapshot_05-06-2025_22_16_39.jpeg\" style=\"border-width: 2px; border-style: solid; float: right; width: 200px; height: 113px;\" /><em><strong>Xin ch&agrave;o c&aacute;c bạn</strong></em></p>\n', 123456.00, 10, 123456.00, '2025-05-01 14:25:49', '2025-05-08 17:44:13', 4, '1_6_5_4_3_2_1__a76f4802-679e-4ab5-a961-ec8cca3c3e49.jpg', '/ao-so-mi', 'ao-so-mi', 0, 1, 20, 100, '1_6_5_4_3_2_1_ODOT.png', '1_6_5_4_3_2_1_ngya.png', 'tag-tag', '1_3_2_1_doitra_1.webp', '1_3_2_1_cs_giaohanh.webp', 90, 5, 5),
-(2, 'JEAN FEMALE', '<p>Form &ocirc;m body t&ocirc;n d&aacute;ng</p>\r\n', 400000.00, 20, 400000.00, '2025-05-01 14:25:49', '2025-05-08 15:17:26', 1, '1_2_1_item2.webp', '/quan-jeans', 'quan-jeans', 0, 2, 12, 10, '1_1_item2.webp', '1_1_item2.jpg', 'ao-thun,ao-somi,quan-tay', 'buffet.png', '1_3_cs_giaohanh.webp', 0, 0, 0),
-(3, 'Giày thể thao', '<p>Gi&agrave;y sneaker trẻ trung</p>\r\n', 595000.00, 15, 595000.00, '2025-05-01 14:25:49', '2025-05-08 15:17:26', 3, '2_1_bruh.png', '/giay-sneaker', 'giay-sneaker', 0, 3, 5, 0, '2_1_really.png', 'Whiskers Meme Sticker Aegean Cat PNG - Free Download.jpg', 'ao-thun,ao-somi,quan-tay', '4_doitra_1.webp', '4_cs_giaohanh.webp', 0, 0, 0),
-(4, 'Túi xách', '<p>T&uacute;i da PU cao cấp</p>\r\n', 427500.00, 5, 427500.00, '2025-05-01 14:25:49', '2025-05-08 15:17:26', 1, '1_item4.jpg', '/tui-xach', 'tui-xach', 0, 4, 7, 10, '1_item4.webp', '2_1_item4.webp', 'ao-thun,ao-somi,quan-tay', '2_doitra_1.webp', '2_cs_giaohanh.webp', 0, 0, 0),
-(5, 'Áo thun nam', 'Áo thun trơn basic', 250000.00, 10, 225000.00, '2025-05-01 14:25:49', '2025-05-08 15:17:26', 1, 'item5.jpg', '/ao-thun', 'ao-thun', 0, 5, 30, 0, 'item5.webp', 'item5.webp', 'ao-thun, ao-somi, quan-tay', 'doitra_1.webp', 'cs_giaohanh.webp', 0, 0, 0),
-(6, 'Quần KAKI', 'Mô tả quần kaki', 400000.00, 10, 360000.00, '2025-05-04 13:59:31', '2025-05-08 15:17:26', 2, 'item1.jpg', '/item1', 'quan-kaki', 0, 5, 0, 20, 'item1.webp', 'item1.webp', 'quan', '', '', 0, 0, 0),
-(32, 'CHiec ao thun', '<p>ccwqcwqcwqwqqc</p>\r\n', 1000000.00, NULL, 1000000.00, '2025-05-08 13:15:28', '2025-05-08 15:17:26', 1, '1_2_1_1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', NULL, NULL, 0, NULL, 0, 13, '1_2_1_1_160_ao_thun_486-11_048e677a305a4d288f3a40f83e0cd12b_1024x1024.jpg', '1_2_1_1_160_ao_thun_486-7_192a8a84946943ba809cf83eda40e528_1024x1024.jpg', 'tagf-tag', '1_2_1_1_Untitled_snapshot_05-06-2025_23_35_55.jpeg', '1_2_2_Untitled_snapshot_05-06-2025_23_35_55.jpeg', 8, 5, 0);
+(32, 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 'Áo polo nam với công nghệ Procool và chi tiết seam sealing hiện đại, mang đến sự thoải mái và phong cách thời trang.', 329000.00, 15, 279650.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item1.webp', 'ao-polo-nam-procool-icondenim-seam-sealing', 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 0, 1, 0, 0, '', '', 'áo polo, nam giới, procool', 'Có', 'Có', 10, 10, 10),
+(33, 'Áo Thun Nam ICONDENIM Atheltics Champion', 'Áo thun thể thao với thiết kế năng động, chất liệu thoáng mát phù hợp cho vận động và sinh hoạt hàng ngày.', 299000.00, 20, 239200.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item8.webp', 'ao-thun-nam-icondenim-atheltics-champion', 'Áo Thun Nam ICONDENIM Atheltics Champion', 0, 2, 0, 0, '', '', 'áo thun, nam giới, thể thao', 'Có', 'Có', 10, 10, 10),
+(34, 'Set Đồ Nam ICONDENIM Rugby Football', 'Bộ đồ thể thao phong cách rugby football, chất liệu cao cấp mang đến sự thoải mái tối đa khi vận động.', 799000.00, 25, 599250.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item9.webp', 'set-do-nam-icondenim-rugby-football', 'Set Đồ Nam ICONDENIM Rugby Football', 0, 3, 0, 0, '', '', 'set đồ, nam giới, thể thao', 'Có', 'Có', 10, 10, 10),
+(35, 'Áo Polo Nam ICONDENIM Horizontal Stripped', 'Áo polo sọc ngang thời trang, thiết kế trẻ trung, phù hợp cho cả môi trường công sở và dạo phố.', 329000.00, 10, 296100.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item10.webp', 'ao-polo-nam-icondenim-horizontal-stripped', 'Áo Polo Nam ICONDENIM Horizontal Stripped', 0, 4, 0, 0, '', '', 'áo polo, nam giới, sọc ngang', 'Có', 'Có', 10, 10, 10),
+(36, 'Áo Thun Nam ICONDENIM Edge Striped', 'Áo thun với chi tiết sọc viền độc đáo, thiết kế hiện đại, chất liệu cotton thoáng mát.', 299000.00, 15, 254150.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item1.webp', 'ao-thun-nam-icondenim-edge-striped', 'Áo Thun Nam ICONDENIM Edge Striped', 0, 5, 0, 0, '', '', 'áo thun, nam giới, sọc viền', 'Có', 'Có', 10, 10, 10),
+(37, 'Áo Thun Nam Procool ICONDENIM Seam Sealing', 'Áo thun công nghệ Procool với chi tiết seam sealing, mang đến sự khô thoáng và thoải mái suốt cả ngày.', 299000.00, 20, 239200.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item2.webp', 'ao-thun-nam-procool-icondenim-seam-sealing', 'Áo Thun Nam Procool ICONDENIM Seam Sealing', 0, 6, 0, 0, '', '', 'áo thun, nam giới, procool', 'Có', 'Có', 10, 10, 10),
+(38, 'Quần Jean Nam Procool ICONDENIM CoolMax Black Slim', 'Quần jean đen ôm với công nghệ CoolMax, mang đến sự thoải mái và phong cách trong mọi hoạt động.', 549000.00, 10, 494100.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item3.webp', 'quan-jean-nam-procool-icondenim-coolmax-black-slim', 'Quần Jean Nam Procool ICONDENIM CoolMax Black Slim', 0, 7, 0, 0, '', '', 'quần jean, nam giới, slim fit', 'Có', 'Có', 10, 10, 10),
+(39, 'Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim', 'Quần jean xanh nhạt ôm với công nghệ CoolMax và ProCOOL, kết hợp hoàn hảo giữa phong cách và tính năng.', 549000.00, 15, 466650.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item4.webp', 'quan-jean-nam-procool-icondenim-coolmax-light-blue-slim', 'Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim', 0, 8, 0, 0, '', '', 'quần jean, nam giới, xanh nhạt', 'Có', 'Có', 10, 10, 10),
+(40, 'Quần Short Jean Nam ICONDENIM Mid Blue Regular', 'Quần short jean màu xanh trung bình, dáng regular thoải mái, phù hợp cho mùa hè.', 359000.00, 30, 251300.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item2.webp', 'quan-short-jean-nam-icondenim-mid-blue-regular', 'Quần Short Jean Nam ICONDENIM Mid Blue Regular', 0, 9, 0, 0, '', '', 'quần short, nam giới, jean', 'Có', 'Có', 10, 10, 10),
+(41, 'Áo Thun Nam ICONDENIM Basic Form Regular', 'Áo thun basic form với kiểu dáng regular, chất liệu cotton mềm mại, màu sắc đơn giản dễ phối đồ.', 199000.00, 20, 159200.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item3.webp', 'ao-thun-nam-icondenim-basic-form-regular', 'Áo Thun Nam ICONDENIM Basic Form Regular', 0, 10, 0, 0, '', '', 'áo thun, nam giới, basic', 'Có', 'Có', 10, 10, 10),
+(42, 'Quần Tây Nam ICONDENIM Straight Neutral Basic', 'Quần tây dáng straight với màu sắc trung tính, phù hợp cho môi trường công sở và dạo phố.', 499000.00, 15, 424150.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item4.webp', 'quan-tay-nam-icondenim-straight-neutral-basic', 'Quần Tây Nam ICONDENIM Straight Neutral Basic', 0, 11, 0, 0, '', '', 'quần tây, nam giới, công sở', 'Có', 'Có', 10, 10, 10),
+(43, 'Quần Short Kaki Nam ICONDENIM Garment Dye', 'Quần short kaki với công nghệ garment dye, màu sắc tự nhiên, phong cách casual thoải mái.', 359000.00, 25, 269250.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item5.webp', 'quan-short-kaki-nam-icondenim-garment-dye', 'Quần Short Kaki Nam ICONDENIM Garment Dye', 0, 12, 0, 0, '', '', 'quần short, nam giới, kaki', 'Có', 'Có', 10, 10, 10);
+
+--
+-- Bẫy `product`
+--
+DELIMITER $$
+CREATE TRIGGER `auto_calculate_current_price` BEFORE INSERT ON `product` FOR EACH ROW BEGIN
+    -- Kiểm tra xem có giá gốc và phần trăm giảm giá không
+    IF NEW.original_price IS NOT NULL AND NEW.discount_percent IS NOT NULL THEN
+        -- Tính giá hiện tại = giá gốc × (1 - phần trăm giảm/100)
+        -- ROUND() giúp làm tròn số để tránh số lẻ như .000001
+        SET NEW.current_price = ROUND(NEW.original_price * (1 - NEW.discount_percent / 100));
+    ELSE
+        -- Nếu không có discount hoặc giá gốc, giữ giá hiện tại = giá gốc
+        SET NEW.current_price = NEW.original_price;
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `auto_update_current_price` BEFORE UPDATE ON `product` FOR EACH ROW BEGIN
+    -- Chỉ tính lại nếu giá gốc hoặc discount thay đổi
+    IF NEW.original_price != OLD.original_price OR NEW.discount_percent != OLD.discount_percent THEN
+        IF NEW.original_price IS NOT NULL AND NEW.discount_percent IS NOT NULL THEN
+            SET NEW.current_price = ROUND(NEW.original_price * (1 - NEW.discount_percent / 100));
+        ELSE
+            SET NEW.current_price = NEW.original_price;
+        END IF;
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -201,17 +213,6 @@ CREATE TABLE `review` (
   `status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `review`
---
-
-INSERT INTO `review` (`id`, `id_User`, `id_Product`, `rate`, `comment`, `created_at`, `updated_at`, `main`, `status`) VALUES
-(1, 1, 1, 4.5, 'Rất đẹp và thoải mái', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 'r1.jpg', 1),
-(2, 2, 2, 5, 'Vừa vặn và đúng mô tả', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 'r2.jpg', 1),
-(3, 3, 3, 3.5, 'Hơi chật so với size', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 'r3.jpg', 1),
-(4, 4, 4, 4, 'Giao hàng nhanh, đóng gói kỹ', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 'r4.jpg', 1),
-(5, 5, 5, 5, 'Áo thun chất lượng tốt', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 'r5.jpg', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -226,6 +227,10 @@ CREATE TABLE `user` (
   `phone` varchar(50) DEFAULT NULL,
   `address` text DEFAULT NULL,
   `role` enum('admin','user') DEFAULT 'user',
+  `verification_code` varchar(50) DEFAULT NULL,
+  `verified` tinyint(1) DEFAULT 0,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_token_expiry` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `hide` int(11) DEFAULT NULL
@@ -235,16 +240,16 @@ CREATE TABLE `user` (
 -- Đang đổ dữ liệu cho bảng `user`
 --
 
-INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, `role`, `created_at`, `updated_at`, `hide`) VALUES
-(1, 'Nguyễn Văn A', 'a@example.com', '123456', '0900000001', 'Hà Nội', 'user', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(2, 'Trần Thị B', 'b@example.com', '123456', '0900000002', 'Hồ Chí Minh', 'user', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(3, 'Lê Văn C', 'c@example.com', '123456', '0900000003', 'Đà Nẵng', 'admin', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(4, 'Phạm Thị D', 'd@example.com', '123456', '0900000004', 'Cần Thơ', 'user', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(5, 'Hoàng Văn E', 'e@example.com', '123456', '0900000005', 'Hải Phòng', 'user', '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', '2025-04-15 21:59:36', '2025-05-02 22:00:43', NULL),
-(7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', '2025-04-16 08:00:00', '2025-05-02 22:01:25', NULL),
-(8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', '2025-04-16 09:15:00', '2025-05-02 22:01:25', NULL),
-(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', '2025-04-16 10:30:00', '2025-05-02 22:01:25', NULL);
+INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, `role`, `verification_code`, `verified`, `reset_token`, `reset_token_expiry`, `created_at`, `updated_at`, `hide`) VALUES
+(1, 'Nguyễn Văn A', 'a@example.com', '123456', '0900000001', 'Hà Nội', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
+(2, 'Trần Thị B', 'b@example.com', '123456', '0900000002', 'Hồ Chí Minh', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
+(3, 'Lê Văn C', 'c@example.com', '123456', '0900000003', 'Đà Nẵng', 'admin', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
+(4, 'Phạm Thị D', 'd@example.com', '123456', '0900000004', 'Cần Thơ', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
+(5, 'Hoàng Văn E', 'e@example.com', '123456', '0900000005', 'Hải Phòng', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
+(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', NULL, 0, NULL, NULL, '2025-04-15 21:59:36', '2025-05-02 22:00:43', NULL),
+(7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', NULL, 0, NULL, NULL, '2025-04-16 08:00:00', '2025-05-02 22:01:25', NULL),
+(8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', NULL, 0, NULL, NULL, '2025-04-16 09:15:00', '2025-05-02 22:01:25', NULL),
+(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', NULL, 0, NULL, NULL, '2025-04-16 10:30:00', '2025-05-02 22:01:25', NULL);
 
 -- --------------------------------------------------------
 
@@ -356,7 +361,7 @@ ALTER TABLE `order`
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT cho bảng `review`
@@ -385,7 +390,7 @@ ALTER TABLE `visits`
 --
 ALTER TABLE `cart`
   ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
-  ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_Product`);
+  ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 
 --
 -- Các ràng buộc cho bảng `order`
@@ -398,7 +403,7 @@ ALTER TABLE `order`
 --
 ALTER TABLE `order_detail`
   ADD CONSTRAINT `order_detail_ibfk_1` FOREIGN KEY (`id_Order`) REFERENCES `order` (`id_Order`),
-  ADD CONSTRAINT `order_detail_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_Product`);
+  ADD CONSTRAINT `order_detail_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 
 --
 -- Các ràng buộc cho bảng `product`
@@ -411,7 +416,7 @@ ALTER TABLE `product`
 --
 ALTER TABLE `review`
   ADD CONSTRAINT `review_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
-  ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_Product`);
+  ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

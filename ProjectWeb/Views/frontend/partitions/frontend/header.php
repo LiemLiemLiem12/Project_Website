@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RSStore - Thời trang nam chính hãng</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/ProjectWeb/layout/css/Header.css">s
-   
+
+
+       
+    
+    <!-- Trong thẻ <head> -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css"> <!-- Đường dẫn đến file CSS mới -->
+    
+       
 </head>
 <body>
         <!-- Top promotional banner -->
@@ -32,16 +34,20 @@
                     </button>
                 </div>
                 
-                <!-- Logo -->
-                <div class="col-md-3 col-6 text-center text-md-start">
+                <!-- Logo for Mobile -->
+                <div class="col-6 d-md-none text-center text-md-start">
                     <a href="/ProjectWeb/index.php" class="logo">
-                        <img src="/ProjectWeb/upload/img/Header/logo.png" alt="RSStore Logo" class="img-fluid">
+                        <img src="/Project_Website/ProjectWeb/upload/img/Header/logo.png" alt="RSStore Logo" class="img-fluid">
                     </a>
                 </div>
                 
-                <!-- Search bar -->
-                <div class="col-md-6 d-none d-md-block">
-                    <div class="search-container">
+                <!-- Combined Logo, Brand Text, and Search bar for MD and UP -->
+                <div class="col-md-8 col-lg-9 d-none d-md-flex align-items-center">
+                    <a href="/ProjectWeb/index.php" class="logo me-2 d-none d-md-inline-block">
+                        <img src="/Project_Website/ProjectWeb/upload/img/Header/logo.png" alt="RSStore Logo" class="img-fluid desktop-logo-img">
+                    </a>
+                    <h1 class="rs-store-brand-text me-3 h5 mb-0 d-none d-md-inline-block">RS Store</h1>
+                    <div class="search-container flex-grow-1">
                         <form action="/ProjectWeb/index.php?controller=search" method="get">
                             <input type="text" placeholder="Bạn đang tìm gì..." name="q" class="search-input">
                             <button type="submit" class="search-button">
@@ -52,7 +58,7 @@
                 </div>
                 
                 <!-- User actions -->
-                <div class="col-md-3 col-4">
+                <div class="col-md-4 col-lg-3 col-4">
                     <div class="d-flex justify-content-end">
                         <!-- User account -->
                         <div class="header-action me-3 position-relative dropdown">
@@ -85,13 +91,14 @@
                                 </div>
                             </div>
                         </div>
-                        
+                 
+
                         <!-- Shopping cart -->
                         <div class="header-action position-relative dropdown">
-                            <a href="javascript:void(0);" class="action-link cart-toggle" id="cartBtn">
+                            <a href="index.php?controller=cart&action=index" class="action-link cart-toggle" id="cartBtn">
                                 <i class="fas fa-shopping-cart"></i>
                                 <span class="cart-count">0</span>
-                                <span class="d-none d-lg-inline-block">Giỏ hàng</span>
+                                <span  class="d-none d-lg-inline-block">Giỏ hàng</span>
                             </a>
                             <div class="cart-dropdown dropdown-menu">
                                 <div class="dropdown-content">
@@ -143,73 +150,62 @@
         </div>
 
         <!-- Navigation menu -->
-        <div class="main-nav">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <nav class="navbar navbar-expand-lg navbar-light">
-                            <div class="collapse navbar-collapse" id="navbarMain">
-                                <ul class="navbar-nav mx-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/hang-moi">
-                                            <i class="fas fa-tshirt me-1"></i>HÀNG MỚI
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/san-pham">
-                                            SẢN PHẨM
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/ao-nam">
-                                            ÁO NAM
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/quan-nam">
-                                            QUẦN NAM
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/phu-kien">
-                                            PHỤ KIỆN
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/khuyen-mai">
-                                            KHUYẾN MÃI
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/ProjectWeb/tin-tuc">
-                                            TIN TỨC
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </nav>
+      <div class="main-nav">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <div class="collapse navbar-collapse" id="navbarMain">
+                        <ul class="navbar-nav mx-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php">
+                                    <i class="fas fa-home me-1"></i>TRANG CHỦ
+                                </a>
+                            </li>
+                            <?php 
+                            // Khởi tạo controller để lấy danh mục
+                            require_once('Controllers/CategoryController.php');
+                            $categoryController = new CategoryController();
+                            $categories = $categoryController->getHeaderCategories();
+                            
+                            // Hiển thị các danh mục từ database
+                            foreach($categories as $category): 
+                                // Chỉ hiển thị các danh mục không bị ẩn (hide = 0 hoặc NULL)
+                                if(!isset($category['hide']) || $category['hide'] == 0):
+                            ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<?='index.php?controller=category&action=show&id='.$category['id_Category'] ?>">
+                                        <?= strtoupper($category['name']) ?>
+                                    </a>
+                                </li>
+                            <?php 
+                                endif;
+                            endforeach; 
+                            ?>
+                           
+                        </ul>
                     </div>
-                </div>
+                </nav>
             </div>
         </div>
+    </div>
+</div>
     </header>
 
     <!-- Main content placeholder -->
     <main>
         <!-- Main content will go here -->
+         
     </main>
 
     <!-- Notification container -->
     <div class="notification-container">
-        <!-- Notifications will be dynamically added here -->
-    </div>
+        
+     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Custom JS -->
-    <script src="/ProjectWeb/layout/js/Header.js"></script>
+    <!-- Cuối thẻ <body> -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/Project_Website/ProjectWeb/layout/js/Header.js"></script> <!-- Đường dẫn đến file JS mới -->
     <!-- Thêm script để xử lý header khi cuộn -->
     <script>
         window.addEventListener('scroll', function() {
@@ -223,3 +219,4 @@
     </script>
 </body>
 </html>
+<!-- Navigation menu -->

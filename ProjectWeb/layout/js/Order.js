@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.querySelector('input[type="radio"]').checked = true;
         });
     });
-    
+
     // Shipping method selection
     const shippingMethods = document.querySelectorAll('.shipping-method');
     shippingMethods.forEach(method => {
@@ -66,21 +66,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const couponSuccess = document.getElementById('coupon-success');
     const couponError = document.getElementById('coupon-error');
     const discountRow = document.querySelector('.discount-row');
+    const discountCodeInput = document.getElementById('discount_code_input');
     
     applyBtn.addEventListener('click', function() {
         const code = couponInput.value.trim();
-        if (code === 'SALE100K') {
+        if (!code) {
+            couponSuccess.classList.add('d-none');
+            couponError.classList.remove('d-none');
+            discountRow.classList.add('d-none');
+            document.getElementById('discount').textContent = '-0₫';
+            discountCodeInput.value = '';
+            calculateTotal();
+            return;
+        }
+        
+        // Check valid discount codes
+        const validCodes = {
+            'SALE50K': 50000,
+            'SALE100K': 100000,
+            'FREESHIP': 35000
+        };
+        
+        if (validCodes[code]) {
             // Valid discount code
             couponSuccess.classList.remove('d-none');
             couponError.classList.add('d-none');
             discountRow.classList.remove('d-none');
-            document.getElementById('discount').textContent = '-100,000₫';
+            document.getElementById('discount').textContent = '-' + formatCurrency(validCodes[code]);
+            discountCodeInput.value = code;
             calculateTotal();
         } else {
             // Invalid discount code
             couponSuccess.classList.add('d-none');
             couponError.classList.remove('d-none');
             discountRow.classList.add('d-none');
+            document.getElementById('discount').textContent = '-0₫';
+            discountCodeInput.value = '';
             calculateTotal();
         }
     });
@@ -108,11 +129,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 addOption(districtSelect, '011', 'Quận Hoàn Kiếm');
                 addOption(districtSelect, '012', 'Quận Hai Bà Trưng');
                 addOption(districtSelect, '013', 'Quận Đống Đa');
+            } else if (this.value === '48') { // Đà Nẵng
+                addOption(districtSelect, '480', 'Quận Hải Châu');
+                addOption(districtSelect, '481', 'Quận Thanh Khê');
+                addOption(districtSelect, '482', 'Quận Sơn Trà');
+            } else if (this.value === '92') { // Cần Thơ
+                addOption(districtSelect, '920', 'Quận Ninh Kiều');
+                addOption(districtSelect, '921', 'Quận Bình Thủy');
+                addOption(districtSelect, '922', 'Quận Cái Răng');
+            } else if (this.value === '74') { // Bình Dương
+                addOption(districtSelect, '740', 'Thành phố Thủ Dầu Một');
+                addOption(districtSelect, '741', 'Thành phố Thuận An');
+                addOption(districtSelect, '742', 'Thành phố Dĩ An');
+            } else if (this.value === '75') { // Đồng Nai
+                addOption(districtSelect, '750', 'Thành phố Biên Hòa');
+                addOption(districtSelect, '751', 'Huyện Long Thành');
+                addOption(districtSelect, '752', 'Huyện Nhơn Trạch');
             }
         } else {
             districtSelect.disabled = true;
             wardSelect.disabled = true;
         }
+        
+        // Reset ward
+        wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+        wardSelect.disabled = true;
     });
     
     districtSelect.addEventListener('change', function() {
@@ -130,6 +171,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 addOption(wardSelect, '79101', 'Phường Thảo Điền');
                 addOption(wardSelect, '79102', 'Phường An Phú');
                 addOption(wardSelect, '79103', 'Phường Bình An');
+            } else if (this.value === '010') { // Quận Ba Đình
+                addOption(wardSelect, '01001', 'Phường Phúc Xá');
+                addOption(wardSelect, '01002', 'Phường Trúc Bạch');
+                addOption(wardSelect, '01003', 'Phường Vĩnh Phúc');
+            } else {
+                // Add some generic wards for other districts
+                addOption(wardSelect, '10001', 'Phường 1');
+                addOption(wardSelect, '10002', 'Phường 2');
+                addOption(wardSelect, '10003', 'Phường 3');
             }
         } else {
             wardSelect.disabled = true;
@@ -139,9 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Complete order button click
     completeOrderBtn.addEventListener('click', function() {
         if (validateForm()) {
-            // Show order success modal
-            const successModal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));
-            successModal.show();
+            form.submit();
         }
     });
     
@@ -157,6 +205,9 @@ document.addEventListener('DOMContentLoaded', function() {
         requiredFields.forEach(field => {
             if (!field.value) {
                 isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
             }
         });
         
@@ -203,7 +254,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check if discount is applied
         let discount = 0;
         if (!discountRow.classList.contains('d-none')) {
-            discount = 100000; // Demo discount amount
+            const discountText = document.getElementById('discount').textContent;
+            discount = parseCurrency(discountText);
         }
         
         // Calculate total
@@ -235,12 +287,6 @@ document.addEventListener('DOMContentLoaded', function() {
         selectElement.appendChild(option);
     }
     
-    // Initialize tooltips
-    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltips.forEach(tooltip => {
-        new bootstrap.Tooltip(tooltip);
-    });
-    
     // Initialize calculations
     calculateTotal();
-}); 
+});
