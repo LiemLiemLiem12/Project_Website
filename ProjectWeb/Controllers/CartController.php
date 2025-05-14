@@ -18,7 +18,7 @@ class CartController extends BaseController
         $cart = $_SESSION['cart'] ?? [];
         $cartItems = [];
         $total = 0;
-
+        $number=0;
         foreach ($cart as $item) {
             $product = $this->productModel->findById($item['product_id']);
             if ($product) {
@@ -30,13 +30,15 @@ class CartController extends BaseController
                     'subtotal' => $subtotal,
                 ];
                 $total += $subtotal;
+                $number+=$item['quantity'];
             }
         }
 
         $this->view('frontend.cart.index', [
             'cartItems' => $cartItems,
             'total' => $total,
-            'itemCount' => count($cartItems)
+            'itemCount' => count($cartItems),
+            'number'=> $number,
         ]);
     }
 
@@ -246,4 +248,70 @@ private function redirectWithMessage($url, $message, $type = 'success')
         $_SESSION['cart'] = [];
         $this->redirectWithMessage('index.php?controller=cart&action=index', 'Cart cleared!', 'success');
     }
+    public function getCount()
+{
+    // Ensure this is an AJAX request
+    if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
+        header('HTTP/1.0 403 Forbidden');
+        exit;
+    }
+    
+    // Get cart from session
+    $cart = $_SESSION['cart'] ?? [];
+    
+    // Calculate total items
+    $totalItems = 0;
+    foreach ($cart as $item) {
+        $totalItems += $item['quantity'];
+    }
+    
+    // Return JSON response
+    header('Content-Type: application/json');
+    echo json_encode(['count' => $totalItems]);
+    exit;
+}
+
+/**
+ * Method to update cart items via AJAX
+ */
+public function updateItem()
+{
+    // Ensure this is an AJAX request
+    if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
+        header('HTTP/1.0 403 Forbidden');
+        exit;
+    }
+    
+    $productId = $_POST['product_id'] ?? null;
+    $size = $_POST['size'] ?? 'M';
+    $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 0;
+    
+    if (!$productId || !$size) {
+        echo json_encode(['success' => false, 'message' => 'Invalid product information!']);
+        exit;
+    }
+    
+    $itemKey = $productId . '_' . $size;
+    
+    if ($quantity <= 0) {
+        unset($_SESSION['cart'][$itemKey]);
+    } else {
+        if (isset($_SESSION['cart'][$itemKey])) {
+            $_SESSION['cart'][$itemKey]['quantity'] = $quantity;
+        }
+    }
+    
+    // Calculate total items
+    $totalItems = 0;
+    foreach ($_SESSION['cart'] as $item) {
+        $totalItems += $item['quantity'];
+    }
+    
+    echo json_encode([
+        'success' => true, 
+        'message' => 'Cart updated!',
+        'count' => $totalItems
+    ]);
+    exit;
+}
 }

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -41,9 +42,9 @@
                         <i class="fas fa-shopping-cart"></i>
                         <h4>Giỏ hàng của bạn đang trống</h4>
                         <p>Hãy thêm sản phẩm vào giỏ hàng để mua sắm!</p>
-                        <a href="Home.html" class="btn btn-dark mt-3">Tiếp tục mua sắm</a>
+                        <a href="index.php" class="btn btn-dark mt-3 ">Tiếp tục mua sắm</a>
                     </div>
-  <!-- <?php foreach ($cartItems as $item): ?>
+                  <!-- <?php foreach ($cartItems as $item): ?>
                     <tr>
                         <td>
                             <img src="<?= $item['product']['main_image'] ?>" alt="" width="60">
@@ -73,9 +74,9 @@
                                 <div class="cart-item-variant"><?= $item['size'] ?></div>
                                 <div class="cart-item-actions">
                                     <div class="quantity-control">
-                                        <button class="quantity-btn decrease-btn">−</button>
+                                        <button id="addToOrderBtn"class="quantity-btn decrease-btn" productId="<?= $item['product']['id_product'] ?>"  productSize="<?= $item['size'] ?>">−</button>
                                         <input type="text" class="quantity-input" value="<?= $item['quantity'] ?>" min="1" max="100000000000000">
-                                        <button class="quantity-btn increase-btn">+</button>
+                                        <button id="addToOrderBtn" class="quantity-btn increase-btn" productId="<?= $item['product']['id_product'] ?>"  productSize="<?= $item['size'] ?>">+</button>
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +124,7 @@
                         </div>
                     </div>
 
-                    <button  id="addToOrderBtn" type="button" class=" checkout-btn btn btn-dark btn-sm ms-3" productId="<?= $item['product']['id_product'] ?>" productSize="<?= $item['product']['size'] ?>">THANH TOÁN</button>
+                    <button  type="button" class=" checkout-btn" >THANH TOÁN</button>
 
 
                     <div class="mt-3">
