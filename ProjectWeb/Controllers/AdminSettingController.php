@@ -51,14 +51,35 @@ if (!empty($_FILES)) {
                 $setting = $this->settingModel->getSettingByKey($settingKey);
                 
                 if ($setting && $setting['setting_type'] === 'file') {
-                    // Xác định thư mục lưu trữ dựa trên setting_key
-                    $uploadDir = './upload/img/settings/';
-                    $fileName = basename($file['name']);
+                    // Sử dụng thư mục Header cho tất cả các file
+                    $uploadDir = './upload/img/Header/';
+                    $originalFileName = basename($file['name']);
+                    $fileExt = pathinfo($originalFileName, PATHINFO_EXTENSION);
                     
-                    // Nếu là logo hoặc favicon, lưu vào thư mục Header
+                    // Đặt tên file dựa trên loại setting
                     if ($settingKey === 'logo' || $settingKey === 'site_logo') {
-                        $uploadDir = './upload/img/Header/';
-                        // Không đổi tên file, vẫn giữ tên gốc
+                        // Tìm số lớn nhất trong các file logo hiện có
+                        $maxNumber = 0;
+                        if (file_exists($uploadDir)) {
+                            $files = scandir($uploadDir);
+                            foreach ($files as $existingFile) {
+                                if (preg_match('/^logo(\d+)\.' . preg_quote($fileExt, '/') . '$/', $existingFile, $matches)) {
+                                    $number = (int)$matches[1];
+                                    if ($number > $maxNumber) {
+                                        $maxNumber = $number;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Tạo tên file mới với số kế tiếp
+                        $fileName = 'logo' . ($maxNumber + 1) . '.' . $fileExt;
+                    } elseif ($settingKey === 'favicon' || $settingKey === 'favicon_path') {
+                        // Favicon vẫn giữ tên cố định
+                        $fileName = 'favicon.' . $fileExt;
+                    } else {
+                        // Các loại file khác giữ tên gốc
+                        $fileName = $originalFileName;
                     }
                     
                     $uploadPath = $uploadDir . $fileName;
@@ -71,19 +92,13 @@ if (!empty($_FILES)) {
                     // Di chuyển file tạm sang thư mục đích
                     if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                         // Cập nhật đường dẫn file trong database
-                        // Nếu là logo, sử dụng đường dẫn với định dạng /Project_Website/ProjectWeb/upload/img/Header/
-                        if ($settingKey === 'logo' || $settingKey === 'site_logo') {
-                            $this->settingModel->updateSetting($settingKey, '/Project_Website/ProjectWeb/upload/img/Header/' . $fileName);
-                        } else {
-                            $this->settingModel->updateSetting($settingKey, '/Project_Website/ProjectWeb/upload/img/settings/' . $fileName);
-                        }
+                        $this->settingModel->updateSetting($settingKey, '/Project_Website/ProjectWeb/upload/img/Header/' . $fileName);
                     }
                 }
             }
         }
     }
 }
-            
             // Chuyển hướng với thông báo thành công
             header('Location: index.php?controller=adminsetting&success=1');
             exit;

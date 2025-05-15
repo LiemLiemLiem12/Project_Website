@@ -134,6 +134,9 @@
                     <button class="btn btn-danger" id="deleteSelectedBtn" disabled>
                         <i class="fas fa-trash"></i> Xóa đã chọn
                     </button>
+                    <button class="btn btn-secondary" id="showTrashBtn">
+                        <i class="fas fa-trash-restore"></i> Thùng rác
+                    </button>
                 </div>
             </div>
     <div class="category-filters mb-3">
@@ -148,7 +151,8 @@
             <select class="filter-dropdown form-select" id="filterStatus">
                 <option value="" <?= empty($status) ? 'selected' : '' ?>>Trạng thái</option>
                 <option value="active" <?= ($status ?? '') == 'active' ? 'selected' : '' ?>>Đang hoạt động</option>
-                <option value="inactive" <?= ($status ?? '') == 'inactive' ? 'selected' : '' ?>>Ẩn</option>
+                <option value="newest" <?= ($status ?? '') == 'newest' ? 'selected' : '' ?>>Mới nhất</option>
+                <option value="oldest" <?= ($status ?? '') == 'oldest' ? 'selected' : '' ?>>Cũ nhất</option>
             </select>
         </div>
         <div class="filter-item">
@@ -184,9 +188,6 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-sm btn-info btn-view-category" data-id="<?= $category['ID'] ?>" data-hide="<?= $category['hide'] ?? 0 ?>" title="<?= ($category['hide'] ?? 0) ? 'Hiện' : 'Ẩn' ?>">
-                                        <i class="fas <?= ($category['hide'] ?? 0) ? 'fa-eye-slash' : 'fa-eye' ?>"></i>
-                                    </button>
                                     <button class="btn btn-sm btn-primary btn-edit-category" title="Sửa" data-id="<?= $category['ID'] ?>">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -258,6 +259,7 @@
             </div>
             <div class="modal-body">
                 <p id="deleteConfirmMessage">Bạn có chắc chắn muốn xóa danh mục này không?</p>
+                <p class="text-muted small">Lưu ý: Danh mục sẽ được ẩn chứ không bị xóa hoàn toàn khỏi hệ thống.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -267,7 +269,42 @@
     </div>
 </div>
 
-
+<!-- Modal Thùng rác -->
+<div class="modal fade" id="trashModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thùng rác - Danh mục đã ẩn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all-trash" class="form-check-input"></th>
+                                <th>Tên danh mục</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trashTableBody">
+                            <!-- Dữ liệu sẽ được load bằng AJAX -->
+                            <tr>
+                                <td colspan="3" class="text-center">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" id="restoreSelectedBtn" disabled>
+                    <i class="fas fa-trash-restore"></i> Khôi phục đã chọn
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -413,56 +450,82 @@ document.addEventListener('DOMContentLoaded', function() {
     const sortCategoryEl = document.getElementById('sortCategory');
     
     if (filterStatusEl) {
-        filterStatusEl.addEventListener('change', applyFilters);
-    }
-    
-    if (sortCategoryEl) {
-        sortCategoryEl.addEventListener('change', applyFilters);
-    }
-    
-    function applyFilters() {
-        const statusVal = filterStatusEl ? filterStatusEl.value : '';
-        const sortVal = sortCategoryEl ? sortCategoryEl.value : '';
-        window.location.href = `index.php?controller=admincategory&status=${encodeURIComponent(statusVal)}&sort=${encodeURIComponent(sortVal)}`;
-    }
-
-    // Search categories
-    const searchInput = document.getElementById('searchCategoryInput');
-    let searchTimeout;
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(searchCategories, 500);
+        filterStatusEl.addEventListener('change', function() {
+            const selectedStatus = this.value;
+            // Nếu chọn Mới nhất hoặc Cũ nhất, vô hiệu hóa dropdown sắp xếp
+            if (selectedStatus === 'newest' || selectedStatus === 'oldest') {
+                if (sortCategoryEl) {
+                    sortCategoryEl.value = '';
+                    sortCategoryEl.disabled = true;
+                }
+            } else {
+                if (sortCategoryEl) {
+                    sortCategoryEl.disabled = false;
+                }
+            }
+            loadCategoriesWithAjax();
         });
     }
     
-    function searchCategories() {
-        const keyword = searchInput.value.trim();
-        const paginationNav = document.querySelector('nav .pagination');
-
-        if (keyword.length === 0) {
-            location.reload(); // Reload to show all with pagination
-            return;
+    if (sortCategoryEl) {
+        sortCategoryEl.addEventListener('change', function() {
+            loadCategoriesWithAjax();
+        });
+    }
+    
+    // Kiểm tra trạng thái ban đầu để vô hiệu hóa dropdown sắp xếp nếu cần
+    if (filterStatusEl && sortCategoryEl) {
+        const currentStatus = filterStatusEl.value;
+        if (currentStatus === 'newest' || currentStatus === 'oldest') {
+            sortCategoryEl.disabled = true;
+        }
+    }
+    
+    // Hàm tải danh mục bằng AJAX
+    function loadCategoriesWithAjax(page = 1) {
+        const statusVal = filterStatusEl ? filterStatusEl.value : '';
+        const sortVal = sortCategoryEl && !sortCategoryEl.disabled ? sortCategoryEl.value : '';
+        const keyword = document.getElementById('searchCategoryInput') ? document.getElementById('searchCategoryInput').value.trim() : '';
+        
+        // Hiển thị loading
+        const tableBody = document.getElementById('categoryTableBody');
+        tableBody.innerHTML = '<tr><td colspan="4" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
+        
+        // Cập nhật URL với trang hiện tại mà không reload trang
+        if (page !== 1) {
+            const url = new URL(window.location);
+            url.searchParams.set('page', page);
+            window.history.pushState({}, '', url);
+        } else {
+            const url = new URL(window.location);
+            url.searchParams.delete('page');
+            window.history.pushState({}, '', url);
         }
         
-        sendJsonRequest(`index.php?controller=admincategory&action=search&keyword=${encodeURIComponent(keyword)}`, 'GET')
+        // Gửi request AJAX
+        fetch(`index.php?controller=admincategory&action=ajaxSearch&status=${encodeURIComponent(statusVal)}&sort=${encodeURIComponent(sortVal)}&keyword=${encodeURIComponent(keyword)}&page=${page}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                const tableBody = document.getElementById('categoryTableBody');
-                tableBody.innerHTML = ''; 
+                tableBody.innerHTML = '';
                 
-                if (paginationNav) paginationNav.style.display = 'none'; // Hide pagination for search results
-
-                if (data.length === 0) {
+                if (!data.categories || data.categories.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Không tìm thấy danh mục nào.</td></tr>';
+                    // Xóa phân trang nếu không có dữ liệu
+                    updatePagination({totalPages: 0, currentPage: 1});
                     return;
                 }
                 
-                data.forEach(category => {
+                // Hiển thị danh mục
+                data.categories.forEach(category => {
                     const row = document.createElement('tr');
                     row.setAttribute('data-category-id', category.ID);
                     
-                    const isHidden = category.hide == 1; // Use strict comparison for clarity
+                    const isHidden = category.hide == 1;
                     row.innerHTML = `
                         <td>
                             <input type="checkbox" class="form-check-input category-checkbox" data-id="${category.ID}">
@@ -475,9 +538,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn btn-sm btn-info btn-view-category" data-id="${category.ID}" data-hide="${category.hide || 0}" title="${isHidden ? 'Hiện' : 'Ẩn'}">
-                                    <i class="fas ${isHidden ? 'fa-eye-slash' : 'fa-eye'}"></i>
-                                </button>
                                 <button class="btn btn-sm btn-primary btn-edit-category" title="Sửa" data-id="${category.ID}">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -487,14 +547,71 @@ document.addEventListener('DOMContentLoaded', function() {
                     tableBody.appendChild(row);
                 });
                 
-                attachEventListeners(); // Re-attach event listeners for newly created buttons
+                // Cập nhật phân trang
+                updatePagination(data.pagination);
+                
+                // Đính kèm lại sự kiện
+                attachEventListeners();
             })
             .catch(error => {
-                console.error('Error searching categories:', error);
-                const tableBody = document.getElementById('categoryTableBody');
-                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Có lỗi xảy ra khi tìm kiếm.</td></tr>';
-                if (paginationNav) paginationNav.style.display = 'flex'; // Show pagination again if search error
+                console.error('Error loading categories:', error);
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Có lỗi xảy ra khi tải dữ liệu.</td></tr>';
             });
+    }
+    
+    // Cập nhật phân trang
+    function updatePagination(pagination) {
+        const paginationContainer = document.querySelector('nav .pagination');
+        if (!paginationContainer) return;
+        
+        if (!pagination || pagination.totalPages <= 1) {
+            // Ẩn phân trang nếu chỉ có 1 trang hoặc không có dữ liệu
+            const parentNav = paginationContainer.closest('nav');
+            if (parentNav) {
+                parentNav.style.display = 'none';
+            }
+            paginationContainer.innerHTML = '';
+            return;
+        }
+        
+        // Hiển thị phân trang nếu nó bị ẩn trước đó
+        const parentNav = paginationContainer.closest('nav');
+        if (parentNav) {
+            parentNav.style.display = 'block';
+        }
+        
+        let paginationHTML = '';
+        for (let i = 1; i <= pagination.totalPages; i++) {
+            paginationHTML += `
+                <li class="page-item ${i == pagination.currentPage ? 'active' : ''}">
+                    <a class="page-link" href="javascript:void(0)" data-page="${i}">${i}</a>
+                </li>
+            `;
+        }
+        
+        paginationContainer.innerHTML = paginationHTML;
+        
+        // Đính kèm sự kiện cho các nút phân trang
+        document.querySelectorAll('.pagination .page-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.getAttribute('data-page');
+                loadCategoriesWithAjax(page);
+            });
+        });
+    }
+    
+    // Search categories
+    const searchInput = document.getElementById('searchCategoryInput');
+    let searchTimeout;
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadCategoriesWithAjax();
+            }, 500);
+        });
     }
 
     // Select all categories
@@ -542,11 +659,11 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
         
         // Kiểm tra xem có đang xóa tất cả mục trên trang không
         const totalItemsOnPage = document.querySelectorAll('.category-checkbox').length;
-        const isRemovingAllItems = totalItemsOnPage === selectedIds.length;
+        const isHidingAllItems = totalItemsOnPage === selectedIds.length;
         const currentPage = parseInt(new URLSearchParams(window.location.search).get('page') || 1);
         
         let confirmMessage = `Bạn có chắc chắn muốn xóa ${selectedIds.length} danh mục đã chọn không?`;
-        if (isRemovingAllItems && currentPage > 1) {
+        if (isHidingAllItems && currentPage > 1) {
             confirmMessage += ` Bạn sẽ được chuyển về trang trước đó.`;
         }
         
@@ -554,7 +671,7 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
         deleteConfirmModal.show();
         
         const confirmHandler = function() {
-            deleteCategories(selectedIds);
+            hideCategories(selectedIds);
             deleteConfirmModal.hide();
             confirmDeleteBtn.removeEventListener('click', confirmHandler);
         };
@@ -562,7 +679,7 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
     });
 }
     
-    function deleteCategories(ids) {
+    function hideCategories(ids) {
     // Lấy thông tin trang hiện tại và số lượng item trên trang
     const currentPage = parseInt(new URLSearchParams(window.location.search).get('page') || 1);
     const status = new URLSearchParams(window.location.search).get('status') || '';
@@ -570,7 +687,7 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
     
     // Đếm số item trên trang và số item được chọn để xóa
     const totalItemsOnPage = document.querySelectorAll('.category-checkbox').length;
-    const isRemovingAllItems = totalItemsOnPage === ids.length;
+    const isHidingAllItems = totalItemsOnPage === ids.length;
     
     sendJsonRequest('index.php?controller=admincategory&action=deleteSelected', 'POST', { ids })
         .then(data => {
@@ -578,26 +695,38 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                 alert('Đã xóa thành công!');
                 
                 // Kiểm tra nếu đã xóa tất cả items trên trang và đang không ở trang 1
-                if (isRemovingAllItems && currentPage > 1) {
-                    // Lấy thông tin phân trang từ phản hồi
-                    const pagination = data.pagination || {};
-                    const maxPage = pagination.maxPage || 1;
-                    
-                    // Nếu trang hiện tại lớn hơn tổng số trang sau khi xóa, chuyển đến trang tối đa mới
-                    if (currentPage > maxPage) {
-                        window.location.href = `index.php?controller=admincategory&status=${encodeURIComponent(status)}&sort=${encodeURIComponent(sort)}&page=${maxPage}`;
-                        return;
-                    }
+                if (isHidingAllItems && currentPage > 1) {
+                    // Lấy thông tin phân trang từ phản hồi hoặc gửi request mới để lấy tổng số item
+                    sendJsonRequest('index.php?controller=admincategory&action=getCategoriesCount', 'GET')
+                        .then(countData => {
+                            const totalItems = countData.count || 0;
+                            const itemsPerPage = 5; // Số item trên mỗi trang
+                            const maxPage = Math.ceil(totalItems / itemsPerPage);
+                            
+                            // Nếu trang hiện tại lớn hơn tổng số trang sau khi xóa
+                            if (currentPage > maxPage) {
+                                // Chuyển đến trang tối đa mới
+                                loadCategoriesWithAjax(Math.max(1, maxPage));
+                            } else {
+                                // Tải lại trang hiện tại
+                                loadCategoriesWithAjax(currentPage);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error getting categories count:', error);
+                            // Mặc định tải lại trang trước đó nếu có lỗi
+                            loadCategoriesWithAjax(Math.max(1, currentPage - 1));
+                        });
+                } else {
+                    // Tải lại trang hiện tại
+                    loadCategoriesWithAjax(currentPage);
                 }
-                
-                // Nếu không cần chuyển trang, chỉ tải lại trang hiện tại
-                location.reload();
             } else {
                 alert(data.message || 'Có lỗi xảy ra khi xóa danh mục.');
             }
         })
         .catch(error => {
-            console.error('Error deleting categories:', error);
+            console.error('Error hiding categories:', error);
             alert('Lỗi kết nối khi xóa danh mục. Chi tiết: ' + error.message);
         });
 }
@@ -646,7 +775,38 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                     if (data.success) {
                         categoryModal.hide();
                         alert(id ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục mới!');
-                        location.reload();
+                        
+                        // Lấy trang hiện tại từ URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        let currentPage = parseInt(urlParams.get('page')) || 1;
+                        
+                        // Nếu thêm mới, hãy kiểm tra xem có cần chuyển sang trang mới không
+                        if (!id) {
+                            // Tải tổng số danh mục để quyết định có tạo trang mới không
+                            sendJsonRequest('index.php?controller=admincategory&action=getCategoriesCount', 'GET')
+                                .then(countData => {
+                                    const totalItems = countData.count || 0;
+                                    const itemsPerPage = 5; // Số item trên mỗi trang
+                                    const totalPages = Math.ceil(totalItems / itemsPerPage);
+                                    
+                                    // Kiểm tra nếu thêm item tạo thêm trang mới
+                                    if (totalPages > Math.ceil((totalItems - 1) / itemsPerPage)) {
+                                        // Chuyển đến trang mới
+                                        loadCategoriesWithAjax(totalPages);
+                                    } else {
+                                        // Tải lại trang hiện tại
+                                        loadCategoriesWithAjax(currentPage);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error getting categories count:', error);
+                                    // Mặc định tải lại trang hiện tại nếu có lỗi
+                                    loadCategoriesWithAjax(currentPage);
+                                });
+                        } else {
+                            // Nếu cập nhật, chỉ cần tải lại trang hiện tại
+                            loadCategoriesWithAjax(currentPage);
+                        }
                     } else {
                         alert(data.message || 'Có lỗi xảy ra khi lưu danh mục.');
                     }
@@ -659,69 +819,10 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
     }
 
     function attachEventListeners() {
-        document.querySelectorAll('.btn-view-category').forEach(button => {
+        document.querySelectorAll('.btn-edit-category').forEach(button => {
             // Remove existing listener to prevent duplicates if attachEventListeners is called multiple times on the same elements
             // This is a simple way; a more robust solution might involve checking if a listener already exists or using a flag.
             const newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
-
-            newButton.addEventListener('click', function() {
-                const id = this.getAttribute('data-id');
-                const currentHide = parseInt(this.getAttribute('data-hide'));
-                const newHide = currentHide ? 0 : 1;
-                
-                const icon = this.querySelector('i');
-                const originalIconClass = newHide === 1 ? 'fa-eye' : 'fa-eye-slash'; // Icon before action
-                const newIconClass = newHide === 1 ? 'fa-eye-slash' : 'fa-eye';      // Icon after action
-                const originalTitle = newHide === 1 ? 'Ẩn' : 'Hiện';                 // Title before action
-                const newTitle = newHide === 1 ? 'Hiện' : 'Ẩn';                     // Title after action
-
-                // Optimistic UI update
-                if(icon) {
-                    icon.classList.remove(originalIconClass);
-                    icon.classList.add(newIconClass);
-                }
-                this.setAttribute('title', newTitle);
-                // data-hide will be updated after successful fetch or reverted on failure
-
-                sendJsonRequest('index.php?controller=admincategory&action=toggleHide', 'POST', { id, hide: newHide })
-                    .then(data => {
-                        if (data.success) {
-                            this.setAttribute('data-hide', newHide.toString()); // Update data-hide on success
-                            const row = this.closest('tr');
-                            if (row) {
-                                const statusSpan = row.querySelector('td .status');
-                                if (statusSpan) {
-                                    statusSpan.textContent = newHide === 1 ? 'Ẩn' : 'Đang hoạt động';
-                                    statusSpan.className = `status ${newHide === 1 ? 'inactive' : 'completed'}`;
-                                }
-                            }
-                        } else {
-                            alert('Có lỗi xảy ra khi thay đổi trạng thái danh mục.');
-                            // Revert UI on failure
-                            if(icon) {
-                                icon.classList.remove(newIconClass);
-                                icon.classList.add(originalIconClass);
-                            }
-                            this.setAttribute('title', originalTitle);
-                            // data-hide remains currentHide (original)
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error toggling category visibility:', error);
-                        alert('Lỗi kết nối khi thay đổi trạng thái: ' + error.message);
-                        // Revert UI on error
-                        if(icon) {
-                            icon.classList.remove(newIconClass);
-                            icon.classList.add(originalIconClass);
-                        }
-                        this.setAttribute('title', originalTitle);
-                    });
-            });
-        });
-
-        document.querySelectorAll('.btn-edit-category').forEach(button => {
-            const newButton = button.cloneNode(true); // Similar to above, prevent duplicate listeners
             button.parentNode.replaceChild(newButton, button);
 
             newButton.addEventListener('click', function() {
@@ -757,6 +858,143 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
 
     // Initial call to attach event listeners
     attachEventListeners();
+
+    // Xử lý thùng rác
+    const showTrashBtn = document.getElementById('showTrashBtn');
+    const trashModalEl = document.getElementById('trashModal');
+    const trashModal = trashModalEl ? new bootstrap.Modal(trashModalEl) : null;
+    const trashTableBody = document.getElementById('trashTableBody');
+    const restoreSelectedBtn = document.getElementById('restoreSelectedBtn');
+    const selectAllTrashCheckbox = document.getElementById('select-all-trash');
+    
+    // Hiển thị modal thùng rác
+    if (showTrashBtn && trashModal) {
+        showTrashBtn.addEventListener('click', function() {
+            loadTrashCategories();
+            trashModal.show();
+        });
+    }
+    
+    // Tải danh mục trong thùng rác
+    function loadTrashCategories() {
+        if (!trashTableBody) return;
+        
+        trashTableBody.innerHTML = '<tr><td colspan="3" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
+        
+        sendJsonRequest('index.php?controller=admincategory&action=getTrashCategories', 'GET')
+            .then(data => {
+                trashTableBody.innerHTML = '';
+                
+                if (data.error) {
+                    trashTableBody.innerHTML = `<tr><td colspan="3" class="text-center text-danger">${data.error}</td></tr>`;
+                    return;
+                }
+                
+                if (!data || data.length === 0) {
+                    trashTableBody.innerHTML = '<tr><td colspan="3" class="text-center">Không có danh mục nào trong thùng rác.</td></tr>';
+                    return;
+                }
+                
+                // Hiển thị danh mục trong thùng rác
+                data.forEach(category => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-category-id', category.ID);
+                    
+                    row.innerHTML = `
+                        <td>
+                            <input type="checkbox" class="form-check-input trash-checkbox" data-id="${category.ID}">
+                        </td>
+                        <td>${htmlspecialchars(category.name)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-success btn-restore-category" title="Khôi phục" data-id="${category.ID}">
+                                <i class="fas fa-trash-restore"></i>
+                            </button>
+                        </td>
+                    `;
+                    trashTableBody.appendChild(row);
+                });
+                
+                // Đính kèm sự kiện
+                attachTrashEventListeners();
+            })
+            .catch(error => {
+                console.error('Error loading trash categories:', error);
+                trashTableBody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Có lỗi xảy ra khi tải dữ liệu thùng rác.</td></tr>';
+            });
+    }
+    
+    // Đính kèm sự kiện cho các phần tử trong thùng rác
+    function attachTrashEventListeners() {
+        // Chọn tất cả trong thùng rác
+        if (selectAllTrashCheckbox) {
+            selectAllTrashCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.trash-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateRestoreSelectedButton();
+            });
+        }
+        
+        // Cập nhật trạng thái nút khôi phục khi chọn/bỏ chọn
+        document.querySelectorAll('.trash-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateRestoreSelectedButton);
+        });
+        
+        // Nút khôi phục từng danh mục
+        document.querySelectorAll('.btn-restore-category').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                restoreCategories([id]);
+            });
+        });
+    }
+    
+    // Cập nhật trạng thái nút khôi phục đã chọn
+    function updateRestoreSelectedButton() {
+        if (!restoreSelectedBtn) return;
+        
+        const selectedCheckboxes = document.querySelectorAll('.trash-checkbox:checked');
+        restoreSelectedBtn.disabled = selectedCheckboxes.length === 0;
+    }
+    
+    // Xử lý nút khôi phục đã chọn
+    if (restoreSelectedBtn) {
+        restoreSelectedBtn.addEventListener('click', function() {
+            const selectedIds = Array.from(document.querySelectorAll('.trash-checkbox:checked'))
+                .map(checkbox => checkbox.getAttribute('data-id'));
+            
+            if (selectedIds.length === 0) return;
+            
+            restoreCategories(selectedIds);
+        });
+    }
+    
+    // Khôi phục danh mục
+    function restoreCategories(ids) {
+        sendJsonRequest('index.php?controller=admincategory&action=restoreCategories', 'POST', { ids })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message || 'Đã khôi phục thành công!');
+                    
+                    // Tải lại danh sách thùng rác
+                    loadTrashCategories();
+                    
+                    // Lấy trang hiện tại từ URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const currentPage = parseInt(urlParams.get('page')) || 1;
+                    
+                    // Tải lại danh sách danh mục chính với trang hiện tại
+                    loadCategoriesWithAjax(currentPage);
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra khi khôi phục danh mục.');
+                }
+            })
+            .catch(error => {
+                console.error('Error restoring categories:', error);
+                alert('Lỗi kết nối khi khôi phục danh mục. Chi tiết: ' + error.message);
+            });
+    }
 });
 </script>
 </body>

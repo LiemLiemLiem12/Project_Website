@@ -20,8 +20,13 @@ class AdminCategoryModel {
     public function getCategoriesFiltered($status, $sort, $limit, $offset) {
         try {
             $whereClauses = [];
-            if ($status === 'active') $whereClauses[] = "hide = 0";
-            if ($status === 'inactive') $whereClauses[] = "hide = 1";
+            
+            // Mặc định chỉ hiển thị các danh mục có hide = 0 (đang hoạt động)
+            if ($status === 'active' || $status === '' || $status === 'newest' || $status === 'oldest') {
+                $whereClauses[] = "hide = 0";
+            } elseif ($status === 'inactive') {
+                $whereClauses[] = "hide = 1";
+            }
             
             $where = "";
             if (!empty($whereClauses)) {
@@ -31,6 +36,10 @@ class AdminCategoryModel {
             $order = '';
             if ($sort === 'name-asc') $order = "ORDER BY name ASC";
             if ($sort === 'name-desc') $order = "ORDER BY name DESC";
+            
+            // Thêm sắp xếp theo thời gian tạo nếu status là newest hoặc oldest
+            if ($status === 'newest') $order = "ORDER BY id_Category DESC"; // Giả sử ID tăng dần theo thời gian tạo
+            if ($status === 'oldest') $order = "ORDER BY id_Category ASC";
             
             // Query để lấy danh sách danh mục
             $sql = "SELECT id_Category AS ID, name, hide FROM category $where $order LIMIT $limit OFFSET $offset";
@@ -52,8 +61,13 @@ class AdminCategoryModel {
     public function countCategoriesFiltered($status) {
         try {
             $whereClauses = [];
-            if ($status === 'active') $whereClauses[] = "hide = 0";
-            if ($status === 'inactive') $whereClauses[] = "hide = 1";
+            
+            // Mặc định chỉ đếm các danh mục có hide = 0 (đang hoạt động)
+            if ($status === 'active' || $status === '' || $status === 'newest' || $status === 'oldest') {
+                $whereClauses[] = "hide = 0";
+            } elseif ($status === 'inactive') {
+                $whereClauses[] = "hide = 1";
+            }
 
             $where = "";
             if (!empty($whereClauses)) {
@@ -71,11 +85,31 @@ class AdminCategoryModel {
         }
     }
 
-    public function search($keyword) {
+    public function search($keyword, $status = '', $sort = '') {
         try {
             $escapedKeyword = $this->conn->real_escape_string($keyword);
-            // Query tìm kiếm danh mục
-            $sql = "SELECT id_Category AS ID, name, hide FROM category WHERE name LIKE '%$escapedKeyword%'";
+            
+            $whereClauses = ["name LIKE '%$escapedKeyword%'"];
+            
+            // Apply status filter similar to getCategoriesFiltered
+            if ($status === 'active' || $status === '' || $status === 'newest' || $status === 'oldest') {
+                $whereClauses[] = "hide = 0";
+            } elseif ($status === 'inactive') {
+                $whereClauses[] = "hide = 1";
+            }
+            
+            $where = "WHERE " . implode(" AND ", $whereClauses);
+            
+            // Apply sorting
+            $order = '';
+            if ($sort === 'name-asc') $order = "ORDER BY name ASC";
+            elseif ($sort === 'name-desc') $order = "ORDER BY name DESC";
+            elseif ($status === 'newest') $order = "ORDER BY id_Category DESC";
+            elseif ($status === 'oldest') $order = "ORDER BY id_Category ASC";
+            else $order = "ORDER BY name ASC"; // Default sorting
+            
+            // Query tìm kiếm danh mục với filter và sorting
+            $sql = "SELECT id_Category AS ID, name, hide FROM category $where $order";
             $result = $this->conn->query($sql);
             
             $data = [];

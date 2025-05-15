@@ -253,7 +253,70 @@
                 });
             });
         });
-    </script>
+        // Thêm đoạn script này vào cuối file AdminSetting/index.php
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                const previewContainer = this.closest('.setting-item').querySelector('.preview-image');
+                
+                reader.onload = function(e) {
+                    if (previewContainer) {
+                        // Cập nhật src với timestamp để tránh cache
+                        previewContainer.src = e.target.result + '?v=' + new Date().getTime();
+                    }
+                };
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+    
+    // Cập nhật tất cả các hình ảnh hiển thị với timestamp để tránh cache
+    document.querySelectorAll('.preview-image').forEach(img => {
+        const currentSrc = img.src;
+        const timestamp = new Date().getTime();
+        
+        // Thêm timestamp vào URL
+        if (currentSrc.includes('?')) {
+            img.src = currentSrc.split('?')[0] + '?v=' + timestamp;
+        } else {
+            img.src = currentSrc + '?v=' + timestamp;
+        }
+    });
+    
+    // Xử lý form submit
+    const settingsForm = document.querySelector('form[action*="adminsetting"]');
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', function() {
+            // Lưu lại thông tin rằng form đã được submit
+            localStorage.setItem('settings_updated', 'true');
+        });
+    }
+    
+    // Kiểm tra nếu vừa refresh sau khi submit
+    if (localStorage.getItem('settings_updated') === 'true') {
+        // Xóa flag
+        localStorage.removeItem('settings_updated');
+        
+        // Force refresh tất cả ảnh
+        document.querySelectorAll('.preview-image').forEach(img => {
+            const currentSrc = img.src;
+            const timestamp = new Date().getTime();
+            
+            // Thêm timestamp mới vào URL
+            if (currentSrc.includes('?')) {
+                img.src = currentSrc.split('?')[0] + '?v=' + timestamp;
+            } else {
+                img.src = currentSrc + '?v=' + timestamp;
+            }
+        });
+    }
+});
+</script>
 </body>
 
 </html>

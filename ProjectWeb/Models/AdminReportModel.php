@@ -106,12 +106,16 @@ class AdminReportModel {
     
     // Tính phần trăm thay đổi
     public function calculatePercentChange($current, $previous) {
-        if ($previous == 0) return 100; // nếu giá trị trước đó là 0, thì tăng 100%
-        return round((($current - $previous) / $previous) * 100, 1);
+        if ($previous == 0) {
+            return ($current > 0) ? 100 : 0; // nếu giá trị trước đó là 0, trả về 100% nếu hiện tại > 0, ngược lại 0%
+        }
+        return round((($current - $previous) / abs($previous)) * 100, 1);
     }
     
     // Lấy báo cáo doanh số theo ngày
-    public function getDailySalesReport($startDate, $endDate, $limit = 5) {
+    public function getDailySalesReport($startDate, $endDate, $limit = null) {
+        $limitClause = $limit ? "LIMIT $limit" : "";
+        
         $sql = "SELECT 
                 DATE(created_at) as date,
                 COUNT(*) as order_count,
@@ -123,7 +127,7 @@ class AdminReportModel {
               AND status != 'cancelled'
             GROUP BY DATE(created_at)
             ORDER BY date DESC
-            LIMIT $limit";
+            $limitClause";
         
         $result = mysqli_query($this->conn, $sql);
         $data = [];
@@ -212,7 +216,9 @@ class AdminReportModel {
     }
     
     // Lấy dữ liệu doanh thu cho biểu đồ
-    public function getRevenueChartData($startDate, $endDate, $limit = 5) {
+    public function getRevenueChartData($startDate, $endDate, $limit = null) {
+        $limitClause = $limit ? "LIMIT $limit" : "";
+        
         $sql = "SELECT 
                 DATE(created_at) as date,
                 SUM(total_amount) as revenue
@@ -221,7 +227,7 @@ class AdminReportModel {
               AND status != 'cancelled'
             GROUP BY DATE(created_at)
             ORDER BY date DESC
-            LIMIT $limit";
+            $limitClause";
         
         $result = mysqli_query($this->conn, $sql);
         $data = [];

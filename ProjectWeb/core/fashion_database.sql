@@ -246,10 +246,10 @@ INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, 
 (3, 'Lê Văn C', 'c@example.com', '123456', '0900000003', 'Đà Nẵng', 'admin', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
 (4, 'Phạm Thị D', 'd@example.com', '123456', '0900000004', 'Cần Thơ', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
 (5, 'Hoàng Văn E', 'e@example.com', '123456', '0900000005', 'Hải Phòng', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', NULL, 0, NULL, NULL, '2025-04-15 21:59:36', '2025-05-02 22:00:43', NULL),
-(7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', NULL, 0, NULL, NULL, '2025-04-16 08:00:00', '2025-05-02 22:01:25', NULL),
-(8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', NULL, 0, NULL, NULL, '2025-04-16 09:15:00', '2025-05-02 22:01:25', NULL),
-(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', NULL, 0, NULL, NULL, '2025-04-16 10:30:00', '2025-05-02 22:01:25', NULL);
+(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', NULL, 0, NULL, NULL, '2025-04-15 21:59:36', '2025-05-02 22:00:43', 0),
+(7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', NULL, 0, NULL, NULL, '2025-04-16 08:00:00', '2025-05-02 22:01:25', 0),
+(8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', NULL, 0, NULL, NULL, '2025-04-16 09:15:00', '2025-05-02 22:01:25', 0),
+(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', NULL, 0, NULL, NULL, '2025-04-16 10:30:00', '2025-05-02 22:01:25', 0);
 
 -- --------------------------------------------------------
 

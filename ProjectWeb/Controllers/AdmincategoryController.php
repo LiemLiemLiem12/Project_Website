@@ -36,7 +36,9 @@ class AdminCategoryController {
     // Xử lý tìm kiếm AJAX
     public function search() {
         $keyword = $_GET['keyword'] ?? '';
-        $categories = $this->categoryModel->search($keyword);
+        $status = $_GET['status'] ?? '';
+        $sort = $_GET['sort'] ?? '';
+        $categories = $this->categoryModel->search($keyword, $status, $sort);
         $this->sendJsonResponse($categories);
     }
 
@@ -148,21 +150,24 @@ class AdminCategoryController {
             $sort = $_GET['sort'] ?? '';
             $limit = 5; // Phải giống với giá trị limit trong phương thức index()
             
-            $overallSuccess = true; $messages = []; $deletedCount = 0; $failedCount = 0;
+            $overallSuccess = true; $messages = []; $hiddenCount = 0; $failedCount = 0;
     
             if (!empty($ids) && is_array($ids)) {
                 foreach ($ids as $id) {
                     $id = intval($id);
                     if ($id <= 0) continue; 
                     $catInfo = $this->categoryModel->getById($id);
-                    $result = $this->categoryModel->deleteCategory($id);
+                    
+                    // Thay vì xóa, chỉ cập nhật hide = 1
+                    $result = $this->categoryModel->updateCategory($id, ['hide' => 1]);
+                    
                     if ($result) {
-                        $deletedCount++;
+                        $hiddenCount++;
                         if ($catInfo && $this->categoryModel->conn) {
                              $meta = json_encode(['category_id' => $id, 'name' => $catInfo['name']]);
                              $this->categoryModel->addNotification([
-                                'type' => 'category', 'title' => 'Xóa danh mục',
-                                'content' => "Đã xóa: " . htmlspecialchars($catInfo['name']), 
+                                'type' => 'category', 'title' => 'Ẩn danh mục',
+                                'content' => "Đã ẩn: " . htmlspecialchars($catInfo['name']), 
                                 'meta' => $meta, 'link' => ''
                             ]);
                         }
@@ -170,18 +175,16 @@ class AdminCategoryController {
                         $failedCount++; $overallSuccess = false;
                         $errorMsg = $this->categoryModel->conn ? $this->categoryModel->getLastError() : "Lỗi Model CSDL.";
                         $catName = $catInfo ? htmlspecialchars($catInfo['name']) : "ID $id";
-                        if (strpos(strtolower($errorMsg), 'foreign key constraint fails') !== false) {
-                            $messages[] = "'$catName': có sản phẩm liên kết.";
-                        } else { $messages[] = "'$catName': lỗi xóa."; }
+                        $messages[] = "'$catName': lỗi ẩn danh mục.";
                     }
                 }
                 
-                // Đếm lại số lượng sau khi xóa
+                // Đếm lại số lượng sau khi ẩn
                 $remainingCount = $this->categoryModel->countCategoriesFiltered($status);
                 $maxPage = ceil($remainingCount / $limit);
                 
                 $finalMsg = '';
-                if ($deletedCount > 0) $finalMsg .= "Xóa $deletedCount OK. ";
+                if ($hiddenCount > 0) $finalMsg .= "Đã ẩn $hiddenCount danh mục. ";
                 if ($failedCount > 0) $finalMsg .= "Lỗi $failedCount: " . implode("; ", $messages);
                 if (empty($finalMsg)) $finalMsg = empty($ids) ? "Không có ID." : "Không có gì được xử lý.";
                 
@@ -209,6 +212,119 @@ class AdminCategoryController {
     public function getRecentCategoryNotifications() {
         $notifications = $this->categoryModel->getRecentCategoryNotifications(5); 
         $this->sendJsonResponse($notifications);
+    }
+
+    // Lấy danh sách danh mục trong thùng rác (hide = 1)
+    public function getTrashCategories() {
+        try {
+            // Lấy tất cả danh mục có hide = 1
+            $sql = "SELECT id_Category AS ID, name, hide FROM category WHERE hide = 1 ORDER BY name ASC";
+            $result = $this->categoryModel->conn->query($sql);
+            
+            $data = [];
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $data[] = $row;
+                }
+            }
+            
+            $this->sendJsonResponse($data);
+        } catch (Exception $e) {
+            $this->sendJsonResponse(['error' => 'Lỗi khi lấy dữ liệu thùng rác: ' . $e->getMessage()]);
+        }
+    }
+    
+    // Khôi phục danh mục từ thùng rác (set hide = 0)
+    public function restoreCategories() {
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $ids = $input['ids'] ?? [];
+            
+            $restoredCount = 0;
+            $failedCount = 0;
+            $messages = [];
+            
+            if (!empty($ids) && is_array($ids)) {
+                foreach ($ids as $id) {
+                    $id = intval($id);
+                    if ($id <= 0) continue;
+                    
+                    $catInfo = $this->categoryModel->getById($id);
+                    $result = $this->categoryModel->updateCategory($id, ['hide' => 0]);
+                    
+                    if ($result) {
+                        $restoredCount++;
+                        if ($catInfo && $this->categoryModel->conn) {
+                            $meta = json_encode(['category_id' => $id, 'name' => $catInfo['name']]);
+                            $this->categoryModel->addNotification([
+                                'type' => 'category', 'title' => 'Khôi phục danh mục',
+                                'content' => "Đã khôi phục: " . htmlspecialchars($catInfo['name']), 
+                                'meta' => $meta, 'link' => ''
+                            ]);
+                        }
+                    } else {
+                        $failedCount++;
+                        $catName = $catInfo ? htmlspecialchars($catInfo['name']) : "ID $id";
+                        $messages[] = "'$catName': lỗi khôi phục.";
+                    }
+                }
+                
+                $finalMsg = '';
+                if ($restoredCount > 0) $finalMsg .= "Đã khôi phục $restoredCount danh mục. ";
+                if ($failedCount > 0) $finalMsg .= "Lỗi $failedCount: " . implode("; ", $messages);
+                if (empty($finalMsg)) $finalMsg = empty($ids) ? "Không có ID." : "Không có gì được xử lý.";
+                
+                $this->sendJsonResponse([
+                    'success' => $failedCount === 0,
+                    'message' => trim($finalMsg)
+                ]);
+                return;
+            }
+            
+            $this->sendJsonResponse(['success' => false, 'message' => 'Không có ID được chọn.']);
+        } catch (Exception $e) {
+            $this->sendJsonResponse(['success' => false, 'message' => 'Lỗi hệ thống: ' . $e->getMessage()]);
+        }
+    }
+    
+    // Tìm kiếm danh mục với AJAX (không tải lại trang)
+    public function ajaxSearch() {
+        $keyword = $_GET['keyword'] ?? '';
+        $status = $_GET['status'] ?? '';
+        $sort = $_GET['sort'] ?? '';
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+        
+        // Sử dụng model để lấy dữ liệu theo điều kiện
+        $categories = [];
+        $total = 0;
+        
+        if (!empty($keyword)) {
+            // Nếu có từ khóa tìm kiếm, sử dụng phương thức search
+            $categories = $this->categoryModel->search($keyword, $status, $sort);
+            $total = count($categories);
+            
+            // Phân trang thủ công cho kết quả tìm kiếm
+            $categories = array_slice($categories, $offset, $limit);
+        } else {
+            // Nếu không có từ khóa, sử dụng phương thức getCategoriesFiltered
+            $categories = $this->categoryModel->getCategoriesFiltered($status, $sort, $limit, $offset);
+            $total = $this->categoryModel->countCategoriesFiltered($status);
+        }
+        
+        // Tính toán thông tin phân trang
+        $totalPages = ceil($total / $limit);
+        
+        // Trả về kết quả dưới dạng JSON
+        $this->sendJsonResponse([
+            'categories' => $categories,
+            'pagination' => [
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'total' => $total
+            ]
+        ]);
     }
 }
 ?>

@@ -18,73 +18,24 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2>SR STORE</h2>
-            </div>
-            <button class="sidebar-close d-md-none" id="sidebarCloseBtn"
-                aria-label="Đóng menu"><span>&times;</span></button>
-            <ul class="nav-links">
-                <li>
-                    <a href="index.php?controller=admindashboard"><i class="fas fa-th-large"></i> Dashboard</a>
-                </li>
-                <li>
-                    <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
-                </li>
-                <li>
-                    <a href="index.php?controller=adminproduct"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
-                </li>
-                <li class="active">
-                    <a href="index.php?controller=adminorder"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
-                </li>
-                <li>
-                    <a href="AdminCustomer.html"><i class="fas fa-users"></i> Khách Hàng</a>
-                </li>
-                <li>
-                    <a href="AdminCategory.html"><i class="fas fa-tags"></i> Danh Mục</a>
-                </li>
-                <li>
-                    <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> Báo Cáo</a>
-                </li>
-                <li>
-                    <a href="AdminSetting.html"><i class="fas fa-cog"></i> Cài Đặt</a>
-                </li>
-            </ul>
-            <div class="admin-info">
-                <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
-                <div>
-                    <p class="admin-name">Admin</p>
-                    <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-                </div>
-            </div>
-        </div>
+        
+         <!-- Sidebar -->
+         <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
+        
+        <!-- Main Content -->
         <div class="main-content">
+            <!-- Top Header -->
             <header class="header">
                 <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right"
-                    style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
                     <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge">3</span>
-                        <div class="notification-dropdown" id="notificationDropdown"
-                            style="display: none; position: absolute; top: 120%; right: 0; width: 340px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border-radius: 8px; z-index: 9999;">
-                            <div style="padding: 12px 16px; border-bottom: 1px solid #eee; font-weight: 600;">Thông báo
-                                đơn hàng</div>
-                            <ul id="notificationList"
-                                style="list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto;">
-                            </ul>
-                            <div style="padding: 10px 0; text-align: center; border-top: 1px solid #eee;">
-                                <a href="#" style="color: #007bff; font-size: 14px; text-decoration: none;">Xem tất
-                                    cả</a>
-                            </div>
-                        </div>
                     </div>
                     <div class="profile">
-                        <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
                     </div>
                 </div>
             </header>
@@ -245,25 +196,7 @@
                                 </table>
                             </div>
 
-                            <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
-                                <ul class="pagination pagination-sm flex-wrap">
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Previous">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </a>
-                                    </li>
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">10</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Next">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
+                           
                         </div>
                     </div>
                 </div>

@@ -1374,15 +1374,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkbox = document.getElementById(checkboxID);
         const input = document.getElementById(inputID);
 
-        checkbox.addEventListener('change', function() {
-            if(this.checked) {
-                input.disabled = false;
-                input.value = 0;
-            } else {
-                input.disabled = true;
-                input.value = '';
-            }
-        })
+        // Kiểm tra xem phần tử có tồn tại không trước khi thêm event listener
+        if (checkbox && input) {
+            checkbox.addEventListener('change', function() {
+                if(this.checked) {
+                    input.disabled = false;
+                    input.value = 0;
+                } else {
+                    input.disabled = true;
+                    input.value = '';
+                }
+            });
+        }
     }
 
 
