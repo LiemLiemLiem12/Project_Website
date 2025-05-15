@@ -1,3 +1,192 @@
+/* CSS cho thông báo và bộ lọc */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 350px;
+}
+
+.notification {
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification-icon {
+    margin-right: 12px;
+    font-size: 24px;
+}
+
+.notification-success .notification-icon {
+    color: #28a745;
+}
+
+.notification-error .notification-icon {
+    color: #dc3545;
+}
+
+.notification-info .notification-icon {
+    color: #17a2b8;
+}
+
+.notification-content {
+    flex: 1;
+    font-size: 14px;
+}
+
+/* Cải thiện giao diện bộ lọc */
+.side-filter {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.filter-category {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 20px;
+}
+
+.filter-category:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.category-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #343a40;
+}
+
+.filter-option {
+    margin-bottom: 10px;
+}
+
+.filter-option label {
+    margin-left: 8px;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.filter-option input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.price-slider {
+    padding: 0 5px;
+}
+
+.price-range {
+    display: flex;
+    justify-content: space-between;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+#price-value {
+    font-weight: 600;
+    color: #343a40;
+}
+
+/* Style cho select dropdown sắp xếp */
+.filter-dropdown {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    background-color: white;
+    color: #495057;
+    cursor: pointer;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.filter-dropdown:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.filter-label {
+    margin-right: 8px;
+    color: #6c757d;
+}
+
+/* Hiệu ứng cho sản phẩm */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.color-option {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.color-option.active, .color-option:hover {
+    transform: scale(1.2);
+    border-color: #343a40;
+}
+
+/* Nút thêm vào giỏ hàng */
+.btn-add-cart {
+    background-color: #343a40;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-add-cart:hover {
+    background-color: #212529;
+}
+
+/* Nút xem nhanh */
+.btn-quickview {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #343a40;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.product-img-wrap:hover .btn-quickview {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;

@@ -84,7 +84,10 @@ if (!isset($_SESSION['visited'])) {
                     </div>
                     <div class="product-info">
                         <h3 class="product-title"><?= $product['name']; ?></h3>
-                        <p class="product-price"><?= number_format($product['original_price'], 0); ?>₫</p>
+                      <span class="fw-bold current-price text-danger fs-4"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
+                                              <?php if($product['original_price'] > $product['current_price']): ?>
+                                                <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
+                                            <?php endif; ?>
                         <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
                 </div>
@@ -160,7 +163,10 @@ if (!isset($_SESSION['visited'])) {
                     </div>
                     <div class="product-info">
                         <h3 class="product-title"><?= $product['name']; ?></h3>
-                        <p class="product-price"><?= number_format($product['original_price'], 0); ?>₫</p>
+                      <span class="fw-bold current-price text-danger fs-4"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
+                                              <?php if($product['original_price'] > $product['current_price']): ?>
+                                                <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
+                                            <?php endif; ?>
                         <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
                 </div>
@@ -212,7 +218,10 @@ if (!isset($_SESSION['visited'])) {
                     </div>
                     <div class="product-info">
                         <h3 class="product-title"><?= $product['name']; ?></h3>
-                        <p class="product-price"><?= number_format($product['original_price'], 0); ?>₫</p>
+                      <span class="fw-bold current-price text-danger fs-4"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
+                                              <?php if($product['original_price'] > $product['current_price']): ?>
+                                                <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
+                                            <?php endif; ?>
                         <button class="btn-add-cart">Thêm vào giỏ</button>
                     </div>
                 </div>

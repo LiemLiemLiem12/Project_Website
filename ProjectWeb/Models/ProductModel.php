@@ -106,7 +106,66 @@ class ProductModel extends BaseModel
   {
     return $this->updateForProduct(self::TABLE, $id, $data);
   }
+<<<<<<< Updated upstream
   
+=======
+/**
+ * Get filtered products by category ID with sorting
+ * 
+ * @param int $categoryId Category ID
+ * @param array $filters Filter and sort options
+ * @return array Filtered products
+ */
+public function getFilteredProducts($categoryId, $filters = [])
+{
+    // Extract filter parameters
+    $priceMin = $filters['price_min'] ?? 0;
+    $priceMax = $filters['price_max'] ?? 10000000;
+    $sizes = $filters['sizes'] ?? [];
+    $sort = $filters['sort'] ?? 'newest';
+    
+    // Build SQL query
+    $sql = "SELECT * FROM " . self::TABLE . " WHERE id_Category = {$categoryId}";
+    
+    // Add price range filter
+    $sql .= " AND current_price >= {$priceMin} AND current_price <= {$priceMax}";
+    
+    // Add size filter if selected
+    if (!empty($sizes)) {
+        $sizeConditions = [];
+        foreach ($sizes as $size) {
+            if (in_array($size, ['M', 'L', 'XL'])) {
+                $sizeConditions[] = "`{$size}` > 0";
+            }
+        }
+        if (!empty($sizeConditions)) {
+            $sql .= " AND (" . implode(" OR ", $sizeConditions) . ")";
+        }
+    }
+    
+    // Add sorting
+    switch ($sort) {
+        case 'price-asc':
+            $sql .= " ORDER BY current_price ASC";
+            break;
+        case 'price-desc':
+            $sql .= " ORDER BY current_price DESC";
+            break;
+        case 'bestseller':
+            // Đối với bestseller, lý tưởng nhất là có cột hoặc tính toán riêng
+            // Ở đây tạm thời dùng số lượt click làm tiêu chí "bán chạy"
+            $sql .= " ORDER BY click_count DESC";
+            break;
+        case 'newest':
+        default:
+            $sql .= " ORDER BY created_at DESC";
+            break;
+    }
+    
+    // Get products with the constructed query
+    return $this->getByQuery($sql);
+}
+>>>>>>> Stashed changes
 
 }
 ?>

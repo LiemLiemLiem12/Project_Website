@@ -31,34 +31,48 @@ class CategoryController extends BaseController
     /**
      * Display a specific category and its products
      */
-    public function show()
-    {
-        $categoryId = $_GET['id'] ?? null;
-        
-        if (!$categoryId) {
-            // Redirect to categories list if no ID provided
-            header('Location: index.php?controller=category&action=index');
-            exit();
-        }
-        
-        // Get the category details
-        $category = $this->categoryModel->findById($categoryId);
-        
-        if (!$category || $category['hide'] == 1) {
-            // Handle category not found or hidden
-            return $this->view('frontend.errors.404', [
-                'message' => 'Danh mục không tồn tại hoặc đã bị ẩn'
-            ]);
-        }
-        
-        // Get products in this category
-        $products = $this->productModel->getByCategoryId($categoryId);
-        
-        return $this->view('frontend.categories._detail', [
-            'category' => $category,
-            'products' => $products
+   public function show()
+{
+    $categoryId = $_GET['id'] ?? null;
+    
+    if (!$categoryId) {
+        // Redirect to categories list if no ID provided
+        header('Location: index.php?controller=category&action=index');
+        exit();
+    }
+    
+    // Get the category details
+    $category = $this->categoryModel->findById($categoryId);
+    
+    if (!$category || $category['hide'] == 1) {
+        // Handle category not found or hidden
+        return $this->view('frontend.errors.404', [
+            'message' => 'Danh mục không tồn tại hoặc đã bị ẩn'
         ]);
     }
+    
+    // Xử lý các tham số lọc và sắp xếp
+    $filters = [
+        'price_min' => isset($_GET['price_min']) ? (int)$_GET['price_min'] : 100000,
+        'price_max' => isset($_GET['price_max']) ? (int)$_GET['price_max'] : 2000000,
+        'sizes' => isset($_GET['size']) && is_array($_GET['size']) ? $_GET['size'] : [],
+        'sort' => $_GET['sort'] ?? 'newest'
+    ];
+
+    // Lấy giá từ thanh trượt (slider)
+    if (isset($_GET['price']) && !empty($_GET['price'])) {
+        $filters['price_max'] = (int)$_GET['price'];
+    }
+    
+    // Get products in this category with filters
+    $products = $this->productModel->getFilteredProducts($categoryId, $filters);
+    
+    return $this->view('frontend.categories._detail', [
+        'category' => $category,
+        'products' => $products,
+        'filters' => $filters
+    ]);
+}
 
     /**
      * Admin functionality to create a new category
@@ -263,6 +277,61 @@ class CategoryController extends BaseController
     public function getHeaderCategories()
 {
     return $this->categoryModel->getCategoriesForMenu();
+}
+/**
+ * Phương thức xử lý yêu cầu AJAX để lọc và sắp xếp sản phẩm
+ */
+public function filterProducts()
+{
+    // Kiểm tra có phải là yêu cầu AJAX không
+    if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
+        header('HTTP/1.0 403 Forbidden');
+        exit;
+    }
+    
+    $categoryId = $_GET['id'] ?? null;
+    
+    if (!$categoryId) {
+        echo json_encode(['error' => 'ID danh mục không hợp lệ']);
+        exit;
+    }
+    
+    // Lấy thông tin danh mục
+    $category = $this->categoryModel->findById($categoryId);
+    
+    if (!$category || $category['hide'] == 1) {
+        echo json_encode(['error' => 'Danh mục không tồn tại hoặc đã bị ẩn']);
+        exit;
+    }
+    
+    // Xử lý các tham số lọc và sắp xếp
+    $filters = [
+        'price_min' => isset($_GET['price_min']) ? (int)$_GET['price_min'] : 100000,
+        'price_max' => isset($_GET['price_max']) ? (int)$_GET['price_max'] : 2000000,
+        'sizes' => isset($_GET['size']) && is_array($_GET['size']) ? $_GET['size'] : [],
+        'sort' => $_GET['sort'] ?? 'newest'
+    ];
+
+    // Lấy giá từ thanh trượt (slider)
+    if (isset($_GET['price']) && !empty($_GET['price'])) {
+        $filters['price_max'] = (int)$_GET['price'];
+    }
+    
+    // Lấy sản phẩm đã lọc
+    $products = $this->productModel->getFilteredProducts($categoryId, $filters);
+    
+    // Tạo response với HTML của danh sách sản phẩm
+    ob_start();
+    // Sử dụng một partial view để hiển thị chỉ danh sách sản phẩm
+    require('Views/frontend/partials/product_grid.php');
+    $productGridHtml = ob_get_clean();
+    
+    echo json_encode([
+        'success' => true,
+        'count' => count($products),
+        'html' => $productGridHtml
+    ]);
+    exit;
 }
 }
 

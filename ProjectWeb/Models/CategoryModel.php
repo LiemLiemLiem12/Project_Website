@@ -98,5 +98,6 @@ class CategoryModel extends BaseModel
         
         return $this->getByQuery($sql);
     }
+    
 }
 ?>

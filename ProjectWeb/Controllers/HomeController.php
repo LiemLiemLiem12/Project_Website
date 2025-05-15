@@ -19,9 +19,9 @@ class HomeController extends BaseController
 
         // $categoriesMenu = $this->categoryModel->getCategoryForMenu();
         // $categoryHome = $this->categoryModel->getCategoryPickHome();
-        $mostViewProducts = $this->productModel->getAll(['id_product', 'name', 'main_image', 'original_price', 'description'], 4, ['column' => 'click_count', 'order' => 'desc']);
-        $mostSaleProducts = $this->productModel->getAll(['id_product', 'name', 'main_image', 'original_price', 'description'], 4, ['column' => 'discount_percent', 'order' => 'desc']);
-        $newProducts = $this->productModel->getAll(['id_product', 'name', 'main_image', 'original_price', 'description'], 4, ['column' => 'created_at', 'order' => 'desc']);
+        $mostViewProducts = $this->productModel->getAll(['*'], 4, ['column' => 'click_count', 'order' => 'desc']);
+        $mostSaleProducts = $this->productModel->getAll(['*'], 4, ['column' => 'discount_percent', 'order' => 'desc']);
+        $newProducts = $this->productModel->getAll(['*'], 4, ['column' => 'created_at', 'order' => 'desc']);
         // $categories = $this->categoryModel->getAll(['*'],10001000);
 
         $this->view('frontend.home.index', [

@@ -7,6 +7,7 @@ class AdminreportController {
     
     public function __construct() {
         // Khởi tạo đối tượng model
+        
         $this->reportModel = new AdminReportModel();
     }
     

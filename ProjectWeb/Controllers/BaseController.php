@@ -15,9 +15,9 @@ class BaseController
     }
     public function view($viewPath, array $data = [])
     {
-        //    if (!isset($data['headerCategories'])) {
-        //     $data['headerCategories'] = $this->getHeaderCategories();
-        // }
+           if (!isset($data['headerCategories'])) {
+            $data['headerCategories'] = $this->getHeaderCategories();
+        }
         foreach($data as $key=>$value){
             $$key=$value;
         }

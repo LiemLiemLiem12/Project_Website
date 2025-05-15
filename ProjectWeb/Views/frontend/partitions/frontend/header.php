@@ -1,3 +1,27 @@
+<?php
+// Đoạn code này thêm vào header.php
+
+// Lấy số lượng sản phẩm từ session giỏ hàng
+$cart = $_SESSION['cart'] ?? [];
+$totalItems = 0;
+foreach ($cart as $item) {
+    $totalItems += $item['quantity'];
+}
+
+// Đoạn mã JavaScript để khởi tạo số lượng sản phẩm trong giỏ hàng
+echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lưu số lượng sản phẩm vào sessionStorage
+        sessionStorage.setItem('cartCount', '{$totalItems}');
+        
+        // Cập nhật hiển thị số lượng
+        const countElement = document.getElementById('item-count');
+        if (countElement) {
+            countElement.textContent = '{$totalItems}';
+        }
+    });
+</script>";
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -97,7 +121,8 @@
                         <div class="header-action position-relative dropdown">
                             <a href="index.php?controller=cart&action=index" class="action-link cart-toggle" id="cartBtn">
                                 <i class="fas fa-shopping-cart"></i>
-                                <span class="cart-count">0</span>
+                             
+                                <span class="cart-count" id="item-count"><?php echo $totalItems; ?></span>
                                 <span  class="d-none d-lg-inline-block">Giỏ hàng</span>
                             </a>
                             <div class="cart-dropdown dropdown-menu">
