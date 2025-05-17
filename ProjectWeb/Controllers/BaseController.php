@@ -1,13 +1,15 @@
 <?php
 class BaseController
 {
+    private $categoryModel;
     const VIEW_FOLDER_NAME = 'Views';
-    const MODEL_FOLDER_NAME= 'Models';
+    const MODEL_FOLDER_NAME = 'Models';
     /**
      * Description:
      * + path name: folderName.fileName
      * + Lấy từ sau thư mục Views
      */
+<<<<<<< Updated upstream
     //  public function __construct()
     // {
     //     $this->loadModel('CategoryModel');
@@ -20,21 +22,37 @@ class BaseController
         // }
         foreach($data as $key=>$value){
             $$key=$value;
+=======
+    public function __construct()
+    {
+        $this->loadModel('CategoryModel');
+        $this->categoryModel = new CategoryModel();
+    }
+    public function view($viewPath, array $data = [])
+    {
+        // if (!isset($data['headerCategories'])) {
+        //     $data['headerCategories'] = $this->getHeaderCategories();
+        // }
+        foreach ($data as $key => $value) {
+            $$key = $value;
+>>>>>>> Stashed changes
         }
         return require(self::VIEW_FOLDER_NAME . '/' . str_replace('.', '/', $viewPath) . '.php');
     }
-   protected function getHeaderCategories()
+    protected function getHeaderCategories()
     {
         return $this->categoryModel->getCategoriesForMenu();
     }
-protected function loadModel($modelPath)
-{
-    $filePath = self::MODEL_FOLDER_NAME . '/' . $modelPath . '.php';
-    // Chỉ load file nếu lớp chưa tồn tại
-    $className = str_replace('.php', '', basename($modelPath));
-    if (!class_exists($className)) {
-        require($filePath);
+    protected function loadModel($modelPath)
+    {
+        $filePath = self::MODEL_FOLDER_NAME . '/' . $modelPath . '.php';
+        // Chỉ load file nếu lớp chưa tồn tại
+        $className = str_replace('.php', '', basename($modelPath));
+        if (!class_exists($className)) {
+            require($filePath);
+        }
     }
+<<<<<<< Updated upstream
 }
 /**
  * Kiểm tra trạng thái đăng nhập
@@ -44,10 +62,14 @@ protected function isLoggedIn()
 {
     return isset($_SESSION['user']);
 }
+=======
+
+>>>>>>> Stashed changes
 
 }
 
-function view($viewPath, array $data = []) {
+function view($viewPath, array $data = [])
+{
     // Chuyển mảng dữ liệu thành các biến động (dynamic variables)
     foreach ($data as $key => $value) {
         $$key = $value;
@@ -56,6 +78,10 @@ function view($viewPath, array $data = []) {
     // Đưa đường dẫn tới tệp view từ thư mục Views
     require('Views/' . str_replace('.', '/', $viewPath) . '.php');
 }
+<<<<<<< Updated upstream
 
 ?>
 
+=======
+?>
+>>>>>>> Stashed changes

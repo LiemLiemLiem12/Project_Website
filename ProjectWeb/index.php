@@ -2,7 +2,7 @@
 ini_set('session.cookie_lifetime', 0); // Cookie phiên chỉ tồn tại đến khi đóng trình duyệt
 ini_set('session.use_cookies', 1);
 ini_set('session.use_only_cookies', 1);
-ini_set('session.gc_maxlifetime', 0); 
+ini_set('session.gc_maxlifetime', 0);
 
 session_start();
 
@@ -21,12 +21,12 @@ $controllerPath = "./Controllers/{$controllerName}.php";
 if (!isset($_SESSION['visited'])) {
     // This is a new visit in this session
     $_SESSION['visited'] = true;
-    
+
     // Try to record the visit if the class exists
     if (file_exists('Models/VisitModel.php')) {
         require_once 'Models/VisitModel.php';
         $vs = new VisitModel();
-        
+
         // Record the visit
         $ip = $_SERVER['REMOTE_ADDR'];
         $vs->createSession($ip);
@@ -37,12 +37,12 @@ if (!isset($_SESSION['visited'])) {
 if (file_exists($controllerPath)) {
     // Include controller file
     require_once $controllerPath;
-    
+
     // Check if the controller class exists
     if (class_exists($controllerName)) {
         // Create controller instance
         $controllerObject = new $controllerName;
-        
+
         // Check if action exists
         if (method_exists($controllerObject, $actionName)) {
             // Call the action
