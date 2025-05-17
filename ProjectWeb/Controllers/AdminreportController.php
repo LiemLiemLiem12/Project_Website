@@ -13,24 +13,40 @@ class AdminreportController {
     
     // Xử lý hiển thị trang báo cáo
     public function index() {
-        // Mặc định lấy dữ liệu 30 ngày gần nhất
-        $endDate = date('Y-m-d');
-        $startDate = date('Y-m-d', strtotime('-30 days'));
-        
-        // Kiểm tra nếu có ngày được chọn từ form
-        if (isset($_GET['start_date']) && isset($_GET['end_date']) && !empty($_GET['start_date']) && !empty($_GET['end_date'])) {
-            $startDate = $_GET['start_date'];
-            $endDate = $_GET['end_date'];
+        // Kiểm tra nếu có tháng và năm được chọn
+        if (isset($_GET['month']) && isset($_GET['year'])) {
+            $month = intval($_GET['month']);
+            $year = intval($_GET['year']);
+            
+            // Tính ngày đầu và cuối tháng
+            $startDate = date("Y-m-d", mktime(0, 0, 0, $month, 1, $year));
+            $endDate = date("Y-m-t", mktime(0, 0, 0, $month, 1, $year));
+            
+            // Cập nhật lại hidden fields
+            $_GET['start_date'] = $startDate;
+            $_GET['end_date'] = $endDate;
+        } else {
+            // Mặc định lấy dữ liệu tháng hiện tại
+            $currentMonth = date('n');
+            $currentYear = date('Y');
+            $startDate = date("Y-m-01"); // Ngày đầu tháng hiện tại
+            $endDate = date("Y-m-t");    // Ngày cuối tháng hiện tại
+            
+            // Cập nhật lại hidden fields
+            $_GET['start_date'] = $startDate;
+            $_GET['end_date'] = $endDate;
+            $_GET['month'] = $currentMonth;
+            $_GET['year'] = $currentYear;
         }
         
         // Lấy dữ liệu từ model
         $summaryStats = $this->reportModel->getSummaryStats($startDate, $endDate);
-        $salesReport = $this->reportModel->getDailySalesReport($startDate, $endDate);
+        $salesReport = $this->reportModel->getDailySalesReport($startDate, $endDate); // Bỏ limit để hiển thị tất cả dữ liệu
         $salesTotal = $this->reportModel->getTotalSalesReport($startDate, $endDate);
         $topProducts = $this->reportModel->getTopProducts(5, $startDate, $endDate);
         
         // Dữ liệu cho biểu đồ
-        $revenueChartData = $this->reportModel->getRevenueChartData($startDate, $endDate);
+        $revenueChartData = $this->reportModel->getRevenueChartData($startDate, $endDate, 10); // Giới hạn 10 mục cho biểu đồ
         $orderStatusData = $this->reportModel->getOrderStatusDistribution($startDate, $endDate);
         
         // Tính toán phần trăm thay đổi so với kỳ trước
