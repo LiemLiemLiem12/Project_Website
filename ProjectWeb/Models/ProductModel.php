@@ -106,9 +106,6 @@ class ProductModel extends BaseModel
   {
     return $this->updateForProduct(self::TABLE, $id, $data);
   }
-<<<<<<< Updated upstream
-  
-=======
 /**
  * Get filtered products by category ID with sorting
  * 
@@ -165,7 +162,6 @@ public function getFilteredProducts($categoryId, $filters = [])
     // Get products with the constructed query
     return $this->getByQuery($sql);
 }
->>>>>>> Stashed changes
 
 }
 ?>

@@ -2,21 +2,23 @@
 class LoginController extends BaseController
 {
     private $userModel;
+    private $cartModel;
     
     public function __construct()
     {
-        // Start session if not already started
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        parent::__construct();
         
-        // Load necessary models
+        // Load các model cần thiết
         $this->loadModel('UserModel');
         $this->userModel = new UserModel();
+        
+        // Load CartModel
+        $this->loadModel('CartModel');
+        $this->cartModel = new CartModel();
     }
     
     /**
-     * Display login/register page
+     * Hiển thị trang đăng nhập
      */
     public function index()
     {
@@ -26,17 +28,12 @@ class LoginController extends BaseController
             exit;
         }
         
-        // Check if there's a redirect parameter
-        $redirect = isset($_GET['redirect']) ? $_GET['redirect'] : '';
-        
         // Render the login page
-        $this->view('frontend.login.index', [
-            'redirect' => $redirect
-        ]);
+        $this->view('frontend.login.index', []);
     }
     
     /**
-     * Process login form submission
+     * Xử lý form đăng nhập
      */
     public function login()
     {
@@ -50,7 +47,6 @@ class LoginController extends BaseController
         // Get form data
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
-        $redirect = $_POST['redirect'] ?? '';
         
         // Validate input
         if (empty($email) || empty($password)) {
@@ -69,38 +65,78 @@ class LoginController extends BaseController
         
         // Check if user exists and password is correct
         if (!$user || !password_verify($password, $user['password'])) {
-            $this->redirectWithMessage('index.php?controller=login', 
-                'Email/SĐT hoặc mật khẩu không chính xác', 'error');
-            return;
-        }
-        
-        // Check if account is verified
-        if ($user['verified'] != 1) {
-            // Generate new verification code
-            $verificationCode = $this->generateVerificationCode();
-            $this->userModel->updateVerificationCode($user['id_User'], $verificationCode);
-            
-            // Store user data in session for verification
-            $_SESSION['pending_user'] = [
-                'id' => $user['id_User'],
-                'email' => $user['email'],
-                'phone' => $user['phone']
-            ];
-            
-            $this->redirectWithMessage('index.php?controller=login&action=verify', 
-                'Tài khoản chưa được xác thực. Vui lòng xác thực để tiếp tục.', 'warning');
-            return;
+            // For development - simple password check (không sử dụng hashing)
+            if (!$user || $password !== $user['password']) {
+                $this->redirectWithMessage('index.php?controller=login', 
+                    'Email/SĐT hoặc mật khẩu không chính xác', 'error');
+                return;
+            }
         }
         
         // Create user session without password
         unset($user['password']);
-        $_SESSION['user'] = $user;
-        
-        // Redirect to requested page or homepage
-        $redirectUrl = !empty($redirect) ? $redirect : 'index.php';
-        $this->redirectWithMessage($redirectUrl, 
-            'Đăng nhập thành công', 'success');
+    $_SESSION['user'] = $user;
+    
+    // Hợp nhất giỏ hàng
+    $this->mergeCart($user['id_User']);
+    
+    // Chuyển hướng về trang chủ
+    $this->redirectWithMessage('index.php', 'Đăng nhập thành công', 'success');
+          
+    // Cập nhật giỏ hàng từ database
+
     }
+    
+    /**
+     * Merge temporary cart (session) with user's cart in database
+     */
+  /**
+ * Merge temporary cart (session) with user's cart in database
+ * Sau khi đăng nhập, load giỏ hàng của người dùng từ database
+ */
+private function mergeCart($userId)
+{
+    // Kiểm tra xem người dùng có giỏ hàng session không
+    $sessionCart = $_SESSION['cart'] ?? [];
+    
+    // 1. Nếu session có sản phẩm, hợp nhất với giỏ hàng trong database
+    if (!empty($sessionCart)) {
+        foreach ($sessionCart as $itemKey => $item) {
+            $productId = $item['product_id'];
+            $quantity = $item['quantity'];
+            $size = $item['size'] ?? 'M';
+            
+            $existingItem = $this->cartModel->getCartItem($userId, $productId, $size);
+            
+            if ($existingItem) {
+                // Cộng số lượng nếu sản phẩm đã tồn tại trong giỏ hàng người dùng
+                $newQuantity = $existingItem['quantity'] + $quantity;
+                $this->cartModel->updateCartItem($userId, $productId, $size, $newQuantity);
+            } else {
+                // Thêm mới nếu sản phẩm chưa có trong giỏ hàng người dùng
+                $this->cartModel->addCartItem($userId, $productId, $quantity, $size);
+            }
+        }
+    }
+    
+    // 2. Tải lại giỏ hàng của người dùng từ database (bất kể có hợp nhất hay không)
+    $userCart = $this->cartModel->getUserCart($userId);
+    
+    // 3. Thay thế giỏ hàng session bằng giỏ hàng từ database
+    $_SESSION['cart'] = [];
+    
+    foreach ($userCart as $item) {
+        $itemKey = $item['id_Product'] . '_' . $item['size'];
+        $_SESSION['cart'][$itemKey] = [
+            'product_id' => $item['id_Product'],
+            'quantity' => $item['quantity'],
+            'size' => $item['size']
+        ];
+    }
+    
+    // 4. Đánh dấu giỏ hàng đã được cập nhật để header biết
+    $_SESSION['cart_updated'] = true;
+}
     
     /**
      * Process registration form submission
@@ -125,61 +161,58 @@ class LoginController extends BaseController
         // Validate input
         if (empty($fullName) || empty($email) || empty($phone) || 
             empty($password) || empty($confirmPassword)) {
-            $this->redirectWithMessage('index.php?controller=login#register', 
+            $this->redirectWithMessage('index.php?controller=login&tab=register', 
                 'Vui lòng nhập đầy đủ thông tin', 'error');
             return;
         }
         
         // Validate password match
         if ($password !== $confirmPassword) {
-            $this->redirectWithMessage('index.php?controller=login#register', 
+            $this->redirectWithMessage('index.php?controller=login&tab=register', 
                 'Mật khẩu không khớp', 'error');
             return;
         }
         
-        // Validate password strength (minimum 8 characters, includes letters and numbers)
+        // Validate password strength
         if (strlen($password) < 8 || !preg_match('/[A-Za-z]/', $password) || !preg_match('/[0-9]/', $password)) {
-            $this->redirectWithMessage('index.php?controller=login#register', 
+            $this->redirectWithMessage('index.php?controller=login&tab=register', 
                 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và số', 'error');
             return;
         }
         
         // Validate terms agreement
         if (!$agreeTerms) {
-            $this->redirectWithMessage('index.php?controller=login#register', 
+            $this->redirectWithMessage('index.php?controller=login&tab=register', 
                 'Vui lòng đồng ý với điều khoản sử dụng', 'error');
             return;
         }
         
         // Check if email already exists
         if ($this->userModel->findByEmail($email)) {
-            $this->redirectWithMessage('index.php?controller=login#register', 
+            $this->redirectWithMessage('index.php?controller=login&tab=register', 
                 'Email đã được sử dụng', 'error');
             return;
         }
         
         // Check if phone already exists
         if ($this->userModel->findByPhone($phone)) {
-            $this->redirectWithMessage('index.php?controller=login#register', 
+            $this->redirectWithMessage('index.php?controller=login&tab=register', 
                 'Số điện thoại đã được sử dụng', 'error');
             return;
         }
         
-        // Generate verification code
-        $verificationCode = $this->generateVerificationCode();
-        
         // Hash password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         
-        // Prepare user data
+        // Prepare user data - Đặt verified mặc định là 1 (đã xác thực)
         $userData = [
-            'fullname' => $fullName,
+            'name' => $fullName,
             'email' => $email,
             'phone' => $phone,
             'password' => $hashedPassword,
-            'verification_code' => $verificationCode,
-            'verified' => 0,
-            'role' => 'customer',
+            'verification_code' => null,
+            'verified' => 1, // Tự động xác thực tài khoản
+            'role' => 'user',
             'created_at' => date('Y-m-d H:i:s')
         ];
         
@@ -187,119 +220,14 @@ class LoginController extends BaseController
         $userId = $this->userModel->createUser($userData);
         
         if (!$userId) {
-            $this->redirectWithMessage('index.php?controller=login#register', 
+            $this->redirectWithMessage('index.php?controller=login&tab=register', 
                 'Đăng ký không thành công. Vui lòng thử lại sau.', 'error');
             return;
         }
         
-        // Store user data in session for verification
-        $_SESSION['pending_user'] = [
-            'id' => $userId,
-            'email' => $email,
-            'phone' => $phone
-        ];
-        
-        // Redirect to verification page
-        $this->redirectWithMessage('index.php?controller=login&action=verify', 
-            'Đăng ký thành công! Vui lòng xác thực tài khoản.', 'success');
-    }
-    
-    /**
-     * Display verification page and handle verification
-     */
-    public function verify()
-    {
-        // Check if there's a pending user
-        if (!isset($_SESSION['pending_user'])) {
-            $this->redirectWithMessage('index.php?controller=login', 
-                'Không có tài khoản chờ xác thực', 'error');
-            return;
-        }
-        
-        // Check if the request is to verify a code
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->verifyCode();
-            return;
-        }
-        
-        // Get contact information
-        $email = $_SESSION['pending_user']['email'];
-        $phone = $_SESSION['pending_user']['phone'];
-        
-        // Display verification page
-        $this->view('frontend.login.verify', [
-            'email' => $email,
-            'phone' => $phone
-        ]);
-    }
-    
-    /**
-     * Verify code submitted by user
-     */
-    private function verifyCode()
-    {
-        // Get verification code
-        $code = $_POST['code'] ?? '';
-        
-        // Validate input
-        if (empty($code) || strlen($code) !== 6) {
-            $this->redirectWithMessage('index.php?controller=login&action=verify', 
-                'Mã xác thực không hợp lệ', 'error');
-            return;
-        }
-        
-        // Get pending user
-        $userId = $_SESSION['pending_user']['id'];
-        
-        // Verify code
-        $user = $this->userModel->findById($userId);
-        
-        if (!$user || $user['verification_code'] !== $code) {
-            $this->redirectWithMessage('index.php?controller=login&action=verify', 
-                'Mã xác thực không chính xác', 'error');
-            return;
-        }
-        
-        // Mark user as verified
-        $this->userModel->markAsVerified($userId);
-        
-        // Clear pending user
-        unset($_SESSION['pending_user']);
-        
-        // Redirect to login page
+        // Redirect to login page with success message
         $this->redirectWithMessage('index.php?controller=login', 
-            'Xác thực thành công! Vui lòng đăng nhập để tiếp tục.', 'success');
-    }
-    
-    /**
-     * Resend verification code
-     */
-    public function resendCode()
-    {
-        // Check if there's a pending user
-        if (!isset($_SESSION['pending_user'])) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Không có tài khoản chờ xác thực'
-            ]);
-            exit;
-        }
-        
-        // Generate new verification code
-        $verificationCode = $this->generateVerificationCode();
-        
-        // Update user's verification code
-        $userId = $_SESSION['pending_user']['id'];
-        $this->userModel->updateVerificationCode($userId, $verificationCode);
-        
-        // In a real application, send the code via email or SMS
-        // For this implementation, we'll just return success
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Mã xác thực mới đã được gửi'
-        ]);
-        exit;
+            'Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.', 'success');
     }
     
     /**
@@ -456,17 +384,9 @@ class LoginController extends BaseController
         // Clear user session
         unset($_SESSION['user']);
         
-        // Redirect to login page
+        // Redirect to homepage
         $this->redirectWithMessage('index.php', 
             'Đã đăng xuất thành công', 'success');
-    }
-    
-    /**
-     * Generate random verification code
-     */
-    private function generateVerificationCode()
-    {
-        return sprintf('%06d', mt_rand(0, 999999));
     }
     
     /**
@@ -483,3 +403,4 @@ class LoginController extends BaseController
         exit;
     }
 }
+?>

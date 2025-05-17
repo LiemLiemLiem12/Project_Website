@@ -1,5 +1,29 @@
 <?php
-// Đoạn code này thêm vào header.php
+// Code trong header.php để hiển thị giỏ hàng
+$isLoggedIn = isset($_SESSION['user']);
+
+// Nếu người dùng đã đăng nhập, đảm bảo giỏ hàng từ database đã được tải
+if (isset($_SESSION['user']) && !isset($_SESSION['cart_loaded'])) {
+    // Load giỏ hàng từ database nếu chưa được tải
+    require_once('Models/CartModel.php');
+    $cartModel = new CartModel();
+    $userId = $_SESSION['user']['id_User'];
+    $userCart = $cartModel->getUserCart($userId);
+    
+    // Cập nhật giỏ hàng trong session
+    $_SESSION['cart'] = [];
+    foreach ($userCart as $item) {
+        $itemKey = $item['id_Product'] . '_' . $item['size'];
+        $_SESSION['cart'][$itemKey] = [
+            'product_id' => $item['id_Product'],
+            'quantity' => $item['quantity'],
+            'size' => $item['size']
+        ];
+    }
+    
+    // Đánh dấu giỏ hàng đã được tải
+    $_SESSION['cart_loaded'] = true;
+}
 
 // Lấy số lượng sản phẩm từ session giỏ hàng
 $cart = $_SESSION['cart'] ?? [];
@@ -7,20 +31,6 @@ $totalItems = 0;
 foreach ($cart as $item) {
     $totalItems += $item['quantity'];
 }
-
-// Đoạn mã JavaScript để khởi tạo số lượng sản phẩm trong giỏ hàng
-echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Lưu số lượng sản phẩm vào sessionStorage
-        sessionStorage.setItem('cartCount', '{$totalItems}');
-        
-        // Cập nhật hiển thị số lượng
-        const countElement = document.getElementById('item-count');
-        if (countElement) {
-            countElement.textContent = '{$totalItems}';
-        }
-    });
-</script>";
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -28,15 +38,12 @@ echo "<script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RSStore - Thời trang nam chính hãng</title>
-
-
-       
     
     <!-- Trong thẻ <head> -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css"> <!-- Đường dẫn đến file CSS mới -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css"> <!-- Đường dẫn đến file CSS mới -->
     
        
 </head>
@@ -85,78 +92,101 @@ echo "<script>
                 <div class="col-md-4 col-lg-3 col-4">
                     <div class="d-flex justify-content-end">
                         <!-- User account -->
-                        <div class="header-action me-3 position-relative dropdown">
-                            <a href="javascript:void(0);" class="action-link account-toggle" id="userAccountBtn">
-                                <i class="fas fa-user"></i>
-                                <span class="d-none d-lg-inline-block">Tài khoản</span>
-                            </a>
-                            <div class="account-dropdown dropdown-menu">
-                                <div class="dropdown-content">
-                                    <div class="dropdown-header">
-                                        <h5>Đăng nhập tài khoản</h5>
-                                    </div>
-                                    <div class="dropdown-body">
-                                        <form action="/ProjectWeb/index.php?controller=auth&action=login" method="post">
-                                            <div class="form-group mb-3">
-                                                <input type="email" class="form-control" placeholder="Email" required>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <input type="password" class="form-control" placeholder="Mật khẩu" required>
-                                            </div>
-                                            <div class="d-grid gap-2">
-                                                <button type="submit" class="btn btn-dark">Đăng nhập</button>
-                                            </div>
-                                        </form>
-                                        <div class="mt-3 text-center">
-                                            <p class="mb-1">Khách hàng mới? <a href="/ProjectWeb/index.php?controller=auth&action=register">Tạo tài khoản</a></p>
-                                            <p class="mb-0"><a href="/ProjectWeb/index.php?controller=auth&action=forgot">Quên mật khẩu?</a></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                      <!-- User account -->
+                       <div class="header-action me-3 position-relative">
+                            <?php if ($isLoggedIn): ?>
+                                <!-- Hiển thị thông tin người dùng đã đăng nhập -->
+                                <a href="index.php?controller=user&action=profile" class="action-link">
+                                    <i class="fas fa-user"></i>
+                                    <span class="d-none d-lg-inline-block"><?= $_SESSION['user']['name'] ?></span>
+                                </a>
+                                <a href="index.php?controller=login&action=logout" class="action-link small ms-2">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </a>
+                            <?php else: ?>
+                                <!-- Hiển thị link đơn giản cho người dùng chưa đăng nhập -->
+                                <a href="index.php?controller=login" class="action-link">
+                                    <i class="fas fa-user"></i>
+                                    <span class="d-none d-lg-inline-block">Tài khoản</span>
+                                </a>
+                            <?php endif; ?>
                         </div>
-                 
-
+                        <?php if ($isLoggedIn): ?>
+                            <div class="header-action position-relative dropdown">
+                                <a href="index.php?controller=cart&action=index" class="action-link cart-toggle" id="cartBtn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span class="cart-count" id="item-count"><?= $totalItems ?? 0; ?></span>
+                                    <span class="d-none d-lg-inline-block">Giỏ hàng</span>
+                                </a>
+                                <!-- Dropdown content... -->
+                            </div>
+                        <?php endif; ?>
                         <!-- Shopping cart -->
-                        <div class="header-action position-relative dropdown">
-                            <a href="index.php?controller=cart&action=index" class="action-link cart-toggle" id="cartBtn">
-                                <i class="fas fa-shopping-cart"></i>
-                             
-                                <span class="cart-count" id="item-count"><?php echo $totalItems; ?></span>
-                                <span  class="d-none d-lg-inline-block">Giỏ hàng</span>
-                            </a>
+                        <!-- <div class="header-action position-relative dropdown">
+                              <a href="index.php?controller=cart&action=index" class="action-link cart-toggle" id="cartBtn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span class="cart-count" id="item-count"><?=$totalItems; ?></span>
+                                    <span class="d-none d-lg-inline-block">Giỏ hàng</span>
+                             </a>
                             <div class="cart-dropdown dropdown-menu">
                                 <div class="dropdown-content">
                                     <div class="dropdown-header">
                                         <h5>Giỏ hàng</h5>
                                     </div>
                                     <div class="dropdown-body">
-                                        <div class="empty-cart text-center">
-                                            <img src="/ProjectWeb/upload/img/Header/no-cart.png" alt="Empty Cart" class="img-fluid mb-3">
-                                            <p>Hiện chưa có sản phẩm</p>
-                                        </div>
-                                        <div class="cart-summary" style="display: none;">
-                                            <div class="d-flex justify-content-between mb-2">
-                                                <span>Tạm tính:</span>
-                                                <span>0₫</span>
+                                        <?php if (empty($cart)): ?>
+                                            <div class="empty-cart text-center">
+                                                <img src="/ProjectWeb/upload/img/Header/no-cart.png" alt="Empty Cart" class="img-fluid mb-3">
+                                                <p>Hiện chưa có sản phẩm</p>
                                             </div>
-                                            <div class="d-flex justify-content-between mb-2">
-                                                <span>Giảm giá:</span>
-                                                <span>0₫</span>
+                                        <?php else: ?>
+                                            <div class="cart-items">
+                                                <?php 
+                                                $cartTotal = 0;
+                                                foreach ($cart as $item):
+                                                    $productId = $item['product_id'];
+                                                    // Tạo một đối tượng ProductModel để lấy thông tin sản phẩm
+                                                    require_once('Models/ProductModel.php');
+                                                    $productModel = new ProductModel();
+                                                    $product = $productModel->findById($productId);
+                                                    if ($product):
+                                                        $subtotal = $product['current_price'] * $item['quantity'];
+                                                        $cartTotal += $subtotal;
+                                                ?>
+                                                    <div class="cart-item d-flex mb-2">
+                                                        <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $product['main_image'] ?>" alt="<?= $product['name'] ?>" class="cart-item-image me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        <div class="cart-item-details flex-grow-1">
+                                                            <div class="cart-item-title"><?= $product['name'] ?></div>
+                                                            <div class="d-flex justify-content-between">
+                                                                <span class="cart-item-quantity"><?= $item['quantity'] ?> x</span>
+                                                                <span class="cart-item-price"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php 
+                                                    endif;
+                                                endforeach; 
+                                                ?>
                                             </div>
-                                            <div class="d-flex justify-content-between fw-bold mb-3">
-                                                <span>Tổng tiền:</span>
-                                                <span>0₫</span>
+                                            <div class="cart-summary">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span>Tạm tính:</span>
+                                                    <span><?= number_format($cartTotal, 0, ',', '.') ?>₫</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between fw-bold mb-3">
+                                                    <span>Tổng tiền:</span>
+                                                    <span><?= number_format($cartTotal, 0, ',', '.') ?>₫</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <a href="index.php?controller=cart&action=index" class="btn btn-outline-dark">Giỏ hàng</a>
+                                                    <a href="index.php?controller=order" class="btn btn-dark">Thanh toán</a>
+                                                </div>
                                             </div>
-                                            <div class="d-flex justify-content-between">
-                                                <a href="/ProjectWeb/index.php?controller=cart" class="btn btn-outline-dark">Giỏ hàng</a>
-                                                <a href="/ProjectWeb/index.php?controller=checkout" class="btn btn-dark">Thanh toán</a>
-                                            </div>
-                                        </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -224,21 +254,123 @@ echo "<script>
     </main>
 
     <!-- Notification container -->
-    <div class="notification-container">
-        
-     </div>
+    <div class="notification-container"></div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Khôi phục mật khẩu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Vui lòng nhập email hoặc số điện thoại để khôi phục mật khẩu</p>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="recoveryContact" 
+                               placeholder="Email hoặc số điện thoại" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="recoverButton">Gửi mã xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Cuối thẻ <body> -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="/Project_Website/ProjectWeb/layout/js/Header.js"></script> <!-- Đường dẫn đến file JS mới -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Project_Website/ProjectWeb/layout/js/Header.js"></script> <!-- Đường dẫn đến file JS mới -->
     <!-- Thêm script để xử lý header khi cuộn -->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Lấy thông tin giỏ hàng mới nhất từ server
+    fetch("index.php?controller=cart&action=getCount", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Cập nhật số lượng sản phẩm trong giỏ hàng
+        sessionStorage.setItem("cartCount", data.count);
+        
+        // Cập nhật hiển thị số lượng
+        const countElement = document.getElementById("item-count");
+        if (countElement) {
+            countElement.textContent = data.count;
+        }
+        
+        // Thông báo cho các thành phần khác rằng giỏ hàng đã được cập nhật
+        document.dispatchEvent(new CustomEvent("cartUpdated"));
+    })
+    .catch(error => {
+        console.error("Lỗi khi lấy dữ liệu giỏ hàng:", error);
+    });
+});
         window.addEventListener('scroll', function() {
             const header = document.querySelector('header');
             if (window.scrollY > 100) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
+            }
+        });
+
+        // Xử lý form quên mật khẩu
+        document.addEventListener('DOMContentLoaded', function() {
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+            
+            if (forgotPasswordLink && forgotPasswordModal) {
+                forgotPasswordLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const modalInstance = new bootstrap.Modal(forgotPasswordModal);
+                    modalInstance.show();
+                });
+            }
+            
+            // Xử lý nút gửi mã xác nhận
+            const recoverButton = document.getElementById('recoverButton');
+            if (recoverButton) {
+                recoverButton.addEventListener('click', function() {
+                    const recoveryContact = document.getElementById('recoveryContact').value.trim();
+                    
+                    if (!recoveryContact) {
+                        alert('Vui lòng nhập email hoặc số điện thoại');
+                        return;
+                    }
+                    
+                    // Gửi AJAX request đến forgotPassword
+                    fetch('index.php?controller=login&action=forgotPassword', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'contact=' + encodeURIComponent(recoveryContact)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Ẩn modal
+                            const modalInstance = bootstrap.Modal.getInstance(forgotPasswordModal);
+                            modalInstance.hide();
+                            
+                            // Hiển thị thông báo thành công
+                            alert(data.message);
+                        } else {
+                            // Hiển thị thông báo lỗi
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+                    });
+                });
             }
         });
     </script>

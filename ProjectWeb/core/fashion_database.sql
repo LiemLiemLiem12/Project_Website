@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 13, 2025 lúc 07:54 PM
+-- Thời gian đã tạo: Th5 17, 2025 lúc 05:09 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -29,11 +29,20 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `cart` (
   `id` int(11) NOT NULL,
-  `id_User` int(11) DEFAULT NULL,
-  `id_Product` int(11) DEFAULT NULL,
-  `quantity` int(11) NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `id_User` int(11) NOT NULL,
+  `id_Product` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `size` varchar(10) NOT NULL DEFAULT 'M',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `cart`
+--
+
+INSERT INTO `cart` (`id`, `id_User`, `id_Product`, `quantity`, `size`, `created_at`, `updated_at`) VALUES
+(8, 6, 35, 6, 'XL', '2025-05-17 16:55:13', '2025-05-17 21:55:13');
 
 -- --------------------------------------------------------
 
@@ -216,6 +225,41 @@ CREATE TABLE `review` (
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `settings`
+--
+
+CREATE TABLE `settings` (
+  `id` int(11) NOT NULL,
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text DEFAULT NULL,
+  `setting_group` varchar(50) DEFAULT 'general',
+  `setting_type` varchar(20) DEFAULT 'text',
+  `setting_label` varchar(255) NOT NULL,
+  `setting_description` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `settings`
+--
+
+INSERT INTO `settings` (`id`, `setting_key`, `setting_value`, `setting_group`, `setting_type`, `setting_label`, `setting_description`, `created_at`, `updated_at`) VALUES
+(1, 'site_name', 'SR Store', 'general', 'text', 'Tên website', 'Tên hiển thị của website', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(2, 'site_description', 'Website bán quần áo thời trang', 'general', 'textarea', 'Mô tả website', 'Mô tả ngắn về website', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(3, 'admin_email', 'admin@example.com', 'contact', 'email', 'Email quản trị', 'Email liên hệ của quản trị viên', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(4, 'contact_phone', '0123456789', 'contact', 'text', 'Số điện thoại liên hệ', 'Số điện thoại hiển thị trên website', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(5, 'contact_address', '123 Đường ABC, Quận XYZ, TP HCM', 'contact', 'textarea', 'Địa chỉ', 'Địa chỉ liên hệ', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(6, 'logo_path', '/Project_Website/ProjectWeb/upload/img/Header/logo.png', 'appearance', 'file', 'Logo', 'Đường dẫn đến file logo', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(7, 'favicon_path', '/Project_Website/ProjectWeb/upload/img/favicon.ico', 'appearance', 'file', 'Favicon', 'Đường dẫn đến file favicon', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(8, 'currency', 'VND', 'shop', 'select', 'Đơn vị tiền tệ', 'Đơn vị tiền tệ sử dụng trên website', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(9, 'shipping_fee', '30000', 'shop', 'number', 'Phí vận chuyển', 'Phí vận chuyển mặc định', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(10, 'tax_rate', '10', 'shop', 'number', 'Thuế VAT (%)', 'Tỷ lệ thuế VAT áp dụng', '2025-05-17 11:08:46', '2025-05-17 11:08:46'),
+(11, 'maintenance_mode', '0', 'system', 'boolean', 'Chế độ bảo trì', 'Bật/tắt chế độ bảo trì website', '2025-05-17 11:08:46', '2025-05-17 11:08:46');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `user`
 --
 
@@ -246,7 +290,7 @@ INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, 
 (3, 'Lê Văn C', 'c@example.com', '123456', '0900000003', 'Đà Nẵng', 'admin', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
 (4, 'Phạm Thị D', 'd@example.com', '123456', '0900000004', 'Cần Thơ', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
 (5, 'Hoàng Văn E', 'e@example.com', '123456', '0900000005', 'Hải Phòng', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', NULL, 0, NULL, NULL, '2025-04-15 21:59:36', '2025-05-02 22:00:43', NULL),
+(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', '820775', 0, NULL, NULL, '2025-04-15 21:59:36', '2025-05-17 21:19:24', NULL),
 (7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', NULL, 0, NULL, NULL, '2025-04-16 08:00:00', '2025-05-02 22:01:25', NULL),
 (8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', NULL, 0, NULL, NULL, '2025-04-16 09:15:00', '2025-05-02 22:01:25', NULL),
 (9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', NULL, 0, NULL, NULL, '2025-04-16 10:30:00', '2025-05-02 22:01:25', NULL);
@@ -282,8 +326,8 @@ INSERT INTO `visits` (`id`, `ip_address`, `visited_at`) VALUES
 --
 ALTER TABLE `cart`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_cart_user` (`id_User`),
-  ADD KEY `idx_cart_product` (`id_Product`);
+  ADD KEY `id_User` (`id_User`),
+  ADD KEY `id_Product` (`id_Product`);
 
 --
 -- Chỉ mục cho bảng `category`
@@ -322,6 +366,13 @@ ALTER TABLE `review`
   ADD KEY `idx_review_product` (`id_Product`);
 
 --
+-- Chỉ mục cho bảng `settings`
+--
+ALTER TABLE `settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `setting_key` (`setting_key`);
+
+--
 -- Chỉ mục cho bảng `user`
 --
 ALTER TABLE `user`
@@ -343,7 +394,7 @@ ALTER TABLE `visits`
 -- AUTO_INCREMENT cho bảng `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `category`
@@ -370,6 +421,12 @@ ALTER TABLE `review`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT cho bảng `settings`
+--
+ALTER TABLE `settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
 -- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
@@ -389,8 +446,8 @@ ALTER TABLE `visits`
 -- Các ràng buộc cho bảng `cart`
 --
 ALTER TABLE `cart`
-  ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
-  ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
+  ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`) ON DELETE CASCADE,
+  ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `order`
@@ -418,35 +475,6 @@ ALTER TABLE `review`
   ADD CONSTRAINT `review_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
   ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 COMMIT;
-
--- NEW 14 / 05 / 2025
-CREATE TABLE `settings` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `setting_key` varchar(100) NOT NULL,
-  `setting_value` text,
-  `setting_group` varchar(50) DEFAULT 'general',
-  `setting_type` varchar(20) DEFAULT 'text',
-  `setting_label` varchar(255) NOT NULL,
-  `setting_description` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `setting_key` (`setting_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Thêm dữ liệu cài đặt mặc định
-INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`, `setting_type`, `setting_label`, `setting_description`) VALUES
-('site_name', 'SR Store', 'general', 'text', 'Tên website', 'Tên hiển thị của website'),
-('site_description', 'Website bán quần áo thời trang', 'general', 'textarea', 'Mô tả website', 'Mô tả ngắn về website'),
-('admin_email', 'admin@example.com', 'contact', 'email', 'Email quản trị', 'Email liên hệ của quản trị viên'),
-('contact_phone', '0123456789', 'contact', 'text', 'Số điện thoại liên hệ', 'Số điện thoại hiển thị trên website'),
-('contact_address', '123 Đường ABC, Quận XYZ, TP HCM', 'contact', 'textarea', 'Địa chỉ', 'Địa chỉ liên hệ'),
-('logo_path', '/Project_Website/ProjectWeb/upload/img/Header/logo.png', 'appearance', 'file', 'Logo', 'Đường dẫn đến file logo'),
-('favicon_path', '/Project_Website/ProjectWeb/upload/img/favicon.ico', 'appearance', 'file', 'Favicon', 'Đường dẫn đến file favicon'),
-('currency', 'VND', 'shop', 'select', 'Đơn vị tiền tệ', 'Đơn vị tiền tệ sử dụng trên website'),
-('shipping_fee', '30000', 'shop', 'number', 'Phí vận chuyển', 'Phí vận chuyển mặc định'),
-('tax_rate', '10', 'shop', 'number', 'Thuế VAT (%)', 'Tỷ lệ thuế VAT áp dụng'),
-('maintenance_mode', '0', 'system', 'boolean', 'Chế độ bảo trì', 'Bật/tắt chế độ bảo trì website');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

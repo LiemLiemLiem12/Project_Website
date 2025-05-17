@@ -20,12 +20,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const verificationModal = document.getElementById('verificationModal');
     
     // Modal instances
-    const forgotPasswordModalInstance = new bootstrap.Modal(forgotPasswordModal);
-    const verificationModalInstance = new bootstrap.Modal(verificationModal);
+    let forgotPasswordModalInstance = null;
+    let verificationModalInstance = null;
+    
+    if (forgotPasswordModal) {
+        forgotPasswordModalInstance = new bootstrap.Modal(forgotPasswordModal);
+    }
+    
+    if (verificationModal) {
+        verificationModalInstance = new bootstrap.Modal(verificationModal);
+    }
     
     // Initialize event listeners
     initTabSwitching();
-    initFormSubmission();
+    initFormValidation();
     initVerificationCode();
     
     /**
@@ -35,146 +43,80 @@ document.addEventListener('DOMContentLoaded', function() {
         // Switch to register tab when clicking "Register Now" link
         if (switchToRegister) {
             switchToRegister.addEventListener('click', function(e) {
-        e.preventDefault();
+                e.preventDefault();
                 const registerTabEl = new bootstrap.Tab(registerTab);
                 registerTabEl.show();
-    });
+            });
         }
     
         // Switch to login tab when clicking "Login" link
         if (switchToLogin) {
             switchToLogin.addEventListener('click', function(e) {
-        e.preventDefault();
+                e.preventDefault();
                 const loginTabEl = new bootstrap.Tab(loginTab);
                 loginTabEl.show();
-    });
+            });
         }
         
         // Show forgot password modal when clicking "Forgot Password" link
-        if (forgotPasswordLink) {
-    forgotPasswordLink.addEventListener('click', function(e) {
-        e.preventDefault();
+        if (forgotPasswordLink && forgotPasswordModalInstance) {
+            forgotPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
                 forgotPasswordModalInstance.show();
-    });
+            });
         }
     }
     
     /**
-     * Initialize form submission handlers
+     * Initialize form validation
      */
-    function initFormSubmission() {
-        // Login form submission
+    function initFormValidation() {
+        // Login form validation
         if (loginForm) {
             loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
                 
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                
-                // Validate input
                 if (!email || !password) {
-                    showNotification('Vui lòng nhập đầy đủ thông tin', 'error');
-                    return;
+                    e.preventDefault();
+                    showNotification('Vui lòng nhập đầy đủ thông tin đăng nhập', 'error');
                 }
-                
-                // Simulate login process - in production, this would call an API
-                console.log('Login attempt with:', { email, password });
-                
-                // For demo: simulate successful login
-                showNotification('Đăng nhập thành công!', 'success');
-                
-                // Redirect to home page after short delay
-                setTimeout(() => {
-                    window.location.href = 'Home.html';
-                }, 1500);
             });
         }
         
-        // Register form submission
+        // Register form validation
         if (registerForm) {
             registerForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const fullName = document.getElementById('fullName').value;
-                const email = document.getElementById('email').value;
-                const phone = document.getElementById('phone').value;
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const confirmPassword = document.getElementById('confirmPassword').value.trim();
                 const agreeTerms = document.getElementById('agreeTerms').checked;
                 
-                // Validate input
                 if (!fullName || !email || !phone || !password || !confirmPassword) {
+                    e.preventDefault();
                     showNotification('Vui lòng nhập đầy đủ thông tin', 'error');
                     return;
                 }
                 
                 if (password !== confirmPassword) {
+                    e.preventDefault();
                     showNotification('Mật khẩu không khớp', 'error');
-            return;
-        }
-        
+                    return;
+                }
+                
+                if (password.length < 8) {
+                    e.preventDefault();
+                    showNotification('Mật khẩu phải có ít nhất 8 ký tự', 'error');
+                    return;
+                }
+                
                 if (!agreeTerms) {
+                    e.preventDefault();
                     showNotification('Vui lòng đồng ý với điều khoản sử dụng', 'error');
                     return;
                 }
-                
-                // Simulate registration process - in production, this would call an API
-                console.log('Registration attempt with:', { fullName, email, phone, password });
-        
-                // Show verification modal for confirmation code
-                document.getElementById('verificationContact').textContent = email;
-                verificationModalInstance.show();
-            });
-        }
-        
-        // Forgot password form submission
-        const recoverButton = document.getElementById('recoverButton');
-        if (recoverButton) {
-            recoverButton.addEventListener('click', function() {
-                const recoveryContact = document.getElementById('recoveryContact').value;
-                
-                if (!recoveryContact) {
-                    showNotification('Vui lòng nhập email hoặc số điện thoại', 'error');
-                    return;
-                }
-                
-                // Simulate sending recovery email/SMS - in production, this would call an API
-                console.log('Password recovery attempt for:', recoveryContact);
-                
-                // Close modal and show notification
-                forgotPasswordModalInstance.hide();
-                showNotification(`Mã xác nhận đã được gửi đến ${recoveryContact}`, 'success');
-            });
-        }
-        
-        // Verification form submission
-        const verifyButton = document.getElementById('verifyButton');
-        if (verifyButton) {
-            verifyButton.addEventListener('click', function() {
-                // Get verification code
-                const codeInputs = document.querySelectorAll('.verificationCode');
-                let code = '';
-                codeInputs.forEach(input => {
-                    code += input.value;
-                });
-                
-                if (code.length !== 6) {
-                    showNotification('Vui lòng nhập đủ mã xác nhận', 'error');
-                    return;
-                }
-                
-                // Simulate code verification - in production, this would call an API
-                console.log('Verification code submitted:', code);
-                
-                // Close modal and show success
-                verificationModalInstance.hide();
-                showNotification('Đăng ký thành công!', 'success');
-        
-                // Redirect to login tab after short delay
-                setTimeout(() => {
-                    const loginTabEl = new bootstrap.Tab(loginTab);
-                    loginTabEl.show();
-                }, 1500);
             });
         }
     }
@@ -187,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         codeInputs.forEach((input, index) => {
             // Focus on first input when modal is shown
-            if (index === 0) {
+            if (index === 0 && verificationModal) {
                 verificationModal.addEventListener('shown.bs.modal', function() {
                     input.focus();
                 });
@@ -216,40 +158,61 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (resendCodeLink) {
             resendCodeLink.addEventListener('click', function(e) {
-    e.preventDefault();
+                e.preventDefault();
                 
                 // Hide resend link and show countdown
-                resendCodeText.classList.add('d-none');
-                countdownText.classList.remove('d-none');
+                if (resendCodeText) resendCodeText.classList.add('d-none');
+                if (countdownText) countdownText.classList.remove('d-none');
                 
                 // Start countdown
                 let seconds = 60;
-                countdownTimer.textContent = seconds;
+                if (countdownTimer) countdownTimer.textContent = seconds;
                 
                 const countdownInterval = setInterval(function() {
                     seconds--;
-                    countdownTimer.textContent = seconds;
+                    if (countdownTimer) countdownTimer.textContent = seconds;
                     
                     if (seconds <= 0) {
                         clearInterval(countdownInterval);
-                        resendCodeText.classList.remove('d-none');
-                        countdownText.classList.add('d-none');
+                        if (resendCodeText) resendCodeText.classList.remove('d-none');
+                        if (countdownText) countdownText.classList.add('d-none');
                     }
                 }, 1000);
                 
-                // Simulate resending code - in production, this would call an API
-                console.log('Resending verification code');
-                showNotification('Mã xác nhận mới đã được gửi', 'success');
+                // Send AJAX request to resend code
+                fetch('index.php?controller=login&action=resendCode', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification(data.message, data.success ? 'success' : 'error');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Đã xảy ra lỗi khi gửi lại mã. Vui lòng thử lại sau.', 'error');
+                });
             });
         }
     }
     
     /**
-     * Show notification message
-     * @param {string} message - The message to display
-     * @param {string} type - The type of notification (success, error, info)
+     * Helper function to move to next input field in verification code
      */
-    function showNotification(message, type) {
+    window.moveToNext = function(input) {
+        if (input.value.length === input.maxLength) {
+            const fieldIndex = Array.from(document.querySelectorAll('.verificationCode')).indexOf(input);
+            const nextField = document.querySelectorAll('.verificationCode')[fieldIndex + 1];
+            
+            if (nextField) {
+                nextField.focus();
+            }
+        }
+    };
+    
+    /**
+     * Show notification message
+     */
+    window.showNotification = function(message, type) {
         // Look for existing toast container or create one
         let toastContainer = document.querySelector('.toast-container');
         
@@ -261,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Create toast element
         const toastEl = document.createElement('div');
-        toastEl.className = `toast align-items-center text-white bg-${type === 'success' ? 'dark' : 'danger'}`;
+        toastEl.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'}`;
         toastEl.setAttribute('role', 'alert');
         toastEl.setAttribute('aria-live', 'assertive');
         toastEl.setAttribute('aria-atomic', 'true');
@@ -292,20 +255,4 @@ document.addEventListener('DOMContentLoaded', function() {
             toastEl.remove();
         });
     }
-    
-    /**
-     * Helper function to move to next input field
-     * This is used by the verification code inputs
-     * @param {HTMLElement} input - The current input element
-     */
-    window.moveToNext = function(input) {
-        if (input.value.length === input.maxLength) {
-            const fieldIndex = Array.from(document.querySelectorAll('.verificationCode')).indexOf(input);
-            const nextField = document.querySelectorAll('.verificationCode')[fieldIndex + 1];
-            
-            if (nextField) {
-                nextField.focus();
-}
-        }
-    };
 });

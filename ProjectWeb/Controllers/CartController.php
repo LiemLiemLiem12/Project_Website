@@ -2,23 +2,41 @@
 class CartController extends BaseController
 {
     private $productModel;
+    private $cartModel;
 
     public function __construct()
     {
-         parent::__construct();
+        parent::__construct();
         
-        // Sau đó khởi tạo các model riêng
+        // Khởi tạo các model cần thiết
         $this->loadModel('ProductModel');
         $this->productModel = new ProductModel();
+        
+        // Khởi tạo CartModel nếu file tồn tại
+        if (file_exists('./Models/CartModel.php')) {
+            $this->loadModel('CartModel');
+            $this->cartModel = new CartModel();
+        }
+        //     if (!$this->isLoggedIn()) {
+        // // Chưa đăng nhập, chuyển hướng đến trang đăng nhập
+        // $this->redirectWithMessage('index.php?controller=login', 
+        //     'Vui lòng đăng nhập để tiếp tục', 'warning');
+    // }
+     if (!isset($_SESSION['user'])) {
+        $this->redirectWithMessage('index.php?controller=login', 
+            'Vui lòng đăng nhập để sử dụng giỏ hàng', 'warning');
+        exit;
+    }
     }
 
-    // Display Cart Page
+    // Hiển thị trang giỏ hàng
     public function index()
     {
         $cart = $_SESSION['cart'] ?? [];
         $cartItems = [];
         $total = 0;
-        $number=0;
+        $number = 0;
+        
         foreach ($cart as $item) {
             $product = $this->productModel->findById($item['product_id']);
             if ($product) {
@@ -30,7 +48,7 @@ class CartController extends BaseController
                     'subtotal' => $subtotal,
                 ];
                 $total += $subtotal;
-                $number+=$item['quantity'];
+                $number += $item['quantity'];
             }
         }
 
@@ -38,11 +56,11 @@ class CartController extends BaseController
             'cartItems' => $cartItems,
             'total' => $total,
             'itemCount' => count($cartItems),
-            'number'=> $number,
+            'number' => $number,
         ]);
     }
 
-    // Add Product to Cart
+    // Thêm sản phẩm vào giỏ hàng
     public function add()
     {
         $productId = $_GET['id'] ?? null;
@@ -50,13 +68,13 @@ class CartController extends BaseController
         $size = $_GET['size'] ?? 'M';
 
         if (!$productId || $quantity <= 0) {
-            $this->redirectWithMessage('index.php?controller=product&action=show&id=' . $productId, 'Invalid product information!', 'error');
+            $this->redirectWithMessage('index.php?controller=product&action=show&id=' . $productId, 'Thông tin sản phẩm không hợp lệ!', 'error');
             return;
         }
 
         $product = $this->productModel->findById($productId);
         if (!$product) {
-            $this->redirectWithMessage('index.php', 'Product not found!', 'error');
+            $this->redirectWithMessage('index.php', 'Không tìm thấy sản phẩm!', 'error');
             return;
         }
 
@@ -79,15 +97,32 @@ class CartController extends BaseController
             ];
         }
 
-        $this->redirectWithMessage('index.php?controller=cart&action=index', 'Product added to cart!', 'success');
+        // Nếu người dùng đã đăng nhập và CartModel đã được tải, cập nhật giỏ hàng trong DB
+        if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && isset($this->cartModel)) {
+            $userId = $_SESSION['user']['id_User'];
+            
+            // Kiểm tra xem sản phẩm đã có trong giỏ hàng của người dùng chưa
+            $existingItem = $this->cartModel->getCartItem($userId, $productId, $size);
+            
+            if ($existingItem) {
+                // Nếu đã có, cập nhật số lượng
+                $newQuantity = $existingItem['quantity'] + $quantity;
+                $this->cartModel->updateCartItem($userId, $productId, $size, $newQuantity);
+            } else {
+                // Nếu chưa có, thêm mới
+                $this->cartModel->addCartItem($userId, $productId, $quantity, $size);
+            }
+        }
+
+        $this->redirectWithMessage('index.php?controller=cart&action=index', 'Đã thêm sản phẩm vào giỏ hàng!', 'success');
     }
 
-     /**
- * Handle "Buy Now" functionality - add product directly to cart and redirect to checkout
- */
+    /**
+     * Mua ngay - thêm sản phẩm vào giỏ và chuyển đến trang thanh toán
+     */
     public function buyNow()
     {
-        // Check request method
+        // Kiểm tra phương thức yêu cầu
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'GET') {
             $this->jsonResponse([
                 'success' => false,
@@ -96,7 +131,7 @@ class CartController extends BaseController
             return;
         }
         
-        // Get product info - support both POST and GET for flexibility
+        // Lấy thông tin sản phẩm - hỗ trợ cả POST và GET
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 
                         (isset($_POST['id']) ? (int)$_POST['id'] : 0);
@@ -109,7 +144,7 @@ class CartController extends BaseController
             $size = isset($_GET['size']) ? $_GET['size'] : 'M';
         }
         
-        // Validate product ID
+        // Xác thực ID sản phẩm
         if (!$productId) {
             $this->jsonResponse([
                 'success' => false,
@@ -118,13 +153,13 @@ class CartController extends BaseController
             return;
         }
         
-        // Load product model if not already loaded
+        // Tải model sản phẩm nếu chưa được tải
         if (!isset($this->productModel)) {
             $this->loadModel('ProductModel');
             $this->productModel = new ProductModel();
         }
         
-        // Get product information
+        // Lấy thông tin sản phẩm
         $product = $this->productModel->findById($productId);
         
         if (!$product) {
@@ -135,12 +170,12 @@ class CartController extends BaseController
             return;
         }
         
-        // Validate quantity
+        // Xác thực số lượng
         if ($quantity <= 0) {
-            $quantity = 1; // Set default quantity if invalid
+            $quantity = 1; // Đặt số lượng mặc định nếu không hợp lệ
         }
         
-        // Check stock availability
+        // Kiểm tra tồn kho
         if ($product[$size] < $quantity) {
             $this->jsonResponse([
                 'success' => false,
@@ -149,18 +184,18 @@ class CartController extends BaseController
             return;
         }
         
-        // Start session if not already started
+        // Khởi tạo session nếu chưa có
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Generate a unique key for this product + size combination
-        $cartKey = $productId . '-' . $size;
+        // Tạo khóa duy nhất cho sản phẩm này + kích thước
+        $cartKey = $productId . '_' . $size;
         
-        // Clear the cart and add only this item
+        // Xóa giỏ hàng và chỉ thêm mục này
         $_SESSION['cart'] = [];
         
-        // Add the item to cart
+        // Thêm sản phẩm vào giỏ hàng
         $_SESSION['cart'][$cartKey] = [
             'product_id' => $productId,
             'quantity' => $quantity,
@@ -170,28 +205,42 @@ class CartController extends BaseController
             'image' => $product['main_image']
         ];
         
-        // Set a flag to indicate this is a "Buy Now" order
+        // Đặt cờ để chỉ ra rằng đây là đơn đặt hàng "Mua ngay"
         $_SESSION['buy_now'] = true;
         
-        // Return success response with redirect information
+        // Nếu người dùng đã đăng nhập và CartModel đã được tải, cập nhật giỏ hàng trong DB
+        if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && isset($this->cartModel)) {
+            $userId = $_SESSION['user']['id_User'];
+            
+            // Xóa giỏ hàng hiện tại của người dùng
+            $this->cartModel->clearCart($userId);
+            
+            // Thêm sản phẩm mới vào giỏ hàng của người dùng
+            $this->cartModel->addCartItem($userId, $productId, $quantity, $size);
+        }
+        
+        // Trả về phản hồi thành công với thông tin chuyển hướng
         $this->jsonResponse([
             'success' => true,
             'message' => 'Đang chuyển đến trang đặt hàng...',
             'redirect' => 'index.php?controller=order',
-            'cart_count' => 1 // Always 1 for "Buy Now"
+            'cart_count' => 1 // Luôn là 1 cho "Mua ngay"
         ]);
     }
 
-/**
- * Helper function to send JSON response
- */
+    /**
+     * Hàm hỗ trợ để gửi phản hồi JSON
+     */
     private function jsonResponse($data)
     {
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;
     }
-    // Update Product in Cart
+    
+    /**
+     * Cập nhật sản phẩm trong giỏ hàng
+     */
     public function update()
     {
         $productId = $_POST['product_id'] ?? null;
@@ -199,119 +248,223 @@ class CartController extends BaseController
         $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 0;
 
         if (!$productId || !$size) {
-            $this->redirectWithMessage('index.php?controller=cart&action=index', 'Invalid product information!', 'error');
+            $this->redirectWithMessage('index.php?controller=cart&action=index', 'Thông tin sản phẩm không hợp lệ!', 'error');
             return;
         }
 
-        foreach ($_SESSION['cart'] as &$item) {
-            if ($item['product_id'] == $productId && $item['size'] == $size) {
-                if ($quantity <= 0) {
-                    unset($item);
+        $itemKey = $productId . '_' . $size;
+        
+        if ($quantity <= 0) {
+            // Nếu số lượng <= 0, xóa sản phẩm khỏi giỏ hàng
+            if (isset($_SESSION['cart'][$itemKey])) {
+                unset($_SESSION['cart'][$itemKey]);
+            }
+            
+            // Nếu người dùng đã đăng nhập và CartModel đã được tải, xóa sản phẩm khỏi DB
+            if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && isset($this->cartModel)) {
+                $userId = $_SESSION['user']['id_User'];
+                $this->cartModel->removeCartItem($userId, $productId, $size);
+            }
+        } else {
+            // Cập nhật số lượng trong session
+            if (isset($_SESSION['cart'][$itemKey])) {
+                $_SESSION['cart'][$itemKey]['quantity'] = $quantity;
+            }
+            
+            // Nếu người dùng đã đăng nhập và CartModel đã được tải, cập nhật số lượng trong DB
+            if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && isset($this->cartModel)) {
+                $userId = $_SESSION['user']['id_User'];
+                
+                // Kiểm tra xem sản phẩm đã có trong giỏ hàng của người dùng chưa
+                $existingItem = $this->cartModel->getCartItem($userId, $productId, $size);
+                
+                if ($existingItem) {
+                    // Nếu đã có, cập nhật số lượng
+                    $this->cartModel->updateCartItem($userId, $productId, $size, $quantity);
                 } else {
-                    $item['quantity'] = $quantity;
+                    // Nếu chưa có, thêm mới
+                    $this->cartModel->addCartItem($userId, $productId, $quantity, $size);
                 }
-                break;
             }
         }
 
-        $this->redirectWithMessage('index.php?controller=cart&action=index', 'Cart updated!', 'success');
+        $this->redirectWithMessage('index.php?controller=cart&action=index', 'Giỏ hàng đã được cập nhật!', 'success');
     }
 
-    // Remove Product from Cart
+    /**
+     * Xóa sản phẩm khỏi giỏ hàng
+     */
     public function delete()
     {
         $productId = $_GET['product_id'] ?? null;
         $size = $_GET['size'] ?? 'M';
 
-        foreach ($_SESSION['cart'] as $key => $item) {
-            if ($item['product_id'] == $productId && $item['size'] == $size) {
-                unset($_SESSION['cart'][$key]);
-                break;
-            }
+        if (!$productId || !$size) {
+            $this->redirectWithMessage('index.php?controller=cart&action=index', 'Thông tin sản phẩm không hợp lệ!', 'error');
+            return;
         }
 
-        $this->redirectWithMessage('index.php?controller=cart&action=index', 'Product removed from cart!', 'success');
-    }
-private function redirectWithMessage($url, $message, $type = 'success')
-{
-    $_SESSION['flash_message'] = [
-        'message' => $message,
-        'type' => $type
-    ];
-    header("Location: $url");
-    exit();
-}
+        $itemKey = $productId . '_' . $size;
+        
+        // Xóa sản phẩm khỏi session
+        if (isset($_SESSION['cart'][$itemKey])) {
+            unset($_SESSION['cart'][$itemKey]);
+        }
+        
+        // Nếu người dùng đã đăng nhập và CartModel đã được tải, xóa sản phẩm khỏi DB
+        if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && isset($this->cartModel)) {
+            $userId = $_SESSION['user']['id_User'];
+            $this->cartModel->removeCartItem($userId, $productId, $size);
+        }
 
-    // Clear Cart
+        $this->redirectWithMessage('index.php?controller=cart&action=index', 'Đã xóa sản phẩm khỏi giỏ hàng!', 'success');
+    }
+
+    /**
+     * Chuyển hướng với thông báo
+     */
+    private function redirectWithMessage($url, $message, $type = 'success')
+    {
+        $_SESSION['flash_message'] = [
+            'message' => $message,
+            'type' => $type
+        ];
+        header("Location: $url");
+        exit();
+    }
+
+    /**
+     * Xóa giỏ hàng
+     */
     public function clear()
     {
+        // Xóa giỏ hàng trong session
         $_SESSION['cart'] = [];
-        $this->redirectWithMessage('index.php?controller=cart&action=index', 'Cart cleared!', 'success');
+        
+        // Nếu người dùng đã đăng nhập và CartModel đã được tải, xóa giỏ hàng trong DB
+        if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && isset($this->cartModel)) {
+            $userId = $_SESSION['user']['id_User'];
+            $this->cartModel->clearCart($userId);
+        }
+        
+        $this->redirectWithMessage('index.php?controller=cart&action=index', 'Giỏ hàng đã được xóa!', 'success');
     }
-    public function getCount()
+
+    /**
+     * Lấy số lượng sản phẩm trong giỏ hàng (sử dụng cho AJAX)
+     */
+    /**
+ * Lấy số lượng sản phẩm trong giỏ hàng (sử dụng cho AJAX)
+ */
+public function getCount()
 {
-    // Ensure this is an AJAX request
+    // Đảm bảo đây là yêu cầu AJAX
     if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
         header('HTTP/1.0 403 Forbidden');
         exit;
     }
     
-    // Get cart from session
+    // Lấy giỏ hàng từ session
     $cart = $_SESSION['cart'] ?? [];
     
-    // Calculate total items
+    // Nếu người dùng đã đăng nhập, đảm bảo giỏ hàng từ database đã được tải
+    if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && empty($cart)) {
+        $userId = $_SESSION['user']['id_User'];
+        $userCart = $this->cartModel->getUserCart($userId);
+        
+        foreach ($userCart as $item) {
+            $itemKey = $item['id_Product'] . '_' . $item['size'];
+            $cart[$itemKey] = [
+                'product_id' => $item['id_Product'],
+                'quantity' => $item['quantity'],
+                'size' => $item['size']
+            ];
+        }
+        
+        // Cập nhật session
+        $_SESSION['cart'] = $cart;
+    }
+    
+    // Tính tổng số sản phẩm
     $totalItems = 0;
     foreach ($cart as $item) {
         $totalItems += $item['quantity'];
     }
     
-    // Return JSON response
+    // Trả về phản hồi JSON
     header('Content-Type: application/json');
     echo json_encode(['count' => $totalItems]);
     exit;
 }
 
-/**
- * Method to update cart items via AJAX
- */
-public function updateItem()
-{
-    // Ensure this is an AJAX request
-    if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
-        header('HTTP/1.0 403 Forbidden');
-        exit;
-    }
-    
-    $productId = $_POST['product_id'] ?? null;
-    $size = $_POST['size'] ?? 'M';
-    $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 0;
-    
-    if (!$productId || !$size) {
-        echo json_encode(['success' => false, 'message' => 'Invalid product information!']);
-        exit;
-    }
-    
-    $itemKey = $productId . '_' . $size;
-    
-    if ($quantity <= 0) {
-        unset($_SESSION['cart'][$itemKey]);
-    } else {
-        if (isset($_SESSION['cart'][$itemKey])) {
-            $_SESSION['cart'][$itemKey]['quantity'] = $quantity;
+    /**
+     * Cập nhật số lượng sản phẩm qua AJAX
+     */
+    public function updateItem()
+    {
+        // Đảm bảo đây là yêu cầu AJAX
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
+            header('HTTP/1.0 403 Forbidden');
+            exit;
         }
+        
+        $productId = $_POST['product_id'] ?? null;
+        $size = $_POST['size'] ?? 'M';
+        $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 0;
+        
+        if (!$productId || !$size) {
+            echo json_encode(['success' => false, 'message' => 'Thông tin sản phẩm không hợp lệ!']);
+            exit;
+        }
+        
+        $itemKey = $productId . '_' . $size;
+        
+        if ($quantity <= 0) {
+            // Nếu số lượng <= 0, xóa sản phẩm khỏi giỏ hàng
+            if (isset($_SESSION['cart'][$itemKey])) {
+                unset($_SESSION['cart'][$itemKey]);
+            }
+            
+            // Nếu người dùng đã đăng nhập và CartModel đã được tải, xóa sản phẩm khỏi DB
+            if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && isset($this->cartModel)) {
+                $userId = $_SESSION['user']['id_User'];
+                $this->cartModel->removeCartItem($userId, $productId, $size);
+            }
+        } else {
+            // Cập nhật số lượng trong session
+            if (isset($_SESSION['cart'][$itemKey])) {
+                $_SESSION['cart'][$itemKey]['quantity'] = $quantity;
+            }
+            
+            // Nếu người dùng đã đăng nhập và CartModel đã được tải, cập nhật số lượng trong DB
+            if (isset($_SESSION['user'], $_SESSION['user']['id_User']) && isset($this->cartModel)) {
+                $userId = $_SESSION['user']['id_User'];
+                
+                // Kiểm tra xem sản phẩm đã có trong giỏ hàng của người dùng chưa
+                $existingItem = $this->cartModel->getCartItem($userId, $productId, $size);
+                
+                if ($existingItem) {
+                    // Nếu đã có, cập nhật số lượng
+                    $this->cartModel->updateCartItem($userId, $productId, $size, $quantity);
+                } else {
+                    // Nếu chưa có, thêm mới
+                    $this->cartModel->addCartItem($userId, $productId, $quantity, $size);
+                }
+            }
+        }
+        
+        // Tính tổng số sản phẩm
+        $totalItems = 0;
+        foreach ($_SESSION['cart'] as $item) {
+            $totalItems += $item['quantity'];
+        }
+        
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Giỏ hàng đã được cập nhật!',
+            'count' => $totalItems
+        ]);
+        exit;
     }
     
-    // Calculate total items
-    $totalItems = 0;
-    foreach ($_SESSION['cart'] as $item) {
-        $totalItems += $item['quantity'];
-    }
-    
-    echo json_encode([
-        'success' => true, 
-        'message' => 'Cart updated!',
-        'count' => $totalItems
-    ]);
-    exit;
-}
 }
