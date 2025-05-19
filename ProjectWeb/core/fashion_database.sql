@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 17, 2025 lúc 05:09 PM
+-- Thời gian đã tạo: Th5 19, 2025 lúc 05:42 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -42,7 +42,8 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `id_User`, `id_Product`, `quantity`, `size`, `created_at`, `updated_at`) VALUES
-(8, 6, 35, 6, 'XL', '2025-05-17 16:55:13', '2025-05-17 21:55:13');
+(25, 6, 35, 6, 'L', '2025-05-17 22:34:42', '2025-05-18 03:58:50'),
+(29, 14, 35, 4, 'L', '2025-05-19 17:02:53', '2025-05-19 22:02:53');
 
 -- --------------------------------------------------------
 
@@ -87,6 +88,7 @@ CREATE TABLE `order` (
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `id_User` int(11) DEFAULT NULL,
+  `shipping_address_id` int(11) DEFAULT NULL COMMENT 'ID địa chỉ giao hàng',
   `note` text DEFAULT NULL,
   `shipping_fee` decimal(10,2) DEFAULT NULL,
   `hide` int(11) NOT NULL DEFAULT 0
@@ -96,17 +98,24 @@ CREATE TABLE `order` (
 -- Đang đổ dữ liệu cho bảng `order`
 --
 
-INSERT INTO `order` (`id_Order`, `order_number`, `total_amount`, `payment_by`, `shipping_method`, `status`, `created_at`, `updated_at`, `id_User`, `note`, `shipping_fee`, `hide`) VALUES
-(1, NULL, 315000.00, NULL, NULL, 'pending', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 1, NULL, NULL, 0),
-(2, NULL, 400000.00, NULL, NULL, 'completed', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 2, NULL, NULL, 0),
-(3, NULL, 595000.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 3, NULL, NULL, 0),
-(4, NULL, 427500.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 4, NULL, NULL, 0),
-(5, NULL, 225000.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 5, NULL, NULL, 0),
-(6, NULL, 12.00, NULL, NULL, 'completed', '2025-05-02 18:56:30', '2025-05-13 02:51:10', 1, NULL, NULL, 0),
-(7, NULL, 1000000.00, NULL, NULL, 'shipping', '2025-05-02 13:05:02', '2025-05-13 02:51:10', 3, NULL, NULL, 0),
-(8, NULL, 1000000.00, NULL, NULL, 'pending', '2025-02-09 13:05:23', '2025-05-13 02:51:10', 3, NULL, NULL, 0),
-(9, NULL, 10000000.00, NULL, NULL, 'completed', '2025-04-16 13:36:31', '2025-05-13 02:51:10', 5, NULL, NULL, 0),
-(10, NULL, 10000000.00, NULL, NULL, 'completed', '2025-04-17 21:57:49', '2025-05-13 02:51:10', 1, NULL, NULL, 0);
+INSERT INTO `order` (`id_Order`, `order_number`, `total_amount`, `payment_by`, `shipping_method`, `status`, `created_at`, `updated_at`, `id_User`, `shipping_address_id`, `note`, `shipping_fee`, `hide`) VALUES
+(1, NULL, 315000.00, NULL, NULL, 'pending', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
+(2, NULL, 400000.00, NULL, NULL, 'completed', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 2, NULL, NULL, NULL, 0),
+(3, NULL, 595000.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
+(4, NULL, 427500.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 4, NULL, NULL, NULL, 0),
+(5, NULL, 225000.00, NULL, NULL, 'cancelled', '2025-05-01 14:25:49', '2025-05-13 02:51:10', 5, NULL, NULL, NULL, 0),
+(6, NULL, 12.00, NULL, NULL, 'completed', '2025-05-02 18:56:30', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
+(7, NULL, 1000000.00, NULL, NULL, 'shipping', '2025-05-02 13:05:02', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
+(8, NULL, 1000000.00, NULL, NULL, 'pending', '2025-02-09 13:05:23', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
+(9, NULL, 10000000.00, NULL, NULL, 'completed', '2025-04-16 13:36:31', '2025-05-13 02:51:10', 5, NULL, NULL, NULL, 0),
+(10, NULL, 10000000.00, NULL, NULL, 'completed', '2025-04-17 21:57:49', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
+(14, 'SR202505178641', 331100.00, 'cod', 'ghn', 'pending', '2025-05-17 19:14:49', '2025-05-18 00:14:49', 6, NULL, 'Minh Quân - 0783318569 - liem@ - Đà Lạt, 79101, 791, 79 | Xin chàoo', 35000.00, 0),
+(15, 'SR202505176086', 331100.00, 'cod', 'ghn', 'pending', '2025-05-17 19:32:28', '2025-05-18 00:32:28', 6, NULL, 'Minh Quân - 0785054969 - liem@ - Đà Lạt, 79001, 790, 79 | Xin Chàooo', 35000.00, 0),
+(16, 'SR202505176903', 331100.00, 'cod', 'ghn', 'pending', '2025-05-17 21:06:44', '2025-05-18 02:06:44', 6, NULL, 'Minh Quân - 1234567890 - liem@ - 123, 79001, 790, 79 | dfsaf', 35000.00, 0),
+(17, 'SR202505173443', 331100.00, 'cod', 'ghn', 'pending', '2025-05-17 21:07:11', '2025-05-18 02:07:11', 6, NULL, 'Minh Quân - 1234567890 - liem@ - 123, 79102, 791, 79 | dsf', 35000.00, 0),
+(18, 'SR202505174919', 1811600.00, 'cod', 'ghn', 'pending', '2025-05-17 22:34:17', '2025-05-18 03:34:17', 6, NULL, 'Minh Quân - 123 - liem@ - 123, 79001, 790, 79', 35000.00, 0),
+(19, 'SR202505194798', 1811600.00, 'cod', 'ghn', 'pending', '2025-05-19 15:39:26', '2025-05-19 20:39:26', 12, NULL, 'Minh Quân - 0783318539 - nguyentranminhquan02062005@gmail.com - Đà Lạt, 79003, 790, 79 | dsfgdsfdsfgdsfgdfsfg', 35000.00, 0),
+(20, 'SR202505196032', 3630500.00, 'cod', 'ghn', 'pending', '2025-05-19 15:44:15', '2025-05-19 20:44:15', 12, NULL, 'Minh Quân - 0783318539 - nguyentranminhquan02062005@gmail.com - Đà Lạt, 79102, 791, 79 | dfgfdg', 35000.00, 0);
 
 -- --------------------------------------------------------
 
@@ -118,9 +127,18 @@ CREATE TABLE `order_detail` (
   `id_Order` int(11) NOT NULL,
   `id_Product` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
-  `size` varchar(10) DEFAULT NULL,
+  `size` varchar(10) NOT NULL,
   `sub_total` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order_detail`
+--
+
+INSERT INTO `order_detail` (`id_Order`, `id_Product`, `quantity`, `size`, `sub_total`) VALUES
+(19, 35, 6, 'M', 1776600.00),
+(20, 34, 4, 'L', 2397000.00),
+(20, 34, 2, 'XL', 1198500.00);
 
 -- --------------------------------------------------------
 
@@ -162,8 +180,8 @@ CREATE TABLE `product` (
 INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `link`, `meta`, `hide`, `order`, `click_count`, `store`, `img2`, `img3`, `tag`, `CSDoiTra`, `CSGiaoHang`, `M`, `L`, `XL`) VALUES
 (32, 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 'Áo polo nam với công nghệ Procool và chi tiết seam sealing hiện đại, mang đến sự thoải mái và phong cách thời trang.', 329000.00, 15, 279650.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item1.webp', 'ao-polo-nam-procool-icondenim-seam-sealing', 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 0, 1, 0, 0, '', '', 'áo polo, nam giới, procool', 'Có', 'Có', 10, 10, 10),
 (33, 'Áo Thun Nam ICONDENIM Atheltics Champion', 'Áo thun thể thao với thiết kế năng động, chất liệu thoáng mát phù hợp cho vận động và sinh hoạt hàng ngày.', 299000.00, 20, 239200.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item8.webp', 'ao-thun-nam-icondenim-atheltics-champion', 'Áo Thun Nam ICONDENIM Atheltics Champion', 0, 2, 0, 0, '', '', 'áo thun, nam giới, thể thao', 'Có', 'Có', 10, 10, 10),
-(34, 'Set Đồ Nam ICONDENIM Rugby Football', 'Bộ đồ thể thao phong cách rugby football, chất liệu cao cấp mang đến sự thoải mái tối đa khi vận động.', 799000.00, 25, 599250.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item9.webp', 'set-do-nam-icondenim-rugby-football', 'Set Đồ Nam ICONDENIM Rugby Football', 0, 3, 0, 0, '', '', 'set đồ, nam giới, thể thao', 'Có', 'Có', 10, 10, 10),
-(35, 'Áo Polo Nam ICONDENIM Horizontal Stripped', 'Áo polo sọc ngang thời trang, thiết kế trẻ trung, phù hợp cho cả môi trường công sở và dạo phố.', 329000.00, 10, 296100.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item10.webp', 'ao-polo-nam-icondenim-horizontal-stripped', 'Áo Polo Nam ICONDENIM Horizontal Stripped', 0, 4, 0, 0, '', '', 'áo polo, nam giới, sọc ngang', 'Có', 'Có', 10, 10, 10),
+(34, 'Set Đồ Nam ICONDENIM Rugby Football', 'Bộ đồ thể thao phong cách rugby football, chất liệu cao cấp mang đến sự thoải mái tối đa khi vận động.', 799000.00, 25, 599250.00, '2025-05-11 20:14:04', '2025-05-19 20:44:15', 1, 'item9.webp', 'set-do-nam-icondenim-rugby-football', 'Set Đồ Nam ICONDENIM Rugby Football', 0, 3, 0, 0, '', '', 'set đồ, nam giới, thể thao', 'Có', 'Có', 10, 6, 8),
+(35, 'Áo Polo Nam ICONDENIM Horizontal Stripped', 'Áo polo sọc ngang thời trang, thiết kế trẻ trung, phù hợp cho cả môi trường công sở và dạo phố.', 329000.00, 10, 296100.00, '2025-05-11 20:14:04', '2025-05-19 20:39:26', 1, 'item10.webp', 'ao-polo-nam-icondenim-horizontal-stripped', 'Áo Polo Nam ICONDENIM Horizontal Stripped', 0, 4, 0, 0, '', '', 'áo polo, nam giới, sọc ngang', 'Có', 'Có', 4, 6, 4),
 (36, 'Áo Thun Nam ICONDENIM Edge Striped', 'Áo thun với chi tiết sọc viền độc đáo, thiết kế hiện đại, chất liệu cotton thoáng mát.', 299000.00, 15, 254150.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item1.webp', 'ao-thun-nam-icondenim-edge-striped', 'Áo Thun Nam ICONDENIM Edge Striped', 0, 5, 0, 0, '', '', 'áo thun, nam giới, sọc viền', 'Có', 'Có', 10, 10, 10),
 (37, 'Áo Thun Nam Procool ICONDENIM Seam Sealing', 'Áo thun công nghệ Procool với chi tiết seam sealing, mang đến sự khô thoáng và thoải mái suốt cả ngày.', 299000.00, 20, 239200.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item2.webp', 'ao-thun-nam-procool-icondenim-seam-sealing', 'Áo Thun Nam Procool ICONDENIM Seam Sealing', 0, 6, 0, 0, '', '', 'áo thun, nam giới, procool', 'Có', 'Có', 10, 10, 10),
 (38, 'Quần Jean Nam Procool ICONDENIM CoolMax Black Slim', 'Quần jean đen ôm với công nghệ CoolMax, mang đến sự thoải mái và phong cách trong mọi hoạt động.', 549000.00, 10, 494100.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'upload/img/Home/item3.webp', 'quan-jean-nam-procool-icondenim-coolmax-black-slim', 'Quần Jean Nam Procool ICONDENIM CoolMax Black Slim', 0, 7, 0, 0, '', '', 'quần jean, nam giới, slim fit', 'Có', 'Có', 10, 10, 10),
@@ -293,11 +311,32 @@ INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, 
 (6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', '820775', 0, NULL, NULL, '2025-04-15 21:59:36', '2025-05-17 21:19:24', NULL),
 (7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', NULL, 0, NULL, NULL, '2025-04-16 08:00:00', '2025-05-02 22:01:25', NULL),
 (8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', NULL, 0, NULL, NULL, '2025-04-16 09:15:00', '2025-05-02 22:01:25', NULL),
-(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', NULL, 0, NULL, NULL, '2025-04-16 10:30:00', '2025-05-02 22:01:25', NULL);
-(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', NULL, 0, NULL, NULL, '2025-04-15 21:59:36', '2025-05-02 22:00:43', 0),
-(7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', NULL, 0, NULL, NULL, '2025-04-16 08:00:00', '2025-05-02 22:01:25', 0),
-(8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', NULL, 0, NULL, NULL, '2025-04-16 09:15:00', '2025-05-02 22:01:25', 0),
-(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', NULL, 0, NULL, NULL, '2025-04-16 10:30:00', '2025-05-02 22:01:25', 0);
+(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', NULL, 0, NULL, NULL, '2025-04-16 10:30:00', '2025-05-02 22:01:25', NULL),
+(11, 'Quân', 'MinhQuan@gmail.com', '12345', '0785054969', NULL, 'user', '', 1, NULL, NULL, '2025-05-17 21:21:43', '2025-05-18 02:23:57', NULL),
+(12, 'Quân', 'nguyentranminhquan02062005@gmail.com', '$2y$10$OvTenCZ/vJpojJuy6S0fzuB15no5MRZDNBQtpNs7ZTpc6dSxeAEOS', '0783318539', NULL, 'user', '31546', 1, NULL, NULL, '2025-05-17 21:36:53', '2025-05-19 17:38:12', NULL),
+(13, 'Quânnguyen', 'nguyentranminhquan.dl2018@gmail.com', '$2y$10$mFqRigHSQ27dqoVksWwbxO6qPoRXXFkDM21kKaMjYiptGmI4vOJfK', '0783318579', NULL, 'user', '09496', 1, '4dcc271a54f24b002d5ea599011d123958fa6ae7961b6f4001673e1b69acb6ae', '2025-05-19 12:09:34', '2025-05-17 21:46:42', '2025-05-19 16:09:34', NULL),
+(14, 'Thanh Liêm', 'tranthanhliemvvt@gmail.com', '$2y$10$oLzYH2zQSSkwgD5zx5D5IeMHDQXzLndevfVkyzSo3WgoqfrlaCLJa', '1234567890', NULL, 'user', '40485', 1, NULL, NULL, '2025-05-19 17:00:10', '2025-05-19 22:02:09', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `user_address`
+--
+
+CREATE TABLE `user_address` (
+  `id` int(11) NOT NULL,
+  `id_User` int(11) NOT NULL,
+  `address_name` varchar(100) DEFAULT NULL COMMENT 'Tên địa chỉ (Nhà, Công ty...)',
+  `receiver_name` varchar(255) NOT NULL COMMENT 'Tên người nhận',
+  `phone` varchar(20) NOT NULL COMMENT 'Số điện thoại',
+  `street_address` varchar(255) NOT NULL COMMENT 'Số nhà, tên đường',
+  `province` varchar(100) NOT NULL COMMENT 'Tỉnh/Thành phố',
+  `district` varchar(100) NOT NULL COMMENT 'Quận/Huyện',
+  `ward` varchar(100) NOT NULL COMMENT 'Phường/Xã',
+  `is_default` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Địa chỉ mặc định',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -319,7 +358,9 @@ INSERT INTO `visits` (`id`, `ip_address`, `visited_at`) VALUES
 (1, '', '2025-05-02 21:14:27'),
 (2, '::1', '2025-05-02 21:17:50'),
 (3, '127.0.0.1', '2025-05-02 21:22:12'),
-(4, '127.0.0.1', '2025-05-02 21:30:24');
+(4, '127.0.0.1', '2025-05-02 21:30:24'),
+(5, '::1', '2025-05-18 01:25:07'),
+(6, '::1', '2025-05-19 14:58:59');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -344,13 +385,14 @@ ALTER TABLE `category`
 --
 ALTER TABLE `order`
   ADD PRIMARY KEY (`id_Order`),
-  ADD KEY `idx_order_user` (`id_User`);
+  ADD KEY `idx_order_user` (`id_User`),
+  ADD KEY `order_shipping_address_fk` (`shipping_address_id`);
 
 --
 -- Chỉ mục cho bảng `order_detail`
 --
 ALTER TABLE `order_detail`
-  ADD PRIMARY KEY (`id_Order`,`id_Product`),
+  ADD PRIMARY KEY (`id_Order`,`id_Product`,`size`),
   ADD KEY `idx_order_detail_order` (`id_Order`),
   ADD KEY `idx_order_detail_product` (`id_Product`);
 
@@ -385,6 +427,13 @@ ALTER TABLE `user`
   ADD KEY `idx_user_email` (`email`);
 
 --
+-- Chỉ mục cho bảng `user_address`
+--
+ALTER TABLE `user_address`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_User` (`id_User`);
+
+--
 -- Chỉ mục cho bảng `visits`
 --
 ALTER TABLE `visits`
@@ -398,7 +447,7 @@ ALTER TABLE `visits`
 -- AUTO_INCREMENT cho bảng `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT cho bảng `category`
@@ -410,7 +459,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT cho bảng `order`
 --
 ALTER TABLE `order`
-  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT cho bảng `product`
@@ -434,13 +483,19 @@ ALTER TABLE `settings`
 -- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT cho bảng `user_address`
+--
+ALTER TABLE `user_address`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `visits`
 --
 ALTER TABLE `visits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -457,7 +512,8 @@ ALTER TABLE `cart`
 -- Các ràng buộc cho bảng `order`
 --
 ALTER TABLE `order`
-  ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`);
+  ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
+  ADD CONSTRAINT `order_shipping_address_fk` FOREIGN KEY (`shipping_address_id`) REFERENCES `user_address` (`id`) ON DELETE SET NULL;
 
 --
 -- Các ràng buộc cho bảng `order_detail`
@@ -478,6 +534,12 @@ ALTER TABLE `product`
 ALTER TABLE `review`
   ADD CONSTRAINT `review_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
   ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
+
+--
+-- Các ràng buộc cho bảng `user_address`
+--
+ALTER TABLE `user_address`
+  ADD CONSTRAINT `user_address_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

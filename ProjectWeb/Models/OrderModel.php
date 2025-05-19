@@ -30,37 +30,94 @@ class OrderModel extends BaseModel
     }
     
     
+    
     /**
      * Create a new order
      */
-    public function createOrder($orderData)
+   public function createOrder($orderData)
     {
-        // Insert order data
-        $this->create(self::TABLE, $orderData);
+        // Chuẩn bị dữ liệu để insert vào database
+        $columns = implode(',', array_keys($orderData));
+        $values = implode(',', array_map(function($value) {
+            return is_null($value) ? "NULL" : "'" . mysqli_real_escape_string($this->connect, $value) . "'";
+        }, array_values($orderData)));
         
-        // Get the last inserted ID
-        $sql = "SELECT LAST_INSERT_ID() as id";
-        $query = $this->_query($sql);
-        $result = mysqli_fetch_assoc($query);
+        // Tạo câu lệnh SQL insert vào bảng
+        $sql = "INSERT INTO `" . self::TABLE . "` ({$columns}) VALUES ({$values})";
         
-        return $result['id'] ?? null;
+        // Thực thi câu lệnh SQL
+        $this->_query($sql);
+        
+        // Lấy ID vừa insert
+        $lastId = mysqli_insert_id($this->connect);
+        
+        return $lastId;
     }
+    
     
     /**
      * Create order detail
      */
-    public function createOrderDetail($detailData)
-    {
-        return $this->create('order_detail', $detailData);
+public function createOrderDetail($detailData)
+{
+    // Kiểm tra nếu có trường size, thêm nó vào điều kiện khóa chính
+    $primaryKeyCheck = "id_Order = " . (int)$detailData['id_Order'] . " AND id_Product = " . (int)$detailData['id_Product'];
+    
+    // Nếu có size, thêm nó vào điều kiện
+    if (isset($detailData['size'])) {
+        $size = mysqli_real_escape_string($this->connect, $detailData['size']);
+        $primaryKeyCheck .= " AND size = '$size'";
     }
     
+    // Kiểm tra xem bản ghi đã tồn tại chưa
+    $checkSql = "SELECT COUNT(*) FROM order_detail WHERE $primaryKeyCheck";
+    $result = $this->_query($checkSql);
+    $row = mysqli_fetch_row($result);
+    $exists = (int)$row[0] > 0;
+    
+    if ($exists) {
+        // Nếu đã tồn tại, cập nhật số lượng và sub_total
+        $updateSets = [];
+        
+        if (isset($detailData['quantity'])) {
+            $updateSets[] = "quantity = quantity + " . (int)$detailData['quantity'];
+        }
+        
+        if (isset($detailData['sub_total'])) {
+            $updateSets[] = "sub_total = sub_total + " . (float)$detailData['sub_total'];
+        }
+        
+        if (!empty($updateSets)) {
+            $updateSql = "UPDATE order_detail SET " . implode(", ", $updateSets) . " WHERE $primaryKeyCheck";
+            return $this->_query($updateSql);
+        }
+        
+        return true;
+    } else {
+        // Nếu chưa tồn tại, thêm mới
+        $columns = implode(',', array_keys($detailData));
+        $values = implode(',', array_map(function($value) {
+            return is_null($value) ? "NULL" : "'" . mysqli_real_escape_string($this->connect, $value) . "'";
+        }, array_values($detailData)));
+        
+        $sql = "INSERT INTO order_detail ({$columns}) VALUES ({$values})";
+        return $this->_query($sql);
+    }
+}
+    
+ 
     /**
      * Get order with details
      */
-    public function getOrderWithDetails($orderId)
+     public function getOrderWithDetails($orderId)
     {
+        $orderId = (int)$orderId;
+        
         // Get order information
-        $sql = "SELECT * FROM " . self::TABLE . " WHERE id_Order = {$orderId} LIMIT 1";
+        $sql = "SELECT o.*, u.name as customer_name, u.email, u.phone 
+                FROM `" . self::TABLE . "` o 
+                LEFT JOIN user u ON o.id_User = u.id_User 
+                WHERE o.id_Order = {$orderId} LIMIT 1";
         $query = $this->_query($sql);
         $order = mysqli_fetch_assoc($query);
         
@@ -69,7 +126,7 @@ class OrderModel extends BaseModel
         }
         
         // Get order details
-        $sql = "SELECT od.*, p.name, p.main_image 
+        $sql = "SELECT od.*, p.name, p.main_image, p.current_price 
                 FROM order_detail od 
                 JOIN product p ON od.id_Product = p.id_product 
                 WHERE od.id_Order = {$orderId}";
@@ -184,5 +241,6 @@ public function getCategoriesForMenu()
     
     return $this->getByQuery($sql);
 }
+
 }
 ?>

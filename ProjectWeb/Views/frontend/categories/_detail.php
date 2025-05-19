@@ -85,21 +85,21 @@
                     <span>Hiển thị <?= count($products) ?> sản phẩm</span>
                 </div> -->
                  <div id="product-count-display">
-            <span>Hiển thị <?= count($products) ?> sản phẩm</span>
-        </div>
-          <div id="loading-indicator" class="text-center py-5" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Đang tải...</span>
-        </div>
-        <p class="mt-2">Đang tải sản phẩm...</p>
-    </div>
-            </div>
-                <div class="notification-container"></div>
-                <!-- Product Grid -->
-                       <?php 
-        // Tách ra phần hiển thị danh sách sản phẩm
-                        require('Views/frontend/categories/product_grid.php'); 
-                        ?>
+                        <span>Hiển thị <?= count($products) ?> sản phẩm</span>
+                    </div>
+                    <div id="loading-indicator" class="text-center py-5" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Đang tải...</span>
+                            </div>
+                            <p class="mt-2">Đang tải sản phẩm...</p>
+                        </div>
+                        </div>
+                            <div class="notification-container"></div>
+                            <!-- Product Grid -->
+                                <?php 
+                    // Tách ra phần hiển thị danh sách sản phẩm
+                                    require('Views/frontend/categories/product_grid.php'); 
+                                    ?>
             </div>
         </div>
     </div>

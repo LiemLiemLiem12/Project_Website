@@ -322,7 +322,7 @@ public function filterProducts()
     
     // Tạo response với HTML của danh sách sản phẩm
     ob_start();
-    // Sử dụng một partial view để hiển thị chỉ danh sách sản phẩm
+    // Sử dụng file product_grid.php để hiển thị danh sách sản phẩm
     require('Views/frontend/partials/product_grid.php');
     $productGridHtml = ob_get_clean();
     

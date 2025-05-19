@@ -109,30 +109,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ?>
                  
                  <!-- Size Selection -->
-                <div class="mb-4">
-                    <div class="fw-bold mb-3">Kích thước:</div>
-                    <div class="d-flex">
-                        <?php 
-                        // Kiểm tra nếu có size nào có sẵn
-                        if (!empty($availableSizes)): 
-                            foreach ($availableSizes as $sizeCode => $sizeData): 
-                        ?>
-                            <div class="size-option" data-size="<?= $sizeCode ?>" data-quantity="<?= $sizeData['quantity'] ?>">
-                                <div class="size-box">
-                                    <span><?= $sizeData['label'] ?></span>
+           <!-- Size Selection -->
+                    <div class="mb-4">
+                        <div class="fw-bold mb-3">Kích thước:</div>
+                        <div class="d-flex">
+                            <?php
+                            // Kiểm tra nếu có size nào có sẵn
+                            if (!empty($availableSizes)):
+                                foreach ($availableSizes as $sizeCode => $sizeData):
+                            ?>
+                                <div class="size-option me-3" data-size="<?= $sizeCode ?>" data-quantity="<?= $sizeData['quantity'] ?>">
+                                    <div class="size-box text-center mb-1">
+                                        <span class="d-block"><?= $sizeData['label'] ?></span>
+                                    </div>
+                                    <div class="size-stock small text-center">
+                                        <span class="text-muted"><?= $sizeData['quantity'] ?> sản phẩm</span>
+                                    </div>
                                 </div>
-                            
-                            </div>
-                        <?php 
-                            endforeach;
-                        else:
-                            // Hiển thị khi không có size nào có sẵn
-                        ?>
-                            <p class="text-dark">Sản phẩm hiện tại không có size nào.</p>
-                        <?php endif; ?>
+                            <?php
+                                endforeach;
+                            else:
+                                // Hiển thị khi không có size nào có sẵn
+                            ?>
+                                <p class="text-dark">Sản phẩm hiện tại không có size nào.</p>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                </div> 
-
                     <!-- Quantity Selection -->
                     <div class="mb-4">
                         <div class="fw-bold mb-3">Số lượng:</div>
@@ -215,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         
         <!-- Customer support section -->
-        <div class="row customer-support-section mt-5">
+        <!-- <div class="row customer-support-section mt-5">
             <div class="col-lg-5 mb-4">
                 <h5 class="support-section-title">TÌM SẢN PHẨM TẠI CỬA HÀNG</h5>
                 <div class="store-finder-container">
@@ -264,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     
     <!-- Related Products Section -->
     <div class="container my-5">
