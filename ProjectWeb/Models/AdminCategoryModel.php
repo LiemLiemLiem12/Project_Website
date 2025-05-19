@@ -42,12 +42,15 @@ class AdminCategoryModel {
             if ($status === 'oldest') $order = "ORDER BY id_Category ASC";
             
             // Query để lấy danh sách danh mục
-            $sql = "SELECT id_Category AS ID, name, hide FROM category $where $order LIMIT $limit OFFSET $offset";
+            $sql = "SELECT id_Category AS ID, name, hide, image FROM category $where $order LIMIT $limit OFFSET $offset";
             $result = $this->conn->query($sql);
             
             $data = [];
             if ($result) {
                 while ($row = $result->fetch_assoc()) {
+                    if (!empty($row['image'])) {
+                        $row['image'] = 'upload/img/category/' . $row['image'];
+                    }
                     $data[] = $row;
                 }
             }
@@ -109,12 +112,15 @@ class AdminCategoryModel {
             else $order = "ORDER BY name ASC"; // Default sorting
             
             // Query tìm kiếm danh mục với filter và sorting
-            $sql = "SELECT id_Category AS ID, name, hide FROM category $where $order";
+            $sql = "SELECT id_Category AS ID, name, hide, image FROM category $where $order";
             $result = $this->conn->query($sql);
             
             $data = [];
             if ($result) {
                 while ($row = $result->fetch_assoc()) {
+                    if (!empty($row['image'])) {
+                        $row['image'] = 'upload/img/category/' . $row['image'];
+                    }
                     $data[] = $row;
                 }
             }
@@ -129,9 +135,13 @@ class AdminCategoryModel {
         try {
             $id = intval($id);
             // Query lấy thông tin danh mục theo ID
-            $sql = "SELECT id_Category AS ID, name, hide FROM category WHERE id_Category = $id";
+            $sql = "SELECT id_Category AS ID, name, hide, image FROM category WHERE id_Category = $id";
             $result = $this->conn->query($sql);
-            return $result ? $result->fetch_assoc() : null;
+            $row = $result ? $result->fetch_assoc() : null;
+            if ($row && !empty($row['image'])) {
+                $row['image'] = 'upload/img/category/' . $row['image'];
+            }
+            return $row;
         } catch (Exception $e) {
             error_log('Error in getById: ' . $e->getMessage());
             return null;
@@ -142,9 +152,10 @@ class AdminCategoryModel {
         try {
             $name = $this->conn->real_escape_string($data['name'] ?? '');
             $hide = intval($data['hide'] ?? 0);
+            $image = isset($data['image']) ? $this->conn->real_escape_string($data['image']) : '';
             
             // Query thêm danh mục mới
-            $sql = "INSERT INTO category (name, hide) VALUES ('$name', $hide)";
+            $sql = "INSERT INTO category (name, hide, image) VALUES ('$name', $hide, '$image')";
             if ($this->conn->query($sql)) {
                 return $this->conn->insert_id; // Trả về ID mới
             }
@@ -165,6 +176,9 @@ class AdminCategoryModel {
             }
             if (isset($data['hide'])) {
                 $fields[] = "hide=" . intval($data['hide']);
+            }
+            if (isset($data['image'])) {
+                $fields[] = "image='" . $this->conn->real_escape_string($data['image']) . "'";
             }
             
             if (empty($fields)) return false;
@@ -240,6 +254,26 @@ class AdminCategoryModel {
         } catch (Exception $e) {
             error_log('Error in addNotification: ' . $e->getMessage());
             return false;
+        }
+    }
+
+    public function getTrashCategories() {
+        try {
+            $sql = "SELECT id_Category AS ID, name, hide, image FROM category WHERE hide = 1 ORDER BY name ASC";
+            $result = $this->conn->query($sql);
+            $data = [];
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    if (!empty($row['image'])) {
+                        $row['image'] = 'upload/img/category/' . $row['image'];
+                    }
+                    $data[] = $row;
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            error_log('Error in getTrashCategories: ' . $e->getMessage());
+            return [];
         }
     }
     

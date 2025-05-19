@@ -170,6 +170,7 @@
                         <tr>
                             <th><input type="checkbox" id="select-all-category" class="form-check-input"></th>
                             <th>Tên danh mục</th>
+                            <th>Ảnh</th>
                             <th>Trạng thái</th>
                             <th>Thao tác</th>
                         </tr>
@@ -181,6 +182,11 @@
                                 <input type="checkbox" class="form-check-input category-checkbox" data-id="<?= $category['ID'] ?>">
                             </td>
                             <td><?= htmlspecialchars($category['name']) ?></td>
+                            <td>
+                                <?php if (!empty($category['image'])): ?>
+                                    <img src="<?= htmlspecialchars($category['image']) ?>" alt="Ảnh" style="width:40px;height:40px;object-fit:cover;">
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <span class="status <?= ($category['hide'] ?? 0) ? 'inactive' : 'completed' ?>">
                                     <?= ($category['hide'] ?? 0) ? 'Ẩn' : 'Đang hoạt động' ?>
@@ -235,6 +241,11 @@
                         <label for="categoryName" class="form-label">Tên danh mục</label>
                         <input type="text" class="form-control" id="categoryName" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="categoryImage" class="form-label">Ảnh danh mục</label>
+                        <input type="file" class="form-control" id="categoryImage" name="image" accept="image/*">
+                        <div id="categoryImagePreview" class="mt-2"></div>
+                    </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="categoryHide">
                         <label class="form-check-label" for="categoryHide">Ẩn danh mục</label>
@@ -284,6 +295,7 @@
                             <tr>
                                 <th><input type="checkbox" id="select-all-trash" class="form-check-input"></th>
                                 <th>Tên danh mục</th>
+                                <th>Ảnh</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -532,6 +544,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         </td>
                         <td>${htmlspecialchars(category.name)}</td>
                         <td>
+                            ${category.image ? `<img src="${htmlspecialchars(category.image)}" style="width:40px;height:40px;object-fit:cover;">` : ''}
+                        </td>
+                        <td>
                             <span class="status ${isHidden ? 'inactive' : 'completed'}">
                                 ${isHidden ? 'Ẩn' : 'Đang hoạt động'}
                             </span>
@@ -693,34 +708,8 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
         .then(data => {
             if (data.success) {
                 alert('Đã xóa thành công!');
-                
-                // Kiểm tra nếu đã xóa tất cả items trên trang và đang không ở trang 1
-                if (isHidingAllItems && currentPage > 1) {
-                    // Lấy thông tin phân trang từ phản hồi hoặc gửi request mới để lấy tổng số item
-                    sendJsonRequest('index.php?controller=admincategory&action=getCategoriesCount', 'GET')
-                        .then(countData => {
-                            const totalItems = countData.count || 0;
-                            const itemsPerPage = 5; // Số item trên mỗi trang
-                            const maxPage = Math.ceil(totalItems / itemsPerPage);
-                            
-                            // Nếu trang hiện tại lớn hơn tổng số trang sau khi xóa
-                            if (currentPage > maxPage) {
-                                // Chuyển đến trang tối đa mới
-                                loadCategoriesWithAjax(Math.max(1, maxPage));
-                            } else {
-                                // Tải lại trang hiện tại
-                                loadCategoriesWithAjax(currentPage);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error getting categories count:', error);
-                            // Mặc định tải lại trang trước đó nếu có lỗi
-                            loadCategoriesWithAjax(Math.max(1, currentPage - 1));
-                        });
-                } else {
-                    // Tải lại trang hiện tại
-                    loadCategoriesWithAjax(currentPage);
-                }
+                loadCategoriesWithAjax(currentPage);
+                loadTrashCategories();
             } else {
                 alert(data.message || 'Có lỗi xảy ra khi xóa danh mục.');
             }
@@ -739,8 +728,10 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
     const categoryIdInput = document.getElementById('categoryId');
     const categoryNameInput = document.getElementById('categoryName');
     const categoryHideCheckbox = document.getElementById('categoryHide');
+    const categoryImageInput = document.getElementById('categoryImage');
+    const categoryImagePreview = document.getElementById('categoryImagePreview');
     
-    if (addCategoryBtn && categoryModal && categoryForm && categoryModalTitle && categoryIdInput && categoryNameInput && categoryHideCheckbox) {
+    if (addCategoryBtn && categoryModal && categoryForm && categoryModalTitle && categoryIdInput && categoryNameInput && categoryHideCheckbox && categoryImageInput && categoryImagePreview) {
         addCategoryBtn.addEventListener('click', function() {
             categoryModalTitle.textContent = 'Thêm danh mục mới';
             categoryForm.reset();
@@ -750,7 +741,7 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
     }
 
     const saveBtn = document.getElementById('saveCategory');
-    if (saveBtn && categoryModal && categoryIdInput && categoryNameInput && categoryHideCheckbox) {
+    if (saveBtn && categoryModal && categoryIdInput && categoryNameInput && categoryHideCheckbox && categoryImageInput && categoryImagePreview) {
         saveBtn.addEventListener('click', function() {
             const id = categoryIdInput.value;
             const name = categoryNameInput.value.trim();
@@ -762,59 +753,87 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                 return;
             }
             
-            const categoryData = { name, hide };
             let url = 'index.php?controller=admincategory&action=addCategory';
-            
             if (id) {
-                categoryData.id = id;
                 url = 'index.php?controller=admincategory&action=updateCategory';
             }
             
-            sendJsonRequest(url, 'POST', categoryData)
-                .then(data => {
-                    if (data.success) {
-                        categoryModal.hide();
-                        alert(id ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục mới!');
-                        
-                        // Lấy trang hiện tại từ URL
-                        const urlParams = new URLSearchParams(window.location.search);
-                        let currentPage = parseInt(urlParams.get('page')) || 1;
-                        
-                        // Nếu thêm mới, hãy kiểm tra xem có cần chuyển sang trang mới không
-                        if (!id) {
-                            // Tải tổng số danh mục để quyết định có tạo trang mới không
-                            sendJsonRequest('index.php?controller=admincategory&action=getCategoriesCount', 'GET')
-                                .then(countData => {
-                                    const totalItems = countData.count || 0;
-                                    const itemsPerPage = 5; // Số item trên mỗi trang
-                                    const totalPages = Math.ceil(totalItems / itemsPerPage);
-                                    
-                                    // Kiểm tra nếu thêm item tạo thêm trang mới
-                                    if (totalPages > Math.ceil((totalItems - 1) / itemsPerPage)) {
-                                        // Chuyển đến trang mới
-                                        loadCategoriesWithAjax(totalPages);
-                                    } else {
-                                        // Tải lại trang hiện tại
-                                        loadCategoriesWithAjax(currentPage);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error getting categories count:', error);
-                                    // Mặc định tải lại trang hiện tại nếu có lỗi
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('hide', hide);
+            
+            if (id) {
+                formData.append('id', id);
+            }
+            
+            if (categoryImageInput.files.length > 0) {
+                formData.append('image', categoryImageInput.files[0]);
+            }
+            
+            // Gửi FormData trực tiếp không dùng JSON.stringify
+            fetch(url, {
+                method: 'POST',
+                body: formData // Không cần Content-Type, trình duyệt tự xử lý
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || contentType.indexOf('application/json') === -1) {
+                    return response.text().then(text => {
+                        console.error('Phản hồi không phải JSON:', text);
+                        throw new Error('Phản hồi không phải JSON, nhận được: ' + text.substring(0, 100));
+                    });
+                }
+                
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    categoryModal.hide();
+                    alert(id ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục mới!');
+                    
+                    // Lấy trang hiện tại từ URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let currentPage = parseInt(urlParams.get('page')) || 1;
+                    
+                    // Nếu thêm mới, hãy kiểm tra xem có cần chuyển sang trang mới không
+                    if (!id) {
+                        // Tải tổng số danh mục để quyết định có tạo trang mới không
+                        sendJsonRequest('index.php?controller=admincategory&action=getCategoriesCount', 'GET')
+                            .then(countData => {
+                                const totalItems = countData.count || 0;
+                                const itemsPerPage = 5; // Số item trên mỗi trang
+                                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                                
+                                // Kiểm tra nếu thêm item tạo thêm trang mới
+                                if (totalPages > Math.ceil((totalItems - 1) / itemsPerPage)) {
+                                    // Chuyển đến trang mới
+                                    loadCategoriesWithAjax(totalPages);
+                                } else {
+                                    // Tải lại trang hiện tại
                                     loadCategoriesWithAjax(currentPage);
-                                });
-                        } else {
-                            // Nếu cập nhật, chỉ cần tải lại trang hiện tại
-                            loadCategoriesWithAjax(currentPage);
-                        }
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error getting categories count:', error);
+                                // Mặc định tải lại trang hiện tại nếu có lỗi
+                                loadCategoriesWithAjax(currentPage);
+                            });
                     } else {
-                        alert(data.message || 'Có lỗi xảy ra khi lưu danh mục.');
+                        // Nếu cập nhật, chỉ cần tải lại trang hiện tại
+                        loadCategoriesWithAjax(currentPage);
                     }
-                })
-                .catch(error => {
-                    console.error('Error saving category:', error);
-                    alert('Lỗi kết nối khi lưu danh mục. Chi tiết: ' + error.message);
-                });
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra khi lưu danh mục.');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving category:', error);
+                alert('Lỗi kết nối khi lưu danh mục. Chi tiết: ' + error.message);
+            });
         });
     }
 
@@ -834,7 +853,7 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                             alert(data.error);
                             return;
                         }
-                        if (categoryModal && categoryForm && categoryModalTitle && categoryIdInput && categoryNameInput && categoryHideCheckbox) {
+                        if (categoryModal && categoryForm && categoryModalTitle && categoryIdInput && categoryNameInput && categoryHideCheckbox && categoryImageInput && categoryImagePreview) {
                             categoryModalTitle.textContent = 'Sửa danh mục';
                             categoryIdInput.value = data.ID;
                             categoryNameInput.value = data.name;
@@ -891,7 +910,7 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                 }
                 
                 if (!data || data.length === 0) {
-                    trashTableBody.innerHTML = '<tr><td colspan="3" class="text-center">Không có danh mục nào trong thùng rác.</td></tr>';
+                    trashTableBody.innerHTML = '<tr class="table-active"><td colspan="4" class="text-center">Không có danh mục nào trong thùng rác.</td></tr>';
                     return;
                 }
                 
@@ -905,6 +924,9 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                             <input type="checkbox" class="form-check-input trash-checkbox" data-id="${category.ID}">
                         </td>
                         <td>${htmlspecialchars(category.name)}</td>
+                        <td>
+                            ${category.image ? `<img src="${htmlspecialchars(category.image)}" style="width:40px;height:40px;object-fit:cover;">` : ''}
+                        </td>
                         <td>
                             <button class="btn btn-sm btn-success btn-restore-category" title="Khôi phục" data-id="${category.ID}">
                                 <i class="fas fa-trash-restore"></i>

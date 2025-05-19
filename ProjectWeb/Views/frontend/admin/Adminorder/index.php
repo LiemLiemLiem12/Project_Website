@@ -51,6 +51,9 @@
                             <button id="deleteSelectedOrderBtn" class="btn btn-danger" disabled>
                                 <i class="fas fa-trash"></i> Xóa đã chọn
                             </button>
+                            <button class="btn btn-secondary" id="showTrashBtn">
+                                <i class="fas fa-trash-restore"></i> Thùng rác
+                            </button>
                             <button class="btn btn-success flex-fill" id="exportExcel"><i
                                     class="fas fa-file-excel me-1"></i> Xuất
                                 Excel</button>
@@ -251,10 +254,55 @@
                         </tbody>
                     </table>
                 </div>
-
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Thùng rác -->
+    <div class="modal fade" id="trashModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thùng rác - Đơn hàng đã ẩn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th width="40"><input type="checkbox" id="select-all-trash" class="form-check-input"></th>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Khách hàng</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Thanh toán</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trashTableBody">
+                                <!-- Dữ liệu sẽ được load bằng AJAX -->
+                                <tr>
+                                    <td colspan="8" class="text-center">Đang tải dữ liệu...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="restoreSelectedBtn" disabled>
+                        <i class="fas fa-trash-restore"></i> Khôi phục đã chọn
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS with Popper -->
     <script src="/Project_Website/ProjectWeb/layout/jsBootstrap/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
@@ -267,7 +315,298 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Đảm bảo chỉ toggle class 'show' cho sidebar khi bấm hamburger
+        // Xóa mọi logic toggle class 'active' hoặc nút đóng sidebar riêng
+        document.addEventListener('DOMContentLoaded', function () {
+            // Thông báo cứng về đơn hàng
+            const notifications = [
+                {
+                    icon: 'fa-shopping-cart',
+                    title: 'Đơn hàng mới',
+                    content: 'Đơn hàng #ORD123 vừa được tạo.',
+                    time: '3 phút trước'
+                },
+                {
+                    icon: 'fa-times-circle',
+                    title: 'Đơn hàng bị hủy',
+                    content: 'Đơn hàng #ORD120 đã bị hủy bởi khách.',
+                    time: '20 phút trước'
+                },
+                {
+                    icon: 'fa-truck',
+                    title: 'Đơn hàng đang giao',
+                    content: 'Đơn hàng #ORD119 đang được giao cho khách.',
+                    time: '1 giờ trước'
+                }
+            ];
+            const notificationList = document.getElementById('notificationList');
+            if (notificationList) {
+                notificationList.innerHTML = notifications.map(n => `
+                <li class="notification-item">
+                    <span class="notification-icon"><i class="fas ${n.icon}"></i></span>
+                    <div class="notification-content">
+                        <div class="notification-title">${n.title}</div>
+                        <div>${n.content}</div>
+                        <div class="notification-time">${n.time}</div>
+                    </div>
+                </li>
+            `).join('');
+            }
+            // Toggle dropdown
+            const bell = document.getElementById('notificationBell');
+            const dropdown = document.getElementById('notificationDropdown');
+            if (bell && dropdown) {
+                bell.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                // Click ngoài dropdown sẽ ẩn
+                document.addEventListener('click', function (e) {
+                    if (!dropdown.contains(e.target) && e.target !== bell) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+            }
 
+            // Xử lý thùng rác
+            const showTrashBtn = document.getElementById('showTrashBtn');
+            const trashModal = new bootstrap.Modal(document.getElementById('trashModal'));
+            const restoreSelectedBtn = document.getElementById('restoreSelectedBtn');
+            
+            if (showTrashBtn) {
+                showTrashBtn.addEventListener('click', function() {
+                    loadTrashOrders();
+                    trashModal.show();
+                });
+            }
+            
+            // Hàm tải danh sách đơn hàng trong thùng rác
+            function loadTrashOrders() {
+                const trashTableBody = document.getElementById('trashTableBody');
+                if (!trashTableBody) return;
+                
+                trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
+                
+                fetch('index.php?controller=adminorder&action=trash')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        trashTableBody.innerHTML = '';
+                        
+                        if (data.error) {
+                            trashTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">${data.error}</td></tr>`;
+                            return;
+                        }
+                        
+                        if (!data || data.length === 0) {
+                            trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Không có đơn hàng nào trong thùng rác.</td></tr>';
+                            updateRestoreSelectedButton();
+                            return;
+                        }
+                        
+                        // Hiển thị đơn hàng trong thùng rác
+                        data.forEach(order => {
+                            let statusClass = '';
+                            let statusText = '';
+                            
+                            if (order.status === 'completed') {
+                                statusClass = 'completed';
+                                statusText = 'Hoàn thành';
+                            } else if (order.status === 'pending') {
+                                statusClass = 'pending';
+                                statusText = 'Đang xử lý';
+                            } else if (order.status === 'cancelled') {
+                                statusClass = 'cancelled';
+                                statusText = 'Đã hủy';
+                            } else if (order.status === 'shipping') {
+                                statusClass = 'shipping';
+                                statusText = 'Đang giao';
+                            } else if (order.status === 'waitConfirm') {
+                                statusClass = 'waitConfirm';
+                                statusText = 'Chờ xác nhận';
+                            } else {
+                                statusClass = 'unknown';
+                                statusText = 'Không xác định';
+                            }
+                            
+                            const row = document.createElement('tr');
+                            row.setAttribute('data-order-id', order.id_Order);
+                            
+                            row.innerHTML = `
+                                <td><input type="checkbox" class="form-check-input trash-order-checkbox" data-id="${order.id_Order}"></td>
+                                <td>#0${order.id_Order}</td>
+                                <td>${order.name || ''}</td>
+                                <td>${order.created_at || ''}</td>
+                                <td>${order.total_amount || ''}</td>
+                                <td>${order.payment_by || ''}</td>
+                                <td><span class="status ${statusClass}">${statusText}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-success btn-restore-order" title="Khôi phục" data-id="${order.id_Order}">
+                                        <i class="fas fa-trash-restore"></i>
+                                    </button>
+                                </td>
+                            `;
+                            trashTableBody.appendChild(row);
+                        });
+                        
+                        // Đính kèm sự kiện
+                        attachTrashEventListeners();
+                    })
+                    .catch(error => {
+                        console.error('Error loading trash orders:', error);
+                        trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Có lỗi xảy ra khi tải dữ liệu thùng rác.</td></tr>';
+                    });
+            }
+            
+            // Đính kèm sự kiện cho các phần tử trong thùng rác
+            function attachTrashEventListeners() {
+                // Đính kèm sự kiện cho các nút khôi phục đơn lẻ
+                document.querySelectorAll('.btn-restore-order').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        if (confirm('Bạn có chắc chắn muốn khôi phục đơn hàng này?')) {
+                            restoreOrder(id);
+                        }
+                    });
+                });
+                
+                // Đính kèm sự kiện cho các checkbox
+                document.querySelectorAll('.trash-order-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', updateRestoreSelectedButton);
+                });
+                
+                // Đính kèm sự kiện cho checkbox chọn tất cả
+                const selectAllTrashCheckbox = document.getElementById('select-all-trash');
+                if (selectAllTrashCheckbox) {
+                    selectAllTrashCheckbox.addEventListener('change', function() {
+                        const isChecked = this.checked;
+                        document.querySelectorAll('.trash-order-checkbox').forEach(checkbox => {
+                            checkbox.checked = isChecked;
+                        });
+                        updateRestoreSelectedButton();
+                    });
+                }
+                
+                updateRestoreSelectedButton();
+            }
+            
+            // Cập nhật trạng thái nút khôi phục đã chọn
+            function updateRestoreSelectedButton() {
+                if (restoreSelectedBtn) {
+                    const selectedCheckboxes = document.querySelectorAll('.trash-order-checkbox:checked');
+                    restoreSelectedBtn.disabled = selectedCheckboxes.length === 0;
+                }
+            }
+            
+            // Xử lý khôi phục hàng loạt
+            if (restoreSelectedBtn) {
+                restoreSelectedBtn.addEventListener('click', function() {
+                    const selectedIds = Array.from(document.querySelectorAll('.trash-order-checkbox:checked'))
+                        .map(checkbox => checkbox.getAttribute('data-id'));
+                    
+                    if (selectedIds.length === 0) return;
+                    
+                    if (confirm(`Bạn có chắc chắn muốn khôi phục ${selectedIds.length} đơn hàng đã chọn?`)) {
+                        restoreMultipleOrders(selectedIds);
+                    }
+                });
+            }
+            
+            // Khôi phục một đơn hàng
+            function restoreOrder(id) {
+                fetch(`index.php?controller=adminorder&action=restore&id=${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Đã khôi phục đơn hàng thành công!');
+                            loadTrashOrders(); // Tải lại danh sách thùng rác
+                            
+                            // Tải lại danh sách đơn hàng chính nếu cần
+                            location.reload(); // Hoặc sử dụng AJAX để tải lại bảng chính
+                        } else {
+                            alert(data.error || 'Lỗi khi khôi phục đơn hàng.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error restoring order:', error);
+                        alert('Lỗi kết nối khi khôi phục đơn hàng.');
+                    });
+            }
+            
+            // Khôi phục nhiều đơn hàng
+            function restoreMultipleOrders(ids) {
+                if (!ids || ids.length === 0) return;
+                
+                // Đếm số thành công
+                let successCount = 0;
+                let failureCount = 0;
+                let totalToProcess = ids.length;
+                let processed = 0;
+                
+                // Hiển thị thông báo đang xử lý
+                const trashTableBody = document.getElementById('trashTableBody');
+                if (trashTableBody) {
+                    const loadingRow = document.createElement('tr');
+                    loadingRow.id = 'restore-loading-indicator';
+                    loadingRow.innerHTML = `<td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang khôi phục ${ids.length} đơn hàng...</td>`;
+                    trashTableBody.appendChild(loadingRow);
+                }
+                
+                // Khôi phục từng đơn hàng
+                ids.forEach(id => {
+                    fetch(`index.php?controller=adminorder&action=restore&id=${id}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            processed++;
+                            if (data.success) {
+                                successCount++;
+                            } else {
+                                failureCount++;
+                                console.error(`Lỗi khôi phục đơn hàng #${id}:`, data.error);
+                            }
+                            
+                            // Khi tất cả đã được xử lý
+                            if (processed === totalToProcess) {
+                                const message = `Đã khôi phục thành công ${successCount}/${totalToProcess} đơn hàng.`;
+                                alert(message);
+                                
+                                // Tải lại danh sách
+                                loadTrashOrders();
+                                
+                                // Tải lại danh sách đơn hàng chính
+                                if (successCount > 0) {
+                                    location.reload();
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            processed++;
+                            failureCount++;
+                            console.error(`Lỗi kết nối khi khôi phục đơn hàng #${id}:`, error);
+                            
+                            // Khi tất cả đã được xử lý
+                            if (processed === totalToProcess) {
+                                const message = `Đã khôi phục thành công ${successCount}/${totalToProcess} đơn hàng.`;
+                                alert(message);
+                                
+                                // Tải lại danh sách
+                                loadTrashOrders();
+                                
+                                // Tải lại danh sách đơn hàng chính
+                                if (successCount > 0) {
+                                    location.reload();
+                                }
+                            }
+                        });
+                });
+            }
+        });
+    </script>
     <!-- Thêm style cho dropdown thông báo -->
     <style>
         .notification-dropdown::-webkit-scrollbar {

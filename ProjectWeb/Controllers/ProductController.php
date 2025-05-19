@@ -60,4 +60,38 @@ class ProductController extends BaseController
         $id = $_GET['id'];
         $this->productModel->deleteData($id);
     }
+    public function trash()
+    {
+        $this->view(
+            "frontend.admin.AdminProduct.index",
+            [
+                "productList" => $this->productModel->getProductList_AdminProduct_Trash(),
+                "categoryList" => $this->categoryModel->getAll(['name', 'id_Category'], 10000),
+                "isTrash" => true
+            ]
+        );
+    }
+    public function restore()
+{
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
+    if (is_array($data)) {
+        foreach ($data as $id) {
+            $this->productModel->updateDataForProduct($id, [
+                "hide" => 0
+            ]);
+        }
+    } else {
+        echo 'Lỗi truyền dữ liệu';
+        http_response_code(404);
+    }
+
+    $this->view(
+        "frontend.admin.AdminProduct.sort",
+        [
+            "productList" => $this->productModel->getProductList_AdminProduct_Trash(),
+            "isTrash" => true
+        ]
+    );
+}
 }

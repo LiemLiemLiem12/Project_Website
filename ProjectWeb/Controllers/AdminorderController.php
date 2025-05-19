@@ -1,4 +1,7 @@
 <?php
+// Include AdminOrderModel
+require_once __DIR__ . '/../Models/AdminOrderModel.php';
+
 class AdminorderController extends BaseController
 {
     private $orderModel;
@@ -135,6 +138,83 @@ class AdminorderController extends BaseController
             'customer' => $this->userModel->getByQuery($customer_query),
             'detail_product' => $this->userModel->getByQuery($detail_product)
         ]);
+    }
+
+    public function trash() {
+        // Đặt header cho JSON
+        header('Content-Type: application/json; charset=utf-8');
+        
+        try {
+            // Xóa output buffer
+            if (ob_get_length()) ob_clean();
+            
+            // Tắt hiển thị lỗi
+            error_reporting(0);
+            ini_set('display_errors', 0);
+            
+            $model = new AdminOrderModel();
+            
+            // Kiểm tra kết nối database
+            if (!$model->conn) {
+                echo json_encode(['error' => 'Không thể kết nối database']);
+                exit;
+            }
+            
+            // Lấy danh sách đơn hàng trong thùng rác
+            $trash_orders = $model->getTrashOrders();
+            
+            echo json_encode($trash_orders);
+        } catch (Exception $e) {
+            echo json_encode(['error' => 'Lỗi: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+    
+    public function restore() {
+        try {
+            // Tắt hiển thị lỗi
+            error_reporting(0);
+            ini_set('display_errors', 0);
+            
+            // Xóa bất kỳ output nào trước khi trả về JSON
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+            
+            // Đặt header cho JSON
+            header('Content-Type: application/json; charset=utf-8');
+            
+            // Lấy ID từ tham số
+            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+            
+            if (!$id) {
+                echo json_encode(['success' => false, 'error' => 'Không có ID hợp lệ']);
+                exit;
+            }
+            
+            $model = new AdminOrderModel();
+            $result = $model->restoreOrder($id);
+            
+            if ($result) {
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Lỗi cập nhật database: ' . $model->conn->error]);
+            }
+            exit;
+        } catch (Exception $e) {
+            // Đảm bảo header JSON được thiết lập
+            header('Content-Type: application/json; charset=utf-8');
+            
+            echo json_encode(['success' => false, 'error' => 'Lỗi khôi phục đơn hàng: ' . $e->getMessage()]);
+            exit;
+        }
+    }
+
+    // Thêm phương thức test đơn giản để kiểm tra routing
+    public function test() {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Test controller OK']);
+        exit;
     }
 }
 ?>

@@ -49,6 +49,10 @@
                         <button class="btn btn-danger" id="deleteSelectedBtn" disabled>
                             <i class="fas fa-trash"></i> Xóa nhiều
                         </button>
+                        <!-- Add this button next to your "Add Product" button -->
+                        <button class="btn btn-secondary" id="btn-trash" data-bs-toggle="modal" data-bs-target="#trashModal">
+                            <i class="fas fa-trash"></i> Thùng rác
+                        </button>
                     </div>
                 </div>
 
@@ -66,10 +70,11 @@
                         <div class="filter-item">
                             <select class="filter-dropdown" id="filter-dropdown-product">
                                 <option value="">Danh mục</option>
-                                <option value="ao">Áo</option>
-                                <option value="quan">Quần</option>
-                                <option value="vay">Váy</option>
-                                <option value="phu-kien">Phụ kiện</option>
+                                <?php
+                                foreach ($categoryList as $category) {
+                                    echo '<option value="' . $category['id_Category'] . '">' . $category['name'] . '</option>';
+                                }
+                                ?>
                             </select>
                         </div>
                         <div class="filter-item">
@@ -169,7 +174,48 @@
 
 
 
-
+    <!-- Modal Thùng Rác -->
+    <div class="modal fade" id="trashModal" tabindex="-1" aria-labelledby="trashModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="trashModalLabel">Thùng Rác</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table" id="trash-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all-trash" class="form-check-input"></th>
+                                    <th>Mã SP</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Giá</th>
+                                    <th>Tồn kho</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trash-table-body">
+                                <!-- Trash items will be loaded here via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="trash-empty-message" class="text-center py-4 d-none">
+                        <i class="fas fa-trash fa-3x mb-3 text-muted"></i>
+                        <p>Thùng rác trống</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-success" id="restoreSelectedBtn" disabled>
+                        <i class="fas fa-trash-restore"></i> Khôi phục đã chọn
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Modal Thêm Sản Phẩm -->
@@ -484,6 +530,270 @@
            }
        });
         // CKEDITOR.replace('productDesc'); // 'productDesc' là id của textarea
+    </script>
+    
+    <script>
+    // Trash bin functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const trashBtn = document.getElementById('btn-trash');
+        const trashTableBody = document.getElementById('trash-table-body');
+        const trashEmptyMessage = document.getElementById('trash-empty-message');
+        const selectAllTrashCheckbox = document.getElementById('select-all-trash');
+        const restoreSelectedBtn = document.getElementById('restoreSelectedBtn');
+
+        console.log('Trash button:', trashBtn);
+
+        // Load trash items when trash button is clicked
+        if (trashBtn) {
+            trashBtn.addEventListener('click', function() {
+                console.log('Trash button clicked');
+                loadTrashItems();
+            });
+        }
+
+        // Function to load trash items
+        function loadTrashItems() {
+            console.log('Loading trash items...');
+            trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
+            
+            // Thêm tham số timestamp để tránh cache
+            fetch('/Project_Website/ProjectWeb/index.php?controller=adminproduct&action=getTrashItems&_=' + new Date().getTime())
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.text(); // Lấy text trước để debug
+                })
+                .then(text => {
+                    console.log('Raw response:', text.substring(0, 200)); // Hiển thị 200 ký tự đầu tiên để debug
+                    
+                    try {
+                        // Xử lý trường hợp text rỗng
+                        if (!text || text.trim() === '') {
+                            throw new Error('Server trả về dữ liệu rỗng');
+                        }
+                        
+                        // Loại bỏ các ký tự HTML nếu có
+                        let cleanText = text;
+                        if (text.includes('<br') || text.includes('<b>')) {
+                            // Nếu có lỗi PHP HTML, hiển thị thông báo lỗi
+                            throw new Error('Server trả về lỗi PHP thay vì JSON');
+                        }
+                        
+                        // Chuyển text thành JSON
+                        const data = JSON.parse(cleanText);
+                        console.log('Parsed JSON data:', data);
+                        
+                        trashTableBody.innerHTML = '';
+                        
+                        if (data.error) {
+                            console.error('Server returned error:', data.error);
+                            trashTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">${data.error}</td></tr>`;
+                            return;
+                        }
+                        
+                        if (!data || data.length === 0) {
+                            console.log('No trash items found');
+                            trashEmptyMessage.classList.remove('d-none');
+                            trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Thùng rác trống</td></tr>';
+                            if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
+                        } else {
+                            trashEmptyMessage.classList.add('d-none');
+                            
+                            data.forEach(item => {
+                                console.log('Creating row for item:', item);
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td><input type="checkbox" class="form-check-input trash-checkbox" data-id="${item.id_product}"></td>
+                                    <td>${item.id_product}</td>
+                                    <td><img src="/Project_Website/ProjectWeb/upload/img/All-Product/${item.main_image}" alt="Product" width="50"></td>
+                                    <td>${item.product_name || item.name}</td>
+                                    <td>${item.category_name}</td>
+                                    <td>${item.current_price}</td>
+                                    <td>${item.store}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success btn-restore-single" data-id="${item.id_product}">
+                                            <i class="fas fa-trash-restore"></i>
+                                        </button>
+                                    </td>
+                                `;
+                                trashTableBody.appendChild(row);
+                            });
+                            
+                            // Add event listeners to single restore buttons
+                            document.querySelectorAll('.btn-restore-single').forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    const productId = this.getAttribute('data-id');
+                                    console.log('Restoring product ID:', productId);
+                                    restoreProduct([productId]);
+                                });
+                            });
+                            
+                            // Add event listeners to checkboxes
+                            attachTrashCheckboxEvents();
+                        }
+                    } catch (parseError) {
+                        console.error('Error parsing JSON:', parseError);
+                        trashTableBody.innerHTML = `
+                            <tr><td colspan="8" class="text-center text-danger">
+                                Lỗi phân tích dữ liệu: ${parseError.message}<br>
+                                <small>Kiểm tra console để biết thêm chi tiết.</small>
+                            </td></tr>
+                        `;
+                        if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading trash items:', error);
+                    trashTableBody.innerHTML = `
+                        <tr><td colspan="8" class="text-center text-danger">
+                            Lỗi kết nối: ${error.message}<br>
+                            <small>Kiểm tra console để biết thêm chi tiết.</small>
+                        </td></tr>
+                    `;
+                    if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
+                });
+        }
+        
+        // Function to attach checkbox events
+        function attachTrashCheckboxEvents() {
+            // Select all checkbox
+            if (selectAllTrashCheckbox) {
+                selectAllTrashCheckbox.addEventListener('change', function() {
+                    const checkboxes = document.querySelectorAll('.trash-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                    updateRestoreButtonState();
+                });
+            }
+            
+            // Individual checkboxes
+            document.querySelectorAll('.trash-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateRestoreButtonState();
+                    
+                    // Update "select all" checkbox state
+                    if (selectAllTrashCheckbox) {
+                        const totalCheckboxes = document.querySelectorAll('.trash-checkbox').length;
+                        const checkedCheckboxes = document.querySelectorAll('.trash-checkbox:checked').length;
+                        selectAllTrashCheckbox.checked = totalCheckboxes === checkedCheckboxes && totalCheckboxes > 0;
+                    }
+                });
+            });
+        }
+        
+        // Function to update restore button state
+        function updateRestoreButtonState() {
+            if (restoreSelectedBtn) {
+                const selectedCheckboxes = document.querySelectorAll('.trash-checkbox:checked');
+                restoreSelectedBtn.disabled = selectedCheckboxes.length === 0;
+            }
+        }
+        
+        // Restore selected button click event
+        if (restoreSelectedBtn) {
+            restoreSelectedBtn.addEventListener('click', function() {
+                const selectedIds = Array.from(document.querySelectorAll('.trash-checkbox:checked')).map(
+                    checkbox => checkbox.getAttribute('data-id')
+                );
+                
+                if (selectedIds.length > 0) {
+                    restoreProduct(selectedIds);
+                }
+            });
+        }
+
+        // Function to restore product(s)
+        function restoreProduct(productIds) {
+            console.log('Restoring products:', productIds);
+            
+            // Create a chain of promises to restore products one by one
+            let promiseChain = Promise.resolve();
+            let successCount = 0;
+            let failCount = 0;
+            
+            productIds.forEach(productId => {
+                promiseChain = promiseChain.then(() => {
+                    return fetch(`/Project_Website/ProjectWeb/index.php?controller=adminproduct&action=restoreProduct&id=${productId}&_=${new Date().getTime()}`)
+                        .then(response => response.text())
+                        .then(text => {
+                            console.log('Raw restore response:', text.substring(0, 200));
+                            
+                            try {
+                                // Xử lý trường hợp text rỗng
+                                if (!text || text.trim() === '') {
+                                    throw new Error('Server trả về dữ liệu rỗng');
+                                }
+                                
+                                // Loại bỏ các ký tự HTML nếu có
+                                let cleanText = text;
+                                if (text.includes('<br') || text.includes('<b>')) {
+                                    throw new Error('Server trả về lỗi PHP thay vì JSON');
+                                }
+                                
+                                // Parse JSON
+                                const data = JSON.parse(cleanText);
+                                console.log('Restore response for ID ' + productId + ':', data);
+                                
+                                if (data.success) {
+                                    // Remove the row from trash table
+                                    const checkbox = document.querySelector(`.trash-checkbox[data-id="${productId}"]`);
+                                    if (checkbox) {
+                                        const row = checkbox.closest('tr');
+                                        if (row) row.remove();
+                                    }
+                                    successCount++;
+                                } else {
+                                    failCount++;
+                                    console.error('Failed to restore product ID ' + productId + ': ', data.error || 'Unknown error');
+                                }
+                            } catch (parseError) {
+                                failCount++;
+                                console.error('Error parsing restore response:', parseError);
+                            }
+                        })
+                        .catch(error => {
+                            failCount++;
+                            console.error('Network error restoring product ID ' + productId + ': ', error);
+                        });
+                });
+            });
+            
+            // After all products are processed
+            promiseChain.then(() => {
+                // Check if trash is empty
+                if (trashTableBody.children.length === 0 || document.querySelectorAll('.trash-checkbox').length === 0) {
+                    trashEmptyMessage.classList.remove('d-none');
+                    trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Thùng rác trống</td></tr>';
+                }
+                
+                // Update select all checkbox
+                if (selectAllTrashCheckbox) {
+                    selectAllTrashCheckbox.checked = false;
+                }
+                
+                // Disable restore button
+                if (restoreSelectedBtn) {
+                    restoreSelectedBtn.disabled = true;
+                }
+                
+                // Show result message
+                let message = '';
+                if (successCount > 0) {
+                    message += `Đã khôi phục thành công ${successCount} sản phẩm. `;
+                }
+                if (failCount > 0) {
+                    message += `Có ${failCount} sản phẩm không thể khôi phục.`;
+                }
+                
+                if (message) {
+                    alert(message);
+                }
+                
+                // Reload main product table
+                location.reload();
+            });
+        }
+    });
     </script>
 </body>
 
