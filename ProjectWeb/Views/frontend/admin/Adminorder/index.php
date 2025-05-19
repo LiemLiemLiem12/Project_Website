@@ -18,10 +18,10 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
-        
-         <!-- Sidebar -->
-         <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
-        
+
+        <!-- Sidebar -->
+        <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
+
         <!-- Main Content -->
         <div class="main-content">
             <!-- Top Header -->
@@ -31,11 +31,13 @@
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                <div class="header-right"
+                    style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
                     <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                     </div>
                     <div class="profile">
-                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar"
+                            class="profile-image">
                     </div>
                 </div>
             </header>
@@ -196,7 +198,7 @@
                                 </table>
                             </div>
 
-                           
+
                         </div>
                     </div>
                 </div>
@@ -249,9 +251,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                </div>
+
             </div>
         </div>
     </div>
@@ -267,57 +267,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        // Đảm bảo chỉ toggle class 'show' cho sidebar khi bấm hamburger
-        // Xóa mọi logic toggle class 'active' hoặc nút đóng sidebar riêng
-        document.addEventListener('DOMContentLoaded', function () {
-            // Thông báo cứng về đơn hàng
-            const notifications = [
-                {
-                    icon: 'fa-shopping-cart',
-                    title: 'Đơn hàng mới',
-                    content: 'Đơn hàng #ORD123 vừa được tạo.',
-                    time: '3 phút trước'
-                },
-                {
-                    icon: 'fa-times-circle',
-                    title: 'Đơn hàng bị hủy',
-                    content: 'Đơn hàng #ORD120 đã bị hủy bởi khách.',
-                    time: '20 phút trước'
-                },
-                {
-                    icon: 'fa-truck',
-                    title: 'Đơn hàng đang giao',
-                    content: 'Đơn hàng #ORD119 đang được giao cho khách.',
-                    time: '1 giờ trước'
-                }
-            ];
-            const notificationList = document.getElementById('notificationList');
-            notificationList.innerHTML = notifications.map(n => `
-            <li class="notification-item">
-                <span class="notification-icon"><i class="fas ${n.icon}"></i></span>
-                <div class="notification-content">
-                    <div class="notification-title">${n.title}</div>
-                    <div>${n.content}</div>
-                    <div class="notification-time">${n.time}</div>
-                </div>
-            </li>
-        `).join('');
-            // Toggle dropdown
-            const bell = document.getElementById('notificationBell');
-            const dropdown = document.getElementById('notificationDropdown');
-            bell.addEventListener('click', function (e) {
-                e.stopPropagation();
-                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-            });
-            // Click ngoài dropdown sẽ ẩn
-            document.addEventListener('click', function (e) {
-                if (!dropdown.contains(e.target) && e.target !== bell) {
-                    dropdown.style.display = 'none';
-                }
-            });
-        });
-    </script>
+
     <!-- Thêm style cho dropdown thông báo -->
     <style>
         .notification-dropdown::-webkit-scrollbar {

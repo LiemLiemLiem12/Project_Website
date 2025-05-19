@@ -4,7 +4,7 @@ class Database
     const HOST = 'localhost';
     const USERNAME = 'root';
     const PASSWORD = '';
-    const DB_NAME = 'fashion_database1';
+    const DB_NAME = 'fashion_database';
 
     private $connect;
 
