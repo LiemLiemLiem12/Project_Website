@@ -180,7 +180,7 @@ if (!isset($_SESSION['visited'])) {
     </div>
 
     <!-- Collections Banner -->
-    <div class="container">
+    <!-- <div class="container">
         <div class="row g-4 mt-4">
             <div class="col-md-6">
                 <div class="collection-card">
@@ -203,7 +203,7 @@ if (!isset($_SESSION['visited'])) {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- New Arrivals -->
     <div class="container">

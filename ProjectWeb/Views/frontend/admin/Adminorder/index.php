@@ -18,10 +18,10 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
-        
-         <!-- Sidebar -->
-         <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
-        
+
+        <!-- Sidebar -->
+        <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
+
         <!-- Main Content -->
         <div class="main-content">
             <!-- Top Header -->
@@ -31,11 +31,13 @@
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                <div class="header-right"
+                    style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
                     <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                     </div>
                     <div class="profile">
-                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar"
+                            class="profile-image">
                     </div>
                 </div>
             </header>
@@ -199,7 +201,7 @@
                                 </table>
                             </div>
 
-                           
+
                         </div>
                     </div>
                 </div>

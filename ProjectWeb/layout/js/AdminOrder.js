@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     exportPDFBtn()
     exportExcelBtn()
 
+
     if (document.querySelector('tr[data-order-id]')) {
         document.querySelectorAll('tr[data-order-id]').forEach(function(row) {
             row.addEventListener('dblclick', function() {
@@ -110,6 +111,7 @@ function detailModalEvent() {
 
     // Lắng nghe sự kiện click của nút đóng
     document.getElementById('closeModalBtn').addEventListener('click', function () {
+        console.log('hello')
         var modalElement = document.getElementById('orderDetailsModal');
         var modalInstance = bootstrap.Modal.getInstance(modalElement);
         if (modalInstance) {

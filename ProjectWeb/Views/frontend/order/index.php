@@ -192,32 +192,32 @@
                 </h4>
                 <div class="product-list mb-4">
                     <?php foreach ($cartItems as $index => $item): ?>
-                    <div class="product-item animate__animated animate__fadeIn" style="animation-delay: <?= $index * 0.1 ?>s;">
-                        <div class="d-flex">
-                            <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $item['product']['main_image'] ?>" 
-                                 alt="<?= $item['product']['name'] ?>" class="product-image">
-                            <div class="product-info">
-                                <div class="product-name"><?= $item['product']['name'] ?></div>
-                                <div class="product-variant">Size: <?= $item['size'] ?></div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="quantity-control">
-                                        <button class="qty-btn minus" type="button">
-                                            <i class="bi bi-dash"></i>
-                                        </button>
-                                        <input type="number" value="<?= $item['quantity'] ?>" min="1" class="qty-input" 
-                                               readonly data-price="<?= $item['subtotal'] ?>" 
-                                               data-original-price="<?= $item['product']['current_price'] ?>">
-                                        <button class="qty-btn plus" type="button">
-                                            <i class="bi bi-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="product-price text-end" style="min-width: 110px;">
-                                        <?= number_format($item['subtotal'], 0, ',', '.') ?>₫
+                   <div class="product-item animate__animated animate__fadeIn" data-product-id="<?= $item['product']['id_product'] ?>" data-product-size="<?= $item['size'] ?>" data-max-stock="<?= $item['product'][$item['size']] ?>">
+                            <div class="d-flex">
+                                <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $item['product']['main_image'] ?>" 
+                                    alt="<?= $item['product']['name'] ?>" class="product-image">
+                                <div class="product-info">
+                                    <div class="product-name"><?= $item['product']['name'] ?></div>
+                                    <div class="product-variant">Size: <?= $item['size'] ?></div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="quantity-control">
+                                            <button class="qty-btn minus" type="button">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <input type="number" value="<?= $item['quantity'] ?>" min="1" class="qty-input" 
+                                                readonly data-price="<?= $item['subtotal'] ?>" 
+                                                data-original-price="<?= $item['product']['current_price'] ?>">
+                                            <button class="qty-btn plus" type="button">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div class="product-price text-end" style="min-width: 110px;">
+                                            <?= number_format($item['subtotal'], 0, ',', '.') ?>₫
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -265,34 +265,36 @@
     </div>
 
     <!-- Order Success Modal -->
-    <div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-labelledby="orderSuccessModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center p-5">
-                    <div class="order-success-check">
-                        <div class="check-icon">
-                            <span class="icon-line line-tip"></span>
-                            <span class="icon-line line-long"></span>
-                            <div class="icon-circle"></div>
-                            <div class="icon-fix"></div>
-                        </div>
+   <!-- Order Success Modal - Cập nhật lại nội dung modal để có thể hiển thị thông tin đơn hàng nếu cần -->
+<div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-labelledby="orderSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-5">
+                <div class="order-success-check">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
                     </div>
-                    <h4 class="mb-3">Đặt hàng thành công!</h4>
-                    <p>Đơn hàng của bạn đã được xác nhận.</p>
-                    <p>Chúng tôi sẽ giao hàng cho bạn trong thời gian sớm nhất.</p>
-                    <p class="mb-4">Cảm ơn bạn đã mua sắm tại 160STORE!</p>
-                    <div class="d-grid gap-2 d-md-flex justify-content-center">
-                        <a href="index.php" class="btn btn-outline-primary me-md-2">
-                            <i class="bi bi-house-door-fill me-1"></i> Trang chủ
-                        </a>
-                        <a href="index.php?controller=user&action=orders" class="btn btn-primary">
-                            <i class="bi bi-bag-check-fill me-1"></i> Theo dõi đơn hàng
-                        </a>
-                    </div>
+                </div>
+                <h4 class="mb-3">Đặt hàng thành công!</h4>
+                <p>Đơn hàng của bạn đã được xác nhận.</p>
+                <p>Mã đơn hàng: <strong><?= $lastOrder['order_number'] ?? 'N/A' ?></strong></p>
+                <p>Chúng tôi sẽ giao hàng cho bạn trong thời gian sớm nhất.</p>
+                <p class="mb-4">Cảm ơn bạn đã mua sắm tại 160STORE!</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-center">
+                    <a href="index.php" class="btn btn-outline-primary me-md-2">
+                        <i class="bi bi-house-door-fill me-1"></i> Trang chủ
+                    </a>
+                    <a href="index.php?controller=product&action=index" class="btn btn-primary">
+                        <i class="bi bi-shop me-1"></i> Tiếp tục mua sắm
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

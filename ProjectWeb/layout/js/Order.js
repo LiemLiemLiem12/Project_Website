@@ -1,292 +1,434 @@
-// Order.js
-document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
-    const form = document.getElementById('checkout-form');
-    const completeOrderBtn = document.getElementById('complete-order');
-    
-    // Payment method selection
-    const paymentMethods = document.querySelectorAll('.payment-method');
-    paymentMethods.forEach(method => {
-        method.addEventListener('click', function() {
-            // Remove selected class from all methods
-            paymentMethods.forEach(m => m.classList.remove('selected'));
-            // Add selected class to clicked method
-            this.classList.add('selected');
-            // Check the radio button
-            this.querySelector('input[type="radio"]').checked = true;
+document.addEventListener("DOMContentLoaded", function () {
+  // Kiểm tra xem có đơn hàng thành công không
+  checkOrderSuccess();
+
+  // Khởi tạo chức năng tăng/giảm số lượng
+  initQuantityControls();
+
+  // Khởi tạo các phương thức thanh toán, vận chuyển
+  initPaymentOptions();
+
+  // Khởi tạo form xác nhận đặt hàng
+  initOrderForm();
+});
+
+// Kiểm tra đơn hàng thành công
+function checkOrderSuccess() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (
+    urlParams.has("order_success") &&
+    urlParams.get("order_success") === "true"
+  ) {
+    const orderSuccessModal = new bootstrap.Modal(
+      document.getElementById("orderSuccessModal")
+    );
+    orderSuccessModal.show();
+
+    // Xóa tham số từ URL
+    const url = new URL(window.location);
+    url.searchParams.delete("order_success");
+    window.history.replaceState({}, "", url);
+
+    // Xử lý khi modal đóng
+    document
+      .getElementById("orderSuccessModal")
+      .addEventListener("hidden.bs.modal", function () {
+        // Chuyển hướng đến trang chủ sau khi xem modal
+        window.location.href = "index.php";
+      });
+  }
+}
+
+// Khởi tạo các nút tăng/giảm số lượng
+function initQuantityControls() {
+  // Xử lý nút giảm số lượng
+  const minusBtns = document.querySelectorAll(".qty-btn.minus");
+  minusBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const input = this.nextElementSibling;
+      const currentValue = parseInt(input.value);
+      const productItem = this.closest(".product-item");
+      const productId = productItem.dataset.productId;
+      const productSize = productItem.dataset.productSize;
+
+      if (currentValue > 1) {
+        const newValue = currentValue - 1;
+        input.value = newValue;
+        updateProductSubtotal(productItem);
+
+        // Cập nhật số lượng trên server thông qua AJAX
+        updateCartItemQuantity(productId, productSize, newValue);
+      }
+    });
+  });
+
+  // Xử lý nút tăng số lượng
+  const plusBtns = document.querySelectorAll(".qty-btn.plus");
+  plusBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const input = this.previousElementSibling;
+      const currentValue = parseInt(input.value);
+      const productItem = this.closest(".product-item");
+      const productId = productItem.dataset.productId;
+      const productSize = productItem.dataset.productSize;
+      const maxStock = parseInt(productItem.dataset.maxStock || 0);
+
+      // Kiểm tra số lượng tồn kho trước khi tăng
+      if (maxStock && currentValue >= maxStock) {
+        showNotification(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
+        return;
+      }
+
+      const newValue = currentValue + 1;
+      input.value = newValue;
+      updateProductSubtotal(productItem);
+
+      // Cập nhật số lượng trên server thông qua AJAX
+      updateCartItemQuantity(productId, productSize, newValue);
+    });
+  });
+
+  // Xử lý khi nhập trực tiếp số lượng
+  const quantityInputs = document.querySelectorAll(".qty-input");
+  quantityInputs.forEach((input) => {
+    input.addEventListener("change", function () {
+      let value = parseInt(this.value);
+      const productItem = this.closest(".product-item");
+      const productId = productItem.dataset.productId;
+      const productSize = productItem.dataset.productSize;
+      const maxStock = parseInt(productItem.dataset.maxStock || 0);
+
+      // Kiểm tra giá trị hợp lệ
+      if (isNaN(value) || value < 1) {
+        value = 1;
+      } else if (maxStock && value > maxStock) {
+        value = maxStock;
+        showNotification(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
+      }
+
+      this.value = value;
+      updateProductSubtotal(productItem);
+
+      // Cập nhật số lượng trên server thông qua AJAX
+      updateCartItemQuantity(productId, productSize, value);
+    });
+  });
+}
+
+// Cập nhật số lượng sản phẩm trong giỏ hàng
+function updateCartItemQuantity(productId, size, quantity) {
+  // Hiển thị loading nếu cần
+  // showLoading(true);
+
+  fetch("index.php?controller=cart&action=updateItem", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    body: `product_id=${productId}&size=${size}&quantity=${quantity}`,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        // Cập nhật tổng cộng
+        calculateTotal();
+
+        // Cập nhật số lượng sản phẩm trên header
+        if (document.getElementById("item-count")) {
+          document.getElementById("item-count").textContent = data.count;
+        }
+
+        // Lưu vào sessionStorage
+        sessionStorage.setItem("cartCount", data.count);
+      } else {
+        showNotification(data.message || "Có lỗi xảy ra", "error");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      showNotification("Có lỗi xảy ra khi cập nhật giỏ hàng", "error");
+    })
+    .finally(() => {
+      // Ẩn loading nếu cần
+      // showLoading(false);
+    });
+}
+
+// Cập nhật tổng giá của một sản phẩm
+function updateProductSubtotal(productItem) {
+  // Lấy thông tin số lượng và giá
+  const quantityInput = productItem.querySelector(".qty-input");
+  const quantity = parseInt(quantityInput.value);
+  const originalPrice = parseInt(
+    quantityInput.getAttribute("data-original-price") || 0
+  );
+  const priceElement = productItem.querySelector(".product-price");
+
+  // Tính giá mới
+  const newPrice = originalPrice * quantity;
+
+  // Cập nhật hiển thị và dữ liệu
+  if (priceElement) {
+    priceElement.textContent = formatCurrency(newPrice);
+  }
+
+  // Cập nhật thuộc tính data-price
+  quantityInput.setAttribute("data-price", newPrice);
+
+  // Tính lại tổng cộng
+  calculateTotal();
+}
+
+// Khởi tạo form xác nhận đặt hàng
+function initOrderForm() {
+  const completeOrderBtn = document.getElementById("complete-order");
+  const checkoutForm = document.getElementById("checkout-form");
+
+  if (completeOrderBtn && checkoutForm) {
+    completeOrderBtn.addEventListener("click", function () {
+      if (validateForm()) {
+        // Hiển thị hiệu ứng loading
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
+        this.disabled = true;
+
+        // Đảm bảo số lượng sản phẩm đã được cập nhật trước khi thanh toán
+        const productItems = document.querySelectorAll(".product-item");
+
+        // Tạo danh sách các promises cập nhật số lượng
+        const updatePromises = Array.from(productItems).map((item) => {
+          const productId = item.dataset.productId;
+          const productSize = item.dataset.productSize;
+          const quantityInput = item.querySelector(".qty-input");
+          const quantity = parseInt(quantityInput.value);
+
+          return new Promise((resolve) => {
+            fetch("index.php?controller=cart&action=updateItem", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Requested-With": "XMLHttpRequest",
+              },
+              body: `product_id=${productId}&size=${productSize}&quantity=${quantity}`,
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                resolve(data.success);
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                resolve(false);
+              });
+          });
         });
+
+        // Sau khi cập nhật tất cả số lượng, submit form
+        Promise.all(updatePromises)
+          .then((results) => {
+            // Kiểm tra nếu tất cả đều thành công
+            if (results.every((result) => result)) {
+              // Thêm trường ẩn để đánh dấu là submit bằng nút thanh toán
+              const hiddenInput = document.createElement("input");
+              hiddenInput.type = "hidden";
+              hiddenInput.name = "checkout_submit";
+              hiddenInput.value = "1";
+              checkoutForm.appendChild(hiddenInput);
+
+              // Submit form
+              checkoutForm.submit();
+            } else {
+              // Có lỗi xảy ra khi cập nhật số lượng
+              this.innerHTML =
+                '<i class="bi bi-check2-circle me-2"></i> HOÀN TẤT ĐƠN HÀNG';
+              this.disabled = false;
+              showNotification(
+                "Có lỗi xảy ra khi cập nhật số lượng sản phẩm. Vui lòng thử lại!",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error in updatePromises:", error);
+            this.innerHTML =
+              '<i class="bi bi-check2-circle me-2"></i> HOÀN TẤT ĐƠN HÀNG';
+            this.disabled = false;
+            showNotification("Có lỗi xảy ra. Vui lòng thử lại!", "error");
+          });
+      }
+    });
+  }
+}
+
+// Xác thực form
+function validateForm() {
+  let isValid = true;
+
+  // Thêm class was-validated để hiển thị validation feedback
+  const checkoutForm = document.getElementById("checkout-form");
+  if (checkoutForm) {
+    checkoutForm.classList.add("was-validated");
+
+    // Kiểm tra các trường bắt buộc
+    const requiredFields = checkoutForm.querySelectorAll("[required]");
+    requiredFields.forEach((field) => {
+      if (!field.value) {
+        isValid = false;
+        field.classList.add("is-invalid");
+      } else {
+        field.classList.remove("is-invalid");
+      }
     });
 
-    // Shipping method selection
-    const shippingMethods = document.querySelectorAll('.shipping-method');
-    shippingMethods.forEach(method => {
-        method.addEventListener('click', function() {
-            // Remove selected class from all methods
-            shippingMethods.forEach(m => m.classList.remove('selected'));
-            // Add selected class to clicked method
-            this.classList.add('selected');
-            // Check the radio button
-            this.querySelector('input[type="radio"]').checked = true;
-            
-            // Update shipping fee in summary
-            const shippingFee = this.getAttribute('data-fee');
-            document.getElementById('shipping-fee').textContent = formatCurrency(shippingFee);
-            
-            // Recalculate total
-            calculateTotal();
-        });
-    });
-    
-    // Quantity controls
-    const minusBtns = document.querySelectorAll('.qty-btn.minus');
-    const plusBtns = document.querySelectorAll('.qty-btn.plus');
-    
-    minusBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const input = this.nextElementSibling;
-            const currentValue = parseInt(input.value);
-            if (currentValue > 1) {
-                input.value = currentValue - 1;
-                updateProductSubtotal(this.closest('.product-item'));
-            }
-        });
-    });
-    
-    plusBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            input.value = parseInt(input.value) + 1;
-            updateProductSubtotal(this.closest('.product-item'));
-        });
-    });
-    
-    // Coupon code handling
-    const applyBtn = document.getElementById('apply-coupon');
-    const couponInput = document.getElementById('coupon-code');
-    const couponSuccess = document.getElementById('coupon-success');
-    const couponError = document.getElementById('coupon-error');
-    const discountRow = document.querySelector('.discount-row');
-    const discountCodeInput = document.getElementById('discount_code_input');
-    
-    applyBtn.addEventListener('click', function() {
-        const code = couponInput.value.trim();
-        if (!code) {
-            couponSuccess.classList.add('d-none');
-            couponError.classList.remove('d-none');
-            discountRow.classList.add('d-none');
-            document.getElementById('discount').textContent = '-0₫';
-            discountCodeInput.value = '';
-            calculateTotal();
-            return;
-        }
-        
-        // Check valid discount codes
-        const validCodes = {
-            'SALE50K': 50000,
-            'SALE100K': 100000,
-            'FREESHIP': 35000
-        };
-        
-        if (validCodes[code]) {
-            // Valid discount code
-            couponSuccess.classList.remove('d-none');
-            couponError.classList.add('d-none');
-            discountRow.classList.remove('d-none');
-            document.getElementById('discount').textContent = '-' + formatCurrency(validCodes[code]);
-            discountCodeInput.value = code;
-            calculateTotal();
-        } else {
-            // Invalid discount code
-            couponSuccess.classList.add('d-none');
-            couponError.classList.remove('d-none');
-            discountRow.classList.add('d-none');
-            document.getElementById('discount').textContent = '-0₫';
-            discountCodeInput.value = '';
-            calculateTotal();
-        }
-    });
-    
-    // Province/District/Ward dropdowns
-    const provinceSelect = document.getElementById('province');
-    const districtSelect = document.getElementById('district');
-    const wardSelect = document.getElementById('ward');
-    
-    provinceSelect.addEventListener('change', function() {
-        if (this.value) {
-            districtSelect.disabled = false;
-            // Clear and reset district select
-            districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-            
-            // Add mock districts based on selected province
-            if (this.value === '79') { // TP. HCM
-                addOption(districtSelect, '790', 'Quận 1');
-                addOption(districtSelect, '791', 'Quận 2');
-                addOption(districtSelect, '792', 'Quận 3');
-                addOption(districtSelect, '793', 'Quận Tân Bình');
-                addOption(districtSelect, '794', 'Quận Bình Thạnh');
-            } else if (this.value === '01') { // Hà Nội
-                addOption(districtSelect, '010', 'Quận Ba Đình');
-                addOption(districtSelect, '011', 'Quận Hoàn Kiếm');
-                addOption(districtSelect, '012', 'Quận Hai Bà Trưng');
-                addOption(districtSelect, '013', 'Quận Đống Đa');
-            } else if (this.value === '48') { // Đà Nẵng
-                addOption(districtSelect, '480', 'Quận Hải Châu');
-                addOption(districtSelect, '481', 'Quận Thanh Khê');
-                addOption(districtSelect, '482', 'Quận Sơn Trà');
-            } else if (this.value === '92') { // Cần Thơ
-                addOption(districtSelect, '920', 'Quận Ninh Kiều');
-                addOption(districtSelect, '921', 'Quận Bình Thủy');
-                addOption(districtSelect, '922', 'Quận Cái Răng');
-            } else if (this.value === '74') { // Bình Dương
-                addOption(districtSelect, '740', 'Thành phố Thủ Dầu Một');
-                addOption(districtSelect, '741', 'Thành phố Thuận An');
-                addOption(districtSelect, '742', 'Thành phố Dĩ An');
-            } else if (this.value === '75') { // Đồng Nai
-                addOption(districtSelect, '750', 'Thành phố Biên Hòa');
-                addOption(districtSelect, '751', 'Huyện Long Thành');
-                addOption(districtSelect, '752', 'Huyện Nhơn Trạch');
-            }
-        } else {
-            districtSelect.disabled = true;
-            wardSelect.disabled = true;
-        }
-        
-        // Reset ward
-        wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-        wardSelect.disabled = true;
-    });
-    
-    districtSelect.addEventListener('change', function() {
-        if (this.value) {
-            wardSelect.disabled = false;
-            // Clear and reset ward select
-            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-            
-            // Add mock wards based on selected district
-            if (this.value === '790') { // Quận 1
-                addOption(wardSelect, '79001', 'Phường Bến Nghé');
-                addOption(wardSelect, '79002', 'Phường Bến Thành');
-                addOption(wardSelect, '79003', 'Phường Đa Kao');
-            } else if (this.value === '791') { // Quận 2
-                addOption(wardSelect, '79101', 'Phường Thảo Điền');
-                addOption(wardSelect, '79102', 'Phường An Phú');
-                addOption(wardSelect, '79103', 'Phường Bình An');
-            } else if (this.value === '010') { // Quận Ba Đình
-                addOption(wardSelect, '01001', 'Phường Phúc Xá');
-                addOption(wardSelect, '01002', 'Phường Trúc Bạch');
-                addOption(wardSelect, '01003', 'Phường Vĩnh Phúc');
-            } else {
-                // Add some generic wards for other districts
-                addOption(wardSelect, '10001', 'Phường 1');
-                addOption(wardSelect, '10002', 'Phường 2');
-                addOption(wardSelect, '10003', 'Phường 3');
-            }
-        } else {
-            wardSelect.disabled = true;
-        }
-    });
-    
-    // Complete order button click
-    completeOrderBtn.addEventListener('click', function() {
-        if (validateForm()) {
-            form.submit();
-        }
-    });
-    
-    // Helper functions
-    function validateForm() {
-        let isValid = true;
-        
-        // Add was-validated class to form
-        form.classList.add('was-validated');
-        
-        // Check required fields
-        const requiredFields = form.querySelectorAll('[required]');
-        requiredFields.forEach(field => {
-            if (!field.value) {
-                isValid = false;
-                field.classList.add('is-invalid');
-            } else {
-                field.classList.remove('is-invalid');
-            }
-        });
-        
-        return isValid;
+    // Kiểm tra select fields
+    const provinceSelect = document.getElementById("province");
+    const districtSelect = document.getElementById("district");
+    const wardSelect = document.getElementById("ward");
+
+    if (provinceSelect && !provinceSelect.value) {
+      isValid = false;
+      provinceSelect.classList.add("is-invalid");
+      showNotification("Vui lòng chọn Tỉnh/Thành phố", "error");
     }
-    
-    function updateProductSubtotal(productItem) {
-        // Get quantity and unit price for this product
-        const quantityInput = productItem.querySelector('.qty-input');
-        const quantity = parseInt(quantityInput.value);
-        const priceElement = productItem.querySelector('.product-price');
-        
-        // Get the original price from data attribute
-        const originalPrice = parseInt(quantityInput.getAttribute('data-original-price'));
-        
-        // Calculate new price based on quantity
-        const newPrice = originalPrice * quantity;
-        
-        // Update the product price display
-        priceElement.textContent = formatCurrency(newPrice);
-        
-        // Update the current price data attribute
-        quantityInput.setAttribute('data-price', newPrice);
-        
-        // Recalculate the total
-        calculateTotal();
+
+    if (districtSelect && districtSelect.required && !districtSelect.value) {
+      isValid = false;
+      districtSelect.classList.add("is-invalid");
+      showNotification("Vui lòng chọn Quận/Huyện", "error");
     }
-    
-    function calculateTotal() {
-        // Calculate the actual subtotal from all product items
-        let subtotal = 0;
-        const productItems = document.querySelectorAll('.product-item');
-        
-        productItems.forEach(item => {
-            const quantityInput = item.querySelector('.qty-input');
-            const price = parseInt(quantityInput.getAttribute('data-price'));
-            subtotal += price;
-        });
-        
-        // Get shipping fee
-        const selectedShipping = document.querySelector('.shipping-method.selected');
-        const shippingFee = selectedShipping ? parseInt(selectedShipping.getAttribute('data-fee')) : 35000;
-        
-        // Check if discount is applied
-        let discount = 0;
-        if (!discountRow.classList.contains('d-none')) {
-            const discountText = document.getElementById('discount').textContent;
-            discount = parseCurrency(discountText);
-        }
-        
-        // Calculate total
-        const total = subtotal + shippingFee - discount;
-        
-        // Update UI
-        document.getElementById('subtotal').textContent = formatCurrency(subtotal);
-        document.getElementById('shipping-fee').textContent = formatCurrency(shippingFee);
-        document.getElementById('total').textContent = formatCurrency(total);
+
+    if (wardSelect && wardSelect.required && !wardSelect.value) {
+      isValid = false;
+      wardSelect.classList.add("is-invalid");
+      showNotification("Vui lòng chọn Phường/Xã", "error");
     }
-    
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-            maximumFractionDigits: 0
-        }).format(amount).replace('₫', '') + '₫';
+
+    // Kiểm tra chọn phương thức thanh toán và vận chuyển
+    const paymentMethod = document.querySelector(
+      'input[name="payment_method"]:checked'
+    );
+    const shippingMethod = document.querySelector(
+      'input[name="shipping_method"]:checked'
+    );
+
+    if (!paymentMethod) {
+      isValid = false;
+      showNotification("Vui lòng chọn phương thức thanh toán", "error");
     }
-    
-    function parseCurrency(currencyString) {
-        // Remove non-digit characters and convert to number
-        return parseInt(currencyString.replace(/\D/g, ''));
+
+    if (!shippingMethod) {
+      isValid = false;
+      showNotification("Vui lòng chọn phương thức vận chuyển", "error");
     }
-    
-    function addOption(selectElement, value, text) {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = text;
-        selectElement.appendChild(option);
+  }
+
+  return isValid;
+}
+
+// Tính toán tổng đơn hàng
+function calculateTotal() {
+  // Tính tổng tiền từ các sản phẩm
+  let subtotal = 0;
+  const productItems = document.querySelectorAll(".product-item");
+
+  productItems.forEach((item) => {
+    const quantityInput = item.querySelector(".qty-input");
+    const price = parseInt(quantityInput.getAttribute("data-price") || 0);
+    subtotal += price;
+  });
+
+  // Cập nhật hiển thị tạm tính
+  const subtotalElement = document.getElementById("subtotal");
+  if (subtotalElement) {
+    subtotalElement.textContent = formatCurrency(subtotal);
+  }
+
+  // Lấy phí vận chuyển
+  const shippingSelection = document.querySelector(".shipping-method.selected");
+  const shippingFee = shippingSelection
+    ? parseInt(shippingSelection.getAttribute("data-fee") || 0)
+    : 35000;
+
+  // Cập nhật hiển thị phí vận chuyển
+  const shippingFeeElement = document.getElementById("shipping-fee");
+  if (shippingFeeElement) {
+    shippingFeeElement.textContent = formatCurrency(shippingFee);
+  }
+
+  // Lấy giảm giá (nếu có)
+  let discount = 0;
+  const discountRow = document.querySelector(".discount-row");
+  if (discountRow && !discountRow.classList.contains("d-none")) {
+    const discountElement = document.getElementById("discount");
+    if (discountElement) {
+      discount = parseCurrency(discountElement.textContent);
     }
-    
-    // Initialize calculations
-    calculateTotal();
-});
+  }
+
+  // Tính tổng cộng
+  const total = subtotal + shippingFee - discount;
+
+  // Cập nhật hiển thị tổng cộng
+  const totalElement = document.getElementById("total");
+  if (totalElement) {
+    totalElement.textContent = formatCurrency(total);
+  }
+}
+
+// Hiển thị thông báo
+function showNotification(message, type = "success") {
+  // Tạo phần tử thông báo
+  const notification = document.createElement("div");
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="fas fa-${
+              type === "success" ? "check-circle" : "exclamation-circle"
+            }"></i>
+        </div>
+        <div class="notification-content">${message}</div>
+    `;
+
+  // Tìm hoặc tạo container thông báo
+  let container = document.querySelector(".notification-container");
+
+  if (!container) {
+    container = document.createElement("div");
+    container.className = "notification-container";
+    document.body.appendChild(container);
+  }
+
+  // Thêm thông báo vào container
+  container.appendChild(notification);
+
+  // Thêm class hiển thị sau khoảng thời gian ngắn
+  setTimeout(() => {
+    notification.classList.add("show");
+  }, 10);
+
+  // Tự động ẩn thông báo sau 3 giây
+  setTimeout(() => {
+    notification.classList.remove("show");
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }, 3000);
+}
+
+// Định dạng số tiền
+function formatCurrency(amount) {
+  return (
+    new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      maximumFractionDigits: 0,
+    })
+      .format(amount)
+      .replace("₫", "") + "₫"
+  );
+}
+
+// Chuyển đổi chuỗi tiền thành số
+function parseCurrency(currencyString) {
+  // Loại bỏ ký tự không phải số
+  return parseInt(currencyString.replace(/\D/g, "")) || 0;
+}
