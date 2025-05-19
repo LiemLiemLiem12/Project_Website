@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize cart functionality
   initCart();
   fetchCartData();
+  fetchCartData();
   // Cập nhật giá trị ban đầu
   updateCartTotal();
   updateCartCount();
