@@ -67,7 +67,7 @@
                     <div class="cart-items" id="cart-items">
                         <!-- Cart Item 1 -->
                         <?php  foreach ($cartItems as $item): ?>
-                        <div class="cart-item" data-id="1">
+                      <div class="cart-item" data-id="<?= $item['product']['id_product'] ?>" data-unit-price="<?= $item['product']['current_price'] ?>" data-max-stock="<?= $item['product'][$item['size']] ?>">
                             <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $item['product']['main_image'] ?>" alt="Áo Thun Nam" class="cart-item-image">
                             <div class="cart-item-info">
                                 <div class="cart-item-title"><?= $item['product']['name'] ?></div>
@@ -110,17 +110,17 @@
                             <span>Tạm tính:</span>
                             <span id="cart-subtotal">224,000₫</span>
                         </div>
-                        <div class="summary-row">
+                        <!-- <div class="summary-row">
                             <span>Phí vận chuyển:</span>
                             <span id="cart-shipping">30,000₫</span>
-                        </div>
+                        </div> -->
                         <div class="summary-row discount-row" style="display: none;">
                             <span>Giảm giá:</span>
                             <span id="cart-discount" class="text-success">-50,000₫</span>
                         </div>
                         <div class="summary-row mt-3">
                             <span>Tổng cộng:</span>
-                            <span id="cart-total" class="summary-total">254,000₫</span>
+                            <span id="cart-total" class="summary-total">0₫</span>
                         </div>
                     </div>
 
@@ -128,11 +128,11 @@
 
 
                     <div class="mt-3">
-                        <div class="text-center text-muted small mb-2">Miễn phí vận chuyển cho đơn hàng từ 200K</div>
-                        <div class="progress">
+                        <!-- <div class="text-center text-muted small mb-2">Miễn phí vận chuyển cho đơn hàng từ 200K</div> -->
+                        <!-- <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <div class="text-end text-muted small mt-1">Đủ điều kiện ✓</div>
+                        <div class="text-end text-muted small mt-1">Đủ điều kiện ✓</div> -->
                     </div>
                 </div>
             </div>

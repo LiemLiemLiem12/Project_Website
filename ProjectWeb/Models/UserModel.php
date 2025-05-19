@@ -48,16 +48,18 @@ class UserModel extends BaseModel
     /**
      * Find user by reset token
      */
-    public function findByResetToken($token)
-    {
-        $token = mysqli_real_escape_string($this->connect, $token);
-        $sql = "SELECT * FROM " . self::TABLE . " 
-                WHERE reset_token = '$token' 
-                AND reset_token_expiry > NOW() 
-                LIMIT 1";
-        $result = $this->getByQuery($sql);
-        return $result ? $result[0] : null;
-    }
+   public function findByResetToken($token)
+{
+    $token = mysqli_real_escape_string($this->connect, $token);
+    $sql = "SELECT * FROM " . self::TABLE . " 
+           WHERE reset_token = '$token' 
+           LIMIT 1";
+    
+    error_log("SQL query để tìm token: $sql");
+    
+    $result = $this->getByQuery($sql);
+    return $result ? $result[0] : null;
+}
     
     /**
      * Create a new user
@@ -79,18 +81,7 @@ class UserModel extends BaseModel
     /**
      * Update user verification code
      */
-    public function updateVerificationCode($userId, $code)
-    {
-        $userId = (int)$userId;
-        $code = mysqli_real_escape_string($this->connect, $code);
-        
-        $sql = "UPDATE " . self::TABLE . " 
-                SET verification_code = '$code' 
-                WHERE id_User = $userId";
-        
-        return $this->_query($sql);
-    }
-    
+ 
     /**
      * Mark user as verified
      */
@@ -139,5 +130,32 @@ class UserModel extends BaseModel
         
         return $this->_query($sql);
     }
+    /**
+ * Update user verification code
+ */
+public function updateVerificationCode($userId, $code)
+{
+    $userId = (int)$userId;
+    $code = mysqli_real_escape_string($this->connect, $code);
+    
+    $sql = "UPDATE " . self::TABLE . " 
+            SET verification_code = '$code' 
+            WHERE id_User = $userId";
+    
+    return $this->_query($sql);
+}
+
+/**
+ * Find user by verification code
+ */
+public function findByVerificationCode($code)
+{
+    $code = mysqli_real_escape_string($this->connect, $code);
+    $sql = "SELECT * FROM " . self::TABLE . " 
+            WHERE verification_code = '$code' 
+            LIMIT 1";
+    $result = $this->getByQuery($sql);
+    return $result ? $result[0] : null;
+}
 }
 ?>

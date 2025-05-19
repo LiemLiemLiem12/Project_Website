@@ -10,6 +10,20 @@ document.addEventListener("DOMContentLoaded", function () {
   checkEmptyCart(); // Kiểm tra giỏ hàng trống
   // Initialize voucher buttons
   initVoucherButtons();
+
+  function showNotification(message, type = "success") {
+  // Tạo phần tử thông báo
+  const notification = document.createElement("div");
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="fas fa-${
+              type === "success" ? "check-circle" : "exclamation-circle"
+            }"></i>
+        </div>
+        <div class="notification-content">${message}</div>
+    `;
+          }
   const cartCount = sessionStorage.getItem("cartCount");
   if (cartCount) {
     const countElement = document.getElementById("item-count");
@@ -226,19 +240,27 @@ function initCart() {
     });
 
     // Cập nhật nút tăng số lượng
-    document.querySelectorAll(".increase-btn").forEach((button) => {
-      button.addEventListener("click", function () {
-        const productId = this.getAttribute("productId");
-        const size = this.getAttribute("productSize");
-        const quantityInput =
-          this.closest(".quantity-control").querySelector(".quantity-input");
-        let value = parseInt(quantityInput.value);
-
-        quantityInput.value = value + 1;
-        // Cập nhật giỏ hàng qua AJAX
-        updateCartItemAjax(productId, size, value + 1);
-      });
-    });
+   document.querySelectorAll(".increase-btn").forEach((button) => {
+  button.addEventListener("click", function () {
+    const productId = this.getAttribute("productId");
+    const size = this.getAttribute("productSize");
+    const quantityInput = this.closest(".quantity-control").querySelector(".quantity-input");
+    let value = parseInt(quantityInput.value);
+    
+    // Lấy thông tin tồn kho từ thuộc tính data
+    const maxStock = parseInt(this.closest(".cart-item").getAttribute("data-max-stock") || 0);
+    
+    // Kiểm tra số lượng tồn kho trước khi tăng
+    if (maxStock && value >= maxStock) {
+      showNotification(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
+      return;
+    }
+    
+    quantityInput.value = value + 1;
+    // Cập nhật giỏ hàng qua AJAX
+    updateCartItemAjax(productId, size, value + 1);
+  });
+});
 
     // Xử lý nút xóa sản phẩm
     document

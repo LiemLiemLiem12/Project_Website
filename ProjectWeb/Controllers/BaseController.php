@@ -8,16 +8,16 @@ class BaseController
      * + path name: folderName.fileName
      * + Lấy từ sau thư mục Views
      */
-    //  public function __construct()
-    // {
-    //     $this->loadModel('CategoryModel');
-    //     $this->categoryModel = new CategoryModel();
-    // }
+     public function __construct()
+    {
+        $this->loadModel('CategoryModel');
+        $this->categoryModel = new CategoryModel();
+    }
     public function view($viewPath, array $data = [])
     {
-        //    if (!isset($data['headerCategories'])) {
-        //     $data['headerCategories'] = $this->getHeaderCategories();
-        // }
+           if (!isset($data['headerCategories'])) {
+            $data['headerCategories'] = $this->getHeaderCategories();
+        }
         foreach($data as $key=>$value){
             $$key=$value;
         }
