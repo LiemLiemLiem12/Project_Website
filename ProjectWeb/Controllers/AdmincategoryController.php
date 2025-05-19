@@ -72,62 +72,60 @@ class AdminCategoryController {
 
     // Xử lý thêm danh mục mới
     public function addCategory() {
-        $input = json_decode(file_get_contents('php://input'), true);
-
-        if (!$input || empty($input['name'])) {
-            $this->sendJsonResponse(['success' => false, 'message' => 'Tên danh mục không được để trống.']);
-            return; // Add this return statement
-        }
-
-        $dataToInsert = [
-            'name' => $input['name'],
-            'hide' => isset($input['hide']) ? intval($input['hide']) : 0
-        ];
-        
-        $insertedId = $this->categoryModel->addCategory($dataToInsert); 
-
-        if ($insertedId !== false && $insertedId > 0) {
-            $name = htmlspecialchars($input['name']); 
-            if ($this->categoryModel->conn) { // Chỉ ghi log nếu kết nối DB ok
-                $meta = json_encode(['category_id' => $insertedId]);
-                $this->categoryModel->addNotification([
-                    'type' => 'category', 'title' => 'Thêm danh mục',
-                    'content' => "Đã thêm: $name.", 'meta' => $meta, 'link' => ''
-                ]);
+        // Sử dụng FormData nên lấy từ $_POST và $_FILES
+        $name = $_POST['name'] ?? '';
+        $hide = isset($_POST['hide']) ? intval($_POST['hide']) : 0;
+        $imageName = '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $targetDir = 'upload/img/category/';
+            if (!file_exists($targetDir)) {
+                mkdir($targetDir, 0777, true);
             }
+            $imageName = time() . '_' . basename($_FILES['image']['name']);
+            $targetFile = $targetDir . $imageName;
+            move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
+        }
+        $dataToInsert = [
+            'name' => $name,
+            'hide' => $hide,
+            'image' => $imageName
+        ];
+        $insertedId = $this->categoryModel->addCategory($dataToInsert);
+        if ($insertedId !== false && $insertedId > 0) {
             $this->sendJsonResponse(['success' => true, 'id' => $insertedId, 'message' => 'Đã thêm danh mục thành công!']);
         } else {
             $error = $this->categoryModel->conn ? $this->categoryModel->getLastError() : "Lỗi Model CSDL.";
             $this->sendJsonResponse(['success' => false, 'message' => 'Không thể thêm. ' . $error]);
         }
+        
     }
 
     // Xử lý cập nhật danh mục
     public function updateCategory() {
-        $input = json_decode(file_get_contents('php://input'), true);
-        $id = $input['id'] ?? 0;
-        
-        if (!$input || !$id || empty($input['name'])) {
-            $this->sendJsonResponse(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
-            return; // Add this return statement
-        }
-        
-        $updateData = [
-            'name' => $input['name'],
-            'hide' => isset($input['hide']) ? intval($input['hide']) : 0
-        ];
-
-        $result = $this->categoryModel->updateCategory($id, $updateData);
-
-        if ($result) {
-            $name = htmlspecialchars($input['name']);
-            if ($this->categoryModel->conn) {
-                $meta = json_encode(['category_id' => $id]);
-                $this->categoryModel->addNotification([
-                    'type' => 'category', 'title' => 'Cập nhật danh mục',
-                    'content' => "Đã cập nhật: $name.", 'meta' => $meta, 'link' => ''
-                ]);
+        $id = $_POST['id'] ?? 0;
+        $name = $_POST['name'] ?? '';
+        $hide = isset($_POST['hide']) ? intval($_POST['hide']) : 0;
+        $imageName = '';
+        // Lấy ảnh cũ nếu không upload mới
+        $old = $this->categoryModel->getById($id);
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $targetDir = 'upload/img/category/';
+            if (!file_exists($targetDir)) {
+                mkdir($targetDir, 0777, true);
             }
+            $imageName = time() . '_' . basename($_FILES['image']['name']);
+            $targetFile = $targetDir . $imageName;
+            move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
+        } else if ($old && !empty($old['image'])) {
+            $imageName = $old['image'];
+        }
+        $updateData = [
+            'name' => $name,
+            'hide' => $hide,
+            'image' => $imageName
+        ];
+        $result = $this->categoryModel->updateCategory($id, $updateData);
+        if ($result) {
             $this->sendJsonResponse(['success' => true, 'message' => 'Đã cập nhật thành công!']);
         } else {
             $error = $this->categoryModel->conn ? $this->categoryModel->getLastError() : "Lỗi Model CSDL.";
@@ -216,22 +214,8 @@ class AdminCategoryController {
 
     // Lấy danh sách danh mục trong thùng rác (hide = 1)
     public function getTrashCategories() {
-        try {
-            // Lấy tất cả danh mục có hide = 1
-            $sql = "SELECT id_Category AS ID, name, hide FROM category WHERE hide = 1 ORDER BY name ASC";
-            $result = $this->categoryModel->conn->query($sql);
-            
-            $data = [];
-            if ($result) {
-                while ($row = $result->fetch_assoc()) {
-                    $data[] = $row;
-                }
-            }
-            
-            $this->sendJsonResponse($data);
-        } catch (Exception $e) {
-            $this->sendJsonResponse(['error' => 'Lỗi khi lấy dữ liệu thùng rác: ' . $e->getMessage()]);
-        }
+        $data = $this->categoryModel->getTrashCategories();
+        $this->sendJsonResponse($data);
     }
     
     // Khôi phục danh mục từ thùng rác (set hide = 0)
@@ -325,6 +309,11 @@ class AdminCategoryController {
                 'total' => $total
             ]
         ]);
+    }
+
+    public function getCategoriesCount() {
+        $count = $this->categoryModel->countCategoriesFiltered('active');
+        $this->sendJsonResponse(['count' => $count]);
     }
 }
 ?>
