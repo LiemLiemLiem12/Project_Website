@@ -1,3 +1,16 @@
+<?php
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+header("Pragma: no-cache"); // HTTP 1.0
+header("Expires: 0"); // Proxies
+
+if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
+    header('Location: ?controller=Adminlogin');
+    exit;
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -274,7 +287,8 @@
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th width="40"><input type="checkbox" id="select-all-trash" class="form-check-input"></th>
+                                    <th width="40"><input type="checkbox" id="select-all-trash"
+                                            class="form-check-input"></th>
                                     <th>Mã đơn hàng</th>
                                     <th>Khách hàng</th>
                                     <th>Ngày đặt</th>
@@ -373,21 +387,21 @@
             const showTrashBtn = document.getElementById('showTrashBtn');
             const trashModal = new bootstrap.Modal(document.getElementById('trashModal'));
             const restoreSelectedBtn = document.getElementById('restoreSelectedBtn');
-            
+
             if (showTrashBtn) {
-                showTrashBtn.addEventListener('click', function() {
+                showTrashBtn.addEventListener('click', function () {
                     loadTrashOrders();
                     trashModal.show();
                 });
             }
-            
+
             // Hàm tải danh sách đơn hàng trong thùng rác
             function loadTrashOrders() {
                 const trashTableBody = document.getElementById('trashTableBody');
                 if (!trashTableBody) return;
-                
+
                 trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
-                
+
                 fetch('index.php?controller=adminorder&action=trash')
                     .then(response => {
                         if (!response.ok) {
@@ -397,23 +411,23 @@
                     })
                     .then(data => {
                         trashTableBody.innerHTML = '';
-                        
+
                         if (data.error) {
                             trashTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">${data.error}</td></tr>`;
                             return;
                         }
-                        
+
                         if (!data || data.length === 0) {
                             trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Không có đơn hàng nào trong thùng rác.</td></tr>';
                             updateRestoreSelectedButton();
                             return;
                         }
-                        
+
                         // Hiển thị đơn hàng trong thùng rác
                         data.forEach(order => {
                             let statusClass = '';
                             let statusText = '';
-                            
+
                             if (order.status === 'completed') {
                                 statusClass = 'completed';
                                 statusText = 'Hoàn thành';
@@ -433,10 +447,10 @@
                                 statusClass = 'unknown';
                                 statusText = 'Không xác định';
                             }
-                            
+
                             const row = document.createElement('tr');
                             row.setAttribute('data-order-id', order.id_Order);
-                            
+
                             row.innerHTML = `
                                 <td><input type="checkbox" class="form-check-input trash-order-checkbox" data-id="${order.id_Order}"></td>
                                 <td>#0${order.id_Order}</td>
@@ -453,7 +467,7 @@
                             `;
                             trashTableBody.appendChild(row);
                         });
-                        
+
                         // Đính kèm sự kiện
                         attachTrashEventListeners();
                     })
@@ -462,28 +476,28 @@
                         trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Có lỗi xảy ra khi tải dữ liệu thùng rác.</td></tr>';
                     });
             }
-            
+
             // Đính kèm sự kiện cho các phần tử trong thùng rác
             function attachTrashEventListeners() {
                 // Đính kèm sự kiện cho các nút khôi phục đơn lẻ
                 document.querySelectorAll('.btn-restore-order').forEach(button => {
-                    button.addEventListener('click', function() {
+                    button.addEventListener('click', function () {
                         const id = this.getAttribute('data-id');
                         if (confirm('Bạn có chắc chắn muốn khôi phục đơn hàng này?')) {
                             restoreOrder(id);
                         }
                     });
                 });
-                
+
                 // Đính kèm sự kiện cho các checkbox
                 document.querySelectorAll('.trash-order-checkbox').forEach(checkbox => {
                     checkbox.addEventListener('change', updateRestoreSelectedButton);
                 });
-                
+
                 // Đính kèm sự kiện cho checkbox chọn tất cả
                 const selectAllTrashCheckbox = document.getElementById('select-all-trash');
                 if (selectAllTrashCheckbox) {
-                    selectAllTrashCheckbox.addEventListener('change', function() {
+                    selectAllTrashCheckbox.addEventListener('change', function () {
                         const isChecked = this.checked;
                         document.querySelectorAll('.trash-order-checkbox').forEach(checkbox => {
                             checkbox.checked = isChecked;
@@ -491,10 +505,10 @@
                         updateRestoreSelectedButton();
                     });
                 }
-                
+
                 updateRestoreSelectedButton();
             }
-            
+
             // Cập nhật trạng thái nút khôi phục đã chọn
             function updateRestoreSelectedButton() {
                 if (restoreSelectedBtn) {
@@ -502,21 +516,21 @@
                     restoreSelectedBtn.disabled = selectedCheckboxes.length === 0;
                 }
             }
-            
+
             // Xử lý khôi phục hàng loạt
             if (restoreSelectedBtn) {
-                restoreSelectedBtn.addEventListener('click', function() {
+                restoreSelectedBtn.addEventListener('click', function () {
                     const selectedIds = Array.from(document.querySelectorAll('.trash-order-checkbox:checked'))
                         .map(checkbox => checkbox.getAttribute('data-id'));
-                    
+
                     if (selectedIds.length === 0) return;
-                    
+
                     if (confirm(`Bạn có chắc chắn muốn khôi phục ${selectedIds.length} đơn hàng đã chọn?`)) {
                         restoreMultipleOrders(selectedIds);
                     }
                 });
             }
-            
+
             // Khôi phục một đơn hàng
             function restoreOrder(id) {
                 fetch(`index.php?controller=adminorder&action=restore&id=${id}`)
@@ -525,7 +539,7 @@
                         if (data.success) {
                             alert('Đã khôi phục đơn hàng thành công!');
                             loadTrashOrders(); // Tải lại danh sách thùng rác
-                            
+
                             // Tải lại danh sách đơn hàng chính nếu cần
                             location.reload(); // Hoặc sử dụng AJAX để tải lại bảng chính
                         } else {
@@ -537,17 +551,17 @@
                         alert('Lỗi kết nối khi khôi phục đơn hàng.');
                     });
             }
-            
+
             // Khôi phục nhiều đơn hàng
             function restoreMultipleOrders(ids) {
                 if (!ids || ids.length === 0) return;
-                
+
                 // Đếm số thành công
                 let successCount = 0;
                 let failureCount = 0;
                 let totalToProcess = ids.length;
                 let processed = 0;
-                
+
                 // Hiển thị thông báo đang xử lý
                 const trashTableBody = document.getElementById('trashTableBody');
                 if (trashTableBody) {
@@ -556,7 +570,7 @@
                     loadingRow.innerHTML = `<td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang khôi phục ${ids.length} đơn hàng...</td>`;
                     trashTableBody.appendChild(loadingRow);
                 }
-                
+
                 // Khôi phục từng đơn hàng
                 ids.forEach(id => {
                     fetch(`index.php?controller=adminorder&action=restore&id=${id}`)
@@ -569,15 +583,15 @@
                                 failureCount++;
                                 console.error(`Lỗi khôi phục đơn hàng #${id}:`, data.error);
                             }
-                            
+
                             // Khi tất cả đã được xử lý
                             if (processed === totalToProcess) {
                                 const message = `Đã khôi phục thành công ${successCount}/${totalToProcess} đơn hàng.`;
                                 alert(message);
-                                
+
                                 // Tải lại danh sách
                                 loadTrashOrders();
-                                
+
                                 // Tải lại danh sách đơn hàng chính
                                 if (successCount > 0) {
                                     location.reload();
@@ -588,15 +602,15 @@
                             processed++;
                             failureCount++;
                             console.error(`Lỗi kết nối khi khôi phục đơn hàng #${id}:`, error);
-                            
+
                             // Khi tất cả đã được xử lý
                             if (processed === totalToProcess) {
                                 const message = `Đã khôi phục thành công ${successCount}/${totalToProcess} đơn hàng.`;
                                 alert(message);
-                                
+
                                 // Tải lại danh sách
                                 loadTrashOrders();
-                                
+
                                 // Tải lại danh sách đơn hàng chính
                                 if (successCount > 0) {
                                     location.reload();

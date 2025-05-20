@@ -1,3 +1,16 @@
+<?php
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+header("Pragma: no-cache"); // HTTP 1.0
+header("Expires: 0"); // Proxies
+
+if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
+    header('Location: ?controller=Adminlogin');
+    exit;
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="vi">
 

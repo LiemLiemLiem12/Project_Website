@@ -188,12 +188,12 @@ class AdminproductController extends BaseController
             "hide" => 0
         ]);
         // Nếu thêm thành công, hiển thị lại danh sách sản phẩm
-            $this->view(
-                "frontend.admin.AdminProduct.sort",
-                [
-                    "productList" => $this->productModel->getProductList_AdminProduct()
-                ]
-            );
+        $this->view(
+            "frontend.admin.AdminProduct.sort",
+            [
+                "productList" => $this->productModel->getProductList_AdminProduct()
+            ]
+        );
         // } catch (Exception $exception) {
         //     echo "Lỗi: " . $exception->getMessage();
         // }
@@ -260,7 +260,6 @@ class AdminproductController extends BaseController
         $productTags = str_replace(' ', '-', $productTags);
         // try {
         // Nếu tất cả dữ liệu hợp lệ, gọi phương thức tạo sản phẩm
-
         $this->productModel->updateDataForProduct($productID, [
             "name" => $productName,
             "description" => $productDesc,
@@ -329,84 +328,86 @@ class AdminproductController extends BaseController
             }
         }
     }
-    public function getTrashItems() {
+    public function getTrashItems()
+    {
         try {
             // Tắt hiển thị lỗi
             error_reporting(0);
             ini_set('display_errors', 0);
-            
+
             // Xóa bất kỳ output nào trước khi trả về JSON
             while (ob_get_level()) {
                 ob_end_clean();
             }
-            
+
             // Đảm bảo class AdminProductModel được load
             if (!class_exists('AdminProductModel')) {
                 require_once __DIR__ . '/../Models/AdminProductModel.php';
             }
-            
+
             // Đặt header cho JSON
             header('Content-Type: application/json; charset=utf-8');
-            
+
             $model = new AdminProductModel();
-            
+
             // Kiểm tra kết nối database
             if (!$model->conn) {
                 echo json_encode(['error' => 'Lỗi kết nối database']);
                 exit;
             }
-            
+
             $trashItems = $model->getTrashItems();
-            
+
             // Trả về JSON response
             echo json_encode($trashItems);
             exit; // Ngăn chặn bất kỳ output nào khác
         } catch (Exception $e) {
             // Đảm bảo header JSON được thiết lập
             header('Content-Type: application/json; charset=utf-8');
-            
+
             echo json_encode(['error' => 'Lỗi khi lấy dữ liệu thùng rác: ' . $e->getMessage()]);
             exit;
         }
     }
-    
-    public function restoreProduct() {
+
+    public function restoreProduct()
+    {
         try {
             // Tắt hiển thị lỗi
             error_reporting(0);
             ini_set('display_errors', 0);
-            
+
             // Xóa bất kỳ output nào trước khi trả về JSON
             while (ob_get_level()) {
                 ob_end_clean();
             }
-            
+
             // Đảm bảo class AdminProductModel được load
             if (!class_exists('AdminProductModel')) {
                 require_once __DIR__ . '/../Models/AdminProductModel.php';
             }
-            
+
             // Đặt header cho JSON
             header('Content-Type: application/json; charset=utf-8');
-            
+
             // Lấy ID từ tham số
             $id = isset($_GET['id']) ? $_GET['id'] : null;
-            
+
             if (!$id) {
                 echo json_encode(['success' => false, 'error' => 'Không có ID hợp lệ']);
                 exit;
             }
-            
+
             $model = new AdminProductModel();
-            
+
             // Kiểm tra kết nối database
             if (!$model->conn) {
                 echo json_encode(['success' => false, 'error' => 'Lỗi kết nối database']);
                 exit;
             }
-            
+
             $result = $model->restoreProduct($id);
-            
+
             if ($result) {
                 echo json_encode(['success' => true]);
             } else {
@@ -416,7 +417,7 @@ class AdminproductController extends BaseController
         } catch (Exception $e) {
             // Đảm bảo header JSON được thiết lập
             header('Content-Type: application/json; charset=utf-8');
-            
+
             echo json_encode(['success' => false, 'error' => 'Lỗi khôi phục sản phẩm: ' . $e->getMessage()]);
             exit;
         }
