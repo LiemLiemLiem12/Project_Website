@@ -708,7 +708,34 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
         .then(data => {
             if (data.success) {
                 alert('Đã xóa thành công!');
-                loadCategoriesWithAjax(currentPage);
+                
+                // Kiểm tra thông tin phân trang từ server
+                if (data.pagination) {
+                    const { maxPage, currentPage: serverCurrentPage } = data.pagination;
+                    
+                    // Nếu đang ở trang lớn hơn max page sau khi xóa, load trang cuối cùng có dữ liệu
+                    if (currentPage > maxPage && maxPage > 0) {
+                        loadCategoriesWithAjax(maxPage);
+                    } else if (isHidingAllItems && currentPage > 1 && maxPage === 0) {
+                        // Nếu xóa hết dữ liệu và không còn trang nào, quay về trang 1
+                        loadCategoriesWithAjax(1);
+                    } else if (isHidingAllItems && currentPage > 1) {
+                        // Nếu xóa hết item trên trang hiện tại và còn trang trước đó, load trang trước đó
+                        loadCategoriesWithAjax(currentPage - 1);
+                    } else {
+                        // Các trường hợp còn lại, tải lại trang hiện tại
+                        loadCategoriesWithAjax(currentPage);
+                    }
+                } else {
+                    // Nếu không có thông tin phân trang, áp dụng logic đơn giản
+                    if (isHidingAllItems && currentPage > 1) {
+                        // Nếu xóa hết item trên trang hiện tại, quay lại trang trước
+                        loadCategoriesWithAjax(currentPage - 1);
+                    } else {
+                        loadCategoriesWithAjax(currentPage);
+                    }
+                }
+                
                 loadTrashCategories();
             } else {
                 alert(data.message || 'Có lỗi xảy ra khi xóa danh mục.');
@@ -994,6 +1021,10 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
     
     // Khôi phục danh mục
     function restoreCategories(ids) {
+        // Lấy trang hiện tại từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPage = parseInt(urlParams.get('page')) || 1;
+            
         sendJsonRequest('index.php?controller=admincategory&action=restoreCategories', 'POST', { ids })
             .then(data => {
                 if (data.success) {
@@ -1002,12 +1033,14 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                     // Tải lại danh sách thùng rác
                     loadTrashCategories();
                     
-                    // Lấy trang hiện tại từ URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const currentPage = parseInt(urlParams.get('page')) || 1;
-                    
-                    // Tải lại danh sách danh mục chính với trang hiện tại
-                    loadCategoriesWithAjax(currentPage);
+                    // Kiểm tra thông tin phân trang nếu có
+                    if (data.pagination && data.pagination.maxPage > currentPage) {
+                        // Nếu khôi phục tạo thêm trang mới, chuyển đến trang mới đó
+                        loadCategoriesWithAjax(data.pagination.maxPage);
+                    } else {
+                        // Tải lại danh sách danh mục chính với trang hiện tại
+                        loadCategoriesWithAjax(currentPage);
+                    }
                 } else {
                     alert(data.message || 'Có lỗi xảy ra khi khôi phục danh mục.');
                 }

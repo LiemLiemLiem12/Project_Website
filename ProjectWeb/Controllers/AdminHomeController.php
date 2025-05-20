@@ -318,7 +318,7 @@ class AdminHomeController {
                         throw new Exception("Không thể lưu ảnh đã cắt");
                     }
                     
-                    $resizedImagePath = $targetFile;
+                    $resizedImagePath = $targetFile; // Vẫn lưu đường dẫn đầy đủ cho file system
                 } else {
                     // Xử lý upload file thông thường
                     $fileName = time() . '_' . basename($_FILES['image']['name']);
@@ -346,6 +346,7 @@ class AdminHomeController {
                     if (!$resizedImagePath) {
                         throw new Exception("Không thể xử lý hình ảnh");
                     }
+                    // resizedImagePath vẫn chứa đường dẫn đầy đủ để lưu file vào hệ thống
                 }
                 
                 // Dữ liệu banner
@@ -364,7 +365,10 @@ class AdminHomeController {
                 }
                 
                 // Thêm banner vào database
-                $bannerId = $this->model->createBanner($bannerData, $resizedImagePath);
+                // Lấy chỉ tên file, không lấy đường dẫn
+                $fileName = basename($resizedImagePath);
+                
+                $bannerId = $this->model->createBanner($bannerData, $fileName);
                 
                 if ($bannerId) {
                     $this->sendJsonResponse(['success' => true, 'id' => $bannerId, 'message' => 'Thêm banner thành công']);
@@ -436,7 +440,7 @@ class AdminHomeController {
                         throw new Exception("Không thể lưu ảnh đã cắt");
                     }
                     
-                    $imagePath = $targetFile;
+                    $imagePath = $targetFile; // Vẫn lưu đường dẫn đầy đủ cho file system
                     
                     // Nếu có ảnh mới, xóa ảnh cũ
                     if (!empty($banner['image_path']) && file_exists($banner['image_path'])) {
@@ -479,8 +483,9 @@ class AdminHomeController {
                     }
                 }
                 
-                // Cập nhật banner trong database
-                $success = $this->model->updateBanner($id, $bannerData, $imagePath ?? null);
+                // Cập nhật banner trong database - lấy tên file thay vì đường dẫn đầy đủ
+                $fileNameOnly = isset($imagePath) ? basename($imagePath) : null;
+                $success = $this->model->updateBanner($id, $bannerData, $fileNameOnly);
                 
                 if ($success) {
                     $this->sendJsonResponse(['success' => true, 'message' => 'Cập nhật banner thành công']);
@@ -578,7 +583,6 @@ class AdminHomeController {
                 // Lấy dữ liệu từ form
                 $policyData = [
                     'title' => $_POST['title'] ?? '',
-                    'link' => $_POST['link'] ?? '#',
                     'status' => isset($_POST['status']), // Status là checkbox
                     'meta' => $_POST['meta'] ?? ''
                 ];
@@ -672,7 +676,6 @@ class AdminHomeController {
                 // Dữ liệu policy
                 $policyData = [
                     'title' => $_POST['title'] ?? '',
-                    'link' => $_POST['link'] ?? '#',
                     'status' => isset($_POST['status']), // Status là checkbox
                     'meta' => $_POST['meta'] ?? ''
                 ];

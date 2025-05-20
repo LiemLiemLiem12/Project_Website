@@ -224,6 +224,12 @@ class AdminCategoryController {
             $input = json_decode(file_get_contents('php://input'), true);
             $ids = $input['ids'] ?? [];
             
+            // Lấy thông tin trang hiện tại
+            $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+            $status = $_GET['status'] ?? '';
+            $sort = $_GET['sort'] ?? '';
+            $limit = 5; // Phải giống với giá trị limit trong phương thức index()
+            
             $restoredCount = 0;
             $failedCount = 0;
             $messages = [];
@@ -253,6 +259,10 @@ class AdminCategoryController {
                     }
                 }
                 
+                // Đếm lại số lượng sau khi khôi phục
+                $activeCount = $this->categoryModel->countCategoriesFiltered('active');
+                $maxPage = ceil($activeCount / $limit);
+                
                 $finalMsg = '';
                 if ($restoredCount > 0) $finalMsg .= "Đã khôi phục $restoredCount danh mục. ";
                 if ($failedCount > 0) $finalMsg .= "Lỗi $failedCount: " . implode("; ", $messages);
@@ -260,7 +270,14 @@ class AdminCategoryController {
                 
                 $this->sendJsonResponse([
                     'success' => $failedCount === 0,
-                    'message' => trim($finalMsg)
+                    'message' => trim($finalMsg),
+                    'pagination' => [
+                        'currentPage' => $page,
+                        'maxPage' => $maxPage,
+                        'totalItems' => $activeCount,
+                        'status' => $status,
+                        'sort' => $sort
+                    ]
                 ]);
                 return;
             }

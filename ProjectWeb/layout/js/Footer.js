@@ -1,35 +1,66 @@
 console.log("Footer.js đã chạy!");
 
-// Kiểm tra xem phần tử có tồn tại không
+// Đảm bảo chỉ chạy khi DOM đã sẵn sàng
 document.addEventListener("DOMContentLoaded", function() {
-    const footer = document.getElementById("footer-content");
+    console.log("DOM đã sẵn sàng - Footer.js");
+    
+    // Kiểm tra xem phần tử có tồn tại không
+    const footer = document.querySelector(".footer");
     if (footer) {
-        footer.style.backgroundColor = "lightblue";
-        console.log("Đã đổi màu nền footer!");
+        console.log("Footer đã được tìm thấy!");
+        initFooterFunctionality();
     } else {
-        console.error("Không tìm thấy #footer-content!");
+        console.error("Không tìm thấy footer!");
     }
 });
 
-// Footer script
-document.addEventListener('DOMContentLoaded', function() {
+// Tách riêng chức năng của Footer để có thể gọi lại nếu cần
+function initFooterFunctionality() {
     // Email validation for newsletter subscription
-    const emailInput = document.getElementById('emailSubscribe');
-    const btnSubscribe = document.getElementById('btnSubscribe');
-    const emailFeedback = document.getElementById('emailFeedback');
+    const emailInput = document.querySelector('.newsletter-form input[type="email"]');
+    const btnSubscribe = document.querySelector('.btn-subscribe');
+    let emailFeedback;
+    
+    // Tạo phần tử phản hồi nếu chưa có
+    if (emailInput && !document.getElementById('emailFeedback')) {
+        emailFeedback = document.createElement('div');
+        emailFeedback.id = 'emailFeedback';
+        emailFeedback.className = 'invalid-feedback';
+        emailFeedback.textContent = 'Vui lòng nhập email hợp lệ';
+        emailFeedback.style.display = 'none';
+        emailInput.parentNode.appendChild(emailFeedback);
+    } else {
+        emailFeedback = document.getElementById('emailFeedback');
+    }
 
-    if (btnSubscribe) {
-        btnSubscribe.addEventListener('click', function() {
+    if (btnSubscribe && emailInput) {
+        console.log("Đã tìm thấy form đăng ký email");
+        
+        // Ngăn form submit mặc định
+        const newsletterForm = document.querySelector('.newsletter-form');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                validateAndSubmitEmail();
+            });
+        }
+        
+        btnSubscribe.addEventListener('click', function(e) {
+            e.preventDefault();
+            validateAndSubmitEmail();
+        });
+        
+        function validateAndSubmitEmail() {
             const email = emailInput.value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
             if (!emailRegex.test(email)) {
                 emailInput.classList.add('is-invalid');
-                emailFeedback.style.display = 'block';
+                if (emailFeedback) emailFeedback.style.display = 'block';
             } else {
                 emailInput.classList.remove('is-invalid');
                 emailInput.classList.add('is-valid');
-                emailFeedback.style.display = 'none';
+                if (emailFeedback) emailFeedback.style.display = 'none';
                 
                 // Here you would typically send the email to your server
                 console.log('Subscribing email:', email);
@@ -39,29 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 emailInput.value = '';
                 emailInput.classList.remove('is-valid');
             }
-        });
+        }
     }
-
-    // Collapse toggle icon animation
-    const chinhSachBtn = document.querySelector('[data-bs-target="#chinhSachList"]');
-    const chinhSachIcon = document.getElementById('chinhSachIcon');
-
-    if (chinhSachBtn && chinhSachIcon) {
-        chinhSachBtn.addEventListener('click', function() {
-            chinhSachIcon.classList.toggle('bi-chevron-up');
-            chinhSachIcon.classList.toggle('bi-chevron-down');
-        });
-    }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("Footer script đã chạy!");
-
-    let footer = document.getElementById("footer");
-    if (footer) {
-        let p = document.createElement("p");
-        p.textContent = "© 2025 - Footer đã tải thành công!";
-        footer.appendChild(p);
-    }
-});
     
+    console.log("Footer script đã chạy thành công!");
+}

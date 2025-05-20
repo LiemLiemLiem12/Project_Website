@@ -80,6 +80,21 @@
     padding: 8px 20px;
 }
 
+/* Nút đăng ký nhận bản tin */
+.btn-subscribe {
+    background-color: #4f2abd;
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-subscribe:hover {
+    background-color: #3a1f8a;
+    color: #ffffff;
+}
+
 .is-invalid {
     border-color: #000;
 }

@@ -1038,94 +1038,93 @@
     
     <!-- Add Policy Modal -->
     <div class="modal fade" id="addPolicyModal" tabindex="-1" aria-labelledby="addPolicyModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                    <h5 class="modal-title" id="addPolicyModalLabel">Thêm mới chính sách</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                    <form id="addPolicyForm" enctype="multipart/form-data" method="post" action="javascript:void(0);">
-                        <div class="mb-3">
-                            <label for="policy_title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="policy_title" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="policy_image" class="form-label">Ảnh (tùy chọn)</label>
-                            <input type="file" class="form-control" id="policy_image" name="image_upload" accept="image/*">
-                            <div class="form-text">Hình ảnh đại diện cho chính sách (nếu có), tối đa 1MB</div>
-                        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                        <h5 class="modal-title" id="addPolicyModalLabel">Thêm mới chính sách</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                        <form id="addPolicyForm" enctype="multipart/form-data" method="post" action="javascript:void(0);">
+                            <div class="mb-3">
+                                <label for="policy_title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="policy_title" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="policy_image" class="form-label">Ảnh (tùy chọn)</label>
+                                <input type="file" class="form-control" id="policy_image" name="image_upload" accept="image/*">
+                                <div class="form-text">Hình ảnh đại diện cho chính sách (nếu có), tối đa 1MB</div>
+                            </div>
+                            
+                            <div id="policy_cropperContainer" style="display: none;">
+                                <div class="img-container mb-3">
+                                    <img id="policyImageToCrop" src="">
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-secondary" data-method="zoom" data-option="0.1">
+                                            <i class="fas fa-search-plus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" data-method="zoom" data-option="-0.1">
+                                            <i class="fas fa-search-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-secondary" data-method="rotate" data-option="-90">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" data-method="rotate" data-option="90">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-secondary" data-method="reset">
+                                            <i class="fas fa-sync-alt"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mb-3">
+                                    <div class="preview-container mx-auto">
+                                        <div class="policy-preview"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mb-3">
+                                    <button type="button" class="btn btn-primary crop-btn" id="cropPolicyBtn">
+                                        <i class="fas fa-crop-alt"></i> Cắt và sử dụng
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" id="cancelPolicyCropBtn">
+                                        <i class="fas fa-times"></i> Hủy
+                                    </button>
+                                </div>
+                                
+                                <!-- Hidden input to store cropped image data -->
+                                <input type="hidden" name="image" id="policyCroppedImageData">
+                            </div>
                         
-                        <div id="policy_cropperContainer" style="display: none;">
-                            <div class="img-container mb-3">
-                                <img id="policyImageToCrop" src="">
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-secondary" data-method="zoom" data-option="0.1">
-                                        <i class="fas fa-search-plus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary" data-method="zoom" data-option="-0.1">
-                                        <i class="fas fa-search-minus"></i>
-                                    </button>
-                                </div>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-secondary" data-method="rotate" data-option="-90">
-                                        <i class="fas fa-undo"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary" data-method="rotate" data-option="90">
-                                        <i class="fas fa-redo"></i>
-                                    </button>
-                                </div>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-secondary" data-method="reset">
-                                        <i class="fas fa-sync-alt"></i> Reset
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="text-center mb-3">
-                                <div class="preview-container mx-auto">
-                                    <div class="policy-preview"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="text-center mb-3">
-                                <button type="button" class="btn btn-primary crop-btn" id="cropPolicyBtn">
-                                    <i class="fas fa-crop-alt"></i> Cắt và sử dụng
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" id="cancelPolicyCropBtn">
-                                    <i class="fas fa-times"></i> Hủy
-                                </button>
-                            </div>
-                            
-                            <!-- Hidden input to store cropped image data -->
-                            <input type="hidden" name="image" id="policyCroppedImageData">
-                        </div>
-                    
-                    <div class="mb-3">
-                            <label for="policy_link" class="form-label">Đường dẫn (Link)</label>
-                            <input type="url" class="form-control" id="policy_link" name="link" value="#">
-                        </div>
                         <div class="mb-3">
-                            <label for="policy_meta" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="policy_meta" name="meta" rows="2"></textarea>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="policy_status" name="status" checked>
-                            <label class="form-check-label" for="policy_status">
-                                Hiển thị
-                            </label>
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Thêm mới</button>
-                        </div>
-                    </form>
+                            
+                            <div class="mb-3">
+                                <label for="policy_meta" class="form-label">Mô tả</label>
+                                <textarea class="form-control" id="policy_meta" name="meta" rows="2"></textarea>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="policy_status" name="status" checked>
+                                <label class="form-check-label" for="policy_status">
+                                    Hiển thị
+                                </label>
+                            </div>
+                            <div class="text-end">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">Thêm mới</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-                    </div>
+    </div>
                     
     <!-- Add Social Media Modal -->
     <div class="modal fade" id="addSocialMediaModal" tabindex="-1" aria-labelledby="addSocialMediaModalLabel" aria-hidden="true">
@@ -2833,7 +2832,7 @@ $(document).ready(function() {
                                 const policy = response.policy;
                                 $('#edit_policy_id').val(policy.id);
                                 $('#edit_policy_title').val(policy.title);
-                                $('#edit_policy_link').val(policy.link);
+                              
                                 $('#edit_policy_meta').val(policy.meta);
                                 $('#edit_policy_status').prop('checked', policy.hide == 0);
                                 if (policy.image) {
@@ -3431,10 +3430,6 @@ $(document).ready(function() {
                         <div class="mt-2">
                             <img id="currentPolicyImage" src="" alt="Preview" style="max-width: 100%; max-height: 200px; display: none;">
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_policy_link" class="form-label">Đường dẫn (Link)</label>
-                        <input type="url" class="form-control" id="edit_policy_link" name="link" value="#">
                     </div>
                     <div class="mb-3">
                         <label for="edit_policy_meta" class="form-label">Mô tả</label>
