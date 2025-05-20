@@ -230,6 +230,10 @@ class AdminHomeModel {
         
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
+                // Add the path prefix to the image filename for display
+                if (!empty($row['image_path'])) {
+                    $row['image_path'] = 'upload/img/Home/' . $row['image_path'];
+                }
                 $banners[] = $row;
             }
         }
@@ -243,7 +247,12 @@ class AdminHomeModel {
         $result = $this->conn->query($sql);
         
         if ($result->num_rows > 0) {
-            return $result->fetch_assoc();
+            $banner = $result->fetch_assoc();
+            // Add the path prefix to the image filename for display
+            if (!empty($banner['image_path'])) {
+                $banner['image_path'] = 'upload/img/Home/' . $banner['image_path'];
+            }
+            return $banner;
         }
         
         return null;
@@ -317,14 +326,19 @@ class AdminHomeModel {
         $sql = "SELECT image_path FROM banners WHERE id = '$id'";
         $result = $this->conn->query($sql);
         $banner = $result->fetch_assoc();
+        $imagePath = null;
+        
+        if ($banner && !empty($banner['image_path'])) {
+            $imagePath = 'upload/img/Home/' . $banner['image_path'];
+        }
         
         // Xóa banner từ CSDL
         $deleteSql = "DELETE FROM banners WHERE id = '$id'";
         $success = $this->conn->query($deleteSql);
         
         // Trả về đường dẫn ảnh để controller xóa file
-        if ($success && $banner) {
-            return $banner['image_path'];
+        if ($success && $imagePath) {
+            return $imagePath;
         }
         
         return false;
@@ -461,7 +475,6 @@ class AdminHomeModel {
      */
     public function createPolicy($data, $imagePath = null) {
         $title = $this->conn->real_escape_string($data['title']);
-        $link = $this->conn->real_escape_string($data['link'] ?? '#');
         $hide = $data['status'] ? 0 : 1;
         $meta = isset($data['meta']) ? $this->conn->real_escape_string($data['meta']) : '';
         
@@ -478,17 +491,26 @@ class AdminHomeModel {
         $orderRow = $orderResult->fetch_assoc();
         $orderPosition = (int)($orderRow['max_order'] ?? 0) + 1;
         
+        // Link sẽ được cập nhật sau khi có ID
         $sql = "INSERT INTO footer_policies 
                 (title, image, link, meta, `order`, hide) 
                 VALUES 
-                ('$title', $imagePathSql, '$link', '$meta', $orderPosition, $hide)";
+                ('$title', $imagePathSql, '#', '$meta', $orderPosition, $hide)";
         
         if (!$this->conn->query($sql)) {
             error_log("SQL Error: " . $this->conn->error . " with query: " . $sql);
             return false;
         }
         
-        return $this->conn->insert_id;
+        // Lấy ID vừa tạo
+        $newId = $this->conn->insert_id;
+        
+        // Cập nhật link tự động
+        $autoLink = "/Project_Website/ProjectWeb/index.php?controller=policy&action=show&id=" . $newId;
+        $updateSql = "UPDATE footer_policies SET link = '$autoLink' WHERE id = $newId";
+        $this->conn->query($updateSql);
+        
+        return $newId;
     }
     
     /**
@@ -501,9 +523,11 @@ class AdminHomeModel {
     public function updatePolicy($id, $data, $imagePath = null) {
         $id = $this->conn->real_escape_string($id);
         $title = $this->conn->real_escape_string($data['title']);
-        $link = $this->conn->real_escape_string($data['link'] ?? '#');
         $hide = $data['status'] ? 0 : 1;
         $meta = isset($data['meta']) ? $this->conn->real_escape_string($data['meta']) : '';
+        
+        // Tạo link tự động
+        $link = "/Project_Website/ProjectWeb/index.php?controller=policy&action=show&id=" . $id;
         
         $imageSql = '';
         if ($imagePath !== null) {

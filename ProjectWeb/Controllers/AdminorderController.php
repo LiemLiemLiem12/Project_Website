@@ -4,8 +4,8 @@ require_once __DIR__ . '/../Models/AdminOrderModel.php';
 
 class AdminorderController extends BaseController
 {
-    private $orderModel;
-    private $userModel;
+    public $orderModel;
+    public $userModel;
     public function __construct()
     {
         $this->loadModel('OrderModel');

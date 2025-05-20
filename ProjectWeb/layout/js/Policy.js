@@ -91,6 +91,87 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check window size on load and resize
     setupMobileNav();
     window.addEventListener('resize', setupMobileNav);
+    
+    // Xử lý hiệu ứng active cho sidebar
+    const policyLinks = document.querySelectorAll('.policy-nav li a');
+    
+    policyLinks.forEach(link => {
+        // Đánh dấu active dựa trên URL hiện tại
+        if (link.href === window.location.href) {
+            link.parentElement.classList.add('active');
+        }
+        
+        // Thêm sự kiện click cho animation
+        link.addEventListener('click', function(e) {
+            // Animation sẽ được xử lý bởi CSS
+        });
+    });
+    
+    // Xử lý responsive sidebar 
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const sidebarTitle = document.querySelector('.sidebar-title');
+    const policyNav = document.querySelector('.policy-nav');
+    
+    function handleResponsiveChanges(e) {
+        if (e.matches) {
+            // Hiển thị/ẩn sidebar trên mobile nếu được click
+            if (sidebarTitle && policyNav) {
+                sidebarTitle.addEventListener('click', function() {
+                    policyNav.classList.toggle('show-nav');
+                });
+            }
+        } else {
+            // Luôn hiển thị trên desktop
+            if (policyNav) {
+                policyNav.classList.remove('show-nav');
+            }
+        }
+    }
+    
+    // Khởi tạo và theo dõi thay đổi màn hình
+    mediaQuery.addListener(handleResponsiveChanges);
+    handleResponsiveChanges(mediaQuery);
+    
+    // Smooth scroll khi click vào các liên kết
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId !== '#') {
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
+    
+    // Hiệu ứng zoom ảnh khi click
+    const policyImages = document.querySelectorAll('.policy-image img');
+    
+    policyImages.forEach(img => {
+        img.addEventListener('click', function() {
+            this.classList.toggle('enlarged');
+            
+            if (this.classList.contains('enlarged')) {
+                // Thêm style cho ảnh phóng to
+                this.style.cursor = 'zoom-out';
+                this.style.maxHeight = '90vh';
+                this.style.transition = 'all 0.3s ease';
+            } else {
+                // Khôi phục style ban đầu
+                this.style.cursor = 'zoom-in';
+                this.style.maxHeight = '500px';
+            }
+        });
+        
+        // Mặc định, con trỏ là zoom-in
+        img.style.cursor = 'zoom-in';
+    });
 }); 
 
 ////////////////////////////////////////

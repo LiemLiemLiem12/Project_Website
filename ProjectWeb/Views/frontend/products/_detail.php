@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div id="doi-hang" class="tab-content">
-                <h2>Chính Sách Đổi Hàng</h2>
+                <h2>Chính Sách Đổi Hàng</h2>zzzzzzzzzzzzzzz
                 <div class="text-center">
                     <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/doitra_1.webp" alt="Chính sách đổi hàng" class="img-fluid">
                 </div>

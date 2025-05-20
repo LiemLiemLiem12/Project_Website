@@ -31,13 +31,22 @@ $totalItems = 0;
 foreach ($cart as $item) {
     $totalItems += $item['quantity'];
 }
+
+// Lấy thông tin cài đặt từ CSDL
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+
+// Lấy đường dẫn logo và tên website
+$logoPath = !empty($storeSettings['logo_path']) ? $storeSettings['logo_path'] : '/Project_Website/ProjectWeb/upload/img/Header/logo.png';
+$siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 'RS Store';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSStore - Thời trang nam chính hãng</title>
+    <title><?= htmlspecialchars($siteName) ?> - Thời trang nam chính hãng</title>
     
     <!-- Trong thẻ <head> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
@@ -68,16 +77,16 @@ foreach ($cart as $item) {
                 <!-- Logo for Mobile -->
                 <div class="col-6 d-md-none text-center text-md-start">
                     <a href="/ProjectWeb/index.php" class="logo">
-                        <img src="/Project_Website/ProjectWeb/upload/img/Header/logo.png" alt="RSStore Logo" class="img-fluid">
+                        <img src="<?= htmlspecialchars($logoPath) ?>" alt="<?= htmlspecialchars($siteName) ?> Logo" class="img-fluid">
                     </a>
                 </div>
                 
                 <!-- Combined Logo, Brand Text, and Search bar for MD and UP -->
                 <div class="col-md-8 col-lg-9 d-none d-md-flex align-items-center">
                     <a href="/ProjectWeb/index.php" class="logo me-2 d-none d-md-inline-block">
-                        <img src="/Project_Website/ProjectWeb/upload/img/Header/logo.png" alt="RSStore Logo" class="img-fluid desktop-logo-img">
+                        <img src="<?= htmlspecialchars($logoPath) ?>" alt="<?= htmlspecialchars($siteName) ?> Logo" class="img-fluid desktop-logo-img">
                     </a>
-                    <h1 class="rs-store-brand-text me-3 h5 mb-0 d-none d-md-inline-block">RS Store</h1>
+                    <h1 class="rs-store-brand-text me-3 h5 mb-0 d-none d-md-inline-block"><?= htmlspecialchars($siteName) ?></h1>
                     <div class="search-container flex-grow-1">
                         <form action="/ProjectWeb/index.php?controller=search" method="get">
                             <input type="text" placeholder="Bạn đang tìm gì..." name="q" class="search-input">

@@ -240,6 +240,7 @@
             border: 2px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: all 0.3s;
+            cursor: default; /* Thêm con trỏ mặc định (mũi tên) */
         }
         
         .sidebar .admin-info:hover .profile-image {
@@ -340,30 +341,17 @@
             }
         }
         
-        /* CSS cho mobile */
-        @media (max-width: 767.98px) {
-            .sidebar {
-                left: -250px;
-                width: 250px;
-                transition: left 0.3s ease;
-            }
-            
-            .sidebar.show {
-                left: 0;
-            }
-            
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-            
-            .sidebar-close {
-                display: flex;
-            }
-            
-            .sidebar-toggle {
-                display: flex;
-            }
+                        /* CSS cho mobile */        @media (max-width: 767.98px) {            .sidebar {                left: -250px;                width: 250px;                transition: left 0.3s ease;            }                        .sidebar.show {                left: 0;            }                        .main-content {                margin-left: 0;                width: 100%;            }                        .sidebar-close {                display: flex;            }                        .sidebar-toggle {                display: flex;            }        }                /* CSS cho avatar ở góc trên phải */        .user-avatar, .user-profile-icon, .admin-avatar, header .profile-image {            cursor: default !important;        }
+
+        /* CSS cho tất cả các avatar trên trang */
+        .profile-image, 
+        img.profile-image, 
+        .user-avatar, 
+        .user-profile-icon, 
+        .admin-avatar, 
+        header .profile-image,
+        .admin-info img {
+            cursor: default !important;
         }
     </style>
     
@@ -403,7 +391,7 @@
         <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
         <div>
             <p class="admin-name">Admin</p>
-            <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            <a href="index.php?controller=adminlogin&action=logout" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
         </div>
     </div>
 

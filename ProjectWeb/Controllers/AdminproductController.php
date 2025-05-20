@@ -4,8 +4,8 @@ require_once __DIR__ . '/../Models/AdminProductModel.php';
 
 class AdminproductController extends BaseController
 {
-    private $productModel;
-    private $categoryModel;
+    public $productModel;
+    public $categoryModel;
 
     public function __construct()
     {
