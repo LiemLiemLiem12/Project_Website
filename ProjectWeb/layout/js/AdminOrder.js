@@ -165,28 +165,30 @@ function changeStatus() {
 
         const row = btnCancelStatus.closest('tr')
         if(!row) return;
-
-        const orderId = row.getAttribute('data-order-id');
-        const status = row.getAttribute('data-status');
-        fetch(`?controller=adminorder&action=cancel`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                orderID : orderId,
-                status: status
+        if(confirm("Bạn có muốn hủy đơn hàng này?")) {
+            const orderId = row.getAttribute('data-order-id');
+            const status = row.getAttribute('data-status');
+            fetch(`?controller=adminorder&action=cancel`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    orderID : orderId,
+                    status: status
+                })
             })
-        })
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById('order-table').innerHTML = data
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('order-table').innerHTML = data
 
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Lỗi mạng khi đổi trạng thái');
-        });
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Lỗi mạng khi đổi trạng thái');
+            });
+        }
+        
     })
 }
 
