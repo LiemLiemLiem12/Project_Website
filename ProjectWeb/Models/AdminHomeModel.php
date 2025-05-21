@@ -844,4 +844,14 @@ class AdminHomeModel {
         }
         return null;
     }
+    
+    public function getCategoryById($id) {
+        $id = $this->conn->real_escape_string($id);
+        $sql = "SELECT id_Category as id, name, image FROM category WHERE id_Category = '$id' LIMIT 1";
+        $result = $this->conn->query($sql);
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        return null;
+    }
 }
