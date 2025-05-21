@@ -523,7 +523,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom JS -->
     <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
-    console.log('Toggle button:', document.getElementById('sidebarToggleBtn'));
+    
     <!-- Ckeditor -->
     <script src="https://cdn.ckeditor.com/4.22.1/full-all/ckeditor.js"></script>
     <script>
@@ -717,99 +717,104 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 });
             }
 
-            // Function to restore product(s)
-            function restoreProduct(productIds) {
-                console.log('Restoring products:', productIds);
-
-                // Create a chain of promises to restore products one by one
-                let promiseChain = Promise.resolve();
-                let successCount = 0;
-                let failCount = 0;
-
-                productIds.forEach(productId => {
-                    promiseChain = promiseChain.then(() => {
-                        return fetch(`/Project_Website/ProjectWeb/index.php?controller=adminproduct&action=restoreProduct&id=${productId}&_=${new Date().getTime()}`)
-                            .then(response => response.text())
-                            .then(text => {
-                                console.log('Raw restore response:', text.substring(0, 200));
-
-                                try {
-                                    // Xử lý trường hợp text rỗng
-                                    if (!text || text.trim() === '') {
-                                        throw new Error('Server trả về dữ liệu rỗng');
-                                    }
-
-                                    // Loại bỏ các ký tự HTML nếu có
-                                    let cleanText = text;
-                                    if (text.includes('<br') || text.includes('<b>')) {
-                                        throw new Error('Server trả về lỗi PHP thay vì JSON');
-                                    }
-
-                                    // Parse JSON
-                                    const data = JSON.parse(cleanText);
-                                    console.log('Restore response for ID ' + productId + ':', data);
-
-                                    if (data.success) {
-                                        // Remove the row from trash table
-                                        const checkbox = document.querySelector(`.trash-checkbox[data-id="${productId}"]`);
-                                        if (checkbox) {
-                                            const row = checkbox.closest('tr');
-                                            if (row) row.remove();
-                                        }
-                                        successCount++;
-                                    } else {
-                                        failCount++;
-                                        console.error('Failed to restore product ID ' + productId + ': ', data.error || 'Unknown error');
-                                    }
-                                } catch (parseError) {
-                                    failCount++;
-                                    console.error('Error parsing restore response:', parseError);
+        // Function to restore product(s)
+        function restoreProduct(productIds) {
+            console.log('Restoring products:', productIds);
+            
+            // Create a chain of promises to restore products one by one
+            let promiseChain = Promise.resolve();
+            let successCount = 0;
+            let failCount = 0;
+            
+            productIds.forEach(productId => {
+                promiseChain = promiseChain.then(() => {
+                    return fetch(`/Project_Website/ProjectWeb/index.php?controller=adminproduct&action=restoreProduct&id=${productId}&_=${new Date().getTime()}`)
+                        .then(response => response.text())
+                        .then(text => {
+                            console.log('Raw restore response:', text.substring(0, 200));
+                            
+                            try {
+                                // Xử lý trường hợp text rỗng
+                                if (!text || text.trim() === '') {
+                                    throw new Error('Server trả về dữ liệu rỗng');
                                 }
-                            })
-                            .catch(error => {
+                                
+                                // Loại bỏ các ký tự HTML nếu có
+                                let cleanText = text;
+                                if (text.includes('<br') || text.includes('<b>')) {
+                                    throw new Error('Server trả về lỗi PHP thay vì JSON');
+                                }
+                                
+                                // Parse JSON
+                                const data = JSON.parse(cleanText);
+                                console.log('Restore response for ID ' + productId + ':', data);
+                                
+                                if (data.success) {
+                                    // Remove the row from trash table
+                                    const checkbox = document.querySelector(`.trash-checkbox[data-id="${productId}"]`);
+                                    if (checkbox) {
+                                        const row = checkbox.closest('tr');
+                                        if (row) row.remove();
+                                    }
+                                    successCount++;
+                                } else {
+                                    failCount++;
+                                    console.error('Failed to restore product ID ' + productId + ': ', data.error || 'Unknown error');
+                                }
+                            } catch (parseError) {
                                 failCount++;
-                                console.error('Network error restoring product ID ' + productId + ': ', error);
-                            });
-                    });
+                                console.error('Error parsing restore response:', parseError);
+                            }
+                        })
+                        .catch(error => {
+                            failCount++;
+                            console.error('Network error restoring product ID ' + productId + ': ', error);
+                        });
                 });
-
-                // After all products are processed
-                promiseChain.then(() => {
-                    // Check if trash is empty
-                    if (trashTableBody.children.length === 0 || document.querySelectorAll('.trash-checkbox').length === 0) {
-                        trashEmptyMessage.classList.remove('d-none');
-                        trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Thùng rác trống</td></tr>';
-                    }
-
-                    // Update select all checkbox
-                    if (selectAllTrashCheckbox) {
-                        selectAllTrashCheckbox.checked = false;
-                    }
-
-                    // Disable restore button
-                    if (restoreSelectedBtn) {
-                        restoreSelectedBtn.disabled = true;
-                    }
-
-                    // Show result message
-                    let message = '';
-                    if (successCount > 0) {
-                        message += `Đã khôi phục thành công ${successCount} sản phẩm. `;
-                    }
-                    if (failCount > 0) {
-                        message += `Có ${failCount} sản phẩm không thể khôi phục.`;
-                    }
-
-                    if (message) {
-                        alert(message);
-                    }
-
-                    // Reload main product table
-                    location.reload();
-                });
-            }
-        });
+            });
+            
+            // After all products are processed
+            promiseChain.then(() => {
+                // Check if trash is empty
+                if (trashTableBody.children.length === 0 || document.querySelectorAll('.trash-checkbox').length === 0) {
+                    trashEmptyMessage.classList.remove('d-none');
+                    trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Thùng rác trống</td></tr>';
+                }
+                
+                // Update select all checkbox
+                if (selectAllTrashCheckbox) {
+                    selectAllTrashCheckbox.checked = false;
+                }
+                
+                // Disable restore button
+                if (restoreSelectedBtn) {
+                    restoreSelectedBtn.disabled = true;
+                }
+                
+                // Show result message
+                let message = '';
+                if (successCount > 0) {
+                    message += `Đã khôi phục thành công ${successCount} sản phẩm. `;
+                }
+                if (failCount > 0) {
+                    message += `Có ${failCount} sản phẩm không thể khôi phục.`;
+                }
+                
+                if (message) {
+                    showSuccessAlert(message);
+                }
+                
+                // Reload main product table
+                location.reload();
+            });
+        }
+    });
     </script>
+    
+    <!-- Sweet Alert 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom SweetAlert Config -->
+    <script src="/Project_Website/ProjectWeb/layout/js/sweetalert-config.js"></script>
 </body>
 
 </html>

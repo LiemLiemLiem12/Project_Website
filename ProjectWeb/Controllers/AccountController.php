@@ -32,6 +32,9 @@ class AccountController extends BaseController
      */
     public function index()
     {
+        // Xác định tab hiện tại từ tham số URL, mặc định là "profile"
+        $currentTab = isset($_GET['tab']) ? $_GET['tab'] : 'profile';
+        
         // Lấy thông tin người dùng hiện tại
         $userId = $_SESSION['user']['id_User'];
         $user = $this->userModel->findById($userId);
@@ -46,65 +49,61 @@ class AccountController extends BaseController
         $this->view('frontend.account.index', [
             'user' => $user,
             'orders' => $orders,
-            'addresses' => $addresses
+            'addresses' => $addresses,
+            'currentTab' => $currentTab
         ]);
     }
     
     /**
      * Cập nhật thông tin cá nhân
      */
-    public function updateProfile()
-    {
-        // Kiểm tra phương thức request
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Phương thức không hợp lệ'
-            ]);
-            return;
-        }
-        
-        // Lấy thông tin từ form
-        $userId = $_SESSION['user']['id_User'];
-        $name = $_POST['name'] ?? '';
-        $phone = $_POST['phone'] ?? '';
-        $gender = $_POST['gender'] ?? '';
-        $birthday = $_POST['birthday'] ?? null;
-        
-        // Validate dữ liệu đầu vào
-        if (empty($name) || empty($phone)) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Vui lòng điền đầy đủ thông tin cần thiết'
-            ]);
-            return;
-        }
-        
-        // Cập nhật thông tin người dùng
-        $userData = [
-            'name' => $name,
-            'phone' => $phone,
-            'gender' => $gender,
-            'birthday' => $birthday,
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-        
-        if ($this->userModel->updateUser($userId, $userData)) {
-            // Cập nhật thông tin trong session
-            $_SESSION['user']['name'] = $name;
-            $_SESSION['user']['phone'] = $phone;
-            
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Thông tin cá nhân đã được cập nhật thành công'
-            ]);
-        } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại sau.'
-            ]);
-        }
+    /**
+ * Cập nhật thông tin cá nhân
+ */
+public function updateProfile()
+{
+    // Kiểm tra phương thức request
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse([
+            'success' => false,
+            'message' => 'Phương thức không hợp lệ'
+        ]);
+        return;
     }
+    
+    // Lấy thông tin từ form
+    $userId = $_SESSION['user']['id_User'];
+    $name = $_POST['name'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    
+    // Validate dữ liệu đầu vào
+    if (empty($name) || empty($phone)) {
+        $this->jsonResponse([
+            'success' => false,
+            'message' => 'Vui lòng điền đầy đủ thông tin cần thiết'
+        ]);
+        return;
+    }
+    
+    // Cập nhật thông tin người dùng - chỉ cập nhật name và phone
+    $userData = [
+        'name' => $name,
+        'phone' => $phone,
+        'updated_at' => date('Y-m-d H:i:s')
+    ];
+    
+    if ($this->userModel->updateAccount($userId, $userData)) {
+        // Cập nhật thông tin trong session
+        $_SESSION['user']['name'] = $name;
+        $_SESSION['user']['phone'] = $phone;
+        
+        $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+            'Thông tin cá nhân đã được cập nhật thành công', 'success');
+    } else {
+        $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+            'Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại sau.', 'error');
+    }
+}
     
     /**
      * Thay đổi mật khẩu người dùng
@@ -113,10 +112,8 @@ class AccountController extends BaseController
     {
         // Kiểm tra phương thức request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Phương thức không hợp lệ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=password', 
+                'Phương thức không hợp lệ', 'error');
             return;
         }
         
@@ -128,28 +125,22 @@ class AccountController extends BaseController
         
         // Validate dữ liệu đầu vào
         if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Vui lòng điền đầy đủ thông tin'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=password', 
+                'Vui lòng điền đầy đủ thông tin', 'error');
             return;
         }
         
         // Kiểm tra mật khẩu mới và xác nhận mật khẩu
         if ($newPassword !== $confirmPassword) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Mật khẩu mới và xác nhận mật khẩu không khớp'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=password', 
+                'Mật khẩu mới và xác nhận mật khẩu không khớp', 'error');
             return;
         }
         
         // Kiểm tra độ mạnh của mật khẩu
         if (strlen($newPassword) < 8) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Mật khẩu mới phải có ít nhất 8 ký tự'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=password', 
+                'Mật khẩu mới phải có ít nhất 8 ký tự', 'error');
             return;
         }
         
@@ -160,10 +151,8 @@ class AccountController extends BaseController
         if (!password_verify($currentPassword, $user['password'])) {
             // Cho phép kiểm tra trực tiếp (không dùng password_verify) trong môi trường phát triển
             if ($user['password'] !== $currentPassword) {
-                $this->jsonResponse([
-                    'success' => false,
-                    'message' => 'Mật khẩu hiện tại không chính xác'
-                ]);
+                $this->redirectWithMessage('index.php?controller=account&tab=password', 
+                    'Mật khẩu hiện tại không chính xác', 'error');
                 return;
             }
         }
@@ -173,15 +162,11 @@ class AccountController extends BaseController
         
         // Cập nhật mật khẩu mới
         if ($this->userModel->updatePassword($userId, $hashedPassword)) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Mật khẩu đã được cập nhật thành công'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=password', 
+                'Mật khẩu đã được cập nhật thành công', 'success');
         } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi cập nhật mật khẩu. Vui lòng thử lại sau.'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=password', 
+                'Có lỗi xảy ra khi cập nhật mật khẩu. Vui lòng thử lại sau.', 'error');
         }
     }
     
@@ -192,45 +177,41 @@ class AccountController extends BaseController
     {
         // Kiểm tra phương thức request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Phương thức không hợp lệ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Phương thức không hợp lệ', 'error');
             return;
         }
         
         // Lấy thông tin từ form
         $userId = $_SESSION['user']['id_User'];
-        $name = $_POST['name'] ?? '';
+        $addressName = $_POST['address_name'] ?? 'Địa chỉ của tôi';
+        $receiverName = $_POST['receiver_name'] ?? '';
         $phone = $_POST['phone'] ?? '';
-        $address = $_POST['address'] ?? '';
+        $streetAddress = $_POST['street_address'] ?? '';
         $province = $_POST['province'] ?? '';
         $district = $_POST['district'] ?? '';
         $ward = $_POST['ward'] ?? '';
         $isDefault = isset($_POST['is_default']) && $_POST['is_default'] == '1';
-        $addressType = $_POST['address_type'] ?? 'home';
         
         // Validate dữ liệu đầu vào
-        if (empty($name) || empty($phone) || empty($address) || 
+        if (empty($receiverName) || empty($phone) || empty($streetAddress) || 
             empty($province) || empty($district) || empty($ward)) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Vui lòng điền đầy đủ thông tin địa chỉ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Vui lòng điền đầy đủ thông tin địa chỉ', 'error');
             return;
         }
         
         // Tạo dữ liệu địa chỉ mới
         $addressData = [
             'id_User' => $userId,
-            'name' => $name,
+            'address_name' => $addressName,
+            'receiver_name' => $receiverName,
             'phone' => $phone,
-            'address' => $address,
+            'street_address' => $streetAddress,
             'province' => $province,
             'district' => $district,
             'ward' => $ward,
             'is_default' => $isDefault ? 1 : 0,
-            'address_type' => $addressType,
             'created_at' => date('Y-m-d H:i:s')
         ];
         
@@ -241,16 +222,11 @@ class AccountController extends BaseController
         
         // Thêm địa chỉ mới
         if ($addressId = $this->addressModel->addAddress($addressData)) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Đã thêm địa chỉ mới thành công',
-                'address_id' => $addressId
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Đã thêm địa chỉ mới thành công', 'success');
         } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi thêm địa chỉ. Vui lòng thử lại sau.'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Có lỗi xảy ra khi thêm địa chỉ. Vui lòng thử lại sau.', 'error');
         }
     }
     
@@ -261,55 +237,49 @@ class AccountController extends BaseController
     {
         // Kiểm tra phương thức request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Phương thức không hợp lệ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Phương thức không hợp lệ', 'error');
             return;
         }
         
         // Lấy thông tin từ form
         $userId = $_SESSION['user']['id_User'];
         $addressId = $_POST['address_id'] ?? 0;
-        $name = $_POST['name'] ?? '';
+        $addressName = $_POST['address_name'] ?? 'Địa chỉ của tôi';
+        $receiverName = $_POST['receiver_name'] ?? '';
         $phone = $_POST['phone'] ?? '';
-        $address = $_POST['address'] ?? '';
+        $streetAddress = $_POST['street_address'] ?? '';
         $province = $_POST['province'] ?? '';
         $district = $_POST['district'] ?? '';
         $ward = $_POST['ward'] ?? '';
         $isDefault = isset($_POST['is_default']) && $_POST['is_default'] == '1';
-        $addressType = $_POST['address_type'] ?? 'home';
         
         // Validate dữ liệu đầu vào
-        if (!$addressId || empty($name) || empty($phone) || empty($address) || 
+        if (!$addressId || empty($receiverName) || empty($phone) || empty($streetAddress) || 
             empty($province) || empty($district) || empty($ward)) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Vui lòng điền đầy đủ thông tin địa chỉ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Vui lòng điền đầy đủ thông tin địa chỉ', 'error');
             return;
         }
         
         // Kiểm tra xem địa chỉ có tồn tại và thuộc về người dùng không
         $existingAddress = $this->addressModel->getAddress($addressId);
         if (!$existingAddress || $existingAddress['id_User'] != $userId) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Địa chỉ không tồn tại hoặc không thuộc về bạn'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Địa chỉ không tồn tại hoặc không thuộc về bạn', 'error');
             return;
         }
         
         // Cập nhật dữ liệu địa chỉ
         $addressData = [
-            'name' => $name,
+            'address_name' => $addressName,
+            'receiver_name' => $receiverName,
             'phone' => $phone,
-            'address' => $address,
+            'street_address' => $streetAddress,
             'province' => $province,
             'district' => $district,
             'ward' => $ward,
             'is_default' => $isDefault ? 1 : 0,
-            'address_type' => $addressType,
             'updated_at' => date('Y-m-d H:i:s')
         ];
         
@@ -320,15 +290,11 @@ class AccountController extends BaseController
         
         // Cập nhật địa chỉ
         if ($this->addressModel->updateAddress($addressId, $addressData)) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Đã cập nhật địa chỉ thành công'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Đã cập nhật địa chỉ thành công', 'success');
         } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi cập nhật địa chỉ. Vui lòng thử lại sau.'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Có lỗi xảy ra khi cập nhật địa chỉ. Vui lòng thử lại sau.', 'error');
         }
     }
     
@@ -339,10 +305,8 @@ class AccountController extends BaseController
     {
         // Kiểm tra phương thức request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Phương thức không hợp lệ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Phương thức không hợp lệ', 'error');
             return;
         }
         
@@ -352,43 +316,33 @@ class AccountController extends BaseController
         
         // Validate dữ liệu đầu vào
         if (!$addressId) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Địa chỉ không hợp lệ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Địa chỉ không hợp lệ', 'error');
             return;
         }
         
         // Kiểm tra xem địa chỉ có tồn tại và thuộc về người dùng không
         $existingAddress = $this->addressModel->getAddress($addressId);
         if (!$existingAddress || $existingAddress['id_User'] != $userId) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Địa chỉ không tồn tại hoặc không thuộc về bạn'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Địa chỉ không tồn tại hoặc không thuộc về bạn', 'error');
             return;
         }
         
         // Kiểm tra xem địa chỉ có phải là mặc định không
         if ($existingAddress['is_default']) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Không thể xóa địa chỉ mặc định. Vui lòng đặt địa chỉ khác làm mặc định trước khi xóa.'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Không thể xóa địa chỉ mặc định. Vui lòng đặt địa chỉ khác làm mặc định trước khi xóa.', 'error');
             return;
         }
         
         // Xóa địa chỉ
         if ($this->addressModel->deleteAddress($addressId)) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Đã xóa địa chỉ thành công'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Đã xóa địa chỉ thành công', 'success');
         } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi xóa địa chỉ. Vui lòng thử lại sau.'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Có lỗi xảy ra khi xóa địa chỉ. Vui lòng thử lại sau.', 'error');
         }
     }
     
@@ -399,10 +353,8 @@ class AccountController extends BaseController
     {
         // Kiểm tra phương thức request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Phương thức không hợp lệ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Phương thức không hợp lệ', 'error');
             return;
         }
         
@@ -412,20 +364,16 @@ class AccountController extends BaseController
         
         // Validate dữ liệu đầu vào
         if (!$addressId) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Địa chỉ không hợp lệ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Địa chỉ không hợp lệ', 'error');
             return;
         }
         
         // Kiểm tra xem địa chỉ có tồn tại và thuộc về người dùng không
         $existingAddress = $this->addressModel->getAddress($addressId);
         if (!$existingAddress || $existingAddress['id_User'] != $userId) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Địa chỉ không tồn tại hoặc không thuộc về bạn'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Địa chỉ không tồn tại hoặc không thuộc về bạn', 'error');
             return;
         }
         
@@ -434,34 +382,42 @@ class AccountController extends BaseController
         
         // Đặt địa chỉ hiện tại là mặc định
         if ($this->addressModel->setDefaultAddress($addressId)) {
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Đã đặt địa chỉ làm mặc định thành công'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Đã đặt địa chỉ làm mặc định thành công', 'success');
         } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi đặt địa chỉ làm mặc định. Vui lòng thử lại sau.'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=address', 
+                'Có lỗi xảy ra khi đặt địa chỉ làm mặc định. Vui lòng thử lại sau.', 'error');
         }
     }
     
     /**
-     * Lấy thông tin chi tiết đơn hàng
+     * Lấy chi tiết đơn hàng qua AJAX
      */
-    public function getOrderDetail()
+    public function getOrderDetails()
     {
-        // Kiểm tra phương thức request hoặc có thể sử dụng GET cho truy vấn này
-        $orderId = $_GET['order_id'] ?? 0;
+        // Đặt header JSON
+        header('Content-Type: application/json');
+        
+        // Kiểm tra phương thức request
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Phương thức không hợp lệ'
+            ]);
+            exit;
+        }
+        
+        // Lấy ID đơn hàng từ POST
+        $orderId = isset($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
         $userId = $_SESSION['user']['id_User'];
         
         // Validate dữ liệu đầu vào
         if (!$orderId) {
-            $this->jsonResponse([
+            echo json_encode([
                 'success' => false,
                 'message' => 'Mã đơn hàng không hợp lệ'
             ]);
-            return;
+            exit;
         }
         
         // Lấy thông tin chi tiết đơn hàng
@@ -469,18 +425,85 @@ class AccountController extends BaseController
         
         // Kiểm tra xem đơn hàng có tồn tại và thuộc về người dùng không
         if (!$order || $order['id_User'] != $userId) {
-            $this->jsonResponse([
+            echo json_encode([
                 'success' => false,
                 'message' => 'Đơn hàng không tồn tại hoặc không thuộc về bạn'
             ]);
-            return;
+            exit;
+        }
+        
+        // Xử lý thông tin chi tiết đơn hàng
+        $orderDetails = [];
+        foreach ($order['details'] as $detail) {
+            $orderDetails[] = [
+                'product' => [
+                    'id' => $detail['id_Product'],
+                    'name' => $detail['name'],
+                    'main_image' => $detail['main_image'],
+                    'current_price' => $detail['current_price']
+                ],
+                'quantity' => $detail['quantity'],
+                'size' => $detail['size'],
+                'price' => (float)($detail['sub_total'] / $detail['quantity']),
+                'sub_total' => (float)$detail['sub_total']
+            ];
         }
         
         // Trả về dữ liệu đơn hàng dưới dạng JSON
-        $this->jsonResponse([
+        echo json_encode([
             'success' => true,
-            'order' => $order
+            'order' => $order,
+            'orderDetails' => $orderDetails
         ]);
+        exit;
+    }
+    
+    /**
+     * Trợ giúp chọn địa chỉ qua AJAX
+     */
+    public function selectAddress()
+    {
+        // Đặt header JSON
+        header('Content-Type: application/json');
+        
+        // Kiểm tra phương thức request
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Phương thức không hợp lệ'
+            ]);
+            exit;
+        }
+        
+        // Lấy ID địa chỉ từ POST
+        $addressId = isset($_POST['address_id']) ? (int)$_POST['address_id'] : 0;
+        $userId = $_SESSION['user']['id_User'];
+        
+        if (!$addressId) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'ID địa chỉ không hợp lệ'
+            ]);
+            exit;
+        }
+        
+        // Lấy thông tin địa chỉ
+        $address = $this->addressModel->getAddress($addressId);
+        
+        // Kiểm tra địa chỉ tồn tại và thuộc về người dùng hiện tại
+        if (!$address || $address['id_User'] != $userId) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Địa chỉ không tồn tại hoặc không thuộc về bạn'
+            ]);
+            exit;
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'address' => $address
+        ]);
+        exit;
     }
     
     /**
@@ -490,19 +513,15 @@ class AccountController extends BaseController
     {
         // Kiểm tra phương thức request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Phương thức không hợp lệ'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+                'Phương thức không hợp lệ', 'error');
             return;
         }
         
         // Kiểm tra xem có file được upload không
         if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Không có file được upload hoặc có lỗi trong quá trình upload'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+                'Không có file được upload hoặc có lỗi trong quá trình upload','error');
             return;
         }
         
@@ -512,19 +531,15 @@ class AccountController extends BaseController
         // Kiểm tra loại file
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
         if (!in_array($file['type'], $allowedTypes)) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Chỉ chấp nhận file hình ảnh (JPG, PNG, GIF)'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+                'Chỉ chấp nhận file hình ảnh (JPG, PNG, GIF)', 'error');
             return;
         }
         
         // Kiểm tra kích thước file (giới hạn 2MB)
         if ($file['size'] > 2 * 1024 * 1024) {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Kích thước file không được vượt quá 2MB'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+                'Kích thước file không được vượt quá 2MB', 'error');
             return;
         }
         
@@ -549,22 +564,15 @@ class AccountController extends BaseController
                 // Cập nhật SESSION
                 $_SESSION['user']['avatar'] = $uploadPath;
                 
-                $this->jsonResponse([
-                    'success' => true,
-                    'message' => 'Đã cập nhật ảnh đại diện thành công',
-                    'avatar_url' => $uploadPath
-                ]);
+                $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+                    'Đã cập nhật ảnh đại diện thành công', 'success');
             } else {
-                $this->jsonResponse([
-                    'success' => false,
-                    'message' => 'Có lỗi xảy ra khi cập nhật thông tin ảnh đại diện trong database'
-                ]);
+                $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+                    'Có lỗi xảy ra khi cập nhật thông tin ảnh đại diện trong database', 'error');
             }
         } else {
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi lưu file. Vui lòng thử lại sau.'
-            ]);
+            $this->redirectWithMessage('index.php?controller=account&tab=profile', 
+                'Có lỗi xảy ra khi lưu file. Vui lòng thử lại sau.', 'error');
         }
     }
     
@@ -590,5 +598,24 @@ class AccountController extends BaseController
         
         header("Location: " . $url);
         exit;
+    }
+     public function logout()
+    {
+        // Lưu ID người dùng trước khi xóa để làm sạch giỏ hàng session
+        $hadUser = isset($_SESSION['user'], $_SESSION['user']['id_User']);
+
+        // Clear user session
+        unset($_SESSION['user']);
+
+        // Clear cart related session variables completely
+        unset($_SESSION['cart']);
+        unset($_SESSION['cart_loaded']);
+
+        // Redirect to homepage
+        $this->redirectWithMessage(
+            'index.php',
+            'Đã đăng xuất thành công',
+            'success'
+        );
     }
 }

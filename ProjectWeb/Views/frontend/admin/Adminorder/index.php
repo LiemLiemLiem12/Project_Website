@@ -483,9 +483,9 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 document.querySelectorAll('.btn-restore-order').forEach(button => {
                     button.addEventListener('click', function () {
                         const id = this.getAttribute('data-id');
-                        if (confirm('Bạn có chắc chắn muốn khôi phục đơn hàng này?')) {
+                        showConfirmDialog('Bạn có chắc chắn muốn khôi phục đơn hàng này?', function() {
                             restoreOrder(id);
-                        }
+                        });
                     });
                 });
 
@@ -524,10 +524,10 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                         .map(checkbox => checkbox.getAttribute('data-id'));
 
                     if (selectedIds.length === 0) return;
-
-                    if (confirm(`Bạn có chắc chắn muốn khôi phục ${selectedIds.length} đơn hàng đã chọn?`)) {
+                    
+                    showConfirmDialog(`Bạn có chắc chắn muốn khôi phục ${selectedIds.length} đơn hàng đã chọn?`, function() {
                         restoreMultipleOrders(selectedIds);
-                    }
+                    });
                 });
             }
 
@@ -537,18 +537,18 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            alert('Đã khôi phục đơn hàng thành công!');
+                            showSuccessAlert('Đã khôi phục đơn hàng thành công!');
                             loadTrashOrders(); // Tải lại danh sách thùng rác
 
                             // Tải lại danh sách đơn hàng chính nếu cần
                             location.reload(); // Hoặc sử dụng AJAX để tải lại bảng chính
                         } else {
-                            alert(data.error || 'Lỗi khi khôi phục đơn hàng.');
+                            showErrorAlert(data.error || 'Lỗi khi khôi phục đơn hàng.');
                         }
                     })
                     .catch(error => {
                         console.error('Error restoring order:', error);
-                        alert('Lỗi kết nối khi khôi phục đơn hàng.');
+                        showErrorAlert('Lỗi kết nối khi khôi phục đơn hàng.');
                     });
             }
 
@@ -587,8 +587,8 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             // Khi tất cả đã được xử lý
                             if (processed === totalToProcess) {
                                 const message = `Đã khôi phục thành công ${successCount}/${totalToProcess} đơn hàng.`;
-                                alert(message);
-
+                                showSuccessAlert(message);
+                                
                                 // Tải lại danh sách
                                 loadTrashOrders();
 
@@ -606,8 +606,8 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             // Khi tất cả đã được xử lý
                             if (processed === totalToProcess) {
                                 const message = `Đã khôi phục thành công ${successCount}/${totalToProcess} đơn hàng.`;
-                                alert(message);
-
+                                showSuccessAlert(message);
+                                
                                 // Tải lại danh sách
                                 loadTrashOrders();
 
@@ -621,6 +621,12 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
             }
         });
     </script>
+    
+    <!-- Sweet Alert 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom SweetAlert Config -->
+    <script src="/Project_Website/ProjectWeb/layout/js/sweetalert-config.js"></script>
+    
     <!-- Thêm style cho dropdown thông báo -->
     <style>
         .notification-dropdown::-webkit-scrollbar {

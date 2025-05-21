@@ -56,8 +56,14 @@ class PolicyController {
         $settingKeys = ['contact_phone', 'admin_email', 'site_name'];
         $settings = $this->policyModel->getSettings($settingKeys);
         
+        // Debug settings
+        error_log('Settings data: ' . print_r($settings, true));
+        
         // Lấy thông tin mạng xã hội
         $socialMedia = $this->policyModel->getSocialMedia();
+        
+        // Debug social media
+        error_log('Social media data: ' . print_r($socialMedia, true));
         
         // Tạo mảng dữ liệu để truyền vào view
         $data = [

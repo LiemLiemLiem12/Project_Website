@@ -1,13 +1,10 @@
 <?php
 class AddressModel extends BaseModel
 {
-    const TABLE = 'addresses';
+    const TABLE = 'user_address'; // Đảm bảo tên bảng chính xác
     
     /**
      * Lấy tất cả địa chỉ của người dùng
-     *
-     * @param int $userId ID của người dùng
-     * @return array Danh sách địa chỉ
      */
     public function getUserAddresses($userId)
     {
@@ -18,9 +15,6 @@ class AddressModel extends BaseModel
     
     /**
      * Lấy thông tin chi tiết của một địa chỉ
-     *
-     * @param int $addressId ID của địa chỉ
-     * @return array|null Thông tin địa chỉ hoặc null nếu không tìm thấy
      */
     public function getAddress($addressId)
     {
@@ -32,9 +26,6 @@ class AddressModel extends BaseModel
     
     /**
      * Lấy địa chỉ mặc định của người dùng
-     *
-     * @param int $userId ID của người dùng
-     * @return array|null Thông tin địa chỉ mặc định hoặc null nếu không tìm thấy
      */
     public function getDefaultAddress($userId)
     {
@@ -46,9 +37,6 @@ class AddressModel extends BaseModel
     
     /**
      * Thêm địa chỉ mới
-     *
-     * @param array $data Thông tin địa chỉ
-     * @return int|bool ID của địa chỉ đã thêm hoặc false nếu thất bại
      */
     public function addAddress($data)
     {
@@ -61,10 +49,6 @@ class AddressModel extends BaseModel
     
     /**
      * Cập nhật thông tin địa chỉ
-     *
-     * @param int $addressId ID của địa chỉ
-     * @param array $data Thông tin địa chỉ mới
-     * @return bool Kết quả cập nhật
      */
     public function updateAddress($addressId, $data)
     {
@@ -88,9 +72,6 @@ class AddressModel extends BaseModel
     
     /**
      * Xóa địa chỉ
-     *
-     * @param int $addressId ID của địa chỉ
-     * @return bool Kết quả xóa
      */
     public function deleteAddress($addressId)
     {
@@ -101,9 +82,6 @@ class AddressModel extends BaseModel
     
     /**
      * Xóa trạng thái mặc định của tất cả địa chỉ của một người dùng
-     *
-     * @param int $userId ID của người dùng
-     * @return bool Kết quả cập nhật
      */
     public function clearDefaultAddress($userId)
     {
@@ -114,9 +92,6 @@ class AddressModel extends BaseModel
     
     /**
      * Đặt một địa chỉ làm địa chỉ mặc định
-     *
-     * @param int $addressId ID của địa chỉ
-     * @return bool Kết quả cập nhật
      */
     public function setDefaultAddress($addressId)
     {
@@ -127,9 +102,6 @@ class AddressModel extends BaseModel
     
     /**
      * Đếm số lượng địa chỉ của người dùng
-     *
-     * @param int $userId ID của người dùng
-     * @return int Số lượng địa chỉ
      */
     public function countUserAddresses($userId)
     {
@@ -137,5 +109,21 @@ class AddressModel extends BaseModel
         $sql = "SELECT COUNT(*) as count FROM " . self::TABLE . " WHERE id_User = {$userId}";
         $result = $this->getByQuery($sql);
         return isset($result[0]['count']) ? (int)$result[0]['count'] : 0;
+    }
+    
+    /**
+     * Định dạng địa chỉ đầy đủ
+     */
+    public function formatFullAddress($address)
+    {
+        if (!$address) return '';
+        
+        $parts = [];
+        if (!empty($address['street_address'])) $parts[] = $address['street_address'];
+        if (!empty($address['ward'])) $parts[] = $address['ward'];
+        if (!empty($address['district'])) $parts[] = $address['district'];
+        if (!empty($address['province'])) $parts[] = $address['province'];
+        
+        return implode(', ', $parts);
     }
 }

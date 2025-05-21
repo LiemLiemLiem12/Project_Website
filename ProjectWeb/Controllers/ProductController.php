@@ -22,6 +22,7 @@ class ProductController extends BaseController
     public function show()
     {
         $productId = $_GET['id'] ?? null;
+        $this->productModel->incrementClickCount($productId);
         $productDetail = $this->productModel->findById($productId);
         $this->view('frontend.products.show', [
             // 'menus' => $categoriesMenu,

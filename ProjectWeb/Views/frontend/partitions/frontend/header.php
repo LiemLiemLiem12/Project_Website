@@ -102,10 +102,11 @@ $siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 
                     <div class="d-flex justify-content-end">
                         <!-- User account -->
                       <!-- User account -->
-                       <div class="header-action me-3 position-relative">
+                      <!-- User account -->
+                        <div class="header-action me-3 position-relative">
                             <?php if ($isLoggedIn): ?>
                                 <!-- Hiển thị thông tin người dùng đã đăng nhập -->
-                                <a href="index.php?controller=user&action=profile" class="action-link">
+                                <a href="index.php?controller=account" class="action-link">
                                     <i class="fas fa-user"></i>
                                     <span class="d-none d-lg-inline-block"><?= $_SESSION['user']['name'] ?></span>
                                 </a>

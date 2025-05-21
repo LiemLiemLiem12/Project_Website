@@ -48,18 +48,18 @@ class UserModel extends BaseModel
     /**
      * Find user by reset token
      */
-   public function findByResetToken($token)
-{
-    $token = mysqli_real_escape_string($this->connect, $token);
-    $sql = "SELECT * FROM " . self::TABLE . " 
-           WHERE reset_token = '$token' 
-           LIMIT 1";
-    
-    error_log("SQL query để tìm token: $sql");
-    
-    $result = $this->getByQuery($sql);
-    return $result ? $result[0] : null;
-}
+    public function findByResetToken($token)
+    {
+        $token = mysqli_real_escape_string($this->connect, $token);
+        $sql = "SELECT * FROM " . self::TABLE . " 
+               WHERE reset_token = '$token' 
+               LIMIT 1";
+        
+        error_log("SQL query để tìm token: $sql");
+        
+        $result = $this->getByQuery($sql);
+        return $result ? $result[0] : null;
+    }
     
     /**
      * Create a new user
@@ -79,9 +79,51 @@ class UserModel extends BaseModel
     }
     
     /**
-     * Update user verification code
+     * Update user information
      */
- 
+    public function updateUser($userId, $userData)
+    {
+        $userId = (int)$userId;
+        
+        // Chuẩn bị dữ liệu để cập nhật
+        $updateSets = [];
+        foreach ($userData as $key => $value) {
+            if ($value === null) {
+                $updateSets[] = "{$key} = NULL";
+            } else {
+                $value = mysqli_real_escape_string($this->connect, $value);
+                $updateSets[] = "{$key} = '{$value}'";
+            }
+        }
+        
+        $updateString = implode(', ', $updateSets);
+        
+        // Tạo và thực thi câu truy vấn UPDATE
+        $sql = "UPDATE " . self::TABLE . " SET {$updateString} WHERE id_User = {$userId}";
+        
+        return $this->_query($sql);
+    }
+    
+    /**
+     * Update user account (alias for updateUser for compatibility)
+     */
+    public function updateAccount($userId, $userData)
+    {
+        return $this->updateUser($userId, $userData);
+    }
+    
+    /**
+     * Update user avatar
+     */
+    public function updateAvatar($userId, $avatarPath)
+    {
+        $userId = (int)$userId;
+        $avatarPath = mysqli_real_escape_string($this->connect, $avatarPath);
+        
+        $sql = "UPDATE " . self::TABLE . " SET avatar = '{$avatarPath}' WHERE id_User = {$userId}";
+        return $this->_query($sql);
+    }
+    
     /**
      * Mark user as verified
      */
@@ -130,32 +172,33 @@ class UserModel extends BaseModel
         
         return $this->_query($sql);
     }
+    
     /**
- * Update user verification code
- */
-public function updateVerificationCode($userId, $code)
-{
-    $userId = (int)$userId;
-    $code = mysqli_real_escape_string($this->connect, $code);
-    
-    $sql = "UPDATE " . self::TABLE . " 
-            SET verification_code = '$code' 
-            WHERE id_User = $userId";
-    
-    return $this->_query($sql);
-}
+     * Update user verification code
+     */
+    public function updateVerificationCode($userId, $code)
+    {
+        $userId = (int)$userId;
+        $code = mysqli_real_escape_string($this->connect, $code);
+        
+        $sql = "UPDATE " . self::TABLE . " 
+                SET verification_code = '$code' 
+                WHERE id_User = $userId";
+        
+        return $this->_query($sql);
+    }
 
-/**
- * Find user by verification code
- */
-public function findByVerificationCode($code)
-{
-    $code = mysqli_real_escape_string($this->connect, $code);
-    $sql = "SELECT * FROM " . self::TABLE . " 
-            WHERE verification_code = '$code' 
-            LIMIT 1";
-    $result = $this->getByQuery($sql);
-    return $result ? $result[0] : null;
-}
+    /**
+     * Find user by verification code
+     */
+    public function findByVerificationCode($code)
+    {
+        $code = mysqli_real_escape_string($this->connect, $code);
+        $sql = "SELECT * FROM " . self::TABLE . " 
+                WHERE verification_code = '$code' 
+                LIMIT 1";
+        $result = $this->getByQuery($sql);
+        return $result ? $result[0] : null;
+    }
 }
 ?>
