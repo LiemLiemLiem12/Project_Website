@@ -45,56 +45,53 @@ if (!isset($_SESSION['visited'])) {
     <!-- Hero Carousel -->
     <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"
-                aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="/Project_Website/ProjectWeb/upload/img/Home/Banner1.webp" class="d-block w-100" alt="ProCOOL™ - Mát lạnh giảm 10%">
-            </div>
-            <div class="carousel-item">
-                <img src="/Project_Website/ProjectWeb/upload/img/Home/Banner2.webp" class="d-block w-100" alt="ICON Denim - New Collection">
-            </div>
-            <div class="carousel-item">
-                <img src="/Project_Website/ProjectWeb/upload/img/Home/Banner3.webp" class="d-block w-100" alt="Smart Jeans™ - Siêu co giãn">
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
+            <?php
+            $firstTime = true;
+            $i = 0;
+            foreach ($bannerList as $data) {
+                $start_date = new DateTime($data['start_date']);
+                $end_date = new DateTime($data['end_date']);
+                $today = new DateTime();
 
-    <!-- Featured Products -->
-   <div class="container">
-    <h2 class="section-title">Sản phẩm nổi bật</h2>
-    <div class="row">
-        <?php foreach ($mostViewProducts as $product): ?>
-            <div class="col-lg-3 col-md-4 col-6">
-                <!-- Loại bỏ thẻ <a>, thêm data-product-id -->
-                <div class="product-card" data-product-id="<?= $product['id_product'] ?>">
-                    <div class="product-image">
-                        <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $product['main_image']; ?>" alt="<?= $product['name']; ?>">
+                if ($today >= $start_date && $today <= $end_date) {
+                    echo '<button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="' . $i . '" class="' . ($firstTime ? 'active' : '') . '" aria-current="true" aria-label="Slide ' . $i . '"></button>';
+                    $firstTime = false;
+                    $i++;
+                }
+            }
+
+            ?>
+            <!-- 
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button> -->
+        </div>
+
+
+        <div class="carousel-inner">
+            <?php
+            $j = 0;
+            $firstTime = true;
+            foreach ($bannerList as $data) {
+                $start_date = new DateTime($data['start_date']);
+                $end_date = new DateTime($data['end_date']);
+                $today = new DateTime();
+
+                if ($today >= $start_date && $today <= $end_date) {
+                    echo '
+                    <div class="carousel-item ' . ($firstTime ? 'active' : '') . '">
+                        <a href="' . $data['link'] . '">
+                        <img src="/Project_Website/ProjectWeb/upload/img/Home/' . $data['image_path'] . '" class="d-block w-100"
+                            alt="' . $data['title'] . '">
+                        </a>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-title"><?= $product['name']; ?></h3>
-                      <span class="fw-bold current-price text-danger fs-4"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
-                                              <?php if($product['original_price'] > $product['current_price']): ?>
-                                                <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
-                                            <?php endif; ?>
-                        <button class="btn-add-cart">Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
+                ';
+                    $firstTime = false;
+                }
+                $j++;
+            }
+            ?>
+        </div>
     </div>
-</div>
 
     <!-- Categories -->
     <div class="container">
@@ -103,7 +100,8 @@ if (!isset($_SESSION['visited'])) {
             <!-- Category 1 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item5.webp" alt="Áo Thun" class="category-image">
+                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item5.webp" alt="Áo Thun"
+                        class="category-image">
                     <div class="category-title">Áo Thun</div>
                 </div>
             </div>
@@ -111,7 +109,8 @@ if (!isset($_SESSION['visited'])) {
             <!-- Category 2 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item6.webp" alt="Áo Polo" class="category-image">
+                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item6.webp" alt="Áo Polo"
+                        class="category-image">
                     <div class="category-title">Áo Polo</div>
                 </div>
             </div>
@@ -119,7 +118,8 @@ if (!isset($_SESSION['visited'])) {
             <!-- Category 3 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
+                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean"
+                        class="category-image">
                     <div class="category-title">Quần Jean</div>
                 </div>
             </div>
@@ -127,7 +127,8 @@ if (!isset($_SESSION['visited'])) {
             <!-- Category 2 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item6.webp" alt="Áo Polo" class="category-image">
+                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item6.webp" alt="Áo Polo"
+                        class="category-image">
                     <div class="category-title">Áo Polo</div>
                 </div>
             </div>
@@ -135,14 +136,16 @@ if (!isset($_SESSION['visited'])) {
             <!-- Category 3 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
+                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean"
+                        class="category-image">
                     <div class="category-title">Quần Jean</div>
                 </div>
             </div>
             <!-- Category 3 -->
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean" class="category-image">
+                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean"
+                        class="category-image">
                     <div class="category-title">Quần Jean</div>
                 </div>
             </div>
@@ -155,28 +158,72 @@ if (!isset($_SESSION['visited'])) {
         <h2 class="section-title">Sản phẩm bán chạy</h2>
         <div class="row">
             <?php foreach ($mostSaleProducts as $product): ?>
-            <div class="col-lg-3 col-md-4 col-6">
-                <!-- Loại bỏ thẻ <a>, thêm data-product-id -->
-                <div class="product-card" data-product-id="<?= $product['id_product'] ?>">
-                    <div class="product-image">
-                        <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $product['main_image']; ?>" alt="<?= $product['name']; ?>">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title"><?= $product['name']; ?></h3>
-                      <span class="fw-bold current-price text-danger fs-4"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
-                                              <?php if($product['original_price'] > $product['current_price']): ?>
-                                                <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
-                                            <?php endif; ?>
-                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <!-- Loại bỏ thẻ <a>, thêm data-product-id -->
+                    <div class="product-card" data-product-id="<?= $product['id_product'] ?>">
+                        <div class="product-image">
+                            <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $product['main_image']; ?>"
+                                alt="<?= $product['name']; ?>">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title"><?= $product['name']; ?></h3>
+                            <span
+                                class="fw-bold current-price text-danger fs-4"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
+                            <?php if ($product['original_price'] > $product['current_price']): ?>
+                                <span
+                                    class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
-                </div>
-            </div>
-
-        
+            <?php endforeach; ?>
         </div>
+    </div>
+    <?php
+    foreach ($sectionList as $data) {
+        if ($data['section_type'] == 'product') {
+            echo '
+                <div class="container">
+                    <h2 class="section-title">' . $data['title'] . '</h2>
+                    <div class="row">';
+
+            $sectionModel = new SectionModel();
+            $sectionDetail = $sectionModel->getDetailProductById($data['id']);
+            foreach ($sectionDetail as $detail) {
+                echo '
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="product-card" data-product-id="' . $detail['item_id'] . '">
+                        <div class="product-image">
+                            <img src="/Project_Website/ProjectWeb/upload/img/Home/' . $detail['main_image'] . '" alt="' . $detail['name'] . '">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">' . $detail['name'] . '</h3>
+                            <span class="fw-bold current-price text-danger fs-4">' . number_format($detail['current_price'], 0, ',', '.') . '₫</span>';
+
+                if ($detail['original_price'] > $detail['current_price']) {
+                    echo '
+                            <span class="fw-bold original-price text-decoration-line-through">' . number_format($detail['original_price'], 0, ',', '.') . '₫</span>';
+                }
+
+                echo '
+                        </div>
+                    </div>
+                </div>
+            ';
+            }
+
+            echo '</div>
+                </div>
+                
+            ';
+        }
+
+    }
+    ?>
+
+
+
+    </div>
     </div>
 
     <!-- Collections Banner -->
@@ -205,30 +252,7 @@ if (!isset($_SESSION['visited'])) {
         </div>
     </div> -->
 
-    <!-- New Arrivals -->
-    <div class="container">
-        <h2 class="section-title">Sản phẩm mới</h2>
-        <div class="row">
-             <?php foreach ($newProducts as $product): ?>
-            <div class="col-lg-3 col-md-4 col-6">
-                <!-- Loại bỏ thẻ <a>, thêm data-product-id -->
-                <div class="product-card" data-product-id="<?= $product['id_product'] ?>">
-                    <div class="product-image">
-                        <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $product['main_image']; ?>" alt="<?= $product['name']; ?>">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title"><?= $product['name']; ?></h3>
-                      <span class="fw-bold current-price text-danger fs-4"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
-                                              <?php if($product['original_price'] > $product['current_price']): ?>
-                                                <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
-                                            <?php endif; ?>
-                        <button class="btn-add-cart">Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-        </div>
-    </div>
+
 
     <!-- Features -->
     <section class="features-section">

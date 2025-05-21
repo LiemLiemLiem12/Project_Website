@@ -2005,7 +2005,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 
                         // Lấy thứ tự mới
                         const positions = {};
-                        $(".section-card").each(function (index) {
+                        $("#sectionsContainer .section-card").each(function (index) {
                             positions[$(this).data("id")] = index + 1;
                         });
 
