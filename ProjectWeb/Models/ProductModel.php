@@ -3,7 +3,7 @@ class ProductModel extends BaseModel
 {
   const TABLE = 'product';
   // Lấy tất cả dữ liệu từ bản
-  public function getAll($select = ['*'], $limit, $orderBys = [])
+  public function getAll($select = ['*'], $limit = 9999, $orderBys = [])
   {
     return $this->all(self::TABLE, $select, $limit, $orderBys);
   }
@@ -160,6 +160,55 @@ class ProductModel extends BaseModel
         break;
     }
 
+    // Get products with the constructed query
+    return $this->getByQuery($sql);
+  }
+
+  public function getFilteredProductsForIndex($filters = [])
+  {
+    // Extract filter parameters
+    $priceMin = $filters['price_min'] ?? 0;
+    $priceMax = $filters['price_max'] ?? 10000000;
+    $sizes = $filters['sizes'] ?? [];
+    $sort = $filters['sort'] ?? 'newest';
+
+    // Build SQL query
+    $sql = "SELECT * FROM " . self::TABLE;
+
+    // Add price range filter
+    $sql .= " WHERE current_price >= {$priceMin} AND current_price <= {$priceMax}";
+
+    // Add size filter if selected
+    if (!empty($sizes)) {
+      $sizeConditions = [];
+      foreach ($sizes as $size) {
+        if (in_array($size, ['M', 'L', 'XL'])) {
+          $sizeConditions[] = "`{$size}` > 0";
+        }
+      }
+      if (!empty($sizeConditions)) {
+        $sql .= " AND (" . implode(" OR ", $sizeConditions) . ")";
+      }
+    }
+
+    // Add sorting
+    switch ($sort) {
+      case 'price-asc':
+        $sql .= " ORDER BY current_price ASC";
+        break;
+      case 'price-desc':
+        $sql .= " ORDER BY current_price DESC";
+        break;
+      case 'bestseller':
+        // Đối với bestseller, lý tưởng nhất là có cột hoặc tính toán riêng
+        // Ở đây tạm thời dùng số lượt click làm tiêu chí "bán chạy"
+        $sql .= " ORDER BY click_count DESC";
+        break;
+      case 'newest':
+      default:
+        $sql .= " ORDER BY created_at DESC";
+        break;
+    }
     // Get products with the constructed query
     return $this->getByQuery($sql);
   }

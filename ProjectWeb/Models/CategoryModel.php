@@ -2,7 +2,7 @@
 class CategoryModel extends BaseModel
 {
     const TABLE = 'category';
-    
+
     /**
      * Get all categories with optional filtering and sorting
      */
@@ -10,21 +10,22 @@ class CategoryModel extends BaseModel
     {
         // By default, only show non-hidden categories
         $sql = "SELECT " . implode(',', $select) . " FROM " . self::TABLE;
-        
+
         // Add WHERE condition to filter by hide = 0
         $sql .= " WHERE hide = 0 OR hide IS NULL";
-        
+
         // Add ORDER BY if specified
         if (!empty($orderBys)) {
             $sql .= " ORDER BY " . $orderBys['column'] . " " . $orderBys['order'];
         }
-        
+
         // Add LIMIT
         $sql .= " LIMIT " . $limit;
-        
+
+
         return $this->getByQuery($sql);
     }
-    
+
     /**
      * Find a category by its ID
      */
@@ -34,7 +35,7 @@ class CategoryModel extends BaseModel
         $result = $this->getByQuery($sql);
         return $result ? $result[0] : null;
     }
-    
+
     /**
      * Store a new category
      */
@@ -42,7 +43,7 @@ class CategoryModel extends BaseModel
     {
         return $this->create(self::TABLE, $data);
     }
-    
+
     /**
      * Update a category
      */
@@ -50,7 +51,7 @@ class CategoryModel extends BaseModel
     {
         return $this->update(self::TABLE, $id, $data);
     }
-    
+
     /**
      * Delete a category
      */
@@ -58,7 +59,7 @@ class CategoryModel extends BaseModel
     {
         return $this->delete(self::TABLE, $id);
     }
-    
+
     /**
      * Get categories with their product counts
      */
@@ -70,10 +71,10 @@ class CategoryModel extends BaseModel
                 WHERE c.hide = 0 OR c.hide IS NULL
                 GROUP BY c.id_Category
                 ORDER BY c.`order` ASC";
-        
+
         return $this->getByQuery($sql);
     }
-    
+
     /**
      * Get featured categories for home page (based on lowest order values)
      */
@@ -83,10 +84,10 @@ class CategoryModel extends BaseModel
                 WHERE hide = 0 OR hide IS NULL
                 ORDER BY `order` ASC 
                 LIMIT " . intval($limit);
-        
+
         return $this->getByQuery($sql);
     }
-    
+
     /**
      * Get categories for menu display
      */
@@ -95,9 +96,9 @@ class CategoryModel extends BaseModel
         $sql = "SELECT id_Category, name, link FROM " . self::TABLE . " 
                 WHERE hide = 0 OR hide IS NULL
                 ORDER BY `order` ASC";
-        
+
         return $this->getByQuery($sql);
     }
-    
+
 }
 ?>
