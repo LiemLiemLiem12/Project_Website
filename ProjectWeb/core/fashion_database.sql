@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 19, 2025 lúc 05:42 PM
--- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: May 21, 2025 at 04:50 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -67,12 +67,13 @@ CREATE TABLE `cart` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `cart`
+-- Dumping data for table `cart`
 --
 
 INSERT INTO `cart` (`id`, `id_User`, `id_Product`, `quantity`, `size`, `created_at`, `updated_at`) VALUES
 (25, 6, 35, 6, 'L', '2025-05-17 22:34:42', '2025-05-18 03:58:50'),
-(29, 14, 35, 4, 'L', '2025-05-19 17:02:53', '2025-05-19 22:02:53');
+(29, 14, 35, 4, 'L', '2025-05-19 17:02:53', '2025-05-19 22:02:53'),
+(30, 3, 32, 1, 'M', '2025-05-21 16:46:39', '2025-05-21 21:46:39');
 
 -- --------------------------------------------------------
 
@@ -87,19 +88,24 @@ CREATE TABLE `category` (
   `link` varchar(255) DEFAULT NULL,
   `meta` varchar(255) DEFAULT NULL,
   `hide` int(11) DEFAULT NULL,
-  `order` int(11) DEFAULT NULL
+  `order` int(11) DEFAULT NULL,
+  `banner` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `category`
 --
 
-INSERT INTO `category` (`id_Category`, `name`, `image`, `link`, `meta`, `hide`, `order`) VALUES
-(1, 'Áo', 'ca1.jpg', '/ao', 'ao-thoi-trang', 0, 1),
-(2, 'Quần', 'ca4.jpg', '/quan', 'quan-dep', 0, 2),
-(3, 'Giày', 'ca5.jpg', '/giay', 'giay-thoi-trang', 0, 3),
-(4, 'Phụ kiện', 'ca3.jpg', '/phu-kien', 'phu-kien', 0, 4),
-(5, 'Khuyến mãi', 'ca2.jpg', '/sale', 'khuyen-mai', 0, 5);
+INSERT INTO `category` (`id_Category`, `name`, `image`, `link`, `meta`, `hide`, `order`, `banner`) VALUES
+(1, 'Áo', 'ca1.jpg', '/ao', 'ao-thoi-trang', 0, 1, NULL),
+(2, 'Quần', 'ca4.jpg', '/quan', 'quan-dep', 0, 2, NULL),
+(3, 'Giày', 'ca5.jpg', '/giay', 'giay-thoi-trang', 0, 3, NULL),
+(4, 'Phụ kiện', 'ca3.jpg', '/phu-kien', 'phu-kien', 0, 4, NULL),
+(5, 'Khuyến mãi', 'ca2.jpg', '/sale', 'khuyen-mai', 0, 5, NULL),
+(11, 'HEHE', '1747803607_1_1_160_ao_thun_486-11_048e677a305a4d288f3a40f83e0cd12b_1024x1024.jpg', NULL, NULL, 0, NULL, 'banner_1747803607.jpg'),
+(12, 'KOKOKO', '1747808360_1_2_1_1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', NULL, NULL, 0, NULL, NULL),
+(13, 'KJKJKJK', '1747813467_1_1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', NULL, NULL, 0, 6, 'banner_1747813477.jpg'),
+(14, 'KO`', '1747817176_1747666069_ThanhToanSpay.webp', NULL, NULL, 0, 7, 'banner_1747817176.jpg');
 
 -- --------------------------------------------------------
 
@@ -146,21 +152,14 @@ CREATE TABLE `footer_policies` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `image2` varchar(255) DEFAULT NULL COMMENT 'Tên file ảnh',
   `image3` varchar(255) DEFAULT NULL COMMENT 'Tên file ảnh'
-
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `footer_policies`
 --
 
-INSERT INTO `footer_policies` (`id`, `title`, `image`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`) VALUES
-(3, 'Chính Sách Ưu Đãi Sinh Nhật', 'sinhnhat.webp', 'http://localhost/Project_Website/ProjectWeb/index.php?controller=admincategory', 3, 0, 'Ưu đãi đặc biệt dành cho khách hàng vào ngày sinh nhật', '2025-05-18 13:22:58', '2025-05-19 07:10:34'),
-(4, 'Chính Sách Khách Hàng Thân Thiết', 'cs_khtt.webp', '/chinh-sach-khach-hang-than-thiet', 4, 0, 'Chương trình tích điểm và ưu đãi cho khách hàng thân thiết', '2025-05-18 13:22:58', '2025-05-19 03:00:58'),
-(5, 'Chính Sách Giao Hàng', 'cs_giaohanh.webp', '/chinh-sach-giao-hang', 5, 0, 'Thông tin về phương thức giao hàng và phí vận chuyển', '2025-05-18 13:22:58', '2025-05-18 16:46:48'),
-(6, 'Chính Sách Bảo Mật', 'baomat_1.webp', '/chinh-sach-bao-mat', 6, 0, 'Cam kết bảo mật thông tin khách hàng', '2025-05-18 13:22:58', '2025-05-18 16:47:04'),
-(7, 'Chính Sách Đổi Hàng Và Bảo Hành', 'doitra_1.webp', '/chinh-sach-doi-hang-va-bao-hanh', 7, 0, 'Quy định về đổi trả và bảo hành sản phẩm', '2025-05-18 13:22:58', '2025-05-18 16:47:21'),
-(11, 'SP MẮC NHẤT', 'doitra_1.webp', 'https://www.google.com/', 9, 0, '123', '2025-05-19 05:34:27', '2025-05-19 05:34:27'),
-(18, 'CSSSSS', '1747638012_img2.jpg', 'https://www.google.com/', 10, 0, 'fsdfgdg', '2025-05-19 06:45:07', '2025-05-19 07:00:12');
+INSERT INTO `footer_policies` (`id`, `title`, `image`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`, `image2`, `image3`) VALUES
+(19, 'Chính Sách Sinh Nhật', '1747813663_sinhnhat.webp', '/Project_Website/ProjectWeb/index.php?controller=policy&action=show&id=19', 1, 0, 'Ưu đãi sinh nhật 5 năm ', '2025-05-21 07:47:43', '2025-05-21 07:47:43', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -303,7 +302,7 @@ CREATE TABLE `order_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `order_detail`
+-- Dumping data for table `order_detail`
 --
 
 INSERT INTO `order_detail` (`id_Order`, `id_Product`, `quantity`, `size`, `sub_total`) VALUES
@@ -360,7 +359,8 @@ INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `d
 (40, 'Quần Short Jean Nam ICONDENIM Mid Blue Regular', 'Quần short jean màu xanh trung bình, dáng regular thoải mái, phù hợp cho mùa hè.', 359000.00, 30, 251300.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item2.webp', 'quan-short-jean-nam-icondenim-mid-blue-regular', 'Quần Short Jean Nam ICONDENIM Mid Blue Regular', 0, 9, 0, 0, '', '', 'quần short, nam giới, jean', 'Có', 'Có', 10, 10, 10),
 (41, 'Áo Thun Nam ICONDENIM Basic Form Regular', 'Áo thun basic form với kiểu dáng regular, chất liệu cotton mềm mại, màu sắc đơn giản dễ phối đồ.', 199000.00, 20, 159200.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item3.webp', 'ao-thun-nam-icondenim-basic-form-regular', 'Áo Thun Nam ICONDENIM Basic Form Regular', 0, 10, 0, 0, '', '', 'áo thun, nam giới, basic', 'Có', 'Có', 10, 10, 10),
 (42, 'Quần Tây Nam ICONDENIM Straight Neutral Basic', 'Quần tây dáng straight với màu sắc trung tính, phù hợp cho môi trường công sở và dạo phố.', 499000.00, 15, 424150.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item4.webp', 'quan-tay-nam-icondenim-straight-neutral-basic', 'Quần Tây Nam ICONDENIM Straight Neutral Basic', 0, 11, 0, 0, '', '', 'quần tây, nam giới, công sở', 'Có', 'Có', 10, 10, 10),
-(43, 'Quần Short Kaki Nam ICONDENIM Garment Dye', 'Quần short kaki với công nghệ garment dye, màu sắc tự nhiên, phong cách casual thoải mái.', 359000.00, 25, 269250.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item5.webp', 'quan-short-kaki-nam-icondenim-garment-dye', 'Quần Short Kaki Nam ICONDENIM Garment Dye', 0, 12, 0, 0, '', '', 'quần short, nam giới, kaki', 'Có', 'Có', 10, 10, 10);
+(43, 'Quần Short Kaki Nam ICONDENIM Garment Dye', 'Quần short kaki với công nghệ garment dye, màu sắc tự nhiên, phong cách casual thoải mái.', 359000.00, 25, 269250.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item5.webp', 'quan-short-kaki-nam-icondenim-garment-dye', 'Quần Short Kaki Nam ICONDENIM Garment Dye', 0, 12, 0, 0, '', '', 'quần short, nam giới, kaki', 'Có', 'Có', 10, 10, 10),
+(61, 'KOKOKOKOK', '<p>KOKOKOKOKOKOO</p>\r\n', 131231.00, NULL, 131231.00, '2025-05-21 21:43:55', '2025-05-21 21:43:55', 11, '1747637035_Đăng ký thông tin.png', NULL, NULL, 0, NULL, 0, 12, '1747637107_vt2.png', '1747638012_img2.jpg', 'KOKO', '1747722164_sinhnhat.webp', '1747722853_baomat_1.webp', 12, 0, 0);
 
 --
 -- Triggers `product`
@@ -491,7 +491,7 @@ INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `user_address`
+-- Table structure for table `user_address`
 --
 
 CREATE TABLE `user_address` (
@@ -531,7 +531,10 @@ INSERT INTO `visits` (`id`, `ip_address`, `visited_at`) VALUES
 (3, '127.0.0.1', '2025-05-02 21:22:12'),
 (4, '127.0.0.1', '2025-05-02 21:30:24'),
 (5, '::1', '2025-05-18 01:25:07'),
-(6, '::1', '2025-05-19 14:58:59');
+(6, '::1', '2025-05-19 14:58:59'),
+(7, '::1', '2025-05-21 14:44:04'),
+(8, '::1', '2025-05-21 21:31:27'),
+(9, '::1', '2025-05-21 21:49:46');
 
 --
 -- Indexes for dumped tables
@@ -635,14 +638,14 @@ ALTER TABLE `user`
   ADD KEY `idx_user_email` (`email`);
 
 --
--- Chỉ mục cho bảng `user_address`
+-- Indexes for table `user_address`
 --
 ALTER TABLE `user_address`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_User` (`id_User`);
 
 --
--- Chỉ mục cho bảng `visits`
+-- Indexes for table `visits`
 --
 ALTER TABLE `visits`
   ADD PRIMARY KEY (`id`);
@@ -661,13 +664,13 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `id_Category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_Category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `footer_payment_methods`
@@ -679,7 +682,7 @@ ALTER TABLE `footer_payment_methods`
 -- AUTO_INCREMENT for table `footer_policies`
 --
 ALTER TABLE `footer_policies`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `footer_social_media`
@@ -709,7 +712,7 @@ ALTER TABLE `order`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `review`
@@ -730,16 +733,16 @@ ALTER TABLE `user`
   MODIFY `id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- AUTO_INCREMENT cho bảng `user_address`
+-- AUTO_INCREMENT for table `user_address`
 --
 ALTER TABLE `user_address`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `visits`
+-- AUTO_INCREMENT for table `visits`
 --
 ALTER TABLE `visits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
@@ -786,7 +789,7 @@ ALTER TABLE `review`
   ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 
 --
--- Các ràng buộc cho bảng `user_address`
+-- Constraints for table `user_address`
 --
 ALTER TABLE `user_address`
   ADD CONSTRAINT `user_address_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`) ON DELETE CASCADE;

@@ -42,7 +42,7 @@ class AdminCategoryModel {
             if ($status === 'oldest') $order = "ORDER BY id_Category ASC";
             
             // Query để lấy danh sách danh mục
-            $sql = "SELECT id_Category AS ID, name, hide, image FROM category $where $order LIMIT $limit OFFSET $offset";
+            $sql = "SELECT id_Category AS ID, name, hide, image, banner FROM category $where $order LIMIT $limit OFFSET $offset";
             $result = $this->conn->query($sql);
             
             $data = [];
@@ -112,7 +112,7 @@ class AdminCategoryModel {
             else $order = "ORDER BY name ASC"; // Default sorting
             
             // Query tìm kiếm danh mục với filter và sorting
-            $sql = "SELECT id_Category AS ID, name, hide, image FROM category $where $order";
+            $sql = "SELECT id_Category AS ID, name, hide, image, banner FROM category $where $order";
             $result = $this->conn->query($sql);
             
             $data = [];
@@ -135,7 +135,7 @@ class AdminCategoryModel {
         try {
             $id = intval($id);
             // Query lấy thông tin danh mục theo ID
-            $sql = "SELECT id_Category AS ID, name, hide, image FROM category WHERE id_Category = $id";
+            $sql = "SELECT id_Category AS ID, name, hide, image, banner FROM category WHERE id_Category = $id";
             $result = $this->conn->query($sql);
             $row = $result ? $result->fetch_assoc() : null;
             if ($row && !empty($row['image'])) {
@@ -153,9 +153,17 @@ class AdminCategoryModel {
             $name = $this->conn->real_escape_string($data['name'] ?? '');
             $hide = intval($data['hide'] ?? 0);
             $image = isset($data['image']) ? $this->conn->real_escape_string($data['image']) : '';
+            $banner = isset($data['banner']) ? $this->conn->real_escape_string($data['banner']) : '';
+            
+            // Get the maximum order value and increment by 1
+            $maxOrderSql = "SELECT MAX(`order`) as max_order FROM category";
+            $maxOrderResult = $this->conn->query($maxOrderSql);
+            $maxOrderRow = $maxOrderResult->fetch_assoc();
+            $nextOrder = ($maxOrderRow && isset($maxOrderRow['max_order']) && $maxOrderRow['max_order'] !== null) 
+                ? intval($maxOrderRow['max_order']) + 1 : 1;
             
             // Query thêm danh mục mới
-            $sql = "INSERT INTO category (name, hide, image) VALUES ('$name', $hide, '$image')";
+            $sql = "INSERT INTO category (name, hide, image, banner, `order`) VALUES ('$name', $hide, '$image', '$banner', $nextOrder)";
             if ($this->conn->query($sql)) {
                 return $this->conn->insert_id; // Trả về ID mới
             }
@@ -179,6 +187,12 @@ class AdminCategoryModel {
             }
             if (isset($data['image'])) {
                 $fields[] = "image='" . $this->conn->real_escape_string($data['image']) . "'";
+            }
+            if (isset($data['banner'])) {
+                $fields[] = "banner='" . $this->conn->real_escape_string($data['banner']) . "'";
+            }
+            if (isset($data['order'])) {
+                $fields[] = "`order`=" . intval($data['order']);
             }
             
             if (empty($fields)) return false;
@@ -259,7 +273,7 @@ class AdminCategoryModel {
 
     public function getTrashCategories() {
         try {
-            $sql = "SELECT id_Category AS ID, name, hide, image FROM category WHERE hide = 1 ORDER BY name ASC";
+            $sql = "SELECT id_Category AS ID, name, hide, image, banner FROM category WHERE hide = 1 ORDER BY name ASC";
             $result = $this->conn->query($sql);
             $data = [];
             if ($result) {

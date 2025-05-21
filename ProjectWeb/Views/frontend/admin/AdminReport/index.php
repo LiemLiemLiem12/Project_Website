@@ -1513,7 +1513,7 @@
                 });
             } catch (e) {
                 console.error('Error displaying Swal error message:', e);
-                alert('Không thể tạo file PDF. Vui lòng thử lại sau.');
+                showErrorAlert('Không thể tạo file PDF. Vui lòng thử lại sau.');
             }
         }
 
@@ -1626,6 +1626,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Thư viện SweetAlert2 cho thông báo -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom SweetAlert Config -->
+    <script src="/Project_Website/ProjectWeb/layout/js/sweetalert-config.js"></script>
     
     <!-- Modal Chi Tiết Biểu Đồ -->
     <div class="modal fade" id="chartModal" tabindex="-1" aria-labelledby="chartModalLabel" aria-hidden="true">

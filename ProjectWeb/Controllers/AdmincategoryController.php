@@ -70,12 +70,52 @@ class AdminCategoryController {
         }
     }
 
+    // Helper function to process base64 image data and save as a file
+    private function saveBase64Image($base64Data, $targetDir) {
+        // Check if directory exists, create if not
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+        
+        // Extract the base64 string
+        $parts = explode(';base64,', $base64Data);
+        if (count($parts) < 2) {
+            error_log('Invalid base64 format - missing ;base64, delimiter');
+            return false; // Invalid format
+        }
+        
+        // Get the image data
+        $imageData = base64_decode($parts[1]);
+        if (!$imageData) {
+            error_log('Failed to decode base64 data');
+            return false; // Failed to decode
+        }
+        
+        // Generate a filename
+        $filename = 'banner_' . time() . '.jpg';
+        $targetFile = $targetDir . $filename;
+        
+        // Save the file
+        if (file_put_contents($targetFile, $imageData)) {
+            error_log('Successfully saved banner image: ' . $filename);
+            return $filename;
+        }
+        
+        error_log('Failed to save file to: ' . $targetFile);
+        return false; // Failed to save
+    }
+
     // Xử lý thêm danh mục mới
     public function addCategory() {
         // Sử dụng FormData nên lấy từ $_POST và $_FILES
         $name = $_POST['name'] ?? '';
         $hide = isset($_POST['hide']) ? intval($_POST['hide']) : 0;
         $imageName = '';
+        $bannerName = '';
+        
+        error_log('Adding new category: ' . $name);
+        
+        // Xử lý upload ảnh thường
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $targetDir = 'upload/img/category/';
             if (!file_exists($targetDir)) {
@@ -84,12 +124,41 @@ class AdminCategoryController {
             $imageName = time() . '_' . basename($_FILES['image']['name']);
             $targetFile = $targetDir . $imageName;
             move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
+            error_log('Uploaded image: ' . $imageName);
         }
+        
+        // Xử lý banner từ dữ liệu base64 (ảnh đã cắt)
+        if (isset($_POST['is_cropped_banner']) && $_POST['is_cropped_banner'] === '1' && isset($_POST['banner_data'])) {
+            $targetDir = 'upload/img/category/';
+            $bannerName = $this->saveBase64Image($_POST['banner_data'], $targetDir);
+            if (!$bannerName) {
+                error_log('Failed to save cropped banner');
+            } else {
+                error_log('Saved cropped banner: ' . $bannerName);
+            }
+        }
+        // Hoặc xử lý upload banner thường nếu không có ảnh đã cắt
+        else if (isset($_FILES['banner']) && $_FILES['banner']['error'] === UPLOAD_ERR_OK) {
+            $targetDir = 'upload/img/category/';
+            if (!file_exists($targetDir)) {
+                mkdir($targetDir, 0777, true);
+            }
+            
+            $bannerName = 'banner_' . time() . '_' . basename($_FILES['banner']['name']);
+            $targetFile = $targetDir . $bannerName;
+            move_uploaded_file($_FILES['banner']['tmp_name'], $targetFile);
+            error_log('Uploaded banner file: ' . $bannerName);
+        }
+        
         $dataToInsert = [
             'name' => $name,
             'hide' => $hide,
-            'image' => $imageName
+            'image' => $imageName,
+            'banner' => $bannerName
         ];
+        
+        error_log('Data to insert: ' . print_r($dataToInsert, true));
+        
         $insertedId = $this->categoryModel->addCategory($dataToInsert);
         if ($insertedId !== false && $insertedId > 0) {
             $this->sendJsonResponse(['success' => true, 'id' => $insertedId, 'message' => 'Đã thêm danh mục thành công!']);
@@ -97,7 +166,6 @@ class AdminCategoryController {
             $error = $this->categoryModel->conn ? $this->categoryModel->getLastError() : "Lỗi Model CSDL.";
             $this->sendJsonResponse(['success' => false, 'message' => 'Không thể thêm. ' . $error]);
         }
-        
     }
 
     // Xử lý cập nhật danh mục
@@ -106,9 +174,30 @@ class AdminCategoryController {
         $name = $_POST['name'] ?? '';
         $hide = isset($_POST['hide']) ? intval($_POST['hide']) : 0;
         $imageName = '';
-        // Lấy ảnh cũ nếu không upload mới
+        $bannerName = '';
+        
+        error_log('Updating category ID: ' . $id);
+        
+        // Kiểm tra xem có yêu cầu giữ lại ảnh cũ không
+        $keepOldImage = isset($_POST['keep_old_image']) && $_POST['keep_old_image'] === '1';
+        $oldImageName = $_POST['old_image_name'] ?? '';
+        
+        // Kiểm tra xem có yêu cầu giữ lại banner cũ không
+        $keepOldBanner = isset($_POST['keep_old_banner']) && $_POST['keep_old_banner'] === '1';
+        $oldBannerName = $_POST['old_banner_name'] ?? '';
+        
+        error_log('Keep old image: ' . ($keepOldImage ? 'Yes' : 'No') . ', Old image name: ' . $oldImageName);
+        error_log('Keep old banner: ' . ($keepOldBanner ? 'Yes' : 'No') . ', Old banner name: ' . $oldBannerName);
+        
+        // Lấy thông tin danh mục cũ
         $old = $this->categoryModel->getById($id);
+        if ($old) {
+            error_log('Current category data: ' . print_r($old, true));
+        }
+        
+        // Xử lý ảnh
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            // Có upload ảnh mới
             $targetDir = 'upload/img/category/';
             if (!file_exists($targetDir)) {
                 mkdir($targetDir, 0777, true);
@@ -116,14 +205,94 @@ class AdminCategoryController {
             $imageName = time() . '_' . basename($_FILES['image']['name']);
             $targetFile = $targetDir . $imageName;
             move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
+            error_log('Uploaded new image: ' . $imageName);
+            
+            // Xóa ảnh cũ nếu có
+            if ($old && !empty($old['image'])) {
+                $oldImagePath = parse_url($old['image'], PHP_URL_PATH);
+                if (file_exists($_SERVER['DOCUMENT_ROOT'] . $oldImagePath)) {
+                    @unlink($_SERVER['DOCUMENT_ROOT'] . $oldImagePath);
+                    error_log('Deleted old image: ' . $oldImagePath);
+                }
+            }
+        } else if ($keepOldImage && !empty($oldImageName)) {
+            // Giữ lại tên ảnh cũ từ request
+            $imageName = $oldImageName;
+            error_log('Keeping old image: ' . $imageName);
         } else if ($old && !empty($old['image'])) {
-            $imageName = $old['image'];
+            // Backup: Lấy tên ảnh từ database nếu không có tên từ request
+            $imagePath = parse_url($old['image'], PHP_URL_PATH);
+            $pathParts = explode('/', $imagePath);
+            $imageName = end($pathParts);
+            error_log('Using existing image from DB: ' . $imageName);
         }
+        
+        // Xử lý banner từ dữ liệu base64 (ảnh đã cắt)
+        if (isset($_POST['is_cropped_banner']) && $_POST['is_cropped_banner'] === '1' && isset($_POST['banner_data'])) {
+            $targetDir = 'upload/img/category/';
+            $bannerName = $this->saveBase64Image($_POST['banner_data'], $targetDir);
+            if (!$bannerName) {
+                error_log('Failed to save cropped banner during update');
+            } else {
+                error_log('Saved cropped banner for update: ' . $bannerName);
+                
+                // Xóa banner cũ nếu có
+                if ($old && !empty($old['banner'])) {
+                    $oldBannerPath = 'upload/img/category/' . $old['banner'];
+                    if (file_exists($oldBannerPath)) {
+                        @unlink($oldBannerPath);
+                        error_log('Deleted old banner: ' . $oldBannerPath);
+                    }
+                }
+            }
+        }
+        // Hoặc xử lý upload banner thường
+        else if (isset($_FILES['banner']) && $_FILES['banner']['error'] === UPLOAD_ERR_OK) {
+            $targetDir = 'upload/img/category/';
+            if (!file_exists($targetDir)) {
+                mkdir($targetDir, 0777, true);
+            }
+            
+            $bannerName = 'banner_' . time() . '_' . basename($_FILES['banner']['name']);
+            $targetFile = $targetDir . $bannerName;
+            move_uploaded_file($_FILES['banner']['tmp_name'], $targetFile);
+            error_log('Uploaded banner file for update: ' . $bannerName);
+            
+            // Xóa banner cũ nếu có
+            if ($old && !empty($old['banner'])) {
+                $oldBannerPath = 'upload/img/category/' . $old['banner'];
+                if (file_exists($oldBannerPath)) {
+                    @unlink($oldBannerPath);
+                    error_log('Deleted old banner: ' . $oldBannerPath);
+                }
+            }
+        } else if ($keepOldBanner && !empty($oldBannerName)) {
+            // Giữ lại banner cũ
+            $bannerName = basename($oldBannerName);
+            error_log('Keeping old banner: ' . $bannerName);
+        } else if ($old && !empty($old['banner'])) {
+            // Lấy banner từ database
+            $bannerName = $old['banner'];
+            error_log('Using existing banner from DB: ' . $bannerName);
+        }
+        
         $updateData = [
             'name' => $name,
-            'hide' => $hide,
-            'image' => $imageName
+            'hide' => $hide
         ];
+        
+        // Chỉ cập nhật ảnh nếu có tên ảnh
+        if (!empty($imageName)) {
+            $updateData['image'] = $imageName;
+        }
+        
+        // Chỉ cập nhật banner nếu có tên banner
+        if (!empty($bannerName)) {
+            $updateData['banner'] = $bannerName;
+        }
+        
+        error_log('Data to update: ' . print_r($updateData, true));
+        
         $result = $this->categoryModel->updateCategory($id, $updateData);
         if ($result) {
             $this->sendJsonResponse(['success' => true, 'message' => 'Đã cập nhật thành công!']);
@@ -194,6 +363,7 @@ class AdminCategoryController {
                         'currentPage' => $page,
                         'maxPage' => $maxPage,
                         'remainingCount' => $remainingCount,
+                        'itemsPerPage' => $limit,
                         'status' => $status,
                         'sort' => $sort
                     ]
@@ -275,6 +445,7 @@ class AdminCategoryController {
                         'currentPage' => $page,
                         'maxPage' => $maxPage,
                         'totalItems' => $activeCount,
+                        'itemsPerPage' => $limit,
                         'status' => $status,
                         'sort' => $sort
                     ]

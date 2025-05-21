@@ -7,6 +7,7 @@
     <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
     .status.completed {
         background: #d4f5e9;
@@ -171,6 +172,7 @@
                             <th><input type="checkbox" id="select-all-category" class="form-check-input"></th>
                             <th>Tên danh mục</th>
                             <th>Ảnh</th>
+                            <th>Banner</th>
                             <th>Trạng thái</th>
                             <th>Thao tác</th>
                         </tr>
@@ -185,6 +187,11 @@
                             <td>
                                 <?php if (!empty($category['image'])): ?>
                                     <img src="<?= htmlspecialchars($category['image']) ?>" alt="Ảnh" style="width:40px;height:40px;object-fit:cover;">
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if (!empty($category['banner'])): ?>
+                                    <img src="upload/img/category/<?= htmlspecialchars($category['banner']) ?>" alt="Banner" style="width:80px;height:33px;object-fit:cover;">
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -245,6 +252,21 @@
                         <label for="categoryImage" class="form-label">Ảnh danh mục</label>
                         <input type="file" class="form-control" id="categoryImage" name="image" accept="image/*">
                         <div id="categoryImagePreview" class="mt-2"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryBanner" class="form-label">Ảnh banner danh mục (1200x500px)</label>
+                        <input type="file" class="form-control" id="categoryBanner" name="banner" accept="image/*">
+                        <small class="form-text text-muted">Chọn ảnh để tự động cắt theo kích thước 1200x500px</small>
+                        <div id="bannerCropContainer" class="mt-2 d-none">
+                            <div class="img-container" style="max-height: 300px; margin-bottom: 10px;">
+                                <img id="bannerImage" src="" style="max-width: 100%;">
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" id="cropBannerBtn">Cắt ảnh</button>
+                            <button type="button" class="btn btn-secondary btn-sm" id="cancelCropBtn">Hủy</button>
+                        </div>
+                        <div id="categoryBannerPreview" class="mt-2"></div>
+                        <input type="hidden" id="croppedBannerData">
+                        <input type="hidden" id="currentBannerPath">
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="categoryHide">
@@ -319,6 +341,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
 // Helper function to escape HTML special characters
 function htmlspecialchars(str) {
@@ -501,18 +524,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Hiển thị loading
         const tableBody = document.getElementById('categoryTableBody');
-        tableBody.innerHTML = '<tr><td colspan="4" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
         
         // Cập nhật URL với trang hiện tại mà không reload trang
+        const url = new URL(window.location);
         if (page !== 1) {
-            const url = new URL(window.location);
             url.searchParams.set('page', page);
-            window.history.pushState({}, '', url);
         } else {
-            const url = new URL(window.location);
             url.searchParams.delete('page');
-            window.history.pushState({}, '', url);
         }
+        window.history.pushState({}, '', url);
         
         // Gửi request AJAX
         fetch(`index.php?controller=admincategory&action=ajaxSearch&status=${encodeURIComponent(statusVal)}&sort=${encodeURIComponent(sortVal)}&keyword=${encodeURIComponent(keyword)}&page=${page}`)
@@ -526,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 tableBody.innerHTML = '';
                 
                 if (!data.categories || data.categories.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Không tìm thấy danh mục nào.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Không tìm thấy danh mục nào.</td></tr>';
                     // Xóa phân trang nếu không có dữ liệu
                     updatePagination({totalPages: 0, currentPage: 1});
                     return;
@@ -537,6 +558,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const row = document.createElement('tr');
                     row.setAttribute('data-category-id', category.ID);
                     
+                    console.log("Category data:", category);
+                    
                     const isHidden = category.hide == 1;
                     row.innerHTML = `
                         <td>
@@ -545,6 +568,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${htmlspecialchars(category.name)}</td>
                         <td>
                             ${category.image ? `<img src="${htmlspecialchars(category.image)}" style="width:40px;height:40px;object-fit:cover;">` : ''}
+                        </td>
+                        <td>
+                            ${category.banner ? `<img src="upload/img/category/${htmlspecialchars(category.banner)}" alt="Banner" style="width:80px;height:33px;object-fit:cover;">` : ''}
                         </td>
                         <td>
                             <span class="status ${isHidden ? 'inactive' : 'completed'}">
@@ -570,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Error loading categories:', error);
-                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Có lỗi xảy ra khi tải dữ liệu.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Có lỗi xảy ra khi tải dữ liệu.</td></tr>';
             });
     }
     
@@ -707,16 +733,16 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
     sendJsonRequest('index.php?controller=admincategory&action=deleteSelected', 'POST', { ids })
         .then(data => {
             if (data.success) {
-                alert('Đã xóa thành công!');
+                showSuccessAlert(data.message || 'Đã xóa thành công!');
                 
                 // Kiểm tra thông tin phân trang từ server
                 if (data.pagination) {
-                    const { maxPage, currentPage: serverCurrentPage } = data.pagination;
+                    const { maxPage, currentPage: serverCurrentPage, remainingCount } = data.pagination;
                     
                     // Nếu đang ở trang lớn hơn max page sau khi xóa, load trang cuối cùng có dữ liệu
                     if (currentPage > maxPage && maxPage > 0) {
                         loadCategoriesWithAjax(maxPage);
-                    } else if (isHidingAllItems && currentPage > 1 && maxPage === 0) {
+                    } else if (isHidingAllItems && currentPage > 1 && remainingCount === 0) {
                         // Nếu xóa hết dữ liệu và không còn trang nào, quay về trang 1
                         loadCategoriesWithAjax(1);
                     } else if (isHidingAllItems && currentPage > 1) {
@@ -736,14 +762,15 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                     }
                 }
                 
+                // Cập nhật thùng rác
                 loadTrashCategories();
             } else {
-                alert(data.message || 'Có lỗi xảy ra khi xóa danh mục.');
+                showErrorAlert(data.message || 'Có lỗi xảy ra khi xóa danh mục.');
             }
         })
         .catch(error => {
             console.error('Error hiding categories:', error);
-            alert('Lỗi kết nối khi xóa danh mục. Chi tiết: ' + error.message);
+            showErrorAlert('Lỗi kết nối khi xóa danh mục. Chi tiết: ' + error.message);
         });
 }
 
@@ -757,14 +784,168 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
     const categoryHideCheckbox = document.getElementById('categoryHide');
     const categoryImageInput = document.getElementById('categoryImage');
     const categoryImagePreview = document.getElementById('categoryImagePreview');
+    const categoryBannerInput = document.getElementById('categoryBanner');
+    const categoryBannerPreview = document.getElementById('categoryBannerPreview');
+    const bannerCropContainer = document.getElementById('bannerCropContainer');
+    const bannerImage = document.getElementById('bannerImage');
+    const cropBannerBtn = document.getElementById('cropBannerBtn');
+    const cancelCropBtn = document.getElementById('cancelCropBtn');
+    const croppedBannerData = document.getElementById('croppedBannerData');
+    const currentBannerPath = document.getElementById('currentBannerPath');
+    
+    let cropper;
     
     if (addCategoryBtn && categoryModal && categoryForm && categoryModalTitle && categoryIdInput && categoryNameInput && categoryHideCheckbox && categoryImageInput && categoryImagePreview) {
         addCategoryBtn.addEventListener('click', function() {
             categoryModalTitle.textContent = 'Thêm danh mục mới';
             categoryForm.reset();
             categoryIdInput.value = '';
+            categoryImagePreview.innerHTML = ''; // Xóa preview cũ
+            categoryBannerPreview.innerHTML = ''; // Xóa preview banner cũ
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            bannerCropContainer.classList.add('d-none');
             categoryModal.show();
         });
+        
+        // Hiển thị preview khi chọn ảnh mới
+        categoryImageInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    categoryImagePreview.innerHTML = `
+                        <div class="mt-2">
+                            <p class="mb-1"><strong>Ảnh đã chọn:</strong></p>
+                            <img src="${e.target.result}" alt="Ảnh xem trước" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+                        </div>
+                    `;
+                };
+                
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                // Nếu hủy chọn file, kiểm tra xem có ảnh cũ không để hiển thị lại
+                const currentImagePath = document.getElementById('currentImagePath');
+                if (currentImagePath) {
+                    categoryImagePreview.innerHTML = `
+                        <div class="mt-2">
+                            <p class="mb-1"><strong>Ảnh hiện tại:</strong></p>
+                            <img src="${currentImagePath.value}" alt="Ảnh danh mục" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+                            <input type="hidden" id="currentImagePath" value="${currentImagePath.value}">
+                        </div>
+                    `;
+                } else {
+                    categoryImagePreview.innerHTML = '';
+                }
+            }
+        });
+        
+        // Xử lý banner image
+        if (categoryBannerInput && bannerCropContainer && bannerImage && cropBannerBtn && cancelCropBtn) {
+            // Khi chọn ảnh banner mới
+            categoryBannerInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    // Hiển thị container cắt ảnh
+                    bannerCropContainer.classList.remove('d-none');
+                    
+                    // Đọc file ảnh
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Hiển thị ảnh để cắt
+                        bannerImage.src = e.target.result;
+                        
+                        // Hủy cropper cũ nếu có
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+                        
+                        // Khởi tạo cropper với tỷ lệ 1200x500
+                        cropper = new Cropper(bannerImage, {
+                            aspectRatio: 1200 / 500,
+                            viewMode: 1,
+                            dragMode: 'move',
+                            autoCropArea: 1,
+                            restore: false,
+                            guides: true,
+                            center: true,
+                            highlight: false,
+                            cropBoxMovable: true,
+                            cropBoxResizable: true,
+                            toggleDragModeOnDblclick: false
+                        });
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            
+            // Nút cắt ảnh
+            cropBannerBtn.addEventListener('click', function() {
+                if (!cropper) return;
+                
+                // Lấy ảnh đã cắt với kích thước 1200x500
+                const canvas = cropper.getCroppedCanvas({
+                    width: 1200,
+                    height: 500,
+                    minWidth: 1200,
+                    minHeight: 500,
+                    maxWidth: 1200,
+                    maxHeight: 500,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                
+                if (!canvas) return;
+                
+                // Chuyển canvas thành data URL
+                const croppedImageUrl = canvas.toDataURL('image/jpeg', 0.9);
+                
+                // Lưu data URL để gửi lên server
+                croppedBannerData.value = croppedImageUrl;
+                
+                // Hiển thị ảnh đã cắt
+                categoryBannerPreview.innerHTML = `
+                    <div class="mt-2">
+                        <p class="mb-1"><strong>Banner đã cắt:</strong></p>
+                        <img src="${croppedImageUrl}" alt="Banner đã cắt" class="img-fluid" style="max-width: 100%; max-height: 200px;">
+                    </div>
+                `;
+                
+                // Ẩn container cắt ảnh
+                bannerCropContainer.classList.add('d-none');
+                
+                // Hủy cropper
+                cropper.destroy();
+                cropper = null;
+            });
+            
+            // Nút hủy cắt ảnh
+            cancelCropBtn.addEventListener('click', function() {
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+                
+                bannerCropContainer.classList.add('d-none');
+                
+                // Nếu có banner cũ, hiển thị lại
+                if (currentBannerPath.value) {
+                    categoryBannerPreview.innerHTML = `
+                        <div class="mt-2">
+                            <p class="mb-1"><strong>Banner hiện tại:</strong></p>
+                            <img src="${currentBannerPath.value}" alt="Banner danh mục" class="img-fluid" style="max-width: 100%; max-height: 200px;">
+                        </div>
+                    `;
+                } else {
+                    categoryBannerPreview.innerHTML = '';
+                }
+                
+                // Reset input file
+                categoryBannerInput.value = '';
+            });
+        }
     }
 
     const saveBtn = document.getElementById('saveCategory');
@@ -775,9 +956,8 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
             const hide = categoryHideCheckbox.checked ? 1 : 0;
             
             if (!name) {
-                alert('Vui lòng nhập tên danh mục.');
-                categoryNameInput.focus();
-                return;
+                showWarningAlert('Vui lòng nhập tên danh mục.');
+                return false;
             }
             
             let url = 'index.php?controller=admincategory&action=addCategory';
@@ -791,11 +971,53 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
             
             if (id) {
                 formData.append('id', id);
+                
+                // Khi đang sửa danh mục, nếu không chọn ảnh mới nhưng có ảnh cũ
+                // thì cần gửi thông tin ảnh cũ lên server để giữ lại
+                const currentImagePath = document.getElementById('currentImagePath');
+                if (currentImagePath && categoryImageInput.files.length === 0) {
+                    // Trích xuất tên file từ đường dẫn đầy đủ
+                    const imagePath = currentImagePath.value;
+                    const imageName = imagePath.split('/').pop(); // Lấy phần cuối cùng của đường dẫn
+                    
+                    // Thêm flag để server biết giữ lại ảnh cũ
+                    formData.append('keep_old_image', '1');
+                    formData.append('old_image_name', imageName);
+                    console.log('Giữ lại ảnh cũ:', imageName);
+                }
+                
+                // Tương tự cho banner
+                if (currentBannerPath && categoryBannerInput.files.length === 0 && !croppedBannerData.value) {
+                    const bannerPath = currentBannerPath.value;
+                    const bannerName = bannerPath.split('/').pop();
+                    
+                    formData.append('keep_old_banner', '1');
+                    formData.append('old_banner_name', bannerName);
+                    console.log('Giữ lại banner cũ:', bannerName);
+                }
             }
             
+            // Xử lý ảnh thường
             if (categoryImageInput.files.length > 0) {
                 formData.append('image', categoryImageInput.files[0]);
             }
+            
+            // Xử lý ảnh banner đã cắt từ cropper
+            if (croppedBannerData.value) {
+                // Gửi base64 data trực tiếp thay vì chuyển đổi thành blob
+                formData.append('banner_data', croppedBannerData.value);
+                formData.append('is_cropped_banner', '1');
+                console.log('Sending cropped banner data - length:', croppedBannerData.value.length);
+            } 
+            // Hoặc nếu chỉ chọn ảnh banner mà không cắt
+            else if (categoryBannerInput.files.length > 0) {
+                formData.append('banner', categoryBannerInput.files[0]);
+                console.log('Sending original banner file:', categoryBannerInput.files[0].name);
+            }
+            
+            // Hiển thị trạng thái đang xử lý
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
             
             // Gửi FormData trực tiếp không dùng JSON.stringify
             fetch(url, {
@@ -819,8 +1041,7 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
             })
             .then(data => {
                 if (data.success) {
-                    categoryModal.hide();
-                    alert(id ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục mới!');
+                    showSuccessAlert(id ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục mới!');
                     
                     // Lấy trang hiện tại từ URL
                     const urlParams = new URLSearchParams(window.location.search);
@@ -836,8 +1057,8 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                                 const totalPages = Math.ceil(totalItems / itemsPerPage);
                                 
                                 // Kiểm tra nếu thêm item tạo thêm trang mới
-                                if (totalPages > Math.ceil((totalItems - 1) / itemsPerPage)) {
-                                    // Chuyển đến trang mới
+                                if (totalItems > itemsPerPage * currentPage) {
+                                    // Nghĩa là trang hiện tại đã đầy, chuyển đến trang mới
                                     loadCategoriesWithAjax(totalPages);
                                 } else {
                                     // Tải lại trang hiện tại
@@ -854,14 +1075,33 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                         loadCategoriesWithAjax(currentPage);
                     }
                 } else {
-                    alert(data.message || 'Có lỗi xảy ra khi lưu danh mục.');
+                    showErrorAlert(data.message || 'Có lỗi xảy ra khi lưu danh mục.');
                 }
             })
             .catch(error => {
                 console.error('Error saving category:', error);
-                alert('Lỗi kết nối khi lưu danh mục. Chi tiết: ' + error.message);
+                showErrorAlert('Lỗi kết nối khi lưu danh mục. Chi tiết: ' + error.message);
+            })
+            .finally(() => {
+                // Khôi phục nút lưu dù thành công hay thất bại
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = 'Lưu';
             });
         });
+    }
+
+    // Hàm chuyển đổi Base64 thành Blob
+    function dataURLtoBlob(dataURL) {
+        const parts = dataURL.split(';base64,');
+        const contentType = parts[0].split(':')[1];
+        const raw = window.atob(parts[1]);
+        const uInt8Array = new Uint8Array(raw.length);
+        
+        for (let i = 0; i < raw.length; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+        
+        return new Blob([uInt8Array], { type: contentType });
     }
 
     function attachEventListeners() {
@@ -877,7 +1117,7 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                 sendJsonRequest(`index.php?controller=admincategory&action=getCategory&id=${id}`, 'GET')
                     .then(data => {
                         if (data.error) {
-                            alert(data.error);
+                            showErrorAlert(data.error);
                             return;
                         }
                         if (categoryModal && categoryForm && categoryModalTitle && categoryIdInput && categoryNameInput && categoryHideCheckbox && categoryImageInput && categoryImagePreview) {
@@ -885,12 +1125,52 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                             categoryIdInput.value = data.ID;
                             categoryNameInput.value = data.name;
                             categoryHideCheckbox.checked = data.hide == 1;
+                            
+                            // Hiển thị ảnh hiện tại nếu có
+                            if (data.image) {
+                                categoryImagePreview.innerHTML = `
+                                    <div class="mt-2">
+                                        <p class="mb-1"><strong>Ảnh hiện tại:</strong></p>
+                                        <img src="${data.image}" alt="Ảnh danh mục" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+                                        <input type="hidden" id="currentImagePath" value="${data.image}">
+                                    </div>
+                                `;
+                            } else {
+                                categoryImagePreview.innerHTML = '<p class="text-muted mt-2">Chưa có ảnh</p>';
+                            }
+                            
+                            // Hiển thị banner hiện tại nếu có
+                            if (data.banner) {
+                                const bannerUrl = 'upload/img/category/' + data.banner;
+                                console.log("Banner path:", bannerUrl);
+                                categoryBannerPreview.innerHTML = `
+                                    <div class="mt-2">
+                                        <p class="mb-1"><strong>Banner hiện tại:</strong></p>
+                                        <img src="${bannerUrl}" alt="Banner danh mục" class="img-fluid" style="max-width: 100%; max-height: 200px;">
+                                        <input type="hidden" id="currentBannerPath" value="${bannerUrl}">
+                                    </div>
+                                `;
+                            } else {
+                                categoryBannerPreview.innerHTML = '<p class="text-muted mt-2">Chưa có banner</p>';
+                            }
+                            
+                            // Reset input file để không bị trùng với lần chọn trước
+                            categoryImageInput.value = '';
+                            categoryBannerInput.value = '';
+                            
+                            // Hủy cropper nếu đang tồn tại
+                            if (cropper) {
+                                cropper.destroy();
+                                cropper = null;
+                            }
+                            bannerCropContainer.classList.add('d-none');
+                            
                             categoryModal.show();
                         }
                     })
                     .catch(error => {
-                        console.error('Error getting category details:', error);
-                        alert('Lỗi tải thông tin danh mục: ' + error.message);
+                        console.error('Error fetching category details:', error);
+                        showErrorAlert('Lỗi tải thông tin danh mục: ' + error.message);
                     });
             });
         });
@@ -1024,33 +1304,51 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
         // Lấy trang hiện tại từ URL
         const urlParams = new URLSearchParams(window.location.search);
         const currentPage = parseInt(urlParams.get('page')) || 1;
+        const status = urlParams.get('status') || '';
+        const sort = urlParams.get('sort') || '';
             
         sendJsonRequest('index.php?controller=admincategory&action=restoreCategories', 'POST', { ids })
             .then(data => {
                 if (data.success) {
-                    alert(data.message || 'Đã khôi phục thành công!');
+                    showSuccessAlert(data.message || 'Đã khôi phục thành công!');
                     
                     // Tải lại danh sách thùng rác
                     loadTrashCategories();
                     
                     // Kiểm tra thông tin phân trang nếu có
-                    if (data.pagination && data.pagination.maxPage > currentPage) {
-                        // Nếu khôi phục tạo thêm trang mới, chuyển đến trang mới đó
-                        loadCategoriesWithAjax(data.pagination.maxPage);
+                    if (data.pagination) {
+                        // Đếm tổng số item trên trang hiện tại
+                        const itemsPerPage = 5; // Phải khớp với giá trị trong controller
+                        const totalItems = data.pagination.totalItems || 0;
+                        
+                        // Nếu đã khôi phục và trang hiện tại đã đầy
+                        if (data.pagination.maxPage > currentPage && currentPage * itemsPerPage >= totalItems - ids.length) {
+                            // Có thể đã tạo thêm trang mới, đi đến trang mới đó
+                            loadCategoriesWithAjax(data.pagination.maxPage);
+                        } else {
+                            // Tải lại trang hiện tại
+                            loadCategoriesWithAjax(currentPage);
+                        }
                     } else {
-                        // Tải lại danh sách danh mục chính với trang hiện tại
+                        // Mặc định tải lại trang hiện tại
                         loadCategoriesWithAjax(currentPage);
                     }
                 } else {
-                    alert(data.message || 'Có lỗi xảy ra khi khôi phục danh mục.');
+                    showErrorAlert(data.message || 'Có lỗi xảy ra khi khôi phục danh mục.');
                 }
             })
             .catch(error => {
-                console.error('Error restoring categories:', error);
-                alert('Lỗi kết nối khi khôi phục danh mục. Chi tiết: ' + error.message);
+                console.error('Error restoring category:', error);
+                showErrorAlert('Lỗi kết nối khi khôi phục danh mục. Chi tiết: ' + error.message);
             });
     }
 });
 </script>
+
+<!-- Sweet Alert 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Custom SweetAlert Config -->
+<script src="/Project_Website/ProjectWeb/layout/js/sweetalert-config.js"></script>
+
 </body>
 </html>

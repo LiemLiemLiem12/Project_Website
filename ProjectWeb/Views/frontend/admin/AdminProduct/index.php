@@ -508,7 +508,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom JS -->
     <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
-                                   console.log('Toggle button:', document.getElementById('sidebarToggleBtn'));
+    
     <!-- Ckeditor -->
     <script src="https://cdn.ckeditor.com/4.22.1/full-all/ckeditor.js"></script>
     <script>
@@ -786,7 +786,7 @@
                 }
                 
                 if (message) {
-                    alert(message);
+                    showSuccessAlert(message);
                 }
                 
                 // Reload main product table
@@ -795,6 +795,11 @@
         }
     });
     </script>
+    
+    <!-- Sweet Alert 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom SweetAlert Config -->
+    <script src="/Project_Website/ProjectWeb/layout/js/sweetalert-config.js"></script>
 </body>
 
 </html>
