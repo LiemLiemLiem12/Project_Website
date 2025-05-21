@@ -30,22 +30,7 @@ if (!isset($storeSettings) || !isset($policies) || !isset($socialMedia) || !isse
 <footer class="footer bg-black text-white py-4">
     <div class="container">
          <!-- Newsletter -->
-        <section class="newsletter-section">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-md-8 text-center">
-                        <h2 class="newsletter-title">Đăng ký nhận bản tin</h2>
-                        <p class="newsletter-description">Nhận thông tin về sản phẩm mới, khuyến mãi hấp dẫn và các ưu đãi đặc biệt.</p>
-                        <form class="newsletter-form">
-                            <div class="input-group">
-                                <input type="email" class="form-control" placeholder="Nhập địa chỉ email của bạn" required>
-                                <button class="btn btn-subscribe" type="submit">Đăng ký</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
+      
 
         <!-- MAIN FOOTER SECTIONS -->
         <div class="row">

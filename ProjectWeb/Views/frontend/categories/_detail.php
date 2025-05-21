@@ -11,9 +11,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/AllProduct.css">
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Footer.css">
 </head>
 
 <body>
+      <?php
+    view('frontend.partitions.frontend.header');
+    ?>
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css">
     <!-- Main Container -->
     <div class="container mt-4">
         <!-- Breadcrumb -->
@@ -601,6 +606,9 @@
             }
         });
     </script> -->
+     <script src="/Project_Website/ProjectWeb/layout/js/Header.js"></script>
+   
+    <script src="/Project_Website/ProjectWeb/layout/js/Footer.js"></script>
 </body>
 
 </html>

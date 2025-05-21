@@ -88,7 +88,7 @@ if (!isset($_SESSION['visited'])) {
                                               <?php if($product['original_price'] > $product['current_price']): ?>
                                                 <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
                                             <?php endif; ?>
-                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                        
                     </div>
                 </div>
             </div>
@@ -167,7 +167,7 @@ if (!isset($_SESSION['visited'])) {
                                               <?php if($product['original_price'] > $product['current_price']): ?>
                                                 <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
                                             <?php endif; ?>
-                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                     
                     </div>
                 </div>
             </div>
@@ -222,7 +222,7 @@ if (!isset($_SESSION['visited'])) {
                                               <?php if($product['original_price'] > $product['current_price']): ?>
                                                 <span class="fw-bold original-price original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
                                             <?php endif; ?>
-                        <button class="btn-add-cart">Thêm vào giỏ</button>
+                 
                     </div>
                 </div>
             </div>

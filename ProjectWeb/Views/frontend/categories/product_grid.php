@@ -34,7 +34,7 @@
                                 <span class="original-price text-decoration-line-through"><?= number_format($product['original_price'], 0, ',', '.') ?>₫</span>
                             <?php endif; ?>
                         </div>
-                        <button class="btn-add-cart" data-product-id="<?= $product['id_product'] ?>">Thêm vào giỏ hàng</button>
+                      
                     </div>
                 </div>
             </div>

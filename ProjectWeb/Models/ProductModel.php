@@ -32,6 +32,12 @@ class ProductModel extends BaseModel
     $sql = "SELECT * FROM " . self::TABLE . " WHERE id_category={$categoryId}";
     return $this->getByQuery($sql);
   }
+  // ProductModel.php
+public function incrementClickCount($id)
+{
+    $sql = "UPDATE " . self::TABLE . " SET click_count = click_count + 1 WHERE id_product = {$id}";
+    return $this->_query($sql);
+}
   public function getTopSaleProduct()
   {
     $sql = "

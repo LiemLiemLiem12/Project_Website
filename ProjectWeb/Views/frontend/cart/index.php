@@ -32,10 +32,7 @@
                         <span class="badge bg-dark" id="item-count">22 Sản phẩm</span>
                     </div>
 
-                    <div class="cart-notification">
-                        <i class="fas fa-tags me-2"></i> Đơn hàng của bạn đã đủ điều kiện giảm 50K nhờ nhập mã
-                        <strong>SALE50K</strong>
-                    </div>
+                 
 
                     <!-- Empty cart message - hidden by default -->
                     <div class="empty-cart-message d-none" id="empty-cart">

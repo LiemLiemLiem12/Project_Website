@@ -2,7 +2,7 @@
 <?php
 class OrderModel extends BaseModel
 {
-       const TABLE = "order";
+       const TABLE = "order"; // Thêm dấu backticks
     public function getByMonth($month)
     {
         return $this->getScalar("SELECT COUNT(*) 
@@ -157,7 +157,7 @@ public function createOrderDetail($detailData)
      */
     public function getUserOrders($userId)
     {
-        $sql = "SELECT * FROM " . self::TABLE . " WHERE id_User = {$userId} ORDER BY created_at DESC";
+        $sql = "SELECT * FROM `order` WHERE id_User = {$userId} ORDER BY created_at DESC";
         $query = $this->_query($sql);
         
         $orders = [];
