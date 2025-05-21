@@ -1463,110 +1463,110 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 <p>Người tạo: Admin</p>
                 <p>© RS Store - Hệ thống thời trang</p>
             `;
-                pdfContainer.appendChild(footer);
-
-                // Thêm container tạm thời vào trang
-                document.body.appendChild(pdfContainer);
-
-                // Cấu hình tùy chọn cho PDF với tải xuống tự động
-                const pdfOptions = {
-                    margin: 10,
-                    filename: filename,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        logging: false,
-                        allowTaint: true,
-                        imageTimeout: 3000 // Tăng thời gian chờ cho việc tải hình ảnh
-                    },
-                    jsPDF: {
-                        unit: 'mm',
-                        format: 'a4',
-                        orientation: 'portrait',
-                        compress: true
-                    }
-                };
-
-                // Tạo PDF từ container và tải xuống tự động
-                console.log('Bắt đầu tạo file PDF...');
-                html2pdf()
-                    .from(pdfContainer)
-                    .set(pdfOptions)
-                    .toPdf()
-                    .get('pdf')
-                    .then((pdf) => {
-                        try {
-                            console.log('Đã tạo xong PDF, chuẩn bị tải xuống');
-                            // Tạo blob từ PDF
-                            const blob = pdf.output('blob');
-
-                            // Tạo URL cho blob
-                            const url = URL.createObjectURL(blob);
-
-                            // Tạo link tải xuống
-                            const downloadLink = document.createElement('a');
-                            downloadLink.href = url;
-                            downloadLink.download = filename;
-
-                            // Thêm link vào trang và click
-                            document.body.appendChild(downloadLink);
-                            downloadLink.click();
-
-                            // Dọn dẹp
-                            setTimeout(() => {
-                                document.body.removeChild(downloadLink);
-                                URL.revokeObjectURL(url);
-                                document.body.removeChild(pdfContainer);
-
-                                // Đóng thông báo đang xử lý
-                                Swal.close();
-
-                                // Hiển thị thông báo thành công
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Thành công!',
-                                    text: 'Báo cáo PDF đã được tải xuống',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                            }, 100);
-                        } catch (error) {
-                            console.error('Error in PDF download process:', error);
-                            handlePdfError(pdfContainer);
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Error exporting PDF', err);
+            pdfContainer.appendChild(footer);
+            
+            // Thêm container tạm thời vào trang
+            document.body.appendChild(pdfContainer);
+            
+            // Cấu hình tùy chọn cho PDF với tải xuống tự động
+            const pdfOptions = {
+                margin: 10,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: false,
+                    allowTaint: true,
+                    imageTimeout: 3000 // Tăng thời gian chờ cho việc tải hình ảnh
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                }
+            };
+            
+            // Tạo PDF từ container và tải xuống tự động
+            console.log('Bắt đầu tạo file PDF...');
+            html2pdf()
+                .from(pdfContainer)
+                .set(pdfOptions)
+                .toPdf()
+                .get('pdf')
+                .then((pdf) => {
+                    try {
+                        console.log('Đã tạo xong PDF, chuẩn bị tải xuống');
+                        // Tạo blob từ PDF
+                        const blob = pdf.output('blob');
+                        
+                        // Tạo URL cho blob
+                        const url = URL.createObjectURL(blob);
+                        
+                        // Tạo link tải xuống
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = url;
+                        downloadLink.download = filename;
+                        
+                        // Thêm link vào trang và click
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        
+                        // Dọn dẹp
+                        setTimeout(() => {
+                            document.body.removeChild(downloadLink);
+                            URL.revokeObjectURL(url);
+                            document.body.removeChild(pdfContainer);
+                            
+                            // Đóng thông báo đang xử lý
+                            Swal.close();
+                            
+                            // Hiển thị thông báo thành công
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công!',
+                                text: 'Báo cáo PDF đã được tải xuống',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }, 100);
+                    } catch (error) {
+                        console.error('Error in PDF download process:', error);
                         handlePdfError(pdfContainer);
-                    });
+                    }
+                })
+                .catch(err => {
+                    console.error('Error exporting PDF', err);
+                    handlePdfError(pdfContainer);
+                });
+        }
+        
+        // Hàm xử lý lỗi PDF
+        function handlePdfError(container) {
+            if (document.body.contains(container)) {
+                document.body.removeChild(container);
             }
-
-            // Hàm xử lý lỗi PDF
-            function handlePdfError(container) {
-                if (document.body.contains(container)) {
-                    document.body.removeChild(container);
-                }
-
-                // Đóng thông báo đang xử lý nếu đang hiển thị
-                try {
-                    Swal.close();
-                } catch (e) {
-                    console.error('Error closing Swal:', e);
-                }
-
-                // Hiển thị thông báo lỗi bằng alert nếu SweetAlert2 không hoạt động
-                try {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi!',
-                        text: 'Không thể tạo file PDF. Vui lòng thử lại sau.'
-                    });
-                } catch (e) {
-                    console.error('Error displaying Swal error message:', e);
-                    alert('Không thể tạo file PDF. Vui lòng thử lại sau.');
-                }
+            
+            // Đóng thông báo đang xử lý nếu đang hiển thị
+            try {
+                Swal.close();
+            } catch (e) {
+                console.error('Error closing Swal:', e);
             }
+            
+            // Hiển thị thông báo lỗi bằng alert nếu SweetAlert2 không hoạt động
+            try {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: 'Không thể tạo file PDF. Vui lòng thử lại sau.'
+                });
+            } catch (e) {
+                console.error('Error displaying Swal error message:', e);
+                showErrorAlert('Không thể tạo file PDF. Vui lòng thử lại sau.');
+            }
+        }
 
             // Thêm script để chuyển đổi chế độ xem bảng
             document.getElementById('toggleTableView').addEventListener('click', function () {
@@ -1677,7 +1677,9 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Thư viện SweetAlert2 cho thông báo -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <!-- Custom SweetAlert Config -->
+    <script src="/Project_Website/ProjectWeb/layout/js/sweetalert-config.js"></script>
+    
     <!-- Modal Chi Tiết Biểu Đồ -->
     <div class="modal fade" id="chartModal" tabindex="-1" aria-labelledby="chartModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">

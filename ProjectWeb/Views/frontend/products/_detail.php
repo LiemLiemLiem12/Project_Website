@@ -9,6 +9,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode(['success' => true]);
     exit;   
 }
+
+// Load the ProductDetailController to get dynamic content
+require_once('Controllers/ProductDetailController.php');
+$productDetailCtrl = new ProductDetailController();
+
+// Get the product ID from the existing product detail
+$productId = $productDetail['id_product'];
+
+// Get product details including description and policies
+$dynamicDetails = $productDetailCtrl->getProductDetails($productId);
+
+// Get product images
+$productImages = $productDetailCtrl->getProductImages($productId);
+                
+// Set default images if any are missing
+$mainImage = !empty($productImages['main_image']) ? $productImages['main_image'] : 'default.jpg';
+$image2 = !empty($productImages['img2']) ? $productImages['img2'] : '';
+$image3 = !empty($productImages['img3']) ? $productImages['img3'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -34,14 +52,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Product Images - Left side -->
             <div class="col-md-6">
                 <div class="product-main-image-container mb-3">
-                    <img id="mainProductImage" src="/Project_Website/ProjectWeb/upload/img/Home/<?= $productDetail['main_image'];?>" class="product-main-image" alt="<?= $productDetail['name'];?>">
+                    <img id="mainProductImage" src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $mainImage; ?>" class="product-main-image" alt="<?= $productDetail['name'];?>">
                 </div>
                 <div class="product-thumbnails-wrapper">
                     <div class="product-thumbnails-container">
-                        <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $productDetail['main_image'];?>" class="product-thumbnail img-thumbnail active" alt="Thumbnail 1">
-                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem2.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 2">
-                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem3.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 3">
-                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem4.webp" class="product-thumbnail img-thumbnail" alt="Thumbnail 4">
+                        <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $mainImage; ?>" class="product-thumbnail img-thumbnail active" alt="Thumbnail 1" onclick="changeMainImage(this, '/Project_Website/ProjectWeb/upload/img/All-Product/<?= $mainImage; ?>')">
+                        <?php if (!empty($image2)): ?>
+                        <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $image2; ?>" class="product-thumbnail img-thumbnail" alt="Thumbnail 2" onclick="changeMainImage(this, '/Project_Website/ProjectWeb/upload/img/All-Product/<?= $image2; ?>')">
+                        <?php endif; ?>
+                        <?php if (!empty($image3)): ?>
+                        <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $image3; ?>" class="product-thumbnail img-thumbnail" alt="Thumbnail 3" onclick="changeMainImage(this, '/Project_Website/ProjectWeb/upload/img/All-Product/<?= $image3; ?>')">
+                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -177,41 +198,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-lg-8">
                         <h2>Mô Tả</h2>
                         <div class="product-description-content">
-                            <p class="fw-bold mb-3">160STORE - <?= $productDetail['name'];?></p>
+                            <p class="fw-bold mb-3"><?= $productDetail['name'];?></p>
                             
-                            <div class="mb-4">
-                                <h3>✔ Chất Liệu TC</h3>
-                                <p>Vải TC co giãn, thoáng mát nhờ khả năng thấm hút hiệu quả cùng độ co giãn vượt trội, lý tưởng cho các hoạt động thể thao. Đặc biệt, chất liệu này khô nhanh và bền đẹp, giúp duy trì form dáng ổn định dù sử dụng nhiều lần.</p>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <h3>✔ Thiết Kế Tối Giản</h3>
-                                <p>Thiết kế tạo điểm nhấn với logo ICONDENIM nổi bật ở hai bên, thể hiện dấu ấn thương hiệu rõ nét. Vớ có 3 gam màu trung tính: trắng, đen, và xám melange, dễ dàng phối với mọi trang phục.</p>
-                            </div>
-                            
-                            <div>
-                                <h3>✔ Form Ankle</h3>
-                                <p>Vớ với thiết kế cổ thấp cao 7cm vừa đủ che mắt cá chân, mang lại sự thoải mái và thoáng mát khi sử dụng. Kiểu dáng này dễ dàng phối hợp với nhiều loại giày như giày thể thao, giày lười.</p>
-                            </div>
+                            <?php if (!empty($dynamicDetails['description'])): ?>
+                                <?=  $dynamicDetails['description']; ?>
+                            <?php else: ?>
+                                <div class="mb-4">
+                                    <h3>✔ Sản phẩm chưa có mô tả chi tiết</h3>
+                                    <p>Vui lòng liên hệ bộ phận chăm sóc khách hàng để biết thêm thông tin.</p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem2.webp" alt="Product Detail" class="img-fluid rounded">
+                        <?php if (!empty($image2)): ?>
+                            <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $image2; ?>" alt="Product Detail" class="img-fluid rounded">
+                        <?php else: ?>
+                            <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem2.webp" alt="Product Detail" class="img-fluid rounded">
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
-
             <div id="giao-hang" class="tab-content">
                 <h2>Chính Sách Giao Hàng</h2>
                 <div class="text-center">
-                    <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/cs_giaohanh.webp" alt="Chính sách giao hàng" class="img-fluid">
+                    <?php if (!empty($dynamicDetails['CSGiaoHang'])): ?>
+                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/<?= $dynamicDetails['CSGiaoHang']; ?>" alt="Chính sách giao hàng" class="img-fluid">
+                    <?php else: ?>
+                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/cs_giaohanh.webp" alt="Chính sách giao hàng mặc định" class="img-fluid">
+                    <?php endif; ?>
                 </div>
             </div>
-
             <div id="doi-hang" class="tab-content">
                 <h2>Chính Sách Đổi Hàng</h2>
                 <div class="text-center">
-                    <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/doitra_1.webp" alt="Chính sách đổi hàng" class="img-fluid">
+                    <?php if (!empty($dynamicDetails['CSDoiTra'])): ?>
+                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/<?= $dynamicDetails['CSDoiTra']; ?>" alt="Chính sách đổi hàng" class="img-fluid">
+                    <?php else: ?>
+                        <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/doitra_1.webp" alt="Chính sách đổi hàng mặc định" class="img-fluid">
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -350,6 +375,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         function goBack() {
             window.history.back();
+        }
+        
+        function openTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content and mark tab as active
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        function changeMainImage(thumbnailElement, imageSrc) {
+            // Update main image
+            document.getElementById('mainProductImage').src = imageSrc;
+            
+            // Update active thumbnail
+            const thumbnails = document.querySelectorAll('.product-thumbnail');
+            thumbnails.forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            thumbnailElement.classList.add('active');
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>

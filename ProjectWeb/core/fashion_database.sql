@@ -67,7 +67,7 @@ CREATE TABLE `cart` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `cart`
+-- Dumping data for table `cart`
 --
 
 INSERT INTO `cart` (`id`, `id_User`, `id_Product`, `quantity`, `size`, `created_at`, `updated_at`) VALUES
@@ -87,19 +87,24 @@ CREATE TABLE `category` (
   `link` varchar(255) DEFAULT NULL,
   `meta` varchar(255) DEFAULT NULL,
   `hide` int(11) DEFAULT NULL,
-  `order` int(11) DEFAULT NULL
+  `order` int(11) DEFAULT NULL,
+  `banner` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `category`
 --
 
-INSERT INTO `category` (`id_Category`, `name`, `image`, `link`, `meta`, `hide`, `order`) VALUES
-(1, 'Áo', 'ca1.jpg', '/ao', 'ao-thoi-trang', 0, 1),
-(2, 'Quần', 'ca4.jpg', '/quan', 'quan-dep', 0, 2),
-(3, 'Giày', 'ca5.jpg', '/giay', 'giay-thoi-trang', 0, 3),
-(4, 'Phụ kiện', 'ca3.jpg', '/phu-kien', 'phu-kien', 0, 4),
-(5, 'Khuyến mãi', 'ca2.jpg', '/sale', 'khuyen-mai', 0, 5);
+INSERT INTO `category` (`id_Category`, `name`, `image`, `link`, `meta`, `hide`, `order`, `banner`) VALUES
+(1, 'Áo', 'ca1.jpg', '/ao', 'ao-thoi-trang', 0, 1, NULL),
+(2, 'Quần', 'ca4.jpg', '/quan', 'quan-dep', 0, 2, NULL),
+(3, 'Giày', 'ca5.jpg', '/giay', 'giay-thoi-trang', 0, 3, NULL),
+(4, 'Phụ kiện', 'ca3.jpg', '/phu-kien', 'phu-kien', 0, 4, NULL),
+(5, 'Khuyến mãi', 'ca2.jpg', '/sale', 'khuyen-mai', 0, 5, NULL),
+(11, 'HEHE', '1747803607_1_1_160_ao_thun_486-11_048e677a305a4d288f3a40f83e0cd12b_1024x1024.jpg', NULL, NULL, 0, NULL, 'banner_1747803607.jpg'),
+(12, 'KOKOKO', '1747808360_1_2_1_1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', NULL, NULL, 0, NULL, NULL),
+(13, 'KJKJKJK', '1747813467_1_1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', NULL, NULL, 0, 6, 'banner_1747813477.jpg'),
+(14, 'KO`', '1747817176_1747666069_ThanhToanSpay.webp', NULL, NULL, 0, 7, 'banner_1747817176.jpg');
 
 -- --------------------------------------------------------
 
@@ -153,13 +158,7 @@ CREATE TABLE `footer_policies` (
 --
 
 INSERT INTO `footer_policies` (`id`, `title`, `image`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`, `image2`, `image3`) VALUES
-(3, 'Chính Sách Ưu Đãi Sinh Nhật', 'sinhnhat.webp', 'http://localhost/Project_Website/ProjectWeb/index.php?controller=admincategory', 3, 0, 'Ưu đãi đặc biệt dành cho khách hàng vào ngày sinh nhật', '2025-05-18 13:22:58', '2025-05-19 07:10:34', NULL, NULL),
-(4, 'Chính Sách Khách Hàng Thân Thiết', 'cs_khtt.webp', '/chinh-sach-khach-hang-than-thiet', 4, 0, 'Chương trình tích điểm và ưu đãi cho khách hàng thân thiết', '2025-05-18 13:22:58', '2025-05-19 03:00:58', NULL, NULL),
-(5, 'Chính Sách Giao Hàng', 'cs_giaohanh.webp', '/chinh-sach-giao-hang', 5, 0, 'Thông tin về phương thức giao hàng và phí vận chuyển', '2025-05-18 13:22:58', '2025-05-18 16:46:48', NULL, NULL),
-(6, 'Chính Sách Bảo Mật', 'baomat_1.webp', '/chinh-sach-bao-mat', 6, 0, 'Cam kết bảo mật thông tin khách hàng', '2025-05-18 13:22:58', '2025-05-18 16:47:04', NULL, NULL),
-(7, 'Chính Sách Đổi Hàng Và Bảo Hành', 'doitra_1.webp', '/chinh-sach-doi-hang-va-bao-hanh', 7, 0, 'Quy định về đổi trả và bảo hành sản phẩm', '2025-05-18 13:22:58', '2025-05-18 16:47:21', NULL, NULL),
-(11, 'SP MẮC NHẤT', 'doitra_1.webp', 'https://www.google.com/', 9, 0, '123', '2025-05-19 05:34:27', '2025-05-19 05:34:27', NULL, NULL),
-(18, 'CSSSSS', '1747638012_img2.jpg', 'https://www.google.com/', 10, 0, 'fsdfgdg', '2025-05-19 06:45:07', '2025-05-19 07:00:12', NULL, NULL);
+(19, 'Chính Sách Sinh Nhật', '1747813663_sinhnhat.webp', '/Project_Website/ProjectWeb/index.php?controller=policy&action=show&id=19', 1, 0, 'Ưu đãi sinh nhật 5 năm ', '2025-05-21 07:47:43', '2025-05-21 07:47:43', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -323,7 +322,7 @@ CREATE TABLE `order_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `order_detail`
+-- Dumping data for table `order_detail`
 --
 
 INSERT INTO `order_detail` (`id_Order`, `id_Product`, `quantity`, `size`, `sub_total`) VALUES
@@ -529,7 +528,7 @@ INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `user_address`
+-- Table structure for table `user_address`
 --
 
 CREATE TABLE `user_address` (
@@ -579,7 +578,10 @@ INSERT INTO `visits` (`id`, `ip_address`, `visited_at`) VALUES
 (3, '127.0.0.1', '2025-05-02 21:22:12'),
 (4, '127.0.0.1', '2025-05-02 21:30:24'),
 (5, '::1', '2025-05-18 01:25:07'),
-(6, '::1', '2025-05-19 14:58:59');
+(6, '::1', '2025-05-19 14:58:59'),
+(7, '::1', '2025-05-21 14:44:04'),
+(8, '::1', '2025-05-21 21:31:27'),
+(9, '::1', '2025-05-21 21:49:46');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -683,14 +685,14 @@ ALTER TABLE `user`
   ADD KEY `idx_user_email` (`email`);
 
 --
--- Chỉ mục cho bảng `user_address`
+-- Indexes for table `user_address`
 --
 ALTER TABLE `user_address`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_User` (`id_User`);
 
 --
--- Chỉ mục cho bảng `visits`
+-- Indexes for table `visits`
 --
 ALTER TABLE `visits`
   ADD PRIMARY KEY (`id`);
@@ -715,7 +717,7 @@ ALTER TABLE `cart`
 -- AUTO_INCREMENT cho bảng `category`
 --
 ALTER TABLE `category`
-  MODIFY `id_Category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_Category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT cho bảng `footer_payment_methods`
@@ -727,7 +729,7 @@ ALTER TABLE `footer_payment_methods`
 -- AUTO_INCREMENT cho bảng `footer_policies`
 --
 ALTER TABLE `footer_policies`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT cho bảng `footer_social_media`
@@ -757,7 +759,7 @@ ALTER TABLE `order`
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT cho bảng `review`
@@ -778,16 +780,16 @@ ALTER TABLE `user`
   MODIFY `id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- AUTO_INCREMENT cho bảng `user_address`
+-- AUTO_INCREMENT for table `user_address`
 --
 ALTER TABLE `user_address`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT cho bảng `visits`
+-- AUTO_INCREMENT for table `visits`
 --
 ALTER TABLE `visits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -834,7 +836,7 @@ ALTER TABLE `review`
   ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 
 --
--- Các ràng buộc cho bảng `user_address`
+-- Constraints for table `user_address`
 --
 ALTER TABLE `user_address`
   ADD CONSTRAINT `user_address_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`) ON DELETE CASCADE;

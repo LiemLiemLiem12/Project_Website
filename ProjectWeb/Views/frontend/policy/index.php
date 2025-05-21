@@ -46,14 +46,23 @@
                         <h3 class="sidebar-title">LIÊN HỆ</h3>
                         <div class="sidebar-line mb-3"></div>
                         <div class="contact-info">
-                            <p><i class="bi bi-telephone"></i> Hotline: <a href="tel:1900633349">1900 633 349</a></p>
-                            <p><i class="bi bi-envelope"></i> Email: <a href="mailto:chamsockhachhang@rsstore.com">chamsockhachhang@rsstore.com</a></p>
+                            <p><i class="bi bi-telephone"></i> Hotline: <a href="tel:<?= htmlspecialchars($settings['contact_phone']['setting_value'] ?? '1900 633 349') ?>"><?= htmlspecialchars($settings['contact_phone']['setting_value'] ?? '1900 633 349') ?></a></p>
+                            <p><i class="bi bi-envelope"></i> Email: <a href="mailto:<?= htmlspecialchars($settings['admin_email']['setting_value'] ?? 'chamsockhachhang@rsstore.com') ?>"><?= htmlspecialchars($settings['admin_email']['setting_value'] ?? 'chamsockhachhang@rsstore.com') ?></a></p>
                         </div>
                         <div class="contact-social">
-                            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-                            <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                            <?php if (!empty($socialMedia)): ?>
+                                <?php foreach ($socialMedia as $social): ?>
+                                    <a href="<?= htmlspecialchars($social['link'] ?? '#') ?>" class="social-icon" target="_blank" rel="noopener">
+                                        <i class="<?= htmlspecialchars($social['icon'] ?? 'fab fa-link') ?>"></i>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <!-- Fallback social icons if no data is available -->
+                                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

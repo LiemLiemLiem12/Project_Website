@@ -160,7 +160,7 @@ class PolicyModel {
      */
     public function getSocialMedia() {
         try {
-            $sql = "SELECT * FROM footer_social WHERE hide = 0 ORDER BY `order` ASC";
+            $sql = "SELECT * FROM footer_social_media WHERE hide = 0 ORDER BY `order` ASC";
             $result = $this->db->query($sql);
             
             $socialMedia = [];

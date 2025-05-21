@@ -110,21 +110,81 @@ function detailModalEvent() {
     });
 
     // Lắng nghe sự kiện click của nút đóng
-    document.getElementById('closeModalBtn').addEventListener('click', function () {
-        console.log('hello')
-        var modalElement = document.getElementById('orderDetailsModal');
-        var modalInstance = bootstrap.Modal.getInstance(modalElement);
-        if (modalInstance) {
-            modalInstance.hide();  // Đóng modal
-        }
-
-        // Xóa backdrop nếu có
-        var backdrop = document.querySelector('.modal-backdrop');
-        if (backdrop) {
-            backdrop.remove();
+    document.getElementById('closeModalBtn').addEventListener('click', function (e) {
+        e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
+        forceCloseModal();
+    });
+    
+    // Lắng nghe sự kiện click của nút Đóng ở footer modal
+    const closeFooterBtn = document.querySelector('#orderDetailsModal .modal-footer .btn-secondary');
+    if (closeFooterBtn) {
+        closeFooterBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Ngăn chặn sự kiện lan ra ngoài
+            forceCloseModal();
+        });
+    }
+    
+    // Lắng nghe sự kiện khi modal được đóng
+    const orderDetailsModal = document.getElementById('orderDetailsModal');
+    orderDetailsModal.addEventListener('hidden.bs.modal', function() {
+        setTimeout(forceRemoveBackdrop, 100);
+    });
+    
+    // Thêm sự kiện cho toàn bộ document để bắt backdrop-clicks
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-backdrop')) {
+            forceRemoveBackdrop();
         }
     });
-
+    
+    // Hàm đóng modal với nhiều chiến lược
+    function forceCloseModal() {
+        // Chiến lược 1: Sử dụng Bootstrap API
+        try {
+            const modalEl = document.getElementById('orderDetailsModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        } catch(e) {
+            console.error('Error hiding modal with Bootstrap API:', e);
+        }
+        
+        // Chiến lược 2: Xóa các thuộc tính CSS và class
+        const modalEl = document.getElementById('orderDetailsModal');
+        modalEl.style.display = 'none';
+        modalEl.classList.remove('show');
+        modalEl.setAttribute('aria-hidden', 'true');
+        modalEl.removeAttribute('aria-modal');
+        modalEl.removeAttribute('role');
+        
+        // Chiến lược 3: Force timeout để đảm bảo backdrop bị xóa
+        setTimeout(forceRemoveBackdrop, 100);
+        setTimeout(forceRemoveBackdrop, 300);
+        setTimeout(forceRemoveBackdrop, 500);
+    }
+    
+    // Hàm xóa backdrop với nhiều phương pháp
+    function forceRemoveBackdrop() {
+        // Xóa tất cả các backdrop
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        if (backdrops.length > 0) {
+            backdrops.forEach(backdrop => {
+                backdrop.remove();
+            });
+            
+            // Khôi phục các thuộc tính của body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            // Đặt lại các thuộc tính CSS quan trọng
+            document.body.removeAttribute('data-bs-overflow');
+            document.body.removeAttribute('data-bs-padding-right');
+            
+            console.log('Backdrop removed successfully');
+        }
+    }
 }
 
 
