@@ -19,5 +19,14 @@ class SectionModel extends BaseModel
             ORDER BY h.`order` asc
         ');
     }
+
+    public function getDetailCategoryById($id)
+    {
+        return $this->getByQuery('
+            SELECT * FROM home_section_items h join category p on h.item_id = p.id_Category
+            WHERE section_id = ' . $id . '
+            ORDER BY h.`order` asc
+        ');
+    }
 }
 ?>

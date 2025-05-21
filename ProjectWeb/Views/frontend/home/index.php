@@ -93,65 +93,6 @@ if (!isset($_SESSION['visited'])) {
         </div>
     </div>
 
-    <!-- Categories -->
-    <div class="container">
-        <h2 class="section-title">Danh mục sản phẩm</h2>
-        <div class="row">
-            <!-- Category 1 -->
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item5.webp" alt="Áo Thun"
-                        class="category-image">
-                    <div class="category-title">Áo Thun</div>
-                </div>
-            </div>
-
-            <!-- Category 2 -->
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item6.webp" alt="Áo Polo"
-                        class="category-image">
-                    <div class="category-title">Áo Polo</div>
-                </div>
-            </div>
-
-            <!-- Category 3 -->
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean"
-                        class="category-image">
-                    <div class="category-title">Quần Jean</div>
-                </div>
-            </div>
-
-            <!-- Category 2 -->
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item6.webp" alt="Áo Polo"
-                        class="category-image">
-                    <div class="category-title">Áo Polo</div>
-                </div>
-            </div>
-
-            <!-- Category 3 -->
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean"
-                        class="category-image">
-                    <div class="category-title">Quần Jean</div>
-                </div>
-            </div>
-            <!-- Category 3 -->
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <img src="/Project_Website/ProjectWeb/upload/img/Home/item7.webp" alt="Quần Jean"
-                        class="category-image">
-                    <div class="category-title">Quần Jean</div>
-                </div>
-            </div>
-            <!-- Additional categories would go here -->
-        </div>
-    </div>
 
     <!-- Bestsellers -->
     <div class="container">
@@ -215,6 +156,31 @@ if (!isset($_SESSION['visited'])) {
             echo '</div>
                 </div>
                 
+            ';
+        } elseif ($data['section_type'] == 'category') {
+            $sectionModel = new SectionModel();
+            $sectionDetail = $sectionModel->getDetailCategoryById($data['id']);
+            echo '
+                <div class="container">
+                    <h2 class="section-title">' . $data['title'] . '</h2>
+                    <div class="row d-flex justify-content-center">';
+
+            foreach ($sectionDetail as $detail) {
+                echo '
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="category-card">
+                            <a href=?controller=category&action=show&id=' . $detail['id_Category'] . '>
+                                <img src="/Project_Website/ProjectWeb/upload/img/Category/' . $detail['image'] . '" alt="' . $detail['meta'] . '"
+                                    class="category-image">
+                                <div class="category-title">' . $detail['name'] . '</div>
+                            </a>
+                        </div>
+                    </div>
+                ';
+            }
+
+            echo '</div>
+                </div>
             ';
         }
 
