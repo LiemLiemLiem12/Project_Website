@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    window.addEventListener("pageshow", function(event) {
+        if (event.persisted) {
+            // Trang được load từ bfcache (back-forward cache)
+            window.location.reload(); // Buộc tải lại trang từ server
+        }
+    });
+
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.getElementById('sidebarToggleBtn');
     const closeBtn = document.getElementById('sidebarCloseBtn');

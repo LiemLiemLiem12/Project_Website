@@ -1,5 +1,17 @@
+<?php
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+header("Pragma: no-cache"); // HTTP 1.0
+header("Expires: 0"); // Proxies
+
+if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in']) {
+    header('Location: ?controller=Admindashboard');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,14 +28,16 @@
             height: 100vh;
             margin: 0;
         }
+
         .login-container {
-            background: rgba(34,34,34,0.95);
+            background: rgba(34, 34, 34, 0.95);
             padding: 40px 32px 32px 32px;
             border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
             width: 100%;
             max-width: 370px;
         }
+
         .login-title {
             font-size: 2rem;
             font-weight: 700;
@@ -31,15 +45,19 @@
             text-align: center;
             letter-spacing: 1px;
         }
+
         .form-group {
             margin-bottom: 18px;
         }
+
         label {
             display: block;
             margin-bottom: 6px;
             font-weight: 500;
         }
-        input[type="email"], input[type="password"] {
+
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
             padding: 10px 12px;
             border: 1px solid #ddd;
@@ -50,14 +68,17 @@
             margin-bottom: 2px;
             box-sizing: border-box;
         }
-        input[type="email"]:focus, input[type="password"]:focus {
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
             outline: 2px solid #444;
             background: #222;
         }
+
         .login-btn {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(90deg,#222,#444);
+            background: linear-gradient(90deg, #222, #444);
             color: #fff;
             border: none;
             border-radius: 8px;
@@ -65,13 +86,15 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             transition: background 0.2s, color 0.2s;
         }
+
         .login-btn:hover {
             background: #fff;
             color: #222;
         }
+
         .error-message {
             color: #ff4d4f;
             background: #222;
@@ -81,6 +104,7 @@
             margin-bottom: 18px;
             font-size: 1rem;
         }
+
         @media (max-width: 500px) {
             .login-container {
                 padding: 24px 8px 16px 8px;
@@ -89,6 +113,7 @@
         }
     </style>
 </head>
+
 <body>
     <form class="login-container" method="post" autocomplete="off">
         <div class="login-title">Đăng nhập Admin</div>
@@ -106,4 +131,5 @@
         <button type="submit" class="login-btn">Đăng nhập</button>
     </form>
 </body>
+
 </html>

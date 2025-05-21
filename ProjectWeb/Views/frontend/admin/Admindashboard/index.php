@@ -1,3 +1,18 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+header("Pragma: no-cache"); // HTTP 1.0
+header("Expires: 0"); // Proxies
+
+if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
+    header('Location: ?controller=Adminlogin');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -68,11 +83,13 @@
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                <div class="header-right"
+                    style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
                     <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                     </div>
                     <div class="profile">
-                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar"
+                            class="profile-image">
                     </div>
                 </div>
             </header>

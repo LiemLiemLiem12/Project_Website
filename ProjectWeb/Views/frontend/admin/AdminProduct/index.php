@@ -1,3 +1,15 @@
+<?php
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+header("Pragma: no-cache"); // HTTP 1.0
+header("Expires: 0"); // Proxies
+
+if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
+    header('Location: ?controller=Adminlogin');
+    exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -21,18 +33,20 @@
 
         <!-- Main Content -->
         <div class="main-content">
-         <!-- Top Header -->
-         <header class="header">
+            <!-- Top Header -->
+            <header class="header">
                 <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                <div class="header-right"
+                    style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
                     <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                     </div>
                     <div class="profile">
-                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar"
+                            class="profile-image">
                     </div>
                 </div>
             </header>
@@ -50,7 +64,8 @@
                             <i class="fas fa-trash"></i> Xóa nhiều
                         </button>
                         <!-- Add this button next to your "Add Product" button -->
-                        <button class="btn btn-secondary" id="btn-trash" data-bs-toggle="modal" data-bs-target="#trashModal">
+                        <button class="btn btn-secondary" id="btn-trash" data-bs-toggle="modal"
+                            data-bs-target="#trashModal">
                             <i class="fas fa-trash"></i> Thùng rác
                         </button>
                     </div>
@@ -163,7 +178,7 @@
                                 <!-- Thêm các sản phẩm khác tương tự -->
                             </tbody>
                         </table>
-                    </div> 
+                    </div>
                 </div>
 
 
@@ -512,96 +527,96 @@
     <!-- Ckeditor -->
     <script src="https://cdn.ckeditor.com/4.22.1/full-all/ckeditor.js"></script>
     <script>
-        
-        document.addEventListener('DOMContentLoaded', function() {
-           // Lấy phần tử sidebar và nút toggle
-           const sidebar = document.getElementById('sidebar');
-           const toggleBtn = document.getElementById('sidebarToggleBtn');
-           
-           console.log('Toggle button:', toggleBtn);
-           console.log('Sidebar:', sidebar);
-           
-           // Gắn sự kiện click cho nút toggle
-           if (toggleBtn && sidebar) {
-               toggleBtn.addEventListener('click', function() {
-                   console.log('Toggle button clicked');
-                   sidebar.classList.toggle('show');
-               });
-           }
-       });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lấy phần tử sidebar và nút toggle
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggleBtn');
+
+            console.log('Toggle button:', toggleBtn);
+            console.log('Sidebar:', sidebar);
+
+            // Gắn sự kiện click cho nút toggle
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function () {
+                    console.log('Toggle button clicked');
+                    sidebar.classList.toggle('show');
+                });
+            }
+        });
         // CKEDITOR.replace('productDesc'); // 'productDesc' là id của textarea
     </script>
-    
+
     <script>
-    // Trash bin functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const trashBtn = document.getElementById('btn-trash');
-        const trashTableBody = document.getElementById('trash-table-body');
-        const trashEmptyMessage = document.getElementById('trash-empty-message');
-        const selectAllTrashCheckbox = document.getElementById('select-all-trash');
-        const restoreSelectedBtn = document.getElementById('restoreSelectedBtn');
+        // Trash bin functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const trashBtn = document.getElementById('btn-trash');
+            const trashTableBody = document.getElementById('trash-table-body');
+            const trashEmptyMessage = document.getElementById('trash-empty-message');
+            const selectAllTrashCheckbox = document.getElementById('select-all-trash');
+            const restoreSelectedBtn = document.getElementById('restoreSelectedBtn');
 
-        console.log('Trash button:', trashBtn);
+            console.log('Trash button:', trashBtn);
 
-        // Load trash items when trash button is clicked
-        if (trashBtn) {
-            trashBtn.addEventListener('click', function() {
-                console.log('Trash button clicked');
-                loadTrashItems();
-            });
-        }
+            // Load trash items when trash button is clicked
+            if (trashBtn) {
+                trashBtn.addEventListener('click', function () {
+                    console.log('Trash button clicked');
+                    loadTrashItems();
+                });
+            }
 
-        // Function to load trash items
-        function loadTrashItems() {
-            console.log('Loading trash items...');
-            trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
-            
-            // Thêm tham số timestamp để tránh cache
-            fetch('/Project_Website/ProjectWeb/index.php?controller=adminproduct&action=getTrashItems&_=' + new Date().getTime())
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    return response.text(); // Lấy text trước để debug
-                })
-                .then(text => {
-                    console.log('Raw response:', text.substring(0, 200)); // Hiển thị 200 ký tự đầu tiên để debug
-                    
-                    try {
-                        // Xử lý trường hợp text rỗng
-                        if (!text || text.trim() === '') {
-                            throw new Error('Server trả về dữ liệu rỗng');
-                        }
-                        
-                        // Loại bỏ các ký tự HTML nếu có
-                        let cleanText = text;
-                        if (text.includes('<br') || text.includes('<b>')) {
-                            // Nếu có lỗi PHP HTML, hiển thị thông báo lỗi
-                            throw new Error('Server trả về lỗi PHP thay vì JSON');
-                        }
-                        
-                        // Chuyển text thành JSON
-                        const data = JSON.parse(cleanText);
-                        console.log('Parsed JSON data:', data);
-                        
-                        trashTableBody.innerHTML = '';
-                        
-                        if (data.error) {
-                            console.error('Server returned error:', data.error);
-                            trashTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">${data.error}</td></tr>`;
-                            return;
-                        }
-                        
-                        if (!data || data.length === 0) {
-                            console.log('No trash items found');
-                            trashEmptyMessage.classList.remove('d-none');
-                            trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Thùng rác trống</td></tr>';
-                            if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
-                        } else {
-                            trashEmptyMessage.classList.add('d-none');
-                            
-                            data.forEach(item => {
-                                console.log('Creating row for item:', item);
-                                const row = document.createElement('tr');
-                                row.innerHTML = `
+            // Function to load trash items
+            function loadTrashItems() {
+                console.log('Loading trash items...');
+                trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
+
+                // Thêm tham số timestamp để tránh cache
+                fetch('/Project_Website/ProjectWeb/index.php?controller=adminproduct&action=getTrashItems&_=' + new Date().getTime())
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        return response.text(); // Lấy text trước để debug
+                    })
+                    .then(text => {
+                        console.log('Raw response:', text.substring(0, 200)); // Hiển thị 200 ký tự đầu tiên để debug
+
+                        try {
+                            // Xử lý trường hợp text rỗng
+                            if (!text || text.trim() === '') {
+                                throw new Error('Server trả về dữ liệu rỗng');
+                            }
+
+                            // Loại bỏ các ký tự HTML nếu có
+                            let cleanText = text;
+                            if (text.includes('<br') || text.includes('<b>')) {
+                                // Nếu có lỗi PHP HTML, hiển thị thông báo lỗi
+                                throw new Error('Server trả về lỗi PHP thay vì JSON');
+                            }
+
+                            // Chuyển text thành JSON
+                            const data = JSON.parse(cleanText);
+                            console.log('Parsed JSON data:', data);
+
+                            trashTableBody.innerHTML = '';
+
+                            if (data.error) {
+                                console.error('Server returned error:', data.error);
+                                trashTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">${data.error}</td></tr>`;
+                                return;
+                            }
+
+                            if (!data || data.length === 0) {
+                                console.log('No trash items found');
+                                trashEmptyMessage.classList.remove('d-none');
+                                trashTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Thùng rác trống</td></tr>';
+                                if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
+                            } else {
+                                trashEmptyMessage.classList.add('d-none');
+
+                                data.forEach(item => {
+                                    console.log('Creating row for item:', item);
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
                                     <td><input type="checkbox" class="form-check-input trash-checkbox" data-id="${item.id_product}"></td>
                                     <td>${item.id_product}</td>
                                     <td><img src="/Project_Website/ProjectWeb/upload/img/All-Product/${item.main_image}" alt="Product" width="50"></td>
@@ -615,92 +630,92 @@
                                         </button>
                                     </td>
                                 `;
-                                trashTableBody.appendChild(row);
-                            });
-                            
-                            // Add event listeners to single restore buttons
-                            document.querySelectorAll('.btn-restore-single').forEach(btn => {
-                                btn.addEventListener('click', function() {
-                                    const productId = this.getAttribute('data-id');
-                                    console.log('Restoring product ID:', productId);
-                                    restoreProduct([productId]);
+                                    trashTableBody.appendChild(row);
                                 });
-                            });
-                            
-                            // Add event listeners to checkboxes
-                            attachTrashCheckboxEvents();
-                        }
-                    } catch (parseError) {
-                        console.error('Error parsing JSON:', parseError);
-                        trashTableBody.innerHTML = `
+
+                                // Add event listeners to single restore buttons
+                                document.querySelectorAll('.btn-restore-single').forEach(btn => {
+                                    btn.addEventListener('click', function () {
+                                        const productId = this.getAttribute('data-id');
+                                        console.log('Restoring product ID:', productId);
+                                        restoreProduct([productId]);
+                                    });
+                                });
+
+                                // Add event listeners to checkboxes
+                                attachTrashCheckboxEvents();
+                            }
+                        } catch (parseError) {
+                            console.error('Error parsing JSON:', parseError);
+                            trashTableBody.innerHTML = `
                             <tr><td colspan="8" class="text-center text-danger">
                                 Lỗi phân tích dữ liệu: ${parseError.message}<br>
                                 <small>Kiểm tra console để biết thêm chi tiết.</small>
                             </td></tr>
                         `;
-                        if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading trash items:', error);
-                    trashTableBody.innerHTML = `
+                            if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading trash items:', error);
+                        trashTableBody.innerHTML = `
                         <tr><td colspan="8" class="text-center text-danger">
                             Lỗi kết nối: ${error.message}<br>
                             <small>Kiểm tra console để biết thêm chi tiết.</small>
                         </td></tr>
                     `;
-                    if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
-                });
-        }
-        
-        // Function to attach checkbox events
-        function attachTrashCheckboxEvents() {
-            // Select all checkbox
-            if (selectAllTrashCheckbox) {
-                selectAllTrashCheckbox.addEventListener('change', function() {
-                    const checkboxes = document.querySelectorAll('.trash-checkbox');
-                    checkboxes.forEach(checkbox => {
-                        checkbox.checked = this.checked;
+                        if (restoreSelectedBtn) restoreSelectedBtn.disabled = true;
                     });
-                    updateRestoreButtonState();
+            }
+
+            // Function to attach checkbox events
+            function attachTrashCheckboxEvents() {
+                // Select all checkbox
+                if (selectAllTrashCheckbox) {
+                    selectAllTrashCheckbox.addEventListener('change', function () {
+                        const checkboxes = document.querySelectorAll('.trash-checkbox');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = this.checked;
+                        });
+                        updateRestoreButtonState();
+                    });
+                }
+
+                // Individual checkboxes
+                document.querySelectorAll('.trash-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function () {
+                        updateRestoreButtonState();
+
+                        // Update "select all" checkbox state
+                        if (selectAllTrashCheckbox) {
+                            const totalCheckboxes = document.querySelectorAll('.trash-checkbox').length;
+                            const checkedCheckboxes = document.querySelectorAll('.trash-checkbox:checked').length;
+                            selectAllTrashCheckbox.checked = totalCheckboxes === checkedCheckboxes && totalCheckboxes > 0;
+                        }
+                    });
                 });
             }
-            
-            // Individual checkboxes
-            document.querySelectorAll('.trash-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    updateRestoreButtonState();
-                    
-                    // Update "select all" checkbox state
-                    if (selectAllTrashCheckbox) {
-                        const totalCheckboxes = document.querySelectorAll('.trash-checkbox').length;
-                        const checkedCheckboxes = document.querySelectorAll('.trash-checkbox:checked').length;
-                        selectAllTrashCheckbox.checked = totalCheckboxes === checkedCheckboxes && totalCheckboxes > 0;
+
+            // Function to update restore button state
+            function updateRestoreButtonState() {
+                if (restoreSelectedBtn) {
+                    const selectedCheckboxes = document.querySelectorAll('.trash-checkbox:checked');
+                    restoreSelectedBtn.disabled = selectedCheckboxes.length === 0;
+                }
+            }
+
+            // Restore selected button click event
+            if (restoreSelectedBtn) {
+                restoreSelectedBtn.addEventListener('click', function () {
+                    const selectedIds = Array.from(document.querySelectorAll('.trash-checkbox:checked')).map(
+                        checkbox => checkbox.getAttribute('data-id')
+                    );
+
+                    if (selectedIds.length > 0) {
+                        restoreProduct(selectedIds);
                     }
                 });
-            });
-        }
-        
-        // Function to update restore button state
-        function updateRestoreButtonState() {
-            if (restoreSelectedBtn) {
-                const selectedCheckboxes = document.querySelectorAll('.trash-checkbox:checked');
-                restoreSelectedBtn.disabled = selectedCheckboxes.length === 0;
             }
-        }
-        
-        // Restore selected button click event
-        if (restoreSelectedBtn) {
-            restoreSelectedBtn.addEventListener('click', function() {
-                const selectedIds = Array.from(document.querySelectorAll('.trash-checkbox:checked')).map(
-                    checkbox => checkbox.getAttribute('data-id')
-                );
-                
-                if (selectedIds.length > 0) {
-                    restoreProduct(selectedIds);
-                }
-            });
-        }
 
         // Function to restore product(s)
         function restoreProduct(productIds) {

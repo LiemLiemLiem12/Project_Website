@@ -1,5 +1,18 @@
+<?php
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+header("Pragma: no-cache"); // HTTP 1.0
+header("Expires: 0"); // Proxies
+
+if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
+    header('Location: ?controller=Adminlogin');
+    exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,106 +22,123 @@
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
-    .status.completed {
-        background: #d4f5e9;
-        color: #2e7d32;
-        border-radius: 16px;
-        padding: 2px 12px;
-        display: inline-block;
-        font-size: 14px;
-        font-weight: 500;
-    }
-    .status.inactive {
-        background: #e0e0e0;
-        color: #757575;
-        border-radius: 16px;
-        padding: 2px 12px;
-        display: inline-block;
-        font-size: 14px;
-        font-weight: 500;
-    }
-    .search-box {
-    position: relative;
-}
-.search-box input {
-    width: 100%;
-    padding-left: 36px;
-}
-.search-box i {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-    pointer-events: none; /* Đảm bảo click vào icon vẫn focus được input */
-}
-.filter-row {
-    flex-wrap: wrap;
-    gap: 12px;
-}
-.filter-item {
-    min-width: 160px;
-}
-.search-box input {
-    width: 100%;
-    min-width: 120px;
-    padding-left: 36px;
-    box-sizing: border-box;
-}
-.notification-list-modal {
-    padding: 0;
-    margin: 0;
-}
-.notification-item-modal {
-    transition: background 0.2s;
-    padding: 16px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    cursor: pointer;
-    display: flex;
-    align-items: start;
-}
-.notification-item-modal:hover {
-    background: #f5f7fa;
-}
-.notification-icon-modal {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    color: #1976d2;
-    margin-right: 12px;
-}
-.notification-title-modal {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 2px;
-}
-.notification-desc-modal {
-    font-size: 15px;
-    margin-bottom: 2px;
-    color: #444;
-}
-.notification-time-modal {
-    font-size: 13px;
-    color: #aaa;
-}
+        .status.completed {
+            background: #d4f5e9;
+            color: #2e7d32;
+            border-radius: 16px;
+            padding: 2px 12px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status.inactive {
+            background: #e0e0e0;
+            color: #757575;
+            border-radius: 16px;
+            padding: 2px 12px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding-left: 36px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            pointer-events: none;
+            /* Đảm bảo click vào icon vẫn focus được input */
+        }
+
+        .filter-row {
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .filter-item {
+            min-width: 160px;
+        }
+
+        .search-box input {
+            width: 100%;
+            min-width: 120px;
+            padding-left: 36px;
+            box-sizing: border-box;
+        }
+
+        .notification-list-modal {
+            padding: 0;
+            margin: 0;
+        }
+
+        .notification-item-modal {
+            transition: background 0.2s;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            display: flex;
+            align-items: start;
+        }
+
+        .notification-item-modal:hover {
+            background: #f5f7fa;
+        }
+
+        .notification-icon-modal {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #1976d2;
+            margin-right: 12px;
+        }
+
+        .notification-title-modal {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .notification-desc-modal {
+            font-size: 15px;
+            margin-bottom: 2px;
+            color: #444;
+        }
+
+        .notification-time-modal {
+            font-size: 13px;
+            color: #aaa;
+        }
     </style>
 </head>
-<body>
-<div class="admin-container">
-<?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
 
-       
-    <div class="main-content">
-        <header class="header">
+<body>
+    <div class="admin-container">
+        <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
+
+
+        <div class="main-content">
+            <header class="header">
                 <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                <div class="header-right"
+                    style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
                     <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                         <!-- <i class="fas fa-bell"></i>
                         <span class="badge">3</span>
@@ -121,7 +151,8 @@
                         </div> -->
                     </div>
                     <div class="profile">
-                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar"
+                            class="profile-image">
                     </div>
                 </div>
         </header>
@@ -282,63 +313,63 @@
     </div>
 </div>
 
-<!-- Modal Xác nhận xóa -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Xác nhận xóa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="deleteConfirmMessage">Bạn có chắc chắn muốn xóa danh mục này không?</p>
-                <p class="text-muted small">Lưu ý: Danh mục sẽ được ẩn chứ không bị xóa hoàn toàn khỏi hệ thống.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Thùng rác -->
-<div class="modal fade" id="trashModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Thùng rác - Danh mục đã ẩn</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="select-all-trash" class="form-check-input"></th>
-                                <th>Tên danh mục</th>
-                                <th>Ảnh</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="trashTableBody">
-                            <!-- Dữ liệu sẽ được load bằng AJAX -->
-                            <tr>
-                                <td colspan="3" class="text-center">Đang tải dữ liệu...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <!-- Modal Xác nhận xóa -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="deleteConfirmMessage">Bạn có chắc chắn muốn xóa danh mục này không?</p>
+                    <p class="text-muted small">Lưu ý: Danh mục sẽ được ẩn chứ không bị xóa hoàn toàn khỏi hệ thống.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-success" id="restoreSelectedBtn" disabled>
-                    <i class="fas fa-trash-restore"></i> Khôi phục đã chọn
-                </button>
+        </div>
+    </div>
+
+    <!-- Modal Thùng rác -->
+    <div class="modal fade" id="trashModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thùng rác - Danh mục đã ẩn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all-trash" class="form-check-input"></th>
+                                    <th>Tên danh mục</th>
+                                    <th>Ảnh</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trashTableBody">
+                                <!-- Dữ liệu sẽ được load bằng AJAX -->
+                                <tr>
+                                    <td colspan="3" class="text-center">Đang tải dữ liệu...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-success" id="restoreSelectedBtn" disabled>
+                        <i class="fas fa-trash-restore"></i> Khôi phục đã chọn
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
@@ -359,105 +390,105 @@ function htmlspecialchars(str) {
     });
 }
 
-// Hàm hỗ trợ gửi request JSON
-function sendJsonRequest(url, method, data) {
-    return fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: data ? JSON.stringify(data) : null
-    })
-    .then(response => {
-        // Kiểm tra response
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
-        // Kiểm tra content-type
-        const contentType = response.headers.get('content-type');
-        if (!contentType || contentType.indexOf('application/json') === -1) {
-            return response.text().then(text => {
-                console.error('Phản hồi không phải JSON:', text);
-                throw new Error('Phản hồi không phải JSON, nhận được: ' + text.substring(0, 100));
-            });
-        }
-        
-        return response.json();
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Toggle sidebar
-    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
-    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
-    const sidebar = document.getElementById('sidebar');
-    
-    if (sidebarToggleBtn) {
-        sidebarToggleBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-        });
-    }
-    
-    if (sidebarCloseBtn) {
-        sidebarCloseBtn.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-        });
-    }
-
-    // Notification dropdown
-    const notificationBell = document.getElementById('notificationBell');
-    const notificationDropdown = document.getElementById('notificationDropdown');
-    
-    if (notificationBell && notificationDropdown) {
-        notificationBell.addEventListener('click', function(event) {
-            event.stopPropagation();
-            const isCurrentlyDisplayed = notificationDropdown.style.display === 'block';
-            notificationDropdown.style.display = isCurrentlyDisplayed ? 'none' : 'block';
-            
-            if (!isCurrentlyDisplayed) { // Only load if opening
-                loadNotifications();
-            }
-        });
-        
-        document.addEventListener('click', function(event) {
-            if (notificationDropdown && !notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
-                notificationDropdown.style.display = 'none';
-            }
-        });
-    }
-
-    // Load notifications
-    function loadNotifications() {
-        sendJsonRequest('index.php?controller=admincategory&action=getRecentCategoryNotifications', 'GET')
-            .then(data => {
-                const notificationList = document.getElementById('notificationList');
-                notificationList.innerHTML = ''; // Clear previous notifications
-                
-                if (data.length === 0) {
-                    notificationList.innerHTML = '<li style="padding: 16px; text-align: center;">Không có thông báo mới</li>';
-                    return;
-                }
-                
-                data.forEach(notification => {
-                    const item = document.createElement('li');
-                    item.className = 'notification-item-modal';
-                    
-                    let formattedDate = 'Không rõ thời gian';
-                    if (notification.created_at) {
-                        try {
-                            const date = new Date(notification.created_at);
-                            // Check if date is valid
-                            if (!isNaN(date.getTime())) {
-                               formattedDate = date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
-                            }
-                        } catch (e) {
-                            console.error("Error formatting date:", e, "for notification:", notification.created_at);
-                        }
+        // Hàm hỗ trợ gửi request JSON
+        function sendJsonRequest(url, method, data) {
+            return fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: data ? JSON.stringify(data) : null
+            })
+                .then(response => {
+                    // Kiểm tra response
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
                     }
-                    
-                    item.innerHTML = `
+
+                    // Kiểm tra content-type
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || contentType.indexOf('application/json') === -1) {
+                        return response.text().then(text => {
+                            console.error('Phản hồi không phải JSON:', text);
+                            throw new Error('Phản hồi không phải JSON, nhận được: ' + text.substring(0, 100));
+                        });
+                    }
+
+                    return response.json();
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle sidebar
+            const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+            const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+            const sidebar = document.getElementById('sidebar');
+
+            if (sidebarToggleBtn) {
+                sidebarToggleBtn.addEventListener('click', function () {
+                    sidebar.classList.toggle('active');
+                });
+            }
+
+            if (sidebarCloseBtn) {
+                sidebarCloseBtn.addEventListener('click', function () {
+                    sidebar.classList.remove('active');
+                });
+            }
+
+            // Notification dropdown
+            const notificationBell = document.getElementById('notificationBell');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+
+            if (notificationBell && notificationDropdown) {
+                notificationBell.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    const isCurrentlyDisplayed = notificationDropdown.style.display === 'block';
+                    notificationDropdown.style.display = isCurrentlyDisplayed ? 'none' : 'block';
+
+                    if (!isCurrentlyDisplayed) { // Only load if opening
+                        loadNotifications();
+                    }
+                });
+
+                document.addEventListener('click', function (event) {
+                    if (notificationDropdown && !notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                        notificationDropdown.style.display = 'none';
+                    }
+                });
+            }
+
+            // Load notifications
+            function loadNotifications() {
+                sendJsonRequest('index.php?controller=admincategory&action=getRecentCategoryNotifications', 'GET')
+                    .then(data => {
+                        const notificationList = document.getElementById('notificationList');
+                        notificationList.innerHTML = ''; // Clear previous notifications
+
+                        if (data.length === 0) {
+                            notificationList.innerHTML = '<li style="padding: 16px; text-align: center;">Không có thông báo mới</li>';
+                            return;
+                        }
+
+                        data.forEach(notification => {
+                            const item = document.createElement('li');
+                            item.className = 'notification-item-modal';
+
+                            let formattedDate = 'Không rõ thời gian';
+                            if (notification.created_at) {
+                                try {
+                                    const date = new Date(notification.created_at);
+                                    // Check if date is valid
+                                    if (!isNaN(date.getTime())) {
+                                        formattedDate = date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+                                    }
+                                } catch (e) {
+                                    console.error("Error formatting date:", e, "for notification:", notification.created_at);
+                                }
+                            }
+
+                            item.innerHTML = `
                         <div class="notification-icon-modal">
                             <i class="fas fa-tag"></i>
                         </div>
@@ -467,18 +498,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="notification-time-modal">${formattedDate}</div>
                         </div>
                     `;
-                     if (notification.link) {
-                         item.addEventListener('click', () => { window.location.href = notification.link; });
-                    }
-                    notificationList.appendChild(item);
-                });
-            })
-            .catch(error => {
-                console.error('Error loading notifications:', error);
-                const notificationList = document.getElementById('notificationList');
-                if(notificationList) notificationList.innerHTML = '<li style="padding: 16px; text-align: center; color: red;">Lỗi tải thông báo</li>';
-            });
-    }
+                            if (notification.link) {
+                                item.addEventListener('click', () => { window.location.href = notification.link; });
+                            }
+                            notificationList.appendChild(item);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading notifications:', error);
+                        const notificationList = document.getElementById('notificationList');
+                        if (notificationList) notificationList.innerHTML = '<li style="padding: 16px; text-align: center; color: red;">Lỗi tải thông báo</li>';
+                    });
+            }
 
     // Filter categories
     const filterStatusEl = document.getElementById('filterStatus'); // Renamed for clarity
@@ -628,66 +659,66 @@ document.addEventListener('DOMContentLoaded', function() {
                     <a class="page-link" href="javascript:void(0)" data-page="${i}">${i}</a>
                 </li>
             `;
-        }
-        
-        paginationContainer.innerHTML = paginationHTML;
-        
-        // Đính kèm sự kiện cho các nút phân trang
-        document.querySelectorAll('.pagination .page-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const page = this.getAttribute('data-page');
-                loadCategoriesWithAjax(page);
-            });
-        });
-    }
-    
-    // Search categories
-    const searchInput = document.getElementById('searchCategoryInput');
-    let searchTimeout;
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                loadCategoriesWithAjax();
-            }, 500);
-        });
-    }
+                }
 
-    // Select all categories
-    const selectAllCheckbox = document.getElementById('select-all-category');
-    
-    if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function() {
-            const checkboxes = document.querySelectorAll('.category-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
-            updateDeleteSelectedButton();
-        });
-    }
-    
-    function updateDeleteSelectedButton() {
-        const selectedCheckboxes = document.querySelectorAll('.category-checkbox:checked');
-        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-        
-        if (deleteSelectedBtn) {
-            deleteSelectedBtn.disabled = selectedCheckboxes.length === 0;
-        }
-    }
-    
-    document.addEventListener('change', function(event) { // Listen on document for dynamically added checkboxes
-        if (event.target.classList.contains('category-checkbox')) {
-            updateDeleteSelectedButton();
-        }
-    });
+                paginationContainer.innerHTML = paginationHTML;
 
-    const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-    const deleteConfirmModalEl = document.getElementById('deleteConfirmModal');
-    const deleteConfirmModal = deleteConfirmModalEl ? new bootstrap.Modal(deleteConfirmModalEl) : null;
-    const confirmDeleteBtn = document.getElementById('confirmDelete');
-    const deleteConfirmMessageEl = document.getElementById('deleteConfirmMessage');
+                // Đính kèm sự kiện cho các nút phân trang
+                document.querySelectorAll('.pagination .page-link').forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const page = this.getAttribute('data-page');
+                        loadCategoriesWithAjax(page);
+                    });
+                });
+            }
+
+            // Search categories
+            const searchInput = document.getElementById('searchCategoryInput');
+            let searchTimeout;
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        loadCategoriesWithAjax();
+                    }, 500);
+                });
+            }
+
+            // Select all categories
+            const selectAllCheckbox = document.getElementById('select-all-category');
+
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function () {
+                    const checkboxes = document.querySelectorAll('.category-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                    updateDeleteSelectedButton();
+                });
+            }
+
+            function updateDeleteSelectedButton() {
+                const selectedCheckboxes = document.querySelectorAll('.category-checkbox:checked');
+                const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+
+                if (deleteSelectedBtn) {
+                    deleteSelectedBtn.disabled = selectedCheckboxes.length === 0;
+                }
+            }
+
+            document.addEventListener('change', function (event) { // Listen on document for dynamically added checkboxes
+                if (event.target.classList.contains('category-checkbox')) {
+                    updateDeleteSelectedButton();
+                }
+            });
+
+            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+            const deleteConfirmModalEl = document.getElementById('deleteConfirmModal');
+            const deleteConfirmModal = deleteConfirmModalEl ? new bootstrap.Modal(deleteConfirmModalEl) : null;
+            const confirmDeleteBtn = document.getElementById('confirmDelete');
+            const deleteConfirmMessageEl = document.getElementById('deleteConfirmMessage');
 
 
     // Thay đổi đoạn mã xử lý nút deleteSelectedBtn
@@ -1104,12 +1135,12 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
         return new Blob([uInt8Array], { type: contentType });
     }
 
-    function attachEventListeners() {
-        document.querySelectorAll('.btn-edit-category').forEach(button => {
-            // Remove existing listener to prevent duplicates if attachEventListeners is called multiple times on the same elements
-            // This is a simple way; a more robust solution might involve checking if a listener already exists or using a flag.
-            const newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
+            function attachEventListeners() {
+                document.querySelectorAll('.btn-edit-category').forEach(button => {
+                    // Remove existing listener to prevent duplicates if attachEventListeners is called multiple times on the same elements
+                    // This is a simple way; a more robust solution might involve checking if a listener already exists or using a flag.
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
 
             newButton.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
@@ -1182,51 +1213,51 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
         }
     }
 
-    // Initial call to attach event listeners
-    attachEventListeners();
+            // Initial call to attach event listeners
+            attachEventListeners();
 
-    // Xử lý thùng rác
-    const showTrashBtn = document.getElementById('showTrashBtn');
-    const trashModalEl = document.getElementById('trashModal');
-    const trashModal = trashModalEl ? new bootstrap.Modal(trashModalEl) : null;
-    const trashTableBody = document.getElementById('trashTableBody');
-    const restoreSelectedBtn = document.getElementById('restoreSelectedBtn');
-    const selectAllTrashCheckbox = document.getElementById('select-all-trash');
-    
-    // Hiển thị modal thùng rác
-    if (showTrashBtn && trashModal) {
-        showTrashBtn.addEventListener('click', function() {
-            loadTrashCategories();
-            trashModal.show();
-        });
-    }
-    
-    // Tải danh mục trong thùng rác
-    function loadTrashCategories() {
-        if (!trashTableBody) return;
-        
-        trashTableBody.innerHTML = '<tr><td colspan="3" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
-        
-        sendJsonRequest('index.php?controller=admincategory&action=getTrashCategories', 'GET')
-            .then(data => {
-                trashTableBody.innerHTML = '';
-                
-                if (data.error) {
-                    trashTableBody.innerHTML = `<tr><td colspan="3" class="text-center text-danger">${data.error}</td></tr>`;
-                    return;
-                }
-                
-                if (!data || data.length === 0) {
-                    trashTableBody.innerHTML = '<tr class="table-active"><td colspan="4" class="text-center">Không có danh mục nào trong thùng rác.</td></tr>';
-                    return;
-                }
-                
-                // Hiển thị danh mục trong thùng rác
-                data.forEach(category => {
-                    const row = document.createElement('tr');
-                    row.setAttribute('data-category-id', category.ID);
-                    
-                    row.innerHTML = `
+            // Xử lý thùng rác
+            const showTrashBtn = document.getElementById('showTrashBtn');
+            const trashModalEl = document.getElementById('trashModal');
+            const trashModal = trashModalEl ? new bootstrap.Modal(trashModalEl) : null;
+            const trashTableBody = document.getElementById('trashTableBody');
+            const restoreSelectedBtn = document.getElementById('restoreSelectedBtn');
+            const selectAllTrashCheckbox = document.getElementById('select-all-trash');
+
+            // Hiển thị modal thùng rác
+            if (showTrashBtn && trashModal) {
+                showTrashBtn.addEventListener('click', function () {
+                    loadTrashCategories();
+                    trashModal.show();
+                });
+            }
+
+            // Tải danh mục trong thùng rác
+            function loadTrashCategories() {
+                if (!trashTableBody) return;
+
+                trashTableBody.innerHTML = '<tr><td colspan="3" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
+
+                sendJsonRequest('index.php?controller=admincategory&action=getTrashCategories', 'GET')
+                    .then(data => {
+                        trashTableBody.innerHTML = '';
+
+                        if (data.error) {
+                            trashTableBody.innerHTML = `<tr><td colspan="3" class="text-center text-danger">${data.error}</td></tr>`;
+                            return;
+                        }
+
+                        if (!data || data.length === 0) {
+                            trashTableBody.innerHTML = '<tr class="table-active"><td colspan="4" class="text-center">Không có danh mục nào trong thùng rác.</td></tr>';
+                            return;
+                        }
+
+                        // Hiển thị danh mục trong thùng rác
+                        data.forEach(category => {
+                            const row = document.createElement('tr');
+                            row.setAttribute('data-category-id', category.ID);
+
+                            row.innerHTML = `
                         <td>
                             <input type="checkbox" class="form-check-input trash-checkbox" data-id="${category.ID}">
                         </td>
@@ -1351,4 +1382,5 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
 <script src="/Project_Website/ProjectWeb/layout/js/sweetalert-config.js"></script>
 
 </body>
+
 </html>

@@ -105,6 +105,27 @@ class AdminorderController extends BaseController
             'status' => 'cancelled'
         ]);
 
+        $this->orderModel->_query("
+            UPDATE product P
+            JOIN (
+                SELECT 
+                    id_Product,
+                    SUM(CASE WHEN size = 'M' THEN quantity ELSE 0 END) AS M,
+                    SUM(CASE WHEN size = 'L' THEN quantity ELSE 0 END) AS L,
+                    SUM(CASE WHEN size = 'XL' THEN quantity ELSE 0 END) AS XL
+                FROM order_detail
+                WHERE id_Order = " . $orderID . "
+                GROUP BY id_Product
+            ) AS PIVOTED ON P.id_product = PIVOTED.id_Product
+            SET 
+                P.M = P.M + PIVOTED.M,
+                P.L = P.L + PIVOTED.L,
+                P.XL = P.XL + PIVOTED.XL,
+                P.store = store + PIVOTED.M + PIVOTED.L + PIVOTED.XL
+        ");
+
+
+
         return $this->view("frontend.admin.Adminorder.sort", [
             "orderList" => $this->orderModel->getAll_AdminOrder()
         ]);
@@ -140,61 +161,64 @@ class AdminorderController extends BaseController
         ]);
     }
 
-    public function trash() {
+    public function trash()
+    {
         // Đặt header cho JSON
         header('Content-Type: application/json; charset=utf-8');
-        
+
         try {
             // Xóa output buffer
-            if (ob_get_length()) ob_clean();
-            
+            if (ob_get_length())
+                ob_clean();
+
             // Tắt hiển thị lỗi
             error_reporting(0);
             ini_set('display_errors', 0);
-            
+
             $model = new AdminOrderModel();
-            
+
             // Kiểm tra kết nối database
             if (!$model->conn) {
                 echo json_encode(['error' => 'Không thể kết nối database']);
                 exit;
             }
-            
+
             // Lấy danh sách đơn hàng trong thùng rác
             $trash_orders = $model->getTrashOrders();
-            
+
             echo json_encode($trash_orders);
         } catch (Exception $e) {
             echo json_encode(['error' => 'Lỗi: ' . $e->getMessage()]);
         }
         exit;
     }
-    
-    public function restore() {
+
+    public function restore()
+    {
         try {
             // Tắt hiển thị lỗi
             error_reporting(0);
             ini_set('display_errors', 0);
-            
+
             // Xóa bất kỳ output nào trước khi trả về JSON
             while (ob_get_level()) {
                 ob_end_clean();
             }
-            
+
             // Đặt header cho JSON
             header('Content-Type: application/json; charset=utf-8');
-            
+
             // Lấy ID từ tham số
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            
+
             if (!$id) {
                 echo json_encode(['success' => false, 'error' => 'Không có ID hợp lệ']);
                 exit;
             }
-            
+
             $model = new AdminOrderModel();
             $result = $model->restoreOrder($id);
-            
+
             if ($result) {
                 echo json_encode(['success' => true]);
             } else {
@@ -204,14 +228,15 @@ class AdminorderController extends BaseController
         } catch (Exception $e) {
             // Đảm bảo header JSON được thiết lập
             header('Content-Type: application/json; charset=utf-8');
-            
+
             echo json_encode(['success' => false, 'error' => 'Lỗi khôi phục đơn hàng: ' . $e->getMessage()]);
             exit;
         }
     }
 
     // Thêm phương thức test đơn giản để kiểm tra routing
-    public function test() {
+    public function test()
+    {
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'Test controller OK']);
         exit;
