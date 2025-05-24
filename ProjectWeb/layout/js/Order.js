@@ -13,37 +13,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Khởi tạo xử lý địa chỉ
   initAddressSelection();
-
-  // Khởi tạo xử lý mã giảm giá
-  // initDiscountCodeForm();
 });
-// Trong hàm initOrderForm() hoặc thêm hàm mới
-document
-  .getElementById("complete-order")
-  .addEventListener("click", function () {
-    if (validateForm()) {
-      // Lấy phương thức thanh toán đã chọn
-      const paymentMethod = document.querySelector(
-        'input[name="payment_method"]:checked'
-      ).value;
 
-      // Xử lý theo phương thức thanh toán
-      if (paymentMethod === "cod") {
-        // Thanh toán khi nhận hàng - submit form bình thường
-        document.getElementById("checkout-form").submit();
-      } else if (paymentMethod === "momo") {
-        // Thanh toán MoMo - thay đổi action của form
-        document.getElementById("checkout-form").action =
-          "index.php?controller=payment&action=processMomo";
-        document.getElementById("checkout-form").submit();
-      } else if (paymentMethod === "vnpay") {
-        // Thanh toán VNPay - thay đổi action của form
-        document.getElementById("checkout-form").action =
-          "index.php?controller=payment&action=processVnpay";
-        document.getElementById("checkout-form").submit();
-      }
-    }
-  });
+/**
+ * Khởi tạo xử lý chọn địa chỉ
+ */
 function initAddressSelection() {
   const addressCards = document.querySelectorAll(".address-card");
   const addressRadios = document.querySelectorAll(".address-selector");
@@ -68,6 +42,8 @@ function initAddressSelection() {
     // Xử lý khi chọn radio button
     addressRadios.forEach((radio) => {
       radio.addEventListener("change", function () {
+        console.log("Address radio changed:", this.value); // Debug log
+
         // Xóa border cho tất cả card
         addressCards.forEach((card) => {
           card.classList.remove("border-primary");
@@ -86,19 +62,29 @@ function initAddressSelection() {
 
         // Ẩn/hiện tùy chọn lưu địa chỉ
         if (saveAddressOption) {
-          saveAddressOption.style.display =
-            this.value === "new" ? "block" : "none";
+          if (this.value === "new") {
+            saveAddressOption.style.display = "block";
+          } else {
+            saveAddressOption.style.display = "none";
+          }
         }
 
         // Xử lý điền thông tin địa chỉ
         if (this.value === "new") {
+          console.log("Selected new address - enabling fields"); // Debug log
+
           // Đặt lại form
           resetAddressForm();
 
-          // Mở khóa các trường input
+          // Mở khóa các trường input để người dùng có thể nhập
           enableAddressFields(true);
+
+          // Debug để kiểm tra
+          setTimeout(() => debugAddressFields(), 100);
         } else {
-          // Lấy dữ liệu địa chỉ từ server
+          console.log("Selected existing address:", this.value); // Debug log
+
+          // Lấy dữ liệu địa chỉ từ server và khóa các trường
           fetchAddressData(this.value);
         }
       });
@@ -116,47 +102,82 @@ function initAddressSelection() {
       const event = new Event("change");
       selectedRadio.dispatchEvent(event);
     }
+  } else {
+    // Nếu không có địa chỉ nào, hiển thị tùy chọn lưu địa chỉ
+    if (saveAddressOption) {
+      saveAddressOption.style.display = "block";
+    }
+
+    // Đặt giá trị mặc định cho selected_address_id
+    if (selectedAddressIdInput) {
+      selectedAddressIdInput.value = "new";
+    }
+
+    // Mở khóa tất cả các trường input
+    enableAddressFields(true);
   }
 }
 
-// Đặt lại form địa chỉ
+/**
+ * Đặt lại form địa chỉ
+ */
 function resetAddressForm() {
   const addressForm = document.getElementById("checkout-form");
   if (addressForm) {
     // Reset các trường input
     const inputs = addressForm.querySelectorAll(
-      'input:not([type="hidden"]):not([type="radio"]), select, textarea'
+      'input:not([type="hidden"]):not([type="radio"]):not([type="checkbox"]), select, textarea'
     );
     inputs.forEach((input) => {
-      input.value = "";
+      if (input.id !== "email") {
+        // Giữ nguyên email nếu có
+        input.value = "";
+      }
       input.classList.remove("is-invalid");
     });
   }
 }
 
-// Bật/tắt các trường trong form địa chỉ
+/**
+ * Bật/tắt các trường trong form địa chỉ
+ */
 function enableAddressFields(enable) {
+  console.log("enableAddressFields called with:", enable); // Debug log
+
   const addressForm = document.getElementById("checkout-form");
   if (addressForm) {
     // Các trường địa chỉ
     const fields = addressForm.querySelectorAll(
-      "input[name='fullname'], input[name='phone'], input[name='email'], input[name='address'], " +
+      "input[name='fullname'], input[name='phone'], input[name='address'], " +
         "select[name='province'], select[name='district'], select[name='ward']"
     );
 
+    console.log("Found", fields.length, "address fields"); // Debug log
+
     fields.forEach((field) => {
       field.disabled = !enable;
-      // Thêm class để chỉ ra rằng trường đã bị vô hiệu hóa
+
+      // Thêm/xóa class để chỉ ra rằng trường đã bị vô hiệu hóa
       if (!enable) {
         field.classList.add("bg-light");
+        field.style.backgroundColor = "#f8f9fa"; // Màu nền xám nhạt
+        field.style.cursor = "not-allowed";
       } else {
         field.classList.remove("bg-light");
+        field.style.backgroundColor = "";
+        field.style.cursor = "";
       }
+
+      console.log(`Field ${field.name}: disabled=${field.disabled}`); // Debug log
     });
+  } else {
+    console.log("Address form not found!"); // Debug log
   }
 }
 
-// Lấy dữ liệu địa chỉ từ server
+/**
+ * Lấy dữ liệu địa chỉ từ server
+ */
 function fetchAddressData(addressId) {
   // Hiển thị loading nếu cần
   showLoading(true);
@@ -175,7 +196,7 @@ function fetchAddressData(addressId) {
         // Điền dữ liệu vào form
         fillAddressForm(data.address);
 
-        // Khóa các trường input
+        // Khóa các trường input vì đang sử dụng địa chỉ có sẵn
         enableAddressFields(false);
       } else {
         showNotification(
@@ -189,145 +210,7 @@ function fetchAddressData(addressId) {
     })
     .catch((error) => {
       console.error("Error:", error);
-      // showNotification("Có lỗi xảy ra khi lấy thông tin địa chỉ", "error");
-
-      // Mở khóa các trường input
-      enableAddressFields(true);
-    })
-    .finally(() => {
-      // Ẩn loading
-      showLoading(false);
-    });
-}
-// Khởi tạo xử lý chọn địa chỉ
-function initAddressSelection() {
-  const addressCards = document.querySelectorAll(".address-card");
-  const addressRadios = document.querySelectorAll(".address-selector");
-  const saveAddressOption = document.querySelector(".save-address-option");
-
-  if (addressCards.length > 0) {
-    // Xử lý khi click vào card địa chỉ
-    addressCards.forEach((card) => {
-      card.addEventListener("click", function () {
-        const radio = this.querySelector(".address-selector");
-        if (radio) {
-          radio.checked = true;
-
-          // Trigger change event
-          const event = new Event("change");
-          radio.dispatchEvent(event);
-        }
-      });
-    });
-
-    // Xử lý khi chọn radio button
-    addressRadios.forEach((radio) => {
-      radio.addEventListener("change", function () {
-        // Xóa border cho tất cả card
-        addressCards.forEach((card) => {
-          card.classList.remove("border-primary");
-        });
-
-        // Thêm border cho card được chọn
-        const selectedCard = this.closest(".address-card");
-        if (selectedCard) {
-          selectedCard.classList.add("border-primary");
-        }
-
-        // Ẩn/hiện tùy chọn lưu địa chỉ
-        if (saveAddressOption) {
-          saveAddressOption.style.display =
-            this.value === "new" ? "block" : "none";
-        }
-
-        // Xử lý điền thông tin địa chỉ
-        if (this.value === "new") {
-          // Đặt lại form
-          resetAddressForm();
-
-          // Mở khóa các trường input
-          enableAddressFields(true);
-        } else {
-          // Lấy dữ liệu địa chỉ từ server
-          fetchAddressData(this.value);
-        }
-      });
-    });
-
-    // Kích hoạt địa chỉ đã chọn ban đầu
-    const selectedRadio = document.querySelector(".address-selector:checked");
-    if (selectedRadio) {
-      const event = new Event("change");
-      selectedRadio.dispatchEvent(event);
-    }
-  }
-}
-
-// Đặt lại form địa chỉ
-function resetAddressForm() {
-  const addressForm = document.getElementById("checkout-form");
-  if (addressForm) {
-    // Reset các trường input
-    const inputs = addressForm.querySelectorAll(
-      'input:not([type="hidden"]):not([type="radio"]), select, textarea'
-    );
-    inputs.forEach((input) => {
-      input.value = "";
-      input.classList.remove("is-invalid");
-    });
-  }
-}
-
-// Bật/tắt các trường trong form địa chỉ
-function enableAddressFields(enable) {
-  const addressForm = document.getElementById("checkout-form");
-  if (addressForm) {
-    // Các trường địa chỉ
-    const fields = addressForm.querySelectorAll(
-      ".shipping-fields input, .shipping-fields select, .shipping-fields textarea"
-    );
-    fields.forEach((field) => {
-      field.disabled = !enable;
-    });
-  }
-}
-
-// Lấy dữ liệu địa chỉ từ server
-function fetchAddressData(addressId) {
-  // Hiển thị loading nếu cần
-  showLoading(true);
-
-  fetch("index.php?controller=order&action=loadAddress", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "X-Requested-With": "XMLHttpRequest",
-    },
-    body: "address_id=" + addressId,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        // Điền dữ liệu vào form
-        fillAddressForm(data.address);
-
-        // Khóa các trường input
-        enableAddressFields(false);
-      } else {
-        showNotification(
-          data.message || "Không thể lấy thông tin địa chỉ",
-          "error"
-        );
-
-        // Mở khóa các trường input để người dùng có thể nhập
-        enableAddressFields(true);
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      // showNotification("Có lỗi xảy ra khi lấy thông tin địa chỉ", "error");
-
-      // Mở khóa các trường input
+      // Mở khóa các trường input nếu có lỗi
       enableAddressFields(true);
     })
     .finally(() => {
@@ -336,7 +219,9 @@ function fetchAddressData(addressId) {
     });
 }
 
-// Điền dữ liệu địa chỉ vào form
+/**
+ * Điền dữ liệu địa chỉ vào form
+ */
 function fillAddressForm(address) {
   // Điền các trường input
   document.getElementById("fullname").value = address.fullname;
@@ -379,12 +264,19 @@ function fillAddressForm(address) {
   }
 }
 
-// Hiển thị/ẩn loading
+/**
+ * Hiển thị/ẩn loading
+ */
 function showLoading(show) {
-  // Thêm code hiển thị loading nếu cần
+  const loadingOverlay = document.getElementById("loading-overlay");
+  if (loadingOverlay) {
+    loadingOverlay.style.display = show ? "flex" : "none";
+  }
 }
 
-// Kiểm tra đơn hàng thành công
+/**
+ * Kiểm tra đơn hàng thành công
+ */
 function checkOrderSuccess() {
   const urlParams = new URLSearchParams(window.location.search);
   if (
@@ -411,7 +303,9 @@ function checkOrderSuccess() {
   }
 }
 
-// Khởi tạo các nút tăng/giảm số lượng
+/**
+ * Khởi tạo các nút tăng/giảm số lượng
+ */
 function initQuantityControls() {
   // Xử lý nút giảm số lượng
   const minusBtns = document.querySelectorAll(".qty-btn.minus");
@@ -487,308 +381,10 @@ function initQuantityControls() {
   });
 }
 
-// Các hàm còn lại giữ nguyên...
-// Xử lý chọn địa chỉ từ sổ địa chỉ
-function initAddressSelection() {
-  const addressCards = document.querySelectorAll(".address-card");
-  const addressRadios = document.querySelectorAll(".address-selector");
-  const saveAddressOption = document.querySelector(".save-address-option");
-
-  if (addressCards.length > 0) {
-    // Xử lý khi click vào card địa chỉ
-    addressCards.forEach((card) => {
-      card.addEventListener("click", function () {
-        const radio = this.querySelector(".address-selector");
-        if (radio) {
-          radio.checked = true;
-          // Kích hoạt sự kiện change
-          const event = new Event("change");
-          radio.dispatchEvent(event);
-        }
-      });
-    });
-
-    // Xử lý khi chọn radio button
-    addressRadios.forEach((radio) => {
-      radio.addEventListener("change", function () {
-        // Xóa border cho tất cả card
-        addressCards.forEach((card) => {
-          card.classList.remove("border-primary");
-        });
-
-        // Thêm border cho card được chọn
-        const selectedCard = this.closest(".address-card");
-        if (selectedCard) {
-          selectedCard.classList.add("border-primary");
-        }
-
-        // Ẩn/hiện tùy chọn lưu địa chỉ
-        if (this.value === "new") {
-          // Đặt lại form
-          document.getElementById("fullname").value = "";
-          document.getElementById("phone").value = "";
-          document.getElementById("email").value = "";
-          document.getElementById("address").value = "";
-          document.getElementById("province").value = "";
-          document.getElementById("district").value = "";
-          document.getElementById("ward").value = "";
-
-          // Hiện tùy chọn lưu địa chỉ
-          if (saveAddressOption) {
-            saveAddressOption.style.display = "block";
-          }
-        } else {
-          // Lấy dữ liệu địa chỉ từ server
-          fetchAddressData(this.value);
-
-          // Ẩn tùy chọn lưu địa chỉ
-          if (saveAddressOption) {
-            saveAddressOption.style.display = "none";
-          }
-        }
-      });
-    });
-
-    // Kích hoạt địa chỉ đã chọn ban đầu
-    const selectedRadio = document.querySelector(".address-selector:checked");
-    if (selectedRadio) {
-      const event = new Event("change");
-      selectedRadio.dispatchEvent(event);
-    }
-  }
-}
-// Khởi tạo các phương thức thanh toán, vận chuyển
-function initPaymentOptions() {
-  // Xử lý khi chọn phương thức vận chuyển
-  const shippingMethods = document.querySelectorAll(
-    'input[name="shipping_method"]'
-  );
-  shippingMethods.forEach((method) => {
-    method.addEventListener("change", function () {
-      // Xóa class selected khỏi tất cả các phương thức
-      document.querySelectorAll(".shipping-method").forEach((item) => {
-        item.classList.remove("selected");
-      });
-
-      // Thêm class selected cho phương thức được chọn
-      const shippingCard = this.closest(".shipping-method");
-      if (shippingCard) {
-        shippingCard.classList.add("selected");
-      }
-
-      // Tính lại tổng tiền sau khi chọn phương thức vận chuyển
-      calculateTotal();
-    });
-  });
-
-  // Xử lý khi chọn phương thức thanh toán (tương tự)
-  const paymentMethods = document.querySelectorAll(
-    'input[name="payment_method"]'
-  );
-  paymentMethods.forEach((method) => {
-    method.addEventListener("change", function () {
-      document.querySelectorAll(".payment-method").forEach((item) => {
-        item.classList.remove("selected");
-      });
-
-      const paymentCard = this.closest(".payment-method");
-      if (paymentCard) {
-        paymentCard.classList.add("selected");
-      }
-    });
-  });
-}
-// Lấy dữ liệu địa chỉ từ server
-// function fetchAddressData(addressId) {
-//   // Hiển thị loading
-//   showLoading(true);
-
-//   fetch("index.php?controller=order&action=loadAddress", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/x-www-form-urlencoded",
-//       "X-Requested-With": "XMLHttpRequest",
-//     },
-//     body: "address_id=" + addressId,
-//   })
-//     .then((response) => response.json())
-//     .then((data) => {
-//       if (data.success) {
-//         // Điền dữ liệu vào form
-//         fillAddressForm(data.address);
-//       } else {
-//         showNotification(
-//           data.message || "Không thể lấy thông tin địa chỉ",
-//           "error"
-//         );
-//       }
-//     })
-//     .catch((error) => {
-//       console.error("Error:", error);
-//       showNotification("Có lỗi xảy ra khi lấy thông tin địa chỉ", "error");
-//     })
-//     .finally(() => {
-//       showLoading(false);
-//     });
-// }
-
-// // Điền dữ liệu địa chỉ vào form
-// function fillAddressForm(address) {
-//   document.getElementById("fullname").value = address.receiver_name;
-//   document.getElementById("phone").value = address.phone;
-
-//   // Nếu có email
-//   const emailInput = document.getElementById("email");
-//   if (emailInput && address.email) {
-//     emailInput.value = address.email;
-//   }
-
-//   document.getElementById("address").value = address.street_address;
-
-//   // Xử lý select tỉnh/quận/huyện
-//   const provinceSelect = document.getElementById("province");
-//   const districtSelect = document.getElementById("district");
-//   const wardSelect = document.getElementById("ward");
-
-//   if (provinceSelect) {
-//     provinceSelect.value = address.province;
-
-//     // Kích hoạt sự kiện change để load quận/huyện
-//     const event = new Event("change");
-//     provinceSelect.dispatchEvent(event);
-
-//     // Chờ một chút để quận/huyện được load
-//     setTimeout(() => {
-//       if (districtSelect) {
-//         districtSelect.value = address.district;
-//         districtSelect.dispatchEvent(event);
-
-//         // Chờ tiếp để phường/xã được load
-//         setTimeout(() => {
-//           if (wardSelect) {
-//             wardSelect.value = address.ward;
-//           }
-//         }, 100);
-//       }
-//     }, 100);
-//   }
-// }
-
-// // Hiển thị/ẩn loading
-// function showLoading(show) {
-//   // Thêm hiệu ứng loading nếu cần
-// }
-
-// Khởi tạo
-
-// Kiểm tra đơn hàng thành công
-function checkOrderSuccess() {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (
-    urlParams.has("order_success") &&
-    urlParams.get("order_success") === "true"
-  ) {
-    const orderSuccessModal = new bootstrap.Modal(
-      document.getElementById("orderSuccessModal")
-    );
-    orderSuccessModal.show();
-
-    // Xóa tham số từ URL
-    const url = new URL(window.location);
-    url.searchParams.delete("order_success");
-    window.history.replaceState({}, "", url);
-
-    // Xử lý khi modal đóng
-    document
-      .getElementById("orderSuccessModal")
-      .addEventListener("hidden.bs.modal", function () {
-        // Chuyển hướng đến trang chủ sau khi xem modal
-        window.location.href = "index.php";
-      });
-  }
-}
-
-// Khởi tạo các nút tăng/giảm số lượng
-function initQuantityControls() {
-  // Xử lý nút giảm số lượng
-  const minusBtns = document.querySelectorAll(".qty-btn.minus");
-  minusBtns.forEach((btn) => {
-    btn.addEventListener("click", function () {
-      const input = this.nextElementSibling;
-      const currentValue = parseInt(input.value);
-      const productItem = this.closest(".product-item");
-      const productId = productItem.dataset.productId;
-      const productSize = productItem.dataset.productSize;
-
-      if (currentValue > 1) {
-        const newValue = currentValue - 1;
-        input.value = newValue;
-        updateProductSubtotal(productItem);
-
-        // Cập nhật số lượng trên server thông qua AJAX
-        updateCartItemQuantity(productId, productSize, newValue);
-      }
-    });
-  });
-
-  // Xử lý nút tăng số lượng
-  const plusBtns = document.querySelectorAll(".qty-btn.plus");
-  plusBtns.forEach((btn) => {
-    btn.addEventListener("click", function () {
-      const input = this.previousElementSibling;
-      const currentValue = parseInt(input.value);
-      const productItem = this.closest(".product-item");
-      const productId = productItem.dataset.productId;
-      const productSize = productItem.dataset.productSize;
-      const maxStock = parseInt(productItem.dataset.maxStock || 0);
-
-      // Kiểm tra số lượng tồn kho trước khi tăng
-      if (maxStock && currentValue >= maxStock) {
-        showNotification(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
-        return;
-      }
-
-      const newValue = currentValue + 1;
-      input.value = newValue;
-      updateProductSubtotal(productItem);
-
-      // Cập nhật số lượng trên server thông qua AJAX
-      updateCartItemQuantity(productId, productSize, newValue);
-    });
-  });
-
-  // Xử lý khi nhập trực tiếp số lượng
-  const quantityInputs = document.querySelectorAll(".qty-input");
-  quantityInputs.forEach((input) => {
-    input.addEventListener("change", function () {
-      let value = parseInt(this.value);
-      const productItem = this.closest(".product-item");
-      const productId = productItem.dataset.productId;
-      const productSize = productItem.dataset.productSize;
-      const maxStock = parseInt(productItem.dataset.maxStock || 0);
-
-      // Kiểm tra giá trị hợp lệ
-      if (isNaN(value) || value < 1) {
-        value = 1;
-      } else if (maxStock && value > maxStock) {
-        value = maxStock;
-        showNotification(`Chỉ còn ${maxStock} sản phẩm trong kho`, "error");
-      }
-
-      this.value = value;
-      updateProductSubtotal(productItem);
-
-      // Cập nhật số lượng trên server thông qua AJAX
-      updateCartItemQuantity(productId, productSize, value);
-    });
-  });
-}
-
-// Cập nhật số lượng sản phẩm trong giỏ hàng
+/**
+ * Cập nhật số lượng sản phẩm trong giỏ hàng
+ */
 function updateCartItemQuantity(productId, size, quantity) {
-  // Hiển thị loading nếu cần
-  // showLoading(true);
-
   fetch("index.php?controller=cart&action=updateItem", {
     method: "POST",
     headers: {
@@ -817,14 +413,12 @@ function updateCartItemQuantity(productId, size, quantity) {
     .catch((error) => {
       console.error("Error:", error);
       showNotification("Có lỗi xảy ra khi cập nhật giỏ hàng", "error");
-    })
-    .finally(() => {
-      // Ẩn loading nếu cần
-      // showLoading(false);
     });
 }
 
-// Cập nhật tổng giá của một sản phẩm
+/**
+ * Cập nhật tổng giá của một sản phẩm
+ */
 function updateProductSubtotal(productItem) {
   // Lấy thông tin số lượng và giá
   const quantityInput = productItem.querySelector(".qty-input");
@@ -849,17 +443,60 @@ function updateProductSubtotal(productItem) {
   calculateTotal();
 }
 
-// Khởi tạo form xác nhận đặt hàng
+/**
+ * Khởi tạo các phương thức thanh toán, vận chuyển
+ */
+function initPaymentOptions() {
+  // Xử lý khi chọn phương thức vận chuyển
+  const shippingMethods = document.querySelectorAll(
+    'input[name="shipping_method"]'
+  );
+  shippingMethods.forEach((method) => {
+    method.addEventListener("change", function () {
+      // Xóa class selected khỏi tất cả các phương thức
+      document.querySelectorAll(".shipping-method").forEach((item) => {
+        item.classList.remove("selected");
+      });
+
+      // Thêm class selected cho phương thức được chọn
+      const shippingCard = this.closest(".shipping-method");
+      if (shippingCard) {
+        shippingCard.classList.add("selected");
+      }
+
+      // Tính lại tổng tiền sau khi chọn phương thức vận chuyển
+      calculateTotal();
+    });
+  });
+
+  // Xử lý khi chọn phương thức thanh toán
+  const paymentMethods = document.querySelectorAll(
+    'input[name="payment_method"]'
+  );
+  paymentMethods.forEach((method) => {
+    method.addEventListener("change", function () {
+      document.querySelectorAll(".payment-method").forEach((item) => {
+        item.classList.remove("selected");
+      });
+
+      const paymentCard = this.closest(".payment-method");
+      if (paymentCard) {
+        paymentCard.classList.add("selected");
+      }
+    });
+  });
+}
+
+/**
+ * Khởi tạo form xác nhận đặt hàng
+ */
 function initOrderForm() {
   const completeOrderBtn = document.getElementById("complete-order");
   const checkoutForm = document.getElementById("checkout-form");
-  console.log("Found button and form");
+
   if (completeOrderBtn && checkoutForm) {
-    console.log("Found button and form");
     completeOrderBtn.addEventListener("click", function () {
-      console.log("Button clicked");
       if (validateForm()) {
-        console.log("Form validation passed");
         // Hiển thị hiệu ứng loading
         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
         this.disabled = true;
@@ -926,22 +563,16 @@ function initOrderForm() {
             this.disabled = false;
             showNotification("Có lỗi xảy ra. Vui lòng thử lại!", "error");
           });
-      } else {
-        console.log("Form validation failed");
       }
-    });
-  } else {
-    console.log("Button or form not found", {
-      button: completeOrderBtn,
-      form: checkoutForm,
     });
   }
 }
 
-// Xác thực form
+/**
+ * Xác thực form
+ */
 function validateForm() {
   let isValid = true;
-  console.log("Validating form...");
 
   // Thêm class was-validated để hiển thị validation feedback
   const checkoutForm = document.getElementById("checkout-form");
@@ -950,14 +581,11 @@ function validateForm() {
 
     // Kiểm tra các trường bắt buộc
     const requiredFields = checkoutForm.querySelectorAll("[required]");
-    console.log("Required fields:", requiredFields.length);
 
     requiredFields.forEach((field) => {
-      console.log("Checking field:", field.id, "Value:", field.value);
-      if (!field.value) {
+      if (!field.value.trim()) {
         isValid = false;
         field.classList.add("is-invalid");
-        console.log("Field invalid:", field.id);
       } else {
         field.classList.remove("is-invalid");
       }
@@ -973,22 +601,21 @@ function validateForm() {
 
     if (!paymentMethod) {
       isValid = false;
-      console.log("No payment method selected");
       showNotification("Vui lòng chọn phương thức thanh toán", "error");
     }
 
     if (!shippingMethod) {
       isValid = false;
-      console.log("No shipping method selected");
       showNotification("Vui lòng chọn phương thức vận chuyển", "error");
     }
   }
 
-  console.log("Form validation result:", isValid);
   return isValid;
 }
 
-// Tính toán tổng đơn hàng
+/**
+ * Tính toán tổng đơn hàng
+ */
 function calculateTotal() {
   // Tính tổng tiền từ các sản phẩm
   let subtotal = 0;
@@ -1038,7 +665,9 @@ function calculateTotal() {
   }
 }
 
-// Hiển thị thông báo
+/**
+ * Hiển thị thông báo
+ */
 function showNotification(message, type = "success") {
   // Tạo phần tử thông báo
   const notification = document.createElement("div");
@@ -1078,7 +707,9 @@ function showNotification(message, type = "success") {
   }, 3000);
 }
 
-// Định dạng số tiền
+/**
+ * Định dạng số tiền
+ */
 function formatCurrency(amount) {
   return (
     new Intl.NumberFormat("vi-VN", {
@@ -1091,8 +722,26 @@ function formatCurrency(amount) {
   );
 }
 
-// Chuyển đổi chuỗi tiền thành số
+/**
+ * Chuyển đổi chuỗi tiền thành số
+ */
 function parseCurrency(currencyString) {
   // Loại bỏ ký tự không phải số
   return parseInt(currencyString.replace(/\D/g, "")) || 0;
+}
+
+// Debug function để kiểm tra trạng thái các field
+function debugAddressFields() {
+  const fields = document.querySelectorAll(
+    "input[name='fullname'], input[name='phone'], input[name='address'], " +
+      "select[name='province'], select[name='district'], select[name='ward']"
+  );
+
+  console.log("=== Address Fields Status ===");
+  fields.forEach((field) => {
+    console.log(
+      `${field.name}: disabled=${field.disabled}, value="${field.value}"`
+    );
+  });
+  console.log("=============================");
 }

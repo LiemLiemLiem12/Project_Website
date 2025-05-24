@@ -77,9 +77,11 @@ class OrderController extends BaseController
         
         // Load user addresses if logged in
         $addresses = [];
+        $hasAddresses = false;
         if (isset($_SESSION['user']) && isset($_SESSION['user']['id_User'])) {
             // Get user addresses
             $addresses = $this->addressModel->getUserAddresses($_SESSION['user']['id_User']);
+            $hasAddresses = !empty($addresses);
         }
 
         // Prepare shipping options
@@ -131,7 +133,8 @@ class OrderController extends BaseController
             'cartItems' => $cartItems,
             'total' => $total,
             'userData' => $userData,
-            'addresses' => $addresses, // Pass addresses to the view
+            'addresses' => $addresses,
+            'hasAddresses' => $hasAddresses, // Thêm biến này để view biết có địa chỉ hay không
             'shippingOptions' => $shippingOptions,
             'paymentMethods' => $paymentMethods,
             'orderSuccess' => $orderSuccess,
@@ -277,7 +280,7 @@ class OrderController extends BaseController
         if (empty($fullname) || empty($phone) || empty($address) || 
             empty($province) || empty($district) || empty($ward)) {
             $this->redirectWithMessage('index.php?controller=order&action=index', 
-                'Vui lòng điền đầy đủ thông tin giao hàng!', 'error');
+                'Vui lòng điền đầy đủ thông tin địa chỉ giao hàng!', 'error');
             return;
         }
 
@@ -337,13 +340,12 @@ class OrderController extends BaseController
         }
 
         // Determine shipping fee
-        // Determine shipping fee
         $shippingFee = 35000; // Mặc định GHN
         if ($shippingMethod === 'ghtk') {
             $shippingFee = 30000;
         } elseif ($shippingMethod === 'express') {
             $shippingFee = 60000;
-}
+        }
 
         // Apply discount if applicable
         $discount = 0;
@@ -371,29 +373,15 @@ class OrderController extends BaseController
             'total_amount' => $totalAmount,
             'payment_by' => $paymentMethod,
             'shipping_method' => $shippingMethod,
-            'status' => 'pending',
+            'status' => 'waitConfirm',
             'created_at' => date('Y-m-d H:i:s'),
             'note' => "$fullname - $phone - $email - $fullAddress" . ($note ? " | $note" : ''),
             'shipping_fee' => $shippingFee,
             'hide' => 0
         ];
+        
         // Insert order and get order ID
         $orderId = $this->orderModel->createOrder($orderData);
-        if ($paymentMethod !== 'cod') {
-       // Lưu đơn hàng với trạng thái 'pending'
-       $orderId = $this->orderModel->createOrder($orderData);
-       
-       // Lưu ID đơn hàng vào session để tiếp tục xử lý sau khi thanh toán
-       $_SESSION['pending_order_id'] = $orderId;
-       
-       // Redirect đến phương thức thanh toán tương ứng
-       if ($paymentMethod === 'momo') {
-           header("Location: index.php?controller=payment&action=processMomo");
-       } else if ($paymentMethod === 'vnpay') {
-           header("Location: index.php?controller=payment&action=processVnpay");
-       }
-       exit;
-   }
 
         if (!$orderId) {
             $this->redirectWithMessage('index.php?controller=order&action=index', 

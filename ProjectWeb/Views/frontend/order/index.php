@@ -1,4 +1,103 @@
-<!DOCTYPE html>
+<style>
+/* Thêm style cho các field bị disabled */
+.form-control:disabled,
+.form-select:disabled {
+    background-color: #f8f9fa !important;
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.form-control:disabled:focus,
+.form-select:disabled:focus {
+    background-color: #f8f9fa !important;
+    border-color: #ced4da;
+    box-shadow: none;
+}
+
+/* Style cho address cards */
+.address-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.address-card:hover {
+    border-color: #ddd;
+}
+
+.address-card.border-primary {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.03);
+}
+
+.shipping-divider {
+    position: relative;
+    text-align: center;
+}
+
+.shipping-divider hr {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    z-index: 1;
+}
+
+.shipping-divider p {
+    display: inline-block;
+    position: relative;
+    padding: 0 15px;
+    background-color: #f0f0f0;
+    z-index: 2;
+    margin: 0;
+}
+
+/* Notification styles */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    min-width: 300px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-success {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+    color: #155724;
+}
+
+.notification-error {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+.notification-icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.notification-content {
+    flex: 1;
+}
+</style><!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -73,7 +172,8 @@
                     </h4>
                     
                     <form id="checkout-form" action="index.php?controller=order&action=process" method="POST" novalidate>
-                        <?php if (!empty($addresses)): ?>
+                        <?php if ($hasAddresses): ?>
+                        <!-- Hiển thị sổ địa chỉ khi có địa chỉ -->
                         <div class="address-selection mb-4">
                             <h5 class="mb-3">Chọn địa chỉ giao hàng</h5>
                             
@@ -111,7 +211,7 @@
                                 <!-- "New Address" option -->
                                 <div class="col-md-6">
                                     <div class="card address-card h-100" data-address-id="new">
-                                        <!-- <div class="card-body d-flex flex-column align-items-center justify-content-center text-center">
+                                        <div class="card-body d-flex flex-column align-items-center justify-content-center text-center">
                                             <i class="fas fa-plus-circle fa-3x mb-3 text-muted"></i>
                                             <h6>Sử dụng địa chỉ mới</h6>
                                             <p class="text-muted small mb-3">Nhập thông tin giao hàng mới</p>
@@ -123,19 +223,28 @@
                                                     Nhập địa chỉ mới
                                                 </label>
                                             </div>
-                                        </div> -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                          
+                        </div>
+                        <?php else: ?>
+                        <!-- Hiển thị thông báo khi chưa có địa chỉ -->
+                        <div class="no-address-notice mb-4">
+                            <div class="alert alert-info d-flex align-items-center">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <div>
+                                    <strong>Chưa có địa chỉ giao hàng</strong><br>
+                                    Vui lòng nhập thông tin địa chỉ giao hàng bên dưới. Bạn có thể chọn lưu địa chỉ này để sử dụng cho các đơn hàng sau.
+                                </div>
+                            </div>
                         </div>
                         <?php endif; ?>
 
                         <div class="shipping-fields">
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <label for="fullname" class="form-label">Họ và tên người nhận</label>
+                                    <label for="fullname" class="form-label">Họ và tên người nhận <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="fullname" name="fullname" required 
                                         placeholder="Nhập họ và tên người nhận hàng"
                                         value="<?= isset($userData['name']) ? htmlspecialchars($userData['name']) : '' ?>">
@@ -143,7 +252,7 @@
                                 </div>
                                 
                                 <div class="col-md-6">
-                                    <label for="phone" class="form-label">Số điện thoại</label>
+                                    <label for="phone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
                                     <input type="tel" class="form-control" id="phone" name="phone" required 
                                         placeholder="Nhập số điện thoại liên hệ"
                                         value="<?= isset($userData['phone']) ? htmlspecialchars($userData['phone']) : '' ?>">
@@ -157,7 +266,99 @@
                                         value="<?= isset($userData['email']) ? htmlspecialchars($userData['email']) : '' ?>">
                                 </div>
                                 
-                              
+                                <div class="col-12">
+                                    <label for="address" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="address" name="address" required 
+                                        placeholder="Số nhà, tên đường">
+                                    <div class="invalid-feedback">Vui lòng nhập địa chỉ.</div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="province" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="province" name="province" required>
+                                        <option value="">Chọn tỉnh/thành phố</option>
+                                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                                        <option value="Hà Nội">Hà Nội</option>
+                                        <option value="Đà Nẵng">Đà Nẵng</option>
+                                        <option value="Hải Phòng">Hải Phòng</option>
+                                        <option value="Cần Thơ">Cần Thơ</option>
+                                        <option value="An Giang">An Giang</option>
+                                        <option value="Bà Rịa - Vũng Tàu">Bà Rịa - Vũng Tàu</option>
+                                        <option value="Bắc Giang">Bắc Giang</option>
+                                        <option value="Bắc Kạn">Bắc Kạn</option>
+                                        <option value="Bạc Liêu">Bạc Liêu</option>
+                                        <option value="Bắc Ninh">Bắc Ninh</option>
+                                        <option value="Bến Tre">Bến Tre</option>
+                                        <option value="Bình Định">Bình Định</option>
+                                        <option value="Bình Dương">Bình Dương</option>
+                                        <option value="Bình Phước">Bình Phước</option>
+                                        <option value="Bình Thuận">Bình Thuận</option>
+                                        <option value="Cà Mau">Cà Mau</option>
+                                        <option value="Cao Bằng">Cao Bằng</option>
+                                        <option value="Đắk Lắk">Đắk Lắk</option>
+                                        <option value="Đắk Nông">Đắk Nông</option>
+                                        <option value="Điện Biên">Điện Biên</option>
+                                        <option value="Đồng Nai">Đồng Nai</option>
+                                        <option value="Đồng Tháp">Đồng Tháp</option>
+                                        <option value="Gia Lai">Gia Lai</option>
+                                        <option value="Hà Giang">Hà Giang</option>
+                                        <option value="Hà Nam">Hà Nam</option>
+                                        <option value="Hà Tĩnh">Hà Tĩnh</option>
+                                        <option value="Hải Dương">Hải Dương</option>
+                                        <option value="Hậu Giang">Hậu Giang</option>
+                                        <option value="Hòa Bình">Hòa Bình</option>
+                                        <option value="Hưng Yên">Hưng Yên</option>
+                                        <option value="Khánh Hòa">Khánh Hòa</option>
+                                        <option value="Kiên Giang">Kiên Giang</option>
+                                        <option value="Kon Tum">Kon Tum</option>
+                                        <option value="Lai Châu">Lai Châu</option>
+                                        <option value="Lâm Đồng">Lâm Đồng</option>
+                                        <option value="Lạng Sơn">Lạng Sơn</option>
+                                        <option value="Lào Cai">Lào Cai</option>
+                                        <option value="Long An">Long An</option>
+                                        <option value="Nam Định">Nam Định</option>
+                                        <option value="Nghệ An">Nghệ An</option>
+                                        <option value="Ninh Bình">Ninh Bình</option>
+                                        <option value="Ninh Thuận">Ninh Thuận</option>
+                                        <option value="Phú Thọ">Phú Thọ</option>
+                                        <option value="Phú Yên">Phú Yên</option>
+                                        <option value="Quảng Bình">Quảng Bình</option>
+                                        <option value="Quảng Nam">Quảng Nam</option>
+                                        <option value="Quảng Ngãi">Quảng Ngãi</option>
+                                        <option value="Quảng Ninh">Quảng Ninh</option>
+                                        <option value="Quảng Trị">Quảng Trị</option>
+                                        <option value="Sóc Trăng">Sóc Trăng</option>
+                                        <option value="Sơn La">Sơn La</option>
+                                        <option value="Tây Ninh">Tây Ninh</option>
+                                        <option value="Thái Bình">Thái Bình</option>
+                                        <option value="Thái Nguyên">Thái Nguyên</option>
+                                        <option value="Thanh Hóa">Thanh Hóa</option>
+                                        <option value="Thừa Thiên Huế">Thừa Thiên Huế</option>
+                                        <option value="Tiền Giang">Tiền Giang</option>
+                                        <option value="Trà Vinh">Trà Vinh</option>
+                                        <option value="Tuyên Quang">Tuyên Quang</option>
+                                        <option value="Vĩnh Long">Vĩnh Long</option>
+                                        <option value="Vĩnh Phúc">Vĩnh Phúc</option>
+                                        <option value="Yên Bái">Yên Bái</option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn tỉnh/thành phố.</div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="district" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="district" name="district" required disabled>
+                                        <option value="">Chọn quận/huyện</option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn quận/huyện.</div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="ward" class="form-label">Phường/Xã <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="ward" name="ward" required disabled>
+                                        <option value="">Chọn phường/xã</option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn phường/xã.</div>
+                                </div>
                                 
                                 <div class="col-12">
                                     <label for="note" class="form-label">Ghi chú (tùy chọn)</label>
@@ -165,15 +366,18 @@
                                         placeholder="Thông tin bổ sung về đơn hàng hoặc giao hàng"></textarea>
                                 </div>
                                 
-                                <!-- "Save this address" Checkbox - Hiển thị khi người dùng nhập địa chỉ mới -->
-                                <div class="col-12 save-address-option" style="display: none;">
+                                <!-- "Save this address" Checkbox - Hiển thị khi người dùng đăng nhập và nhập địa chỉ mới -->
+                                <?php if (isset($_SESSION['user'])): ?>
+                                <div class="col-12 save-address-option" <?= $hasAddresses ? 'style="display: none;"' : '' ?>>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="save_address" name="save_address" value="1">
+                                        <input class="form-check-input" type="checkbox" id="save_address" name="save_address" value="1" <?= !$hasAddresses ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="save_address">
-                                            Lưu địa chỉ này vào sổ địa chỉ
+                                            <i class="fas fa-bookmark me-1"></i>
+                                            Lưu địa chỉ này vào sổ địa chỉ để sử dụng cho các đơn hàng sau
                                         </label>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -226,10 +430,8 @@
                             <?php endforeach; ?>
                         </div>
                         
-                        <!-- Discount Code Section - Đã loại bỏ -->
-                        
                         <!-- Hidden fields for form processing -->
-                        <input type="hidden" name="selected_address_id" id="selected_address_id" value="<?= isset($addresses[0]) && $addresses[0]['is_default'] ? $addresses[0]['id'] : 'new' ?>">
+                        <input type="hidden" name="selected_address_id" id="selected_address_id" value="<?= isset($addresses) && !empty($addresses) && $addresses[0]['is_default'] ? $addresses[0]['id'] : 'new' ?>">
                     </form>
                 </div>
             </div>
@@ -418,8 +620,25 @@
                     }
                 });
             }
+
+            // Xử lý hiển thị/ẩn checkbox lưu địa chỉ
+            const addressSelectors = document.querySelectorAll('.address-selector');
+            const saveAddressOption = document.querySelector('.save-address-option');
+            
+            if (addressSelectors.length > 0 && saveAddressOption) {
+                addressSelectors.forEach(selector => {
+                    selector.addEventListener('change', function() {
+                        if (this.value === 'new') {
+                            // Hiển thị tùy chọn lưu địa chỉ khi chọn địa chỉ mới
+                            saveAddressOption.style.display = 'block';
+                        } else {
+                            // Ẩn tùy chọn lưu địa chỉ khi chọn địa chỉ có sẵn
+                            saveAddressOption.style.display = 'none';
+                        }
+                    });
+                });
+            }
         });
     </script>
-          
 </body>
 </html>

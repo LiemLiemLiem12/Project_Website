@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+      <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Footer.css">
     <style>
         :root {
             --primary-color: #000000;
@@ -455,6 +456,10 @@
     </style>
 </head>
 <body>
+     <?php
+    view('frontend.partitions.frontend.header');
+    ?>
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css">
     <!-- Flash Messages -->
     <?php if (isset($_SESSION['flash_message'])): ?>
         <div class="container mt-3">
@@ -473,18 +478,14 @@
                 <div class="account-sidebar">
                     <div class="user-info text-center">
                         <div class="avatar-wrapper mb-3">
-                            <?php 
-                            $avatarUrl = isset($user['avatar']) && !empty($user['avatar']) 
-                                ? $user['avatar'] 
-                                : "https://via.placeholder.com/110";
-                            ?>
-                            <img src="<?= $avatarUrl ?>" alt="Avatar" class="user-avatar rounded-circle">
-                            <label for="avatar-upload" class="avatar-edit" title="Thay đổi ảnh đại diện">
+                           
+                            <img src="/Project_Website/ProjectWeb/upload/img/avatars/image.png" alt="Avatar" class="user-avatar rounded-circle">
+                            <!-- <label for="avatar-upload" class="avatar-edit" title="Thay đổi ảnh đại diện">
                                 <i class="fas fa-camera"></i>
                             </label>
                             <form id="avatar-form" action="index.php?controller=account&action=uploadAvatar" method="POST" enctype="multipart/form-data" style="display: none;">
                                 <input type="file" id="avatar-upload" name="avatar" accept="image/*" onchange="document.getElementById('avatar-form').submit();">
-                            </form>
+                            </form> -->
                         </div>
                         <h5 class="user-name mb-2"><?= isset($user['name']) ? htmlspecialchars($user['name']) : 'Người dùng' ?></h5>
                         <p class="user-email text-muted mb-0"><?= isset($user['email']) ? htmlspecialchars($user['email']) : '' ?></p>
@@ -538,7 +539,7 @@
                         <input type="email" class="form-control" id="email" value="<?= isset($user['email']) ? htmlspecialchars($user['email']) : '' ?>" readonly>
                     </div>
                     <div class="col-12 mt-4">
-                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        <button type="submit" class="btn btn-dark">Lưu thay đổi</button>
                     </div>
                 </div>
                         </form>
@@ -645,7 +646,7 @@
                           <div id="address-section" class="account-content content-section <?= ($currentTab == 'address') ? 'active' : '' ?>">
                         <h4 class="section-title">Sổ địa chỉ</h4>
                         <div class="mb-4">
-                            <button class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                            <button class="btn btn-dark mb-4" data-bs-toggle="modal" data-bs-target="#addAddressModal">
                                 <i class="fas fa-plus me-2"></i>Thêm địa chỉ mới
                             </button>
                             
@@ -725,7 +726,7 @@
                                 <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
                                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Cập nhật mật khẩu</button>
+                            <button type="submit" class="btn btn-dark">Cập nhật mật khẩu</button>
                         </form>
                     </div>
                 </div>
@@ -796,7 +797,7 @@
                         </div>
                         <div class="modal-footer mt-4">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Lưu địa chỉ</button>
+                            <button type="submit" class="btn btn-dark">Lưu địa chỉ</button>
                         </div>
                     </form>
                 </div>
@@ -989,6 +990,7 @@
                     'Quận Hoàn Kiếm': ['Phường Hàng Bạc', 'Phường Hàng Bồ', 'Phường Hàng Đào'],
                     'Quận Tây Hồ': ['Phường Bưởi', 'Phường Nhật Tân', 'Phường Quảng An']
                 }
+                
             };
             
             // Dynamic location selects
@@ -1058,6 +1060,12 @@
             setupLocationSelects('edit_province', 'edit_district', 'edit_ward');
         });
     </script>
+    <?php
+    view('frontend.partitions.frontend.footer');
+    ?>
+        <script src="/Project_Website/ProjectWeb/layout/js/Header.js"></script>
+   
+    <script src="/Project_Website/ProjectWeb/layout/js/Footer.js"></script>
 </body>
 </html>
 
@@ -1207,7 +1215,7 @@
                 <tr>
                     <td>
                         <div class="d-flex align-items-center">
-                            ${detail.product.main_image ? `<img src="${detail.product.main_image}" alt="${detail.product.name}" class="me-2">` : ''}
+                            ${detail.product.main_image ? `<img src="/Project_Website/ProjectWeb/upload/img/All-Product/${detail.product.main_image}" alt="${detail.product.name}" class="me-2">` : ''}
                             <span>${detail.product.name}</span>
                         </div>
                     </td>

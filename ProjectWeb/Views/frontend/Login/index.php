@@ -12,6 +12,80 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Login.css">
+    <style>
+        .password-requirements {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        .password-requirements ul {
+            margin-bottom: 0;
+            padding-left: 1rem;
+        }
+        .password-requirements li {
+            margin-bottom: 0.25rem;
+        }
+        .requirement-met {
+            color: #28a745;
+        }
+        .requirement-unmet {
+            color: #dc3545;
+        }
+        .form-text.enhanced {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .password-strength {
+            font-weight: 500;
+        }
+        .input-group-text {
+            cursor: pointer;
+            border-left: none;
+            background-color: transparent;
+            padding: 0.375rem 0.75rem;
+        }
+        .input-group .form-control {
+            border-right: none;
+        }
+        .input-group .form-control:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+            border-right: none;
+        }
+        .input-group .input-group-text {
+            border-color: #ced4da;
+        }
+        .input-group .form-control:focus + .input-group-text {
+            border-color: #86b7fe;
+        }
+        .phone-hint {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        /* Alternative approach - position absolute for password toggle */
+        .password-field-wrapper {
+            position: relative;
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            z-index: 3;
+        }
+        
+        .password-field-wrapper .form-control {
+            padding-right: 40px;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,25 +93,6 @@
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="index.php">160STORE</a>
-            <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php">Trang chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?controller=product&action=index">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.php?controller=login">Tài khoản</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?controller=cart&action=index">Giỏ hàng <i class="fas fa-shopping-cart"></i></a>
-                    </li>
-                </ul>
-            </div> -->
         </div>
     </nav>
 
@@ -81,14 +136,22 @@
                 <div class="tab-pane fade <?= !isset($_GET['tab']) || $_GET['tab'] !== 'register' ? 'show active' : '' ?>" 
                      id="login" role="tabpanel" aria-labelledby="login-tab">
                     <div class="auth-body">
-                        <form id="loginForm" action="index.php?controller=login&action=login" method="POST">
+                        <form id="loginForm" action="index.php?controller=login&action=login" method="POST" novalidate>
                             <div class="mb-3">
                                 <input type="text" class="form-control" id="loginEmail" name="email" 
                                        placeholder="Email hoặc số điện thoại" required>
+                                <div class="form-text enhanced">
+                                    Nhập email (vd: user@example.com) hoặc số điện thoại (vd: 0912345678)
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <input type="password" class="form-control" id="loginPassword" name="password" 
-                                       placeholder="Mật khẩu" required>
+                                <div class="password-field-wrapper">
+                                    <input type="password" class="form-control" id="loginPassword" name="password" 
+                                           placeholder="Mật khẩu" required>
+                                    <button type="button" class="password-toggle-btn" onclick="togglePassword('loginPassword')">
+                                        <i class="fas fa-eye" id="loginPasswordToggle"></i>
+                                    </button>
+                                </div>
                                 <div id="passwordHelp" class="form-text text-end">
                                     <a href="#" id="forgotPasswordLink">Quên mật khẩu?</a>
                                 </div>
@@ -104,14 +167,7 @@
                         
                         <div class="divider">hoặc đăng nhập với</div>
                         
-                        <div class="social-buttons">
-                            <button class="social-button facebook">
-                                <i class="fab fa-facebook-f"></i> Facebook
-                            </button>
-                            <button class="social-button google">
-                                <i class="fab fa-google"></i> Google
-                            </button>
-                        </div>
+                      
                         
                         <div class="auth-option">
                             Bạn chưa có tài khoản? <a href="#" id="switchToRegister">Đăng ký ngay</a>
@@ -123,34 +179,60 @@
                 <div class="tab-pane fade <?= isset($_GET['tab']) && $_GET['tab'] === 'register' ? 'show active' : '' ?>" 
                      id="register" role="tabpanel" aria-labelledby="register-tab">
                     <div class="auth-body">
-                        <form id="registerForm" action="index.php?controller=login&action=register" method="POST">
+                        <form id="registerForm" action="index.php?controller=login&action=register" method="POST" novalidate>
                             <div class="mb-3">
                                 <input type="text" class="form-control" id="fullName" name="fullName" 
                                        placeholder="Họ và tên" required>
+                                <div class="form-text enhanced">
+                                    Từ 2-50 ký tự, chỉ chữ cái và khoảng trắng, không được toàn số
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <input type="email" class="form-control" id="email" name="email" 
                                        placeholder="Email" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="tel" class="form-control" id="phone" name="phone" 
-                                       placeholder="Số điện thoại" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="password" class="form-control" id="password" name="password" 
-                                       placeholder="Mật khẩu" required>
-                                <div class="form-text">
-                                    Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và số
+                                <div class="form-text enhanced">
+                                    Định dạng: user@example.com
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
-                                       placeholder="Xác nhận mật khẩu" required>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       placeholder="Số điện thoại" maxlength="11" required>
+                                <div class="phone-hint">
+                                    Số điện thoại Việt Nam: 03x, 05x, 07x, 08x, 09x (10 số)
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="password-field-wrapper">
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Mật khẩu" required>
+                                    <button type="button" class="password-toggle-btn" onclick="togglePassword('password')">
+                                        <i class="fas fa-eye" id="passwordToggle"></i>
+                                    </button>
+                                </div>
+                                <div class="password-requirements">
+                                    <small>Mật khẩu phải có:</small>
+                                    <ul class="mb-1">
+                                        <li id="length-req" class="requirement-unmet">Ít nhất 8 ký tự</li>
+                                        <li id="lowercase-req" class="requirement-unmet">Ít nhất 1 chữ thường (a-z)</li>
+                                        <li id="uppercase-req" class="requirement-unmet">Ít nhất 1 chữ hoa (A-Z)</li>
+                                        <li id="number-req" class="requirement-unmet">Ít nhất 1 chữ số (0-9)</li>
+                                        <li id="special-req" class="requirement-unmet">Ít nhất 1 ký tự đặc biệt (!@#$%^&*)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="password-field-wrapper">
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+                                           placeholder="Xác nhận mật khẩu" required>
+                                    <button type="button" class="password-toggle-btn" onclick="togglePassword('confirmPassword')">
+                                        <i class="fas fa-eye" id="confirmPasswordToggle"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms" required>
                                 <label class="form-check-label" for="agreeTerms">
-                                    Tôi đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a>
+                                    Tôi đồng ý với <a href="#" target="_blank">Điều khoản sử dụng</a> và <a href="#" target="_blank">Chính sách bảo mật</a>
                                 </label>
                             </div>
                             <div class="d-grid mb-4">
@@ -162,37 +244,6 @@
                             Đã có tài khoản? <a href="#" id="switchToLogin">Đăng nhập</a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Verification Modal -->
-    <div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="verificationModalLabel">Xác thực tài khoản</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Chúng tôi đã gửi mã xác thực đến <span id="verificationContact"></span></p>
-                    <p>Nhập mã xác thực để hoàn tất đăng ký:</p>
-                    <div class="verification-inputs">
-                        <input type="text" maxlength="1" class="verificationCode" oninput="moveToNext(this)">
-                        <input type="text" maxlength="1" class="verificationCode" oninput="moveToNext(this)">
-                        <input type="text" maxlength="1" class="verificationCode" oninput="moveToNext(this)">
-                        <input type="text" maxlength="1" class="verificationCode" oninput="moveToNext(this)">
-                        <input type="text" maxlength="1" class="verificationCode" oninput="moveToNext(this)">
-                    </div>
-                    <div class="text-center mt-3">
-                        <p class="resendCode">Không nhận được mã? <a href="#" id="resendCodeLink">Gửi lại mã</a></p>
-                        <p class="countdown d-none">Gửi lại mã sau <span id="countdownTimer">60</span>s</p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" id="verifyButton">Xác nhận</button>
                 </div>
             </div>
         </div>
@@ -211,6 +262,9 @@
                     <div class="mb-3">
                         <input type="text" class="form-control" id="recoveryContact" 
                                placeholder="Email hoặc số điện thoại" required>
+                        <div class="form-text">
+                            Email: user@example.com hoặc SĐT: 0912345678
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -230,10 +284,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Chúng tôi đã gửi mã xác thực đến thông tin liên hệ của bạn.</p>
+                    <p>Chúng tôi đã gửi mã xác thực 5 chữ số đến thông tin liên hệ của bạn.</p>
                     <div class="mb-3">
                         <input type="text" class="form-control" id="verificationCode" 
-                               placeholder="Nhập mã xác thực 5 ký tự" maxlength="5" required>
+                               placeholder="Nhập mã xác thực 5 ký tự" maxlength="5" required 
+                               pattern="[0-9]{5}" inputmode="numeric">
+                        <div class="form-text">
+                            Mã xác thực gồm 5 chữ số
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -255,12 +313,24 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                        <input type="password" class="form-control" id="newPassword" required>
-                        <div class="form-text">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và số</div>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="newPassword" required>
+                            <span class="input-group-text" onclick="togglePassword('newPassword')">
+                                <i class="fas fa-eye" id="newPasswordToggle"></i>
+                            </span>
+                        </div>
+                        <div class="password-requirements">
+                            <small>Mật khẩu phải có: ít nhất 8 ký tự, chữ hoa, chữ thường, số và ký tự đặc biệt</small>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="confirmNewPassword" class="form-label">Xác nhận mật khẩu mới</label>
-                        <input type="password" class="form-control" id="confirmNewPassword" required>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="confirmNewPassword" required>
+                            <span class="input-group-text" onclick="togglePassword('confirmNewPassword')">
+                                <i class="fas fa-eye" id="confirmNewPasswordToggle"></i>
+                            </span>
+                        </div>
                     </div>
                     <input type="hidden" id="resetToken">
                 </div>
@@ -277,6 +347,59 @@
     
     <!-- Custom JavaScript -->
     <script>
+    // Enhanced password toggle function
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const toggle = document.getElementById(inputId + 'Toggle');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            toggle.classList.remove('fa-eye');
+            toggle.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            toggle.classList.remove('fa-eye-slash');
+            toggle.classList.add('fa-eye');
+        }
+    }
+
+    // Real-time password requirements checker
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('password');
+        
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                checkPasswordRequirements(this.value);
+            });
+        }
+        
+        function checkPasswordRequirements(password) {
+            const requirements = {
+                'length-req': { met: password.length >= 8, text: 'Ít nhất 8 ký tự' },
+                'lowercase-req': { met: /[a-z]/.test(password), text: 'Ít nhất 1 chữ thường (a-z)' },
+                'uppercase-req': { met: /[A-Z]/.test(password), text: 'Ít nhất 1 chữ hoa (A-Z)' },
+                'number-req': { met: /[0-9]/.test(password), text: 'Ít nhất 1 chữ số (0-9)' },
+                'special-req': { met: /[!@#$%^&*(),.?":{}|<>]/.test(password), text: 'Ít nhất 1 ký tự đặc biệt (!@#$%^&*)' }
+            };
+            
+            Object.keys(requirements).forEach(reqId => {
+                const element = document.getElementById(reqId);
+                if (element) {
+                    const req = requirements[reqId];
+                    if (req.met) {
+                        element.classList.remove('requirement-unmet');
+                        element.classList.add('requirement-met');
+                        element.innerHTML = '✓ ' + req.text;
+                    } else {
+                        element.classList.remove('requirement-met');
+                        element.classList.add('requirement-unmet');
+                        element.innerHTML = req.text;
+                    }
+                }
+            });
+        }
+    });
+
     // Hàm hiển thị thông báo
     function showNotification(message, type) {
         // Look for existing toast container or create one
@@ -311,7 +434,7 @@
         // Initialize and show toast
         const toast = new bootstrap.Toast(toastEl, {
             autohide: true,
-            delay: 3000
+            delay: 5000
         });
         
         toast.show();
@@ -372,62 +495,56 @@
         }
         
         // Xử lý nút "Gửi mã xác nhận"
-      // Xử lý nút "Gửi mã xác nhận"
-const recoverButton = document.getElementById('recoverButton');
-if (recoverButton) {
-    recoverButton.addEventListener('click', function() {
-        const contact = document.getElementById('recoveryContact').value.trim();
-        
-        if (!contact) {
-            showNotification('Vui lòng nhập email hoặc số điện thoại', 'error');
-            return;
-        }
-        
-        console.log('Gửi yêu cầu lấy lại mật khẩu cho:', contact);
-        
-        fetch('index.php?controller=login&action=forgotPassword', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'contact=' + encodeURIComponent(contact)
-        })
-        .then(response => {
-            return response.text(); // Lấy dữ liệu phản hồi dưới dạng văn bản
-        })
-        .then(text => {
-            console.log('Phản hồi từ máy chủ:', text); // Ghi ra nội dung phản hồi
-            
-            try {
-                // Thử phân tích chuỗi thành JSON
-                const data = JSON.parse(text);
-                console.log('Phân tích JSON thành công:', data);
+        const recoverButton = document.getElementById('recoverButton');
+        if (recoverButton) {
+            recoverButton.addEventListener('click', function() {
+                const contact = document.getElementById('recoveryContact').value.trim();
                 
-                if (data.success) {
-                    // Đóng modal quên mật khẩu
-                    forgotPasswordModal.hide();
-                    
-                    // Hiển thị modal nhập mã xác thực
-                    setTimeout(() => {
-                        verificationCodeModal.show();
-                    }, 500);
-                    
-                    showNotification(data.message, 'success');
-                } else {
-                    showNotification(data.message || 'Có lỗi xảy ra', 'error');
+                if (!contact) {
+                    showNotification('Vui lòng nhập email hoặc số điện thoại', 'error');
+                    return;
                 }
-            } catch (e) {
-                console.error('Lỗi phân tích JSON:', e);
-                console.log('Nội dung phản hồi không phải JSON:', text.substring(0, 100)); // Hiển thị 100 ký tự đầu tiên
-                showNotification('Lỗi hệ thống, vui lòng thử lại sau.', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Lỗi fetch:', error);
-            showNotification('Đã xảy ra lỗi khi kết nối đến máy chủ.', 'error');
-        });
-    });
-}
+                
+                console.log('Gửi yêu cầu lấy lại mật khẩu cho:', contact);
+                
+                fetch('index.php?controller=login&action=forgotPassword', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'contact=' + encodeURIComponent(contact)
+                })
+                .then(response => {
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Phản hồi từ máy chủ:', text);
+                    
+                    try {
+                        const data = JSON.parse(text);
+                        console.log('Phân tích JSON thành công:', data);
+                        
+                        if (data.success) {
+                            forgotPasswordModal.hide();
+                            setTimeout(() => {
+                                verificationCodeModal.show();
+                            }, 500);
+                            showNotification(data.message, 'success');
+                        } else {
+                            showNotification(data.message || 'Có lỗi xảy ra', 'error');
+                        }
+                    } catch (e) {
+                        console.error('Lỗi phân tích JSON:', e);
+                        console.log('Nội dung phản hồi không phải JSON:', text.substring(0, 100));
+                        showNotification('Lỗi hệ thống, vui lòng thử lại sau.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi fetch:', error);
+                    showNotification('Đã xảy ra lỗi khi kết nối đến máy chủ.', 'error');
+                });
+            });
+        }
         
         // Xử lý nút xác nhận mã
         const verifyCodeButton = document.getElementById('verifyCodeButton');
@@ -442,7 +559,6 @@ if (recoverButton) {
                 
                 console.log('Gửi yêu cầu xác thực mã:', code);
                 
-                // Gửi yêu cầu xác thực mã
                 fetch('index.php?controller=login&action=verifyResetCode', {
                     method: 'POST',
                     headers: {
@@ -455,15 +571,11 @@ if (recoverButton) {
                     console.log('Phản hồi từ server về xác thực mã:', data);
                     
                     if (data.success) {
-                        // Đóng modal nhập mã xác thực
                         verificationCodeModal.hide();
-                        
-                        // Hiển thị modal đặt lại mật khẩu
                         document.getElementById('resetToken').value = data.resetToken;
                         setTimeout(() => {
                             resetPasswordModal.show();
                         }, 500);
-                        
                         showNotification(data.message, 'success');
                     } else {
                         showNotification(data.message || 'Mã xác thực không hợp lệ', 'error');
@@ -490,18 +602,38 @@ if (recoverButton) {
                 }
                 
                 if (newPassword !== confirmNewPassword) {
-                    showNotification('Mật khẩu không khớp', 'error');
+                    showNotification('Mật khẩu xác nhận không khớp', 'error');
                     return;
                 }
                 
+                // Enhanced password validation
                 if (newPassword.length < 8) {
                     showNotification('Mật khẩu phải có ít nhất 8 ký tự', 'error');
                     return;
                 }
                 
+                if (!/[a-z]/.test(newPassword)) {
+                    showNotification('Mật khẩu phải chứa ít nhất một chữ cái thường', 'error');
+                    return;
+                }
+                
+                if (!/[A-Z]/.test(newPassword)) {
+                    showNotification('Mật khẩu phải chứa ít nhất một chữ cái hoa', 'error');
+                    return;
+                }
+                
+                if (!/[0-9]/.test(newPassword)) {
+                    showNotification('Mật khẩu phải chứa ít nhất một chữ số', 'error');
+                    return;
+                }
+                
+                if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+                    showNotification('Mật khẩu phải chứa ít nhất một ký tự đặc biệt', 'error');
+                    return;
+                }
+                
                 console.log('Gửi yêu cầu đặt lại mật khẩu');
                 
-                // Gửi yêu cầu đặt lại mật khẩu
                 fetch('index.php?controller=login&action=processResetPassword', {
                     method: 'POST',
                     headers: {
@@ -516,12 +648,8 @@ if (recoverButton) {
                     console.log('Phản hồi từ server về đặt lại mật khẩu:', data);
                     
                     if (data.success) {
-                        // Đóng modal đặt lại mật khẩu
                         resetPasswordModal.hide();
-                        
                         showNotification(data.message, 'success');
-                        
-                        // Sau 2 giây, chuyển hướng đến trang đăng nhập
                         setTimeout(function() {
                             window.location.href = 'index.php?controller=login';
                         }, 2000);
@@ -535,42 +663,10 @@ if (recoverButton) {
                 });
             });
         }
-        
-        // Xử lý nút gửi lại mã
-        const resendCodeLink = document.getElementById('resendCodeLink');
-        if (resendCodeLink) {
-            resendCodeLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const contact = document.getElementById('recoveryContact').value.trim();
-                if (!contact) {
-                    showNotification('Không thể gửi lại mã', 'error');
-                    return;
-                }
-                
-                // Gửi yêu cầu lấy lại mật khẩu
-                fetch('index.php?controller=login&action=forgotPassword', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'contact=' + encodeURIComponent(contact)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showNotification('Mã xác thực mới đã được gửi', 'success');
-                    } else {
-                        showNotification(data.message, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Lỗi:', error);
-                    showNotification('Đã xảy ra lỗi. Vui lòng thử lại sau.', 'error');
-                });
-            });
-        }
     });
     </script>
+    
+    <!-- Include Enhanced Login JS -->
+    <script src="/Project_Website/ProjectWeb/layout/js/Login.js"></script>
 </body>
 </html>

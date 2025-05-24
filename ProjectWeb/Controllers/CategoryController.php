@@ -16,87 +16,90 @@ class CategoryController extends BaseController
     /**
      * Display a listing of all categories
      */
-    public function index()
+   public function index()
     {
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = 9; // Hiển thị tối đa 9 sản phẩm mỗi trang
+
         $filters = [
-            'price_min' => isset($_GET['price_min']) ? (int) $_GET['price_min'] : 100000,
-            'price_max' => isset($_GET['price_max']) ? (int) $_GET['price_max'] : 2000000,
+            'price_min' => isset($_GET['price_min']) ? (int)$_GET['price_min'] : 100000,
+            'price_max' => isset($_GET['price_max']) ? (int)$_GET['price_max'] : 2000000,
             'sizes' => isset($_GET['size']) && is_array($_GET['size']) ? $_GET['size'] : [],
             'sort' => $_GET['sort'] ?? 'newest'
         ];
 
-        // Lấy giá từ thanh trượt (slider)
         if (isset($_GET['price']) && !empty($_GET['price'])) {
-            $filters['price_max'] = (int) $_GET['price'];
+            $filters['price_max'] = (int)$_GET['price'];
         }
 
-        // Get products in this category with filters
-        $products = $this->productModel->getFilteredProductsForIndex($filters);
+        // Lấy tổng số sản phẩm để tính tổng số trang
+        $totalProducts = $this->productModel->countFilteredProductsForIndex($filters);
+        $totalPages = ceil($totalProducts / $perPage);
+
+        // Lấy sản phẩm với phân trang
+        $products = $this->productModel->getFilteredProductsForIndex($filters, $page, $perPage);
 
         return $this->view('frontend.categories._detail', [
             'products' => $products,
-            'filters' => $filters
+            'filters' => $filters,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalProducts' => $totalProducts
         ]);
     }
-
     /**
      * Display a specific category and its products
      */
-    public function show()
+     public function show()
     {
         $categoryId = $_GET['id'] ?? null;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = 9; // Hiển thị tối đa 9 sản phẩm mỗi trang
 
         if (!$categoryId) {
-            // Redirect to categories list if no ID provided
             header('Location: index.php?controller=category&action=index');
             exit();
         }
 
-        // Get the category details
         if ($categoryId != 'null') {
             $category = $this->categoryModel->findById($categoryId);
-
             if (!$category || $category['hide'] == 1) {
-                // Handle category not found or hidden
                 return $this->view('frontend.errors.404', [
                     'message' => 'Danh mục không tồn tại hoặc đã bị ẩn'
                 ]);
             }
         }
 
-
-        // Xử lý các tham số lọc và sắp xếp
         $filters = [
-            'price_min' => isset($_GET['price_min']) ? (int) $_GET['price_min'] : 100000,
-            'price_max' => isset($_GET['price_max']) ? (int) $_GET['price_max'] : 2000000,
+            'price_min' => isset($_GET['price_min']) ? (int)$_GET['price_min'] : 100000,
+            'price_max' => isset($_GET['price_max']) ? (int)$_GET['price_max'] : 2000000,
             'sizes' => isset($_GET['size']) && is_array($_GET['size']) ? $_GET['size'] : [],
             'sort' => $_GET['sort'] ?? 'newest'
         ];
 
-        // Lấy giá từ thanh trượt (slider)
         if (isset($_GET['price']) && !empty($_GET['price'])) {
-            $filters['price_max'] = (int) $_GET['price'];
+            $filters['price_max'] = (int)$_GET['price'];
         }
 
-        // Get products in this category with filters
-        if ($categoryId != 'null') {
-            $products = $this->productModel->getFilteredProducts($categoryId, $filters);
-        } else {
-            $products = $this->productModel->getFilteredProductsForIndex($filters);
-        }
+        // Lấy tổng số sản phẩm để tính tổng số trang
+        $totalProducts = $categoryId != 'null' 
+            ? $this->productModel->countFilteredProducts($categoryId, $filters)
+            : $this->productModel->countFilteredProductsForIndex($filters);
+        $totalPages = ceil($totalProducts / $perPage);
 
-        if ($categoryId != 'null') {
-            return $this->view('frontend.categories._detail', [
-                'category' => $category,
-                'products' => $products,
-                'filters' => $filters
-            ]);
-        } else {
-            return $this->view('frontend.categories._detail', [
-                'products' => $products,
-                'filters' => $filters
-            ]);
-        }
+        // Lấy sản phẩm với phân trang
+        $products = $categoryId != 'null'
+            ? $this->productModel->getFilteredProducts($categoryId, $filters, $page, $perPage)
+            : $this->productModel->getFilteredProductsForIndex($filters, $page, $perPage);
+
+        return $this->view('frontend.categories._detail', [
+            'category' => $category ?? null,
+            'products' => $products,
+            'filters' => $filters,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalProducts' => $totalProducts
+        ]);
     }
 
     /**
@@ -308,18 +311,19 @@ class CategoryController extends BaseController
      */
     public function filterProducts()
     {
-        // Kiểm tra có phải là yêu cầu AJAX không
         if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
             header('HTTP/1.0 403 Forbidden');
             exit;
         }
 
         $categoryId = $_GET['id'] ?? null;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = 9; // Hiển thị tối đa 9 sản phẩm mỗi trang
+
         if (!$categoryId) {
             echo json_encode(['error' => 'ID danh mục không hợp lệ']);
             exit;
         }
-
 
         if ($categoryId != 'null') {
             $category = $this->categoryModel->findById($categoryId);
@@ -328,37 +332,38 @@ class CategoryController extends BaseController
                 exit;
             }
         }
-        // Lấy thông tin danh mục
 
-        // Xử lý các tham số lọc và sắp xếp
         $filters = [
-            'price_min' => isset($_GET['price_min']) ? (int) $_GET['price_min'] : 100000,
-            'price_max' => isset($_GET['price_max']) ? (int) $_GET['price_max'] : 2000000,
+            'price_min' => isset($_GET['price_min']) ? (int)$_GET['price_min'] : 100000,
+            'price_max' => isset($_GET['price_max']) ? (int)$_GET['price_max'] : 2000000,
             'sizes' => isset($_GET['size']) && is_array($_GET['size']) ? $_GET['size'] : [],
             'sort' => $_GET['sort'] ?? 'newest'
         ];
 
-
-        // Lấy giá từ thanh trượt (slider)
         if (isset($_GET['price']) && !empty($_GET['price'])) {
-            $filters['price_max'] = (int) $_GET['price'];
+            $filters['price_max'] = (int)$_GET['price'];
         }
 
-        // Lấy sản phẩm đã lọc
-        if ($categoryId != 'null') {
-            $products = $this->productModel->getFilteredProducts($categoryId, $filters);
-        } else {
-            $products = $this->productModel->getFilteredProductsForIndex($filters);
-        }
+        // Lấy tổng số sản phẩm để tính tổng số trang
+        $totalProducts = $categoryId != 'null'
+            ? $this->productModel->countFilteredProducts($categoryId, $filters)
+            : $this->productModel->countFilteredProductsForIndex($filters);
+        $totalPages = ceil($totalProducts / $perPage);
 
-        // Tạo response với HTML của danh sách sản phẩm
+        // Lấy sản phẩm với phân trang
+        $products = $categoryId != 'null'
+            ? $this->productModel->getFilteredProducts($categoryId, $filters, $page, $perPage)
+            : $this->productModel->getFilteredProductsForIndex($filters, $page, $perPage);
+
         ob_start();
-        // Sử dụng file product_grid.php để hiển thị danh sách sản phẩm
         require('Views/frontend/categories/product_grid.php');
         $productGridHtml = ob_get_clean();
         echo json_encode([
             'success' => true,
             'count' => count($products),
+            'totalProducts' => $totalProducts,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
             'html' => $productGridHtml
         ]);
         exit;
