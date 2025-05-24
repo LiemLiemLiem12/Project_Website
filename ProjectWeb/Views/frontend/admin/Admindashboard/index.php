@@ -201,6 +201,9 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                                             echo '<td data-label="Trạng thái"><span class="status cancelled">Đã hủy</span></td>';
                                         } elseif ($data['status'] === 'shipping') {
                                             echo '<td data-label="Trạng thái"><span class="status shipping">Đang giao</span></td>';
+                                        } elseif ($data['status'] === 'waitConfirm') {
+                                            echo '<td data-label="Trạng thái"><span class="status waitConfirm">Chờ xác nhận</span></td>';
+    
                                         } else {
                                             echo '<td data-label="Trạng thái"><span class="status unknown">Không xác định</span></td>';
                                         }

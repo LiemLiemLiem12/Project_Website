@@ -1,9 +1,17 @@
+<?php 
+    // Lấy đường dẫn favicon từ cài đặt hoặc mặc định
+    require_once 'Controllers/FooterController.php';
+    $footerController = new FooterController();
+    $storeSettings = $footerController->getStoreSettings();
+    $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
+
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>160STORE - Đăng nhập/Đăng ký</title>
+    <title><?= htmlspecialchars($storeSettings['site_name']) ?> - Đăng nhập/Đăng ký</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -12,6 +20,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Login.css">
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <style>
         .toast-body.toast-error {
     border: 1px solid red;
@@ -106,7 +116,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="index.php">160STORE</a>
+            <a class="navbar-brand" href="index.php"><?= htmlspecialchars($storeSettings['site_name']) ?></a>
         </div>
     </nav>
 

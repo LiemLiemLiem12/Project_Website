@@ -217,7 +217,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                                 <div class="col-md-4">
                                     <label class="form-label">Năm</label>
                                     <select name="year" class="form-select" id="year">
-                                        <?php for ($i = date('Y') - 2; $i <= date('Y'); $i++): ?>
+                                        <?php for ($i = date('Y') - 20; $i <= date('Y'); $i++): ?>
                                             <option value="<?= $i ?>" <?= isset($_GET['year']) && $_GET['year'] == $i ? 'selected' : (date('Y') == $i && !isset($_GET['year']) ? 'selected' : '') ?>>
                                                 <?= $i ?>
                                             </option>
@@ -607,9 +607,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 orderPieChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: pieChartData.labels.map((label, i) => 
-                            `${label} (${pieChartData.percentages[i]}%)`
-                        ),
+                        labels: pieChartData.labels,
                         datasets: [{
                             data: pieChartData.values,
                             backgroundColor: pieChartData.colors,
@@ -632,7 +630,21 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                                         size: 14,
                                         weight: 'bold'
                                     },
-                                    color: '#333'
+                                    color: '#333',
+                                    generateLabels: function(chart) {
+                                        const data = chart.data;
+                                        if (data.labels.length && data.datasets.length) {
+                                            return data.labels.map((label, i) => ({
+                                                text: label,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                strokeStyle: '#fff',
+                                                lineWidth: 2,
+                                                hidden: false,
+                                                index: i
+                                            }));
+                                        }
+                                        return [];
+                                    }
                                 }
                             },
                             datalabels: {
@@ -642,7 +654,8 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                                     weight: 'bold'
                                 },
                                 formatter: (value, context) => {
-                                    return pieChartData.percentages[context.dataIndex] + '%';
+                                    const percentage = ((value / context.dataset.data.reduce((a, b) => a + b, 0)) * 100).toFixed(1) + '%';
+                                    return percentage;
                                 },
                                 textAlign: 'center',
                                 textStrokeColor: 'rgba(0, 0, 0, 0.5)',
@@ -667,7 +680,8 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                                 callbacks: {
                                     label: function(context) {
                                         const value = context.raw;
-                                        const percentage = pieChartData.percentages[context.dataIndex];
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
                                         return ` ${context.label}: ${value} đơn (${percentage}%)`;
                                     }
                                 }

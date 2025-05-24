@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 24, 2025 lúc 07:26 AM
--- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: May 24, 2025 at 11:10 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `fashion_database`
+-- Database: `fashion_database`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `banners`
+-- Table structure for table `banners`
 --
 
 CREATE TABLE `banners` (
@@ -42,18 +42,18 @@ CREATE TABLE `banners` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `banners`
+-- Dumping data for table `banners`
 --
 
 INSERT INTO `banners` (`id`, `title`, `image_path`, `link`, `meta`, `start_date`, `end_date`, `hide`, `order`, `created_at`, `updated_at`) VALUES
-(4, 'Banner 1', '1747623540_cropped.png', '#', '123', '2025-05-19', '2025-06-18', 0, 2, '2025-05-19 02:59:00', '2025-05-19 07:12:15'),
-(5, 'SP MẮC NHẤT', '1747633830_cropped.png', '#', 'grtgrgt', '2025-05-19', '2025-06-18', 0, 1, '2025-05-19 05:50:30', '2025-05-19 07:12:15'),
-(6, 'Banner 3', '1747666207_cropped.png', 'KOKOKOK', 'vedve', '2025-05-19', '2025-06-18', 0, 3, '2025-05-19 14:50:07', '2025-05-19 14:50:07');
+(7, 'Banner 1', '1748076949_cropped.webp', '#', 'Banner 1', '2025-05-24', '2025-06-23', 0, 1, '2025-05-24 08:55:49', '2025-05-24 08:55:49'),
+(8, 'Banner 2', '1748076992_cropped.webp', '#', 'Banner 2', '2025-05-24', '2025-06-23', 0, 2, '2025-05-24 08:56:32', '2025-05-24 08:56:32'),
+(9, 'Banner 3', '1748077019_cropped.webp', '#', 'Banner 3', '2025-05-24', '2025-06-23', 0, 3, '2025-05-24 08:56:59', '2025-05-24 08:56:59');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `cart`
+-- Table structure for table `cart`
 --
 
 CREATE TABLE `cart` (
@@ -66,19 +66,10 @@ CREATE TABLE `cart` (
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `cart`
---
-
-INSERT INTO `cart` (`id`, `id_User`, `id_Product`, `quantity`, `size`, `created_at`, `updated_at`) VALUES
-(29, 14, 35, 4, 'L', '2025-05-19 17:02:53', '2025-05-19 22:02:53'),
-(102, 6, 32, 1, 'XL', '2025-05-23 19:48:21', '2025-05-24 00:48:21'),
-(109, 13, 34, 1, 'L', '2025-05-23 21:39:55', '2025-05-24 02:39:55');
-
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `category`
+-- Table structure for table `category`
 --
 
 CREATE TABLE `category` (
@@ -88,24 +79,24 @@ CREATE TABLE `category` (
   `link` varchar(255) DEFAULT NULL,
   `meta` varchar(255) DEFAULT NULL,
   `hide` int(11) DEFAULT NULL,
-  `order` int(11) DEFAULT NULL
+  `order` int(11) DEFAULT NULL,
+  `banner` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `category`
+-- Dumping data for table `category`
 --
 
-INSERT INTO `category` (`id_Category`, `name`, `image`, `link`, `meta`, `hide`, `order`) VALUES
-(1, 'Áo', 'ca1.jpg', '/ao', 'ao-thoi-trang', 0, 1),
-(2, 'Quần', 'ca4.jpg', '/quan', 'quan-dep', 0, 2),
-(3, 'Giày', 'ca5.jpg', '/giay', 'giay-thoi-trang', 0, 3),
-(4, 'Phụ kiện', 'ca3.jpg', '/phu-kien', 'phu-kien', 0, 4),
-(5, 'Khuyến mãi', 'ca2.jpg', '/sale', 'khuyen-mai', 0, 5);
+INSERT INTO `category` (`id_Category`, `name`, `image`, `link`, `meta`, `hide`, `order`, `banner`) VALUES
+(11, 'Áo', '1748073821_item2.jpg', NULL, NULL, 0, 1, 'banner_1748073821.jpg'),
+(12, 'Quần', '1748073923_item3.jpg', NULL, NULL, 0, 2, 'banner_1748073923.jpg'),
+(13, 'Giày', '1748074043_giay-nike-run-defy-nam-trang-den-01-300x300.jpg', NULL, NULL, 0, 3, 'banner_1748074043.jpg'),
+(14, 'Phụ Kiện', '1748074113_item7.jpg', NULL, NULL, 0, 4, 'banner_1748074113.jpg');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `footer_payment_methods`
+-- Table structure for table `footer_payment_methods`
 --
 
 CREATE TABLE `footer_payment_methods` (
@@ -117,22 +108,22 @@ CREATE TABLE `footer_payment_methods` (
   `hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0: Hiển thị, 1: Ẩn',
   `meta` text DEFAULT NULL COMMENT 'Thông tin bổ sung',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `qr_image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `footer_payment_methods`
+-- Dumping data for table `footer_payment_methods`
 --
 
-INSERT INTO `footer_payment_methods` (`id`, `title`, `image`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`) VALUES
-(7, 'SHOPPEEEEEEEEEEEEEEEEEEEEEEE', '1747638484_Đăng ký thông tin.png', 'https://www.google.com/', 2, 0, '13213', '2025-05-19 05:22:11', '2025-05-19 07:08:04'),
-(9, 'SP MẮC NHẤT', '1747637035_Đăng ký thông tin.png', 'https://www.google.com/', 4, 0, 'ffgdgf', '2025-05-19 06:43:55', '2025-05-19 06:43:55'),
-(10, 'TIKI', '1747666069_ThanhToanSpay.webp', 'http://localhost/phpmyadmin/index.php?route=/sql&pos=0&db=fashion_database&table=home_sections', 5, 0, 'htyht', '2025-05-19 14:47:49', '2025-05-19 14:47:49');
+INSERT INTO `footer_payment_methods` (`id`, `title`, `image`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`, `qr_image`) VALUES
+(11, 'SPAY', '1748077457_1747726447_1747666069_ThanhToanSpay.webp', '', 1, 0, 'Mô tả SPAY', '2025-05-24 09:04:17', '2025-05-24 09:04:17', '1748077457_qr_1748077274_qr_Đăng ký thông tin.png'),
+(12, 'VNPAY', '1748077477_1747934281_1747726389_ThanhToanVNPay.webp', '', 2, 0, 'Mô tả VNPAY', '2025-05-24 09:04:37', '2025-05-24 09:04:37', '1748077477_qr_1748077274_qr_Đăng ký thông tin.png');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `footer_policies`
+-- Table structure for table `footer_policies`
 --
 
 CREATE TABLE `footer_policies` (
@@ -150,22 +141,18 @@ CREATE TABLE `footer_policies` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `footer_policies`
+-- Dumping data for table `footer_policies`
 --
 
 INSERT INTO `footer_policies` (`id`, `title`, `image`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`, `image2`, `image3`) VALUES
-(3, 'Chính Sách Ưu Đãi Sinh Nhật', 'sinhnhat.webp', 'http://localhost/Project_Website/ProjectWeb/index.php?controller=admincategory', 3, 0, 'Ưu đãi đặc biệt dành cho khách hàng vào ngày sinh nhật', '2025-05-18 13:22:58', '2025-05-19 07:10:34', NULL, NULL),
-(4, 'Chính Sách Khách Hàng Thân Thiết', 'cs_khtt.webp', '/chinh-sach-khach-hang-than-thiet', 4, 0, 'Chương trình tích điểm và ưu đãi cho khách hàng thân thiết', '2025-05-18 13:22:58', '2025-05-19 03:00:58', NULL, NULL),
-(5, 'Chính Sách Giao Hàng', 'cs_giaohanh.webp', '/chinh-sach-giao-hang', 5, 0, 'Thông tin về phương thức giao hàng và phí vận chuyển', '2025-05-18 13:22:58', '2025-05-18 16:46:48', NULL, NULL),
-(6, 'Chính Sách Bảo Mật', 'baomat_1.webp', '/chinh-sach-bao-mat', 6, 0, 'Cam kết bảo mật thông tin khách hàng', '2025-05-18 13:22:58', '2025-05-18 16:47:04', NULL, NULL),
-(7, 'Chính Sách Đổi Hàng Và Bảo Hành', 'doitra_1.webp', '/chinh-sach-doi-hang-va-bao-hanh', 7, 0, 'Quy định về đổi trả và bảo hành sản phẩm', '2025-05-18 13:22:58', '2025-05-18 16:47:21', NULL, NULL),
-(11, 'SP MẮC NHẤT', 'doitra_1.webp', 'https://www.google.com/', 9, 0, '123', '2025-05-19 05:34:27', '2025-05-19 05:34:27', NULL, NULL),
-(18, 'CSSSSS', '1747638012_img2.jpg', 'https://www.google.com/', 10, 0, 'fsdfgdg', '2025-05-19 06:45:07', '2025-05-19 07:00:12', NULL, NULL);
+(19, 'Chính Sách Sinh Nhật', '1748077102_1747813663_sinhnhat.webp', '/Project_Website/ProjectWeb/index.php?controller=policy&action=show&id=19', 1, 0, '<p>Chương tr&igrave;nh &aacute;p dụng v&agrave;o những dịp sinh nhật</p>\r\n', '2025-05-24 08:58:22', '2025-05-24 08:58:22', NULL, NULL),
+(20, 'Chính Sách Bảo Mật', '1748077134_baomat_1.webp', '/Project_Website/ProjectWeb/index.php?controller=policy&action=show&id=20', 2, 0, '<p>Kh&aacute;ch h&agrave;ng lưu &yacute; đọc kĩ ch&iacute;nh s&aacute;ch trước khi tham gia mua h&agrave;ng</p>\r\n', '2025-05-24 08:58:54', '2025-05-24 08:58:54', NULL, NULL),
+(21, 'Chính Sách Khách Hàng Thân Thiết', '1748077187_cs_khtt.webp', '/Project_Website/ProjectWeb/index.php?controller=policy&action=show&id=21', 3, 0, '<p>Chương tr&igrave;nh tr&ecirc;n chỉ d&agrave;nh cho kh&aacute;ch h&agrave;ng đ&atilde; mua h&agrave;ng tr&ecirc;n 2 năm</p>\r\n', '2025-05-24 08:59:47', '2025-05-24 08:59:47', NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `footer_social_media`
+-- Table structure for table `footer_social_media`
 --
 
 CREATE TABLE `footer_social_media` (
@@ -181,18 +168,17 @@ CREATE TABLE `footer_social_media` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `footer_social_media`
+-- Dumping data for table `footer_social_media`
 --
 
 INSERT INTO `footer_social_media` (`id`, `title`, `icon`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`) VALUES
-(7, 'Tik Tok', 'fab fa-tiktok', 'https://www.google.com/', 7, 0, '123', '2025-05-19 04:43:49', '2025-05-19 07:34:48'),
-(8, 'FB', 'fab fa-facebook', 'https://www.google.com/', 8, 0, 'hehehe', '2025-05-19 07:01:23', '2025-05-19 07:01:23'),
-(9, 'IG', 'fab fa-twitter', 'http://localhost/phpmyadmin/index.php?route=/sql&pos=0&db=fashion_database&table=home_sections', 9, 0, 'hththth', '2025-05-19 14:46:32', '2025-05-19 14:46:41');
+(10, 'Facebook', 'fab fa-facebook', 'https://www.facebook.com/nhuthuyhkvn', 1, 0, 'Liên Hệ ', '2025-05-24 09:00:13', '2025-05-24 09:00:13'),
+(11, 'Youtu', 'fab fa-youtube', 'https://www.youtube.com/@phamnhuthuy7330', 2, 0, 'Liên Hệ ', '2025-05-24 09:00:43', '2025-05-24 09:00:43');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `home_sections`
+-- Table structure for table `home_sections`
 --
 
 CREATE TABLE `home_sections` (
@@ -210,17 +196,18 @@ CREATE TABLE `home_sections` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `home_sections`
+-- Dumping data for table `home_sections`
 --
 
 INSERT INTO `home_sections` (`id`, `title`, `section_type`, `display_style`, `product_count`, `hide`, `link`, `meta`, `order`, `created_at`, `updated_at`) VALUES
-(16, 'DANH MỤC 1', 'category', 'grid', 2, 0, '#', '123', 2, '2025-05-19 05:31:34', '2025-05-19 05:31:34'),
-(17, 'Vùng 2', 'product', 'grid', 4, 0, '#', '123', 3, '2025-05-19 14:40:11', '2025-05-19 14:40:11');
+(18, 'Danh Mục Áo Tiêu Biểu', 'product', 'grid', 4, 0, '#', '', 1, '2025-05-24 08:52:32', '2025-05-24 08:52:32'),
+(19, 'Sản Phẩm Quần', 'product', 'grid', 4, 0, '#', '', 2, '2025-05-24 08:53:05', '2025-05-24 08:53:05'),
+(20, 'Danh Mục Hiện Có', 'category', 'grid', 4, 0, '#', '', 3, '2025-05-24 08:53:19', '2025-05-24 08:53:19');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `home_section_items`
+-- Table structure for table `home_section_items`
 --
 
 CREATE TABLE `home_section_items` (
@@ -237,16 +224,26 @@ CREATE TABLE `home_section_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `home_section_items`
+-- Dumping data for table `home_section_items`
 --
 
 INSERT INTO `home_section_items` (`id`, `section_id`, `item_id`, `item_type`, `hide`, `link`, `meta`, `order`, `created_at`, `updated_at`) VALUES
-(26, 17, 33, 'product', 0, '', '', 2, '2025-05-19 14:40:36', '2025-05-19 14:40:36');
+(27, 18, 62, 'product', 0, '', '', 1, '2025-05-24 08:53:30', '2025-05-24 08:53:30'),
+(28, 18, 63, 'product', 0, '', '', 2, '2025-05-24 08:53:34', '2025-05-24 08:53:34'),
+(29, 18, 74, 'product', 0, '', '', 3, '2025-05-24 08:53:38', '2025-05-24 08:53:38'),
+(30, 19, 61, 'product', 0, '', '', 1, '2025-05-24 08:53:50', '2025-05-24 08:53:50'),
+(31, 19, 71, 'product', 0, '', '', 2, '2025-05-24 08:53:54', '2025-05-24 08:53:54'),
+(32, 19, 69, 'product', 0, '', '', 3, '2025-05-24 08:53:59', '2025-05-24 08:53:59'),
+(33, 19, 65, 'product', 0, '', '', 4, '2025-05-24 08:54:03', '2025-05-24 08:54:03'),
+(34, 20, 13, 'category', 0, '', '', 1, '2025-05-24 08:54:14', '2025-05-24 08:54:14'),
+(35, 20, 14, 'category', 0, '', '', 2, '2025-05-24 08:54:17', '2025-05-24 08:54:17'),
+(36, 20, 11, 'category', 0, '', '', 3, '2025-05-24 08:54:22', '2025-05-24 08:54:22'),
+(37, 20, 12, 'category', 0, '', '', 4, '2025-05-24 08:54:25', '2025-05-24 08:54:25');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `order`
+-- Table structure for table `order`
 --
 
 CREATE TABLE `order` (
@@ -269,89 +266,10 @@ CREATE TABLE `order` (
   `hide` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `order`
---
-
-INSERT INTO `order` (`id_Order`, `order_number`, `total_amount`, `payment_by`, `shipping_method`, `status`, `payment_status`, `transaction_id`, `payment_bank`, `payment_response`, `created_at`, `updated_at`, `id_User`, `shipping_address_id`, `note`, `shipping_fee`, `hide`) VALUES
-(1, NULL, 315000.00, NULL, NULL, 'pending', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
-(2, NULL, 400000.00, NULL, NULL, 'completed', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 2, NULL, NULL, NULL, 0),
-(3, NULL, 595000.00, NULL, NULL, 'cancelled', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
-(4, NULL, 427500.00, NULL, NULL, 'cancelled', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 4, NULL, NULL, NULL, 0),
-(5, NULL, 225000.00, NULL, NULL, 'cancelled', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 5, NULL, NULL, NULL, 0),
-(6, NULL, 12.00, NULL, NULL, 'completed', 'pending', NULL, NULL, NULL, '2025-05-02 18:56:30', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
-(7, NULL, 1000000.00, NULL, NULL, 'shipping', 'pending', NULL, NULL, NULL, '2025-05-02 13:05:02', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
-(8, NULL, 1000000.00, NULL, NULL, 'pending', 'pending', NULL, NULL, NULL, '2025-02-09 13:05:23', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
-(9, NULL, 10000000.00, NULL, NULL, 'completed', 'pending', NULL, NULL, NULL, '2025-04-16 13:36:31', '2025-05-13 02:51:10', 5, NULL, NULL, NULL, 0),
-(10, NULL, 10000000.00, NULL, NULL, 'completed', 'pending', NULL, NULL, NULL, '2025-04-17 21:57:49', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
-(14, 'SR202505178641', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-17 19:14:49', '2025-05-18 00:14:49', 6, NULL, 'Minh Quân - 0783318569 - liem@ - Đà Lạt, 79101, 791, 79 | Xin chàoo', 35000.00, 0),
-(15, 'SR202505176086', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-17 19:32:28', '2025-05-18 00:32:28', 6, NULL, 'Minh Quân - 0785054969 - liem@ - Đà Lạt, 79001, 790, 79 | Xin Chàooo', 35000.00, 0),
-(16, 'SR202505176903', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-17 21:06:44', '2025-05-18 02:06:44', 6, NULL, 'Minh Quân - 1234567890 - liem@ - 123, 79001, 790, 79 | dfsaf', 35000.00, 0),
-(17, 'SR202505173443', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-17 21:07:11', '2025-05-18 02:07:11', 6, NULL, 'Minh Quân - 1234567890 - liem@ - 123, 79102, 791, 79 | dsf', 35000.00, 0),
-(18, 'SR202505174919', 1811600.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-17 22:34:17', '2025-05-18 03:34:17', 6, NULL, 'Minh Quân - 123 - liem@ - 123, 79001, 790, 79', 35000.00, 0),
-(19, 'SR202505194798', 1811600.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-19 15:39:26', '2025-05-19 20:39:26', 12, NULL, 'Minh Quân - 0783318539 - nguyentranminhquan02062005@gmail.com - Đà Lạt, 79003, 790, 79 | dsfgdsfdsfgdsfgdfsfg', 35000.00, 0),
-(20, 'SR202505196032', 3630500.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-19 15:44:15', '2025-05-19 20:44:15', 12, NULL, 'Minh Quân - 0783318539 - nguyentranminhquan02062005@gmail.com - Đà Lạt, 79102, 791, 79 | dfgfdg', 35000.00, 0),
-(21, 'SR202505212936', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 09:26:14', '2025-05-21 14:26:14', 11, NULL, 'Thanh Liêm - 0785054969 - MinhQuan@gmail.com - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Bình Trưng Đông, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(22, 'SR202505211689', 274200.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 10:46:56', '2025-05-21 15:46:56', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(23, 'SR202505218095', 314650.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 12:22:47', '2025-05-21 17:22:47', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(24, 'SR202505217396', 326100.00, 'cod', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 12:50:21', '2025-05-21 17:50:21', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 30000.00, 0),
-(25, 'SR202505215056', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 12:51:27', '2025-05-21 17:51:27', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(26, 'SR202505211323', 299250.00, 'cod', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 12:54:33', '2025-05-21 17:54:33', 6, NULL, 'sdfds - 0783318569 - sfsfs@gmail.com - sdfadsdf, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội | ádfasdfasd', 30000.00, 0),
-(27, 'SR202505214699', 299250.00, 'cod', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 12:55:24', '2025-05-21 17:55:24', 6, NULL, 'sdfds - 0783318569 - liem@xn--d-ufa - sdfadsdf, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội | ádasd', 30000.00, 0),
-(28, 'SR202505216569', 329250.00, 'cod', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 13:12:22', '2025-05-21 18:12:22', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 60000.00, 0),
-(29, 'SR202505211080', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 13:18:06', '2025-05-21 18:18:06', 6, NULL, 'sdfds - 0783318569 - liem@ - sdfadsdf, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội |  cho mình xin cái tíu', 35000.00, 0),
-(30, 'SR202505212676', 299200.00, 'cod', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 13:19:04', '2025-05-21 18:19:04', 6, NULL, 'sdfds - 0783318569 - liem@ - sdfadsdf, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 60000.00, 0),
-(31, 'SR202505211320', 1737900.00, 'cod', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 13:19:51', '2025-05-21 18:19:51', 6, NULL, 'sdfds - 0783318569 - liem@ - sdfadsdf, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội | ádfasdfadsfadsf', 60000.00, 0),
-(32, 'SR202505217645', 1706700.00, 'cod', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 13:26:09', '2025-05-21 18:26:09', 1, NULL, 'hihi - 849032890 - a@example.com - ádfasfasfadsfsqr4eyrew, Phường Bình Trưng Đông, Quận 2, TP. Hồ Chí Minh | cho xin hihihi', 60000.00, 0),
-(33, 'SR202505215301', 331100.00, 'momo', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 13:28:32', '2025-05-21 18:28:32', 1, NULL, 'hihi - 849032890 - a@example.com - ádfasfasfadsfsqr4eyrew, Phường Bình Trưng Đông, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(34, 'SR202505218252', 304250.00, 'momo', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 15:10:29', '2025-05-21 20:10:29', 1, NULL, 'hihi - 849032890 - a@example.com - ádfasfasfadsfsqr4eyrew, Phường Bình Trưng Đông, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(35, 'SR202505218757', 304250.00, 'vnpay', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 15:19:38', '2025-05-21 20:19:38', 1, NULL, 'hihi - 849032890 - a@example.com - ádfasfasfadsfsqr4eyrew, Phường Bình Trưng Đông, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(36, 'SR202505214264', 304250.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 15:20:21', '2025-05-21 20:20:21', 1, NULL, 'hihi - 849032890 - a@example.com - ádfasfasfadsfsqr4eyrew, Phường Bình Trưng Đông, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(37, 'SR202505216296', 314650.00, 'momo', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 15:27:22', '2025-05-21 20:27:22', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(38, 'SR202505217665', 629250.00, 'cod', 'ghtk', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:06:11', '2025-05-22 01:06:11', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội | ghj', 30000.00, 0),
-(39, 'SR202505215554', 629250.00, 'cod', 'ghtk', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:12:36', '2025-05-22 01:12:36', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 30000.00, 0),
-(40, 'SR202505214001', 634250.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:12:46', '2025-05-22 01:12:46', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(41, 'SR202505213615', 304250.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:13:21', '2025-05-22 01:13:21', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(42, 'SR202505215327', 304250.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:13:45', '2025-05-22 01:13:45', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(43, 'SR202505219195', 304250.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:15:50', '2025-05-22 01:15:50', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(44, 'SR202505215242', 304250.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:16:04', '2025-05-22 01:16:04', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(45, 'SR202505217068', 304250.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:19:14', '2025-05-22 01:19:14', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(46, 'SR202505213682', 304250.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-21 20:19:48', '2025-05-22 01:19:48', 6, NULL, 'sdfds - 0783318569 - liem@ - sdfadsdf, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(47, 'SR202505237664', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-23 04:46:47', '2025-05-23 09:46:47', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(48, 'SR202505235253', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-23 04:47:20', '2025-05-23 09:47:20', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(49, 'SR202505236968', 329250.00, 'vnpay', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-23 04:47:47', '2025-05-23 09:47:47', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 60000.00, 0),
-(50, 'SR202505236968', 329250.00, 'vnpay', 'express', 'pending', 'pending', NULL, NULL, NULL, '2025-05-23 04:47:47', '2025-05-23 09:47:47', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 60000.00, 0),
-(51, 'SR202505237480', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-23 06:30:19', '2025-05-23 11:30:19', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(52, 'SR202505233118', 274200.00, 'cod', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 12:18:08', '2025-05-23 17:18:08', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(53, 'SR202505233189', 274200.00, 'momo', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:36:49', '2025-05-23 18:36:49', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(54, 'SR202505233189', 274200.00, 'momo', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:36:49', '2025-05-23 18:36:49', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(55, 'SR202505231640', 629250.00, 'momo', 'ghtk', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:37:43', '2025-05-23 18:37:43', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 30000.00, 0),
-(56, 'SR202505231640', 629250.00, 'momo', 'ghtk', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:37:43', '2025-05-23 18:37:43', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 30000.00, 0),
-(57, 'SR202505236065', 634250.00, 'cod', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:38:14', '2025-05-23 18:38:14', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(58, 'SR202505238197', 629250.00, 'vnpay', 'ghtk', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:42:00', '2025-05-23 18:42:00', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 30000.00, 0),
-(59, 'SR202505238197', 629250.00, 'vnpay', 'ghtk', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:42:00', '2025-05-23 18:42:00', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 30000.00, 0),
-(60, 'SR202505236870', 304250.00, 'momo', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:42:44', '2025-05-23 18:42:44', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(61, 'SR202505236870', 304250.00, 'momo', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 13:42:44', '2025-05-23 18:42:44', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(62, 'SR202505239538', 314650.00, 'cod', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:03:28', '2025-05-23 21:03:28', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 35000.00, 0),
-(63, 'SR202505231559', 659250.00, 'momo', 'express', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:03:59', '2025-05-23 21:03:59', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 60000.00, 0),
-(64, 'SR202505231559', 659250.00, 'momo', 'express', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:03:59', '2025-05-23 21:03:59', 6, NULL, 'Thanh Liêm - 1234567890 - liem@ - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Hàng Bồ, Quận Hoàn Kiếm, Hà Nội', 60000.00, 0),
-(65, 'SR202505231564', 634250.00, 'vnpay', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:07:37', '2025-05-23 21:07:37', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(66, 'SR202505231564', 634250.00, 'vnpay', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:07:37', '2025-05-23 21:07:37', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(67, 'SR202505234194', 314150.00, 'vnpay', 'express', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:09:38', '2025-05-23 21:09:38', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 60000.00, 0),
-(68, 'SR202505234194', 314150.00, 'vnpay', 'express', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:09:38', '2025-05-23 21:09:38', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 60000.00, 0),
-(69, 'SR202505232432', 634250.00, 'vnpay', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:13:43', '2025-05-23 21:13:43', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(70, 'SR202505232432', 634250.00, 'vnpay', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:13:43', '2025-05-23 21:13:43', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(71, 'SR202505232710', 314650.00, 'vnpay', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 16:23:35', '2025-05-23 21:23:35', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(72, 'SR202505236902', 314650.00, 'cod', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 17:47:57', '2025-05-23 22:47:57', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(73, 'SR202505239123', 513400.00, 'momo', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 19:39:13', '2025-05-24 00:39:13', 2, NULL, 'dgdfgd - 0785054969 - b@example.com - ưerwerw, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(74, 'SR202505238324', 634250.00, 'cod', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 20:45:20', '2025-05-24 01:45:20', 13, NULL, 'sdfds - 0785054969 - nguyentranminhquan.dl2018@gmail.com - 4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng, Phường Thảo Điền, Quận 2, TP. Hồ Chí Minh', 35000.00, 0),
-(75, 'SR202505232340', 314650.00, 'cod', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 21:31:00', '2025-05-24 02:31:00', 13, NULL, 'Thanh Liêm - 0785054969 - nguyentranminhquan.dl2018@gmail.com - undefined, Phường Hàng Bạc, Quận Hoàn Kiếm, Hà Nội | sdf', 35000.00, 0),
-(76, 'SR202505236674', 634250.00, 'cod', 'ghn', 'waitConfirm', 'pending', NULL, NULL, NULL, '2025-05-23 21:33:50', '2025-05-24 02:33:50', 13, NULL, 'Thảo NHi - 0783318539 - nguyentranminhquan.dl2018@gmail.com - undefined, Phường Hòa Khê, Quận Thanh Khê, Đà Nẵng', 35000.00, 0);
-
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `order_detail`
+-- Table structure for table `order_detail`
 --
 
 CREATE TABLE `order_detail` (
@@ -362,67 +280,10 @@ CREATE TABLE `order_detail` (
   `sub_total` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `order_detail`
---
-
-INSERT INTO `order_detail` (`id_Order`, `id_Product`, `quantity`, `size`, `sub_total`) VALUES
-(19, 35, 6, 'M', 1776600.00),
-(20, 34, 4, 'L', 2397000.00),
-(20, 34, 2, 'XL', 1198500.00),
-(21, 35, 1, 'L', 296100.00),
-(22, 33, 1, 'L', 239200.00),
-(23, 32, 1, 'XL', 279650.00),
-(24, 35, 1, 'XL', 296100.00),
-(25, 35, 1, 'L', 296100.00),
-(26, 43, 1, 'L', 269250.00),
-(27, 43, 1, 'XL', 269250.00),
-(28, 43, 1, 'M', 269250.00),
-(29, 35, 1, 'M', 296100.00),
-(30, 33, 1, 'XL', 239200.00),
-(31, 32, 6, 'XL', 1677900.00),
-(32, 32, 3, 'L', 838950.00),
-(32, 43, 3, 'L', 807750.00),
-(33, 35, 1, 'L', 296100.00),
-(34, 43, 1, 'XL', 269250.00),
-(35, 43, 1, 'XL', 269250.00),
-(36, 43, 1, 'XL', 269250.00),
-(37, 32, 1, 'M', 279650.00),
-(38, 34, 1, 'L', 599250.00),
-(39, 34, 1, 'XL', 599250.00),
-(40, 34, 1, 'XL', 599250.00),
-(41, 43, 1, 'XL', 269250.00),
-(42, 43, 1, 'L', 269250.00),
-(43, 43, 1, 'L', 269250.00),
-(44, 43, 1, 'L', 269250.00),
-(45, 43, 1, 'XL', 269250.00),
-(46, 43, 1, 'XL', 269250.00),
-(47, 35, 1, 'M', 296100.00),
-(48, 35, 1, 'L', 296100.00),
-(50, 43, 1, 'XL', 269250.00),
-(51, 35, 1, 'XL', 296100.00),
-(52, 33, 1, 'XL', 239200.00),
-(54, 33, 1, 'XL', 239200.00),
-(56, 34, 1, 'L', 599250.00),
-(57, 34, 1, 'M', 599250.00),
-(59, 34, 1, 'XL', 599250.00),
-(61, 43, 1, 'M', 269250.00),
-(62, 32, 1, 'L', 279650.00),
-(64, 34, 1, 'XL', 599250.00),
-(66, 34, 1, 'XL', 599250.00),
-(68, 36, 1, 'XL', 254150.00),
-(70, 34, 1, 'XL', 599250.00),
-(71, 32, 1, 'L', 279650.00),
-(72, 32, 1, 'L', 279650.00),
-(73, 33, 2, 'L', 478400.00),
-(74, 34, 1, 'L', 599250.00),
-(75, 32, 1, 'L', 279650.00),
-(76, 34, 1, 'L', 599250.00);
-
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `product`
+-- Table structure for table `product`
 --
 
 CREATE TABLE `product` (
@@ -430,6 +291,7 @@ CREATE TABLE `product` (
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
   `original_price` decimal(10,2) DEFAULT NULL,
+  `import_price` decimal(10,2) DEFAULT NULL,
   `discount_percent` int(11) DEFAULT NULL,
   `current_price` decimal(10,2) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
@@ -453,29 +315,27 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `product`
+-- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `link`, `meta`, `hide`, `order`, `click_count`, `store`, `img2`, `img3`, `tag`, `CSDoiTra`, `CSGiaoHang`, `M`, `L`, `XL`) VALUES
-(32, 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 'Áo polo nam với công nghệ Procool và chi tiết seam sealing hiện đại, mang đến sự thoải mái và phong cách thời trang.', 329000.00, 15, 279650.00, '2025-05-11 20:14:04', '2025-05-24 02:31:00', 1, 'item1.webp', 'ao-polo-nam-procool-icondenim-seam-sealing', 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 0, 1, 40, 0, '', '', 'áo polo, nam giới, procool', 'Có', 'Có', 9, 3, 3),
-(33, 'Áo Thun Nam ICONDENIM Atheltics Champion', 'Áo thun thể thao với thiết kế năng động, chất liệu thoáng mát phù hợp cho vận động và sinh hoạt hàng ngày.', 299000.00, 20, 239200.00, '2025-05-11 20:14:04', '2025-05-24 00:39:13', 1, 'item8.webp', 'ao-thun-nam-icondenim-atheltics-champion', 'Áo Thun Nam ICONDENIM Atheltics Champion', 0, 2, 20, 0, '', '', 'áo thun, nam giới, thể thao', 'Có', 'Có', 10, 7, 7),
-(34, 'Set Đồ Nam ICONDENIM Rugby Football', 'Bộ đồ thể thao phong cách rugby football, chất liệu cao cấp mang đến sự thoải mái tối đa khi vận động.', 799000.00, 25, 599250.00, '2025-05-11 20:14:04', '2025-05-24 02:34:28', 1, 'item9.webp', 'set-do-nam-icondenim-rugby-football', 'Set Đồ Nam ICONDENIM Rugby Football', 0, 3, 45, 0, '', '', 'set đồ, nam giới, thể thao', 'Có', 'Có', 9, 2, 2),
-(35, 'Áo Polo Nam ICONDENIM Horizontal Stripped', 'Áo polo sọc ngang thời trang, thiết kế trẻ trung, phù hợp cho cả môi trường công sở và dạo phố.', 329000.00, 10, 296100.00, '2025-05-11 20:14:04', '2025-05-23 17:09:57', 1, 'item10.webp', 'ao-polo-nam-icondenim-horizontal-stripped', 'Áo Polo Nam ICONDENIM Horizontal Stripped', 0, 4, 62, 0, '', '', 'áo polo, nam giới, sọc ngang', 'Có', 'Có', 2, 2, 2),
-(36, 'Áo Thun Nam ICONDENIM Edge Striped', 'Áo thun với chi tiết sọc viền độc đáo, thiết kế hiện đại, chất liệu cotton thoáng mát.', 299000.00, 15, 254150.00, '2025-05-11 20:14:04', '2025-05-23 22:34:15', 1, 'item1.webp', 'ao-thun-nam-icondenim-edge-striped', 'Áo Thun Nam ICONDENIM Edge Striped', 0, 5, 7, 0, '', '', 'áo thun, nam giới, sọc viền', 'Có', 'Có', 10, 10, 9),
-(37, 'Áo Thun Nam Procool ICONDENIM Seam Sealing', 'Áo thun công nghệ Procool với chi tiết seam sealing, mang đến sự khô thoáng và thoải mái suốt cả ngày.', 299000.00, 20, 239200.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item2.webp', 'ao-thun-nam-procool-icondenim-seam-sealing', 'Áo Thun Nam Procool ICONDENIM Seam Sealing', 0, 6, 0, 0, '', '', 'áo thun, nam giới, procool', 'Có', 'Có', 10, 10, 10),
-(38, 'Quần Jean Nam Procool ICONDENIM CoolMax Black Slim', 'Quần jean đen ôm với công nghệ CoolMax, mang đến sự thoải mái và phong cách trong mọi hoạt động.', 549000.00, 10, 494100.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item3.webp', 'quan-jean-nam-procool-icondenim-coolmax-black-slim', 'Quần Jean Nam Procool ICONDENIM CoolMax Black Slim', 0, 7, 0, 0, '', '', 'quần jean, nam giới, slim fit', 'Có', 'Có', 10, 10, 10),
-(39, 'Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim', 'Quần jean xanh nhạt ôm với công nghệ CoolMax và ProCOOL, kết hợp hoàn hảo giữa phong cách và tính năng.', 549000.00, 15, 466650.00, '2025-05-11 20:14:04', '2025-05-23 11:01:31', 1, 'item4.webp', 'quan-jean-nam-procool-icondenim-coolmax-light-blue-slim', 'Quần Jean Nam ProCOOL ICONDENIM CoolMax Light Blue Slim', 0, 8, 1, 0, '', '', 'quần jean, nam giới, xanh nhạt', 'Có', 'Có', 10, 10, 10),
-(40, 'Quần Short Jean Nam ICONDENIM Mid Blue Regular', 'Quần short jean màu xanh trung bình, dáng regular thoải mái, phù hợp cho mùa hè.', 359000.00, 30, 251300.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item2.webp', 'quan-short-jean-nam-icondenim-mid-blue-regular', 'Quần Short Jean Nam ICONDENIM Mid Blue Regular', 0, 9, 0, 0, '', '', 'quần short, nam giới, jean', 'Có', 'Có', 10, 10, 10),
-(41, 'Áo Thun Nam ICONDENIM Basic Form Regular', 'Áo thun basic form với kiểu dáng regular, chất liệu cotton mềm mại, màu sắc đơn giản dễ phối đồ.', 199000.00, 20, 159200.00, '2025-05-11 20:14:04', '2025-05-23 16:21:04', 1, 'item3.webp', 'ao-thun-nam-icondenim-basic-form-regular', 'Áo Thun Nam ICONDENIM Basic Form Regular', 0, 10, 1, 0, '', '', 'áo thun, nam giới, basic', 'Có', 'Có', 10, 10, 10),
-(42, 'Quần Tây Nam ICONDENIM Straight Neutral Basic', 'Quần tây dáng straight với màu sắc trung tính, phù hợp cho môi trường công sở và dạo phố.', 499000.00, 15, 424150.00, '2025-05-11 20:14:04', '2025-05-11 20:53:11', 1, 'item4.webp', 'quan-tay-nam-icondenim-straight-neutral-basic', 'Quần Tây Nam ICONDENIM Straight Neutral Basic', 0, 11, 0, 0, '', '', 'quần tây, nam giới, công sở', 'Có', 'Có', 10, 10, 10),
-(43, 'Quần Short Kaki Nam ICONDENIM Garment Dye', 'Quần short kaki với công nghệ garment dye, màu sắc tự nhiên, phong cách casual thoải mái.', 359000.00, 25, 269250.00, '2025-05-11 20:14:04', '2025-05-23 22:06:01', 1, 'item5.webp', 'quan-short-kaki-nam-icondenim-garment-dye', 'Quần Short Kaki Nam ICONDENIM Garment Dye', 0, 12, 39, 0, '', '', 'quần short, nam giới, kaki', 'Có', 'Có', 8, 3, 2),
-(44, 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 'Áo polo nam với công nghệ Procool và chi tiết seam sealing hiện đại, mang đến sự thoải mái và phong cách thời trang.', 329000.00, 15, 279650.00, '2025-05-11 20:14:04', '2025-05-21 21:38:19', 1, 'item1.webp', 'ao-polo-nam-procool-icondenim-seam-sealing', 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 0, 1, 13, 0, '', '', 'áo polo, nam giới, procool', 'Có', 'Có', 9, 7, 3),
-(45, 'Áo Thun Nam ICONDENIM Atheltics Champion', 'Áo thun thể thao với thiết kế năng động, chất liệu thoáng mát phù hợp cho vận động và sinh hoạt hàng ngày.', 299000.00, 20, 239200.00, '2025-05-11 20:14:04', '2025-05-21 18:20:55', 1, 'item8.webp', 'ao-thun-nam-icondenim-atheltics-champion', 'Áo Thun Nam ICONDENIM Atheltics Champion', 0, 2, 7, 0, '', '', 'áo thun, nam giới, thể thao', 'Có', 'Có', 10, 9, 9),
-(46, 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 'Áo polo nam với công nghệ Procool và chi tiết seam sealing hiện đại, mang đến sự thoải mái và phong cách thời trang.', 329000.00, 15, 279650.00, '2025-05-11 20:14:04', '2025-05-21 21:38:19', 1, 'item1.webp', 'ao-polo-nam-procool-icondenim-seam-sealing', 'Áo Polo Nam Procool ICONDENIM Seam Sealing', 0, 1, 13, 0, '', '', 'áo polo, nam giới, procool', 'Có', 'Có', 9, 7, 3),
-(47, 'Áo Thun Nam ICONDENIM Atheltics Champion', 'Áo thun thể thao với thiết kế năng động, chất liệu thoáng mát phù hợp cho vận động và sinh hoạt hàng ngày.', 299000.00, 20, 239200.00, '2025-05-11 20:14:04', '2025-05-21 18:20:55', 1, 'item8.webp', 'ao-thun-nam-icondenim-atheltics-champion', 'Áo Thun Nam ICONDENIM Atheltics Champion', 0, 2, 7, 0, '', '', 'áo thun, nam giới, thể thao', 'Có', 'Có', 10, 9, 9);
+INSERT INTO `product` (`id_product`, `name`, `description`, `original_price`, `import_price`, `discount_percent`, `current_price`, `created_at`, `updated_at`, `id_Category`, `main_image`, `link`, `meta`, `hide`, `order`, `click_count`, `store`, `img2`, `img3`, `tag`, `CSDoiTra`, `CSGiaoHang`, `M`, `L`, `XL`) VALUES
+(61, 'Quần Jean Nam', '<p><strong>Bảng Size</strong></p>\r\n\r\n<ul>\r\n	<li>Size 29 C&acirc;n nặng 50-60kg; V&ograve;ng Lưng: 76cm; V&ograve;ng Đ&ugrave;i: 59cm; D&agrave;i Quần: 95cm; Rộng Ống: 36cm</li>\r\n	<li>Size 30: C&acirc;n nặng 61-65kg; V&ograve;ng Lưng: 80cm; V&ograve;ng Đ&ugrave;i: 61cm; D&agrave;i Quần: 96cm; Rộng Ống: 37cm</li>\r\n	<li>Size 31: C&acirc;n nặng 66-70kg; V&ograve;ng Lưng: 84cm; V&ograve;ng Đ&ugrave;i: 63cm; D&agrave;i Quần: 97cm; Rộng Ống: 38cm</li>\r\n	<li>Size 32: C&acirc;n nặng 71-75kg; V&ograve;ng Lưng: 88cm; V&ograve;ng Đ&ugrave;i: 65&nbsp;cm; D&agrave;i Quần: 98cm; Rộng Ống: 39cm</li>\r\n	<li>Size 34: C&acirc;n nặng 76-80kg; V&ograve;ng Lưng: 92cm; V&ograve;ng Đ&ugrave;i: 67cm; D&agrave;i Quần 99cm; Rộng Ống: 40cm</li>\r\n	<li>Size 36: C&acirc;n nặng 81-85kg; V&ograve;ng Lưng: 96cm; V&ograve;ng Đ&ugrave;i: 69cm; D&agrave;i Quần: 100cm; Rộng Ống: 41cm</li>\r\n</ul>\r\n', 700000.00, 500000.00, 0, 700000.00, '2025-05-24 15:10:49', '2025-05-24 15:10:49', 11, '160_jean_239-7_0218d9e7d0e34ed9916235864e9f5966_1024x1024.jpg', NULL, NULL, 0, NULL, 0, 12, '160_jean_239-5_059cdc750a7a4879a80708e690e1ba7e_1024x1024.jpg', '160_jean_239-1_89fcf87205c843e399c5a8c97b7b693d_1024x1024.webp', 'Ao', '1747723170_doitra_1.webp', '1_cs_giaohanh.webp', 4, 4, 4),
+(62, 'Áo Sơ Mi Linen Trắng', '<p>M&ocirc; tả: &Aacute;o sơ mi d&agrave;i tay chất vải linen cao cấp, kiểu d&aacute;ng thanh lịch.</p>\r\n\r\n<p>&nbsp;</p>\r\n', 200000.00, 100000.00, 0, 200000.00, '2025-05-24 15:24:53', '2025-05-24 15:24:53', 11, '160_somi_314-10_83d5c563ca6c4b51913d6a3c316be865_1024x1024.webp', NULL, NULL, 0, NULL, 0, 100, '160_somi_314-1_2ddf5926e8554b0a942714724245b710_1024x1024.jpg', '160_somi_314-7_ae81be7886b14c06845f4deb84c0c1dd_1024x1024.jpg', 'Ao', '1_doitra_1.webp', '2_cs_giaohanh.webp', 25, 50, 25),
+(63, 'Áo Sơ Mi Sọc Trắng', '<p>M&ocirc; tả: &Aacute;o sơ mi d&agrave;i tay chất vải linen cao cấp, kiểu d&aacute;ng thanh lịch.</p>\r\n', 900000.00, 700000.00, 0, 900000.00, '2025-05-24 15:26:17', '2025-05-24 15:26:17', 11, 'ao-so-mi-nam-tay-ngan-icondenim-signature-form-slim__4__e916fe8202fd43edba25db144c767e47_1024x1024.webp', NULL, NULL, 0, NULL, 0, 50, 'ao-so-mi-nam-tay-ngan-icondenim-signature-form-slim__10__a568849eea3a42c083ad43c4d2bc4e88_1024x1024.webp', 'ao-so-mi-nam-tay-ngan-icondenim-signature-form-slim__8__5f40ac8f5f3c462abca6f415a18fc573_1024x1024.webp', '', '2_doitra_1.webp', '3_cs_giaohanh.webp', 25, 10, 15),
+(65, 'Quần Tây Lưng Cao Dáng Rộng', '<p>M&ocirc; tả: Quần t&acirc;y ống rộng, ph&ugrave; hợp đi l&agrave;m hoặc phối phong c&aacute;ch vintage.</p>\r\n', 600000.00, 500000.00, 0, 600000.00, '2025-05-24 15:33:42', '2025-05-24 15:33:42', 12, '160_jean_239-7_0218d9e7d0e34ed9916235864e9f5966_1024x1024.jpg', NULL, NULL, 0, NULL, 0, 30, '160_jean_239-5_059cdc750a7a4879a80708e690e1ba7e_1024x1024.jpg', '160_jean_239-1_89fcf87205c843e399c5a8c97b7b693d_1024x1024.webp', 'Quan', '4_doitra_1.webp', '5_cs_giaohanh.webp', 10, 10, 10),
+(68, 'Quần Jogger Thun Bo Gấu', '<p>M&ocirc; tả: Jogger thun thể thao, năng động, ph&ugrave; hợp cho tập gym hoặc dạo phố.</p>\r\n', 300000.00, 200000.00, 10, 270000.00, '2025-05-24 15:35:16', '2025-05-24 15:35:16', 12, 'procool_d562c83496a147e89e22e10d5c824b5b_1024x1024.webp', NULL, NULL, 0, NULL, 0, 5, 'quan-jeans-procool-icondenim-bright-sky-blue-form-slim_41a0bce260794e628bb6f82fd3ba40c7_1024x1024.webp', '3_2_1_160_jean_239-7_0218d9e7d0e34ed9916235864e9f5966_1024x1024.jpg', 'Quan', '7_doitra_1.webp', '8_cs_giaohanh.webp', 5, 0, 0),
+(69, 'Quần Kaki Nam', '<p>&Aacute;o sử dụng vải lưới dệt với bề mặt tho&aacute;ng, nhẹ m&aacute;t, tạo hiệu ứng sọc dệt tự nhi&ecirc;n sống động. Chất vải mỏng nhẹ, tho&aacute;t kh&iacute; nhanh, gi&uacute;p người mặc lu&ocirc;n cảm thấy dễ chịu, m&aacute;t mẻ ngay cả khi vận động dưới trời nắng n&oacute;ng.</p>\r\n', 200000.00, 100000.00, 10, 180000.00, '2025-05-24 15:36:45', '2025-05-24 15:36:45', 12, 'qu_n_jean_nam_procool_icondenim_coolmax_indigo_slim_986387d69f914621b6f9b60299d55666_1024x1024.webp', NULL, NULL, 0, NULL, 0, 10, 'qjid0228_7608f66900dc4f94aa5d4213615e0cf6_1024x1024.webp', 'quan_jeans_straight_53d90d47aefa4a7b9490a3552a0fc484_1024x1024.webp', '', '8_doitra_1.webp', '9_cs_giaohanh.webp', 0, 10, 0),
+(71, 'Quần Jeans Nam Procool ICONDENIM ', '<p>Chất liệu Denim&nbsp;đặc biệt si&ecirc;u m&aacute;t lạnh đạt chuẩn Coolmax&nbsp;gi&uacute;p cho người mặc vẫn thoải m&aacute;i trong c&aacute;c hoạt động thường ng&agrave;y. Chất liệu c&oacute; độ co d&atilde;n tốt, vừa vặn với mọi loại d&aacute;ng ch&acirc;n của ae. Với c&aacute;c chi tiết kh&aacute;c được tối ưu cho việc di chuyển, c&agrave;ng di chuyển c&agrave;ng m&aacute;t.</p>\r\n', 300000.00, 200000.00, 10, 270000.00, '2025-05-24 15:38:15', '2025-05-24 15:38:15', 12, 'quan-jeans-icondenim-checkered-jacquard-straight__1__88af88a47137497b8eec78ea686ca5a6_1024x1024.webp', NULL, NULL, 0, NULL, 0, 20, '2_1_qu_n_jean_nam_procool_icondenim_coolmax_indigo_slim_986387d69f914621b6f9b60299d55666_1024x1024.webp', '2_1_qjid0228_7608f66900dc4f94aa5d4213615e0cf6_1024x1024.webp', '', '10_doitra_1.webp', '11_cs_giaohanh.webp', 0, 10, 10),
+(74, 'Áo Sơ Mi Trắng Sọc Caro', '<p>M&ocirc; tả: &Aacute;o croptop năng động, ph&ugrave; hợp phong c&aacute;ch trẻ trung, c&aacute; t&iacute;nh.</p>\r\n', 800000.00, 700000.00, 20, 640000.00, '2025-05-24 15:43:47', '2025-05-24 15:43:47', 11, '2_1_ao-so-mi-nam-tay-ngan-icondenim-signature-form-slim__4__e916fe8202fd43edba25db144c767e47_1024x1024.webp', NULL, NULL, 0, NULL, 0, 90, '2_1_ao-so-mi-nam-tay-ngan-icondenim-signature-form-slim__10__a568849eea3a42c083ad43c4d2bc4e88_1024x1024.webp', '2_1_ao-so-mi-nam-tay-ngan-icondenim-signature-form-slim__8__5f40ac8f5f3c462abca6f415a18fc573_1024x1024.webp', 'Ao', '13_doitra_1.webp', '14_cs_giaohanh.webp', 30, 30, 30),
+(75, 'Thắt Lưng Nâu Da Cá Sấu', '<p>Bề mặt d&acirc;y được tạo điểm nhấn với họa tiết v&acirc;n nổi gi&uacute;p&nbsp;tăng độ b&aacute;m cho thắt lưng. Đầu kh&oacute;a kim loại gun satin sắc sảo kết hợp c&ugrave;ng logo ICONDENIM khắc laser tr&ecirc;n khoen da, tạo n&ecirc;n diện mạo nam t&iacute;nh v&agrave; sang trọng.</p>\r\n', 200000.00, 100000.00, 10, 180000.00, '2025-05-24 15:45:29', '2025-05-24 15:45:29', 14, '160_that_lung_028-2_8746d287a174450b9cb131b7822aee0c_1024x1024.webp', NULL, NULL, 0, NULL, 0, 30, '160_that_lung_028-8_cfae8cb2c2e449a8b6ce3dd7566290f7_1024x1024.webp', 'z5905294055603_25d25c7c2604726100b0718c9000105c_598bc3fc118245bdaf21e2514b7b0763_1024x1024.webp', 'ThatLung', '14_doitra_1.webp', '15_cs_giaohanh.webp', 10, 10, 10),
+(77, 'Mũ Lưỡi Trai Nam ICONDENIM America', '<p><strong>▶️ CHẤT LIỆU KAKI</strong></p>\r\n\r\n<p>N&oacute;n lưỡi trai được l&agrave;m từ chất liệu kaki, c&oacute; độ bền cao, khả năng tho&aacute;ng kh&iacute; v&agrave; mang đến sự thoải m&aacute;i khi đội. Chất liệu n&agrave;y cũng giữ được form d&aacute;ng ổn định, tạo cảm gi&aacute;c chắc chắn v&agrave; vừa vặn khi sử dụng, th&iacute;ch hợp để sử dụng h&agrave;ng ng&agrave;y trong nhiều ho&agrave;n cảnh kh&aacute;c nhau, từ dạo phố đến c&aacute;c hoạt động ngo&agrave;i trời.</p>\r\n', 300000.00, 200000.00, 5, 285000.00, '2025-05-24 15:48:53', '2025-05-24 15:48:53', 14, '160_non_037-9_915e4a02cbf245e292c353e1fbefea41_large.jpg', NULL, NULL, 0, NULL, 0, 14, '160_non_037-10_78e0dc32877c4b78892e7c0fb2473777_1024x1024.jpg', '160_non_037-7_fae6d201b3f84a92846a230ff7e37b29_1024x1024.jpg', 'PhuKien,Non', '16_doitra_1.webp', '17_cs_giaohanh.webp', 7, 7, 0),
+(78, 'Nón Bucket Nam ICONDENIM Orgnls Jeans Wash', '<p><strong>▶️ CHẤT LIỆU DENIM</strong></p>\r\n\r\n<p>Mũ sử dụng chất liệu denim jean wash bền bỉ, mềm mại v&agrave; phong c&aacute;ch. Denim kh&ocirc;ng chỉ chịu m&agrave;i m&ograve;n tốt m&agrave; c&ograve;n mang lại vẻ bụi bặm, thời trang, rất ph&ugrave; hợp với phong c&aacute;ch streetwear năng động</p>\r\n\r\n<p><strong>▶️ THIẾT KẾ &Yacute; NGHĨA</strong></p>\r\n\r\n<p>Điểm nhấn của mũ l&agrave; chi tiết th&ecirc;u nổi với biểu tượng vương miện &quot;ORGNLS&quot; v&agrave; slogan &quot;Embrace the journey and let the current guide you&quot; truyền tải th&ocirc;ng điệp sống t&iacute;ch cực. Font chữ graphic viết tay tạo cảm gi&aacute;c tự do, quyền lực v&agrave; dứt kho&aacute;t.</p>\r\n\r\n<p><strong>▶️ FORM BUCKET</strong></p>\r\n\r\n<p>D&aacute;ng mũ bucket với v&agrave;nh rộng vừa phải mang đến sự thoải m&aacute;i v&agrave; tiện dụng, ph&ugrave; hợp cho nhiều khu&ocirc;n mặt. Form d&aacute;ng vừa gi&uacute;p che chắn &aacute;nh nắng tốt vừa tạo n&ecirc;n vẻ năng động, dễ d&agrave;ng phối hợp với c&aacute;c loại trang phục từ casual đến sporty.</p>\r\n', 400000.00, 250000.00, 5, 380000.00, '2025-05-24 15:51:03', '2025-05-24 15:51:03', 14, 'non-bucket-icondenim-orgnls-jean-wash__2__4400f254814d468cba441160bbb7e856_1024x1024.jpg', NULL, NULL, 0, NULL, 0, 6, 'z6025237282432_3201164e89de26a638dfd644f9d01750_2c567e0534754ffdae70d74a0d481fcd_1024x1024.webp', 'z6025237351828_9a2dcff5e55996bb4b561ac3cad34e83_1209ba8acbb944378244e1ed40d73fe4_1024x1024.webp', '', '17_doitra_1.webp', '18_cs_giaohanh.webp', 6, 0, 0),
+(79, 'Nón Bucket Nam ICONDENIM Orgnls Jeans Wash', '<p><strong>▶️ CHẤT LIỆU DENIM</strong></p>\r\n\r\n<p>Mũ sử dụng chất liệu denim jean wash bền bỉ, mềm mại v&agrave; phong c&aacute;ch. Denim kh&ocirc;ng chỉ chịu m&agrave;i m&ograve;n tốt m&agrave; c&ograve;n mang lại vẻ bụi bặm, thời trang, rất ph&ugrave; hợp với phong c&aacute;ch streetwear năng động</p>\r\n\r\n<p><strong>▶️ THIẾT KẾ &Yacute; NGHĨA</strong></p>\r\n\r\n<p>Điểm nhấn của mũ l&agrave; chi tiết th&ecirc;u nổi với biểu tượng vương miện &quot;ORGNLS&quot; v&agrave; slogan &quot;Embrace the journey and let the current guide you&quot; truyền tải th&ocirc;ng điệp sống t&iacute;ch cực. Font chữ graphic viết tay tạo cảm gi&aacute;c tự do, quyền lực v&agrave; dứt kho&aacute;t.</p>\r\n\r\n<p><strong>▶️ FORM BUCKET</strong></p>\r\n\r\n<p>D&aacute;ng mũ bucket với v&agrave;nh rộng vừa phải mang đến sự thoải m&aacute;i v&agrave; tiện dụng, ph&ugrave; hợp cho nhiều khu&ocirc;n mặt. Form d&aacute;ng vừa gi&uacute;p che chắn &aacute;nh nắng tốt vừa tạo n&ecirc;n vẻ năng động, dễ d&agrave;ng phối hợp với c&aacute;c loại trang phục từ casual đến sporty.</p>\r\n', 400000.00, 250000.00, 5, 380000.00, '2025-05-24 15:51:03', '2025-05-24 16:05:59', 14, '1_non-bucket-icondenim-orgnls-jean-wash__2__4400f254814d468cba441160bbb7e856_1024x1024.jpg', NULL, NULL, 1, NULL, 0, 6, '1_z6025237282432_3201164e89de26a638dfd644f9d01750_2c567e0534754ffdae70d74a0d481fcd_1024x1024.webp', '1_z6025237351828_9a2dcff5e55996bb4b561ac3cad34e83_1209ba8acbb944378244e1ed40d73fe4_1024x1024.webp', '', '18_doitra_1.webp', '19_cs_giaohanh.webp', 6, 0, 0),
+(80, 'Áo Thun Nam Superior Form Oversize', '<p><strong>▶️ CHẤT&nbsp;VẢI INTERLOCK M&Aacute;T MẺ</strong></p>\r\n\r\n<p>Chất vải Interlock dệt đ&ocirc;i cho cảm gi&aacute;c mềm mịn, tho&aacute;ng kh&iacute;.&nbsp;Mặc l&ecirc;n m&aacute;t, kh&ocirc;ng b&iacute;, l&yacute; tưởng cho thời tiết oi n&oacute;ng. Giữ form ổn định, hạn chế bai d&atilde;o&nbsp;đồng h&agrave;nh c&ugrave;ng bạn suốt ng&agrave;y d&agrave;i hoạt động.</p>\r\n\r\n<p>▶️&nbsp;<strong>HỌA TIẾT SỐ ĐẬM CHẤT THỂ THAO STREETWEAR</strong></p>\r\n\r\n<p>Thiết kế số nổi bật trước ngực đi c&ugrave;ng d&ograve;ng chữ&nbsp;SUPERIOR&nbsp;ph&iacute;a sau lưng sẽ tạo n&ecirc;n c&aacute; t&iacute;nh mạnh mẽ, năng động. M&agrave;u in tương phản sắc n&eacute;t, bền m&agrave;u sau khi sử dụng.</p>\r\n\r\n<p>▶️&nbsp;<strong>FORM OVERSIZE PH&Oacute;NG KHO&Aacute;NG DỄ MẶC</strong></p>\r\n\r\n<p>Form rộng nhẹ, che khuyết điểm tốt m&agrave; vẫn giữ được&nbsp;t&ocirc;n d&aacute;ng. Ph&ugrave; hợp với nhiều v&oacute;c d&aacute;ng nam giới hiện đại, đặc biệt l&agrave; c&aacute;c bạn trẻ y&ecirc;u phong c&aacute;ch H&agrave;n &ndash; Nhật.</p>\r\n', 300000.00, 200000.00, 10, 270000.00, '2025-05-24 16:05:48', '2025-05-24 16:05:48', 11, '1_160_ao_thun_486-7_192a8a84946943ba809cf83eda40e528_1024x1024.jpg', NULL, NULL, 0, NULL, 0, 4, '1_160_ao_thun_486-11_048e677a305a4d288f3a40f83e0cd12b_1024x1024.jpg', '1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', 'AO', '19_doitra_1.webp', '20_cs_giaohanh.webp', 4, 0, 0),
+(81, 'Áo Thun Nam Sundaze Rush Form Regular', '<p>Vải cotton định lượng 220GSM d&agrave;y dặn vừa phải, bề mặt mịn, &iacute;t x&ugrave; l&ocirc;ng. Ưu điểm thấm h&uacute;t tốt v&agrave; tho&aacute;ng kh&iacute;, mang lại cảm gi&aacute;c thoải m&aacute;i khi mặc trong ng&agrave;y nắng n&oacute;ng. Chất vải giữ phom chuẩn sau nhiều lần giặt.</p>\r\n', 400000.00, 200000.00, 20, 320000.00, '2025-05-24 16:07:40', '2025-05-24 16:07:40', 11, '1_item2.webp', NULL, NULL, 0, NULL, 0, 50, '1_item10.webp', '2_1_1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', 'Ao', '20_doitra_1.webp', '21_cs_giaohanh.webp', 0, 50, 0);
 
 --
--- Bẫy `product`
+-- Triggers `product`
 --
 DELIMITER $$
 CREATE TRIGGER `auto_calculate_current_price` BEFORE INSERT ON `product` FOR EACH ROW BEGIN
@@ -508,7 +368,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `review`
+-- Table structure for table `review`
 --
 
 CREATE TABLE `review` (
@@ -526,7 +386,7 @@ CREATE TABLE `review` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `settings`
+-- Table structure for table `settings`
 --
 
 CREATE TABLE `settings` (
@@ -542,26 +402,26 @@ CREATE TABLE `settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `settings`
+-- Dumping data for table `settings`
 --
 
 INSERT INTO `settings` (`id`, `setting_key`, `setting_value`, `setting_group`, `setting_type`, `setting_label`, `setting_description`, `created_at`, `updated_at`) VALUES
-(1, 'site_name', 'SR Store', 'general', 'text', 'Tên website', 'Tên hiển thị của website', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
-(2, 'site_description', 'Website bán quần áo thời trang', 'general', 'textarea', 'Mô tả website', 'Mô tả ngắn về website', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
-(3, 'admin_email', 'admin@example.com', 'contact', 'email', 'Email quản trị', 'Email liên hệ của quản trị viên', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
-(4, 'contact_phone', '0123456789', 'contact', 'text', 'Số điện thoại liên hệ', 'Số điện thoại hiển thị trên website', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
-(5, 'contact_address', '123 Đường ABC, Quận XYZ, TP HCM', 'contact', 'textarea', 'Địa chỉ', 'Địa chỉ liên hệ', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
+(1, 'site_name', 'SR Store', 'general', 'text', 'Tên website', 'Tên hiển thị của website', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
+(2, 'site_description', 'Website bán quần áo thời trang', 'general', 'textarea', 'Mô tả website', 'Mô tả ngắn về website', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
+(3, 'admin_email', 'admin@example.com', 'contact', 'email', 'Email quản trị', 'Email liên hệ của quản trị viên', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
+(4, 'contact_phone', '0123456789', 'contact', 'text', 'Số điện thoại liên hệ', 'Số điện thoại hiển thị trên website', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
+(5, 'contact_address', '123 Đường ABC, Quận XYZ, TP HCM', 'contact', 'textarea', 'Địa chỉ', 'Địa chỉ liên hệ', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
 (6, 'logo_path', '/Project_Website/ProjectWeb/upload/img/Header/logo.png', 'appearance', 'file', 'Logo', 'Đường dẫn đến file logo', '2025-05-16 08:07:15', '2025-05-16 08:07:15'),
-(7, 'favicon_path', '/Project_Website/ProjectWeb/upload/img/Header/favicon.png', 'appearance', 'file', 'Favicon', 'Đường dẫn đến file favicon', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
-(8, 'currency', 'VND', 'shop', 'select', 'Đơn vị tiền tệ', 'Đơn vị tiền tệ sử dụng trên website', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
-(9, 'shipping_fee', '30000', 'shop', 'number', 'Phí vận chuyển', 'Phí vận chuyển mặc định', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
-(10, 'tax_rate', '10', 'shop', 'number', 'Thuế VAT (%)', 'Tỷ lệ thuế VAT áp dụng', '2025-05-16 08:07:15', '2025-05-16 09:52:02'),
-(11, 'maintenance_mode', '0', 'system', 'boolean', 'Chế độ bảo trì', 'Bật/tắt chế độ bảo trì website', '2025-05-16 08:07:15', '2025-05-16 08:07:15');
+(7, 'favicon_path', '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico', 'appearance', 'file', 'Favicon', 'Đường dẫn đến file favicon', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
+(8, 'currency', 'VND', 'shop', 'select', 'Đơn vị tiền tệ', 'Đơn vị tiền tệ sử dụng trên website', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
+(9, 'shipping_fee', '30000', 'shop', 'number', 'Phí vận chuyển', 'Phí vận chuyển mặc định', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
+(10, 'tax_rate', '10', 'shop', 'number', 'Thuế VAT (%)', 'Tỷ lệ thuế VAT áp dụng', '2025-05-16 08:07:15', '2025-05-24 08:51:42'),
+(11, 'maintenance_mode', '0', 'system', 'boolean', 'Chế độ bảo trì', 'Bật/tắt chế độ bảo trì website', '2025-05-16 08:07:15', '2025-05-24 08:51:42');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
@@ -582,29 +442,17 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `user`
+-- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`id_User`, `name`, `email`, `password`, `phone`, `address`, `role`, `verification_code`, `verified`, `reset_token`, `reset_token_expiry`, `created_at`, `updated_at`, `hide`) VALUES
-(1, 'Nguyễn Văn A', 'a@example.com', '123456', '0900000001', 'Hà Nội', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(2, 'Trần Thị B', 'b@example.com', '123456', '0900000002', 'Hồ Chí Minh', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(3, 'Lê Văn C', 'c@example.com', '123456', '0900000003', 'Đà Nẵng', 'admin', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(4, 'Phạm Thị D', 'd@example.com', '123456', '0900000004', 'Cần Thơ', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(5, 'Hoàng Văn E', 'e@example.com', '123456', '0900000005', 'Hải Phòng', 'user', NULL, 0, NULL, NULL, '2025-05-01 14:25:49', '2025-05-01 14:25:49', 0),
-(6, 'Tran Thanh Liem', 'liem@', '123', '123', '123', 'user', '820775', 0, NULL, NULL, '2025-04-15 21:59:36', '2025-05-23 13:17:57', NULL),
-(7, 'Nguyen Van A', 'ss@example.com', 'pass123', '0912345678', 'Hanoi', 'user', NULL, 0, NULL, NULL, '2025-04-16 08:00:00', '2025-05-02 22:01:25', NULL),
-(8, 'Le Thi B', 'bbb@example.com', 'abc123', '0987654321', 'HCM City', 'admin', NULL, 0, NULL, NULL, '2025-04-16 09:15:00', '2025-05-02 22:01:25', NULL),
-(9, 'Pham Van C', 'cccc@example.com', 'qwerty', '0909090909', 'Da Nang', 'user', NULL, 0, NULL, NULL, '2025-04-16 10:30:00', '2025-05-02 22:01:25', NULL),
-(11, 'Quân123', 'MinhQuan@gmail.com', '$2y$10$L1Ijz52tsez3DxElruen9eyeDsmElX3r0N/YhPHN5OpeRmtdlC87G', '0785054954', NULL, 'user', '', 1, NULL, NULL, '2025-05-17 21:21:43', '2025-05-21 14:30:05', NULL),
-(12, 'Quân', 'nguyentranminhquan02062005@gmail.com', '$2y$10$OvTenCZ/vJpojJuy6S0fzuB15no5MRZDNBQtpNs7ZTpc6dSxeAEOS', '0783318539', NULL, 'user', '31546', 1, NULL, NULL, '2025-05-17 21:36:53', '2025-05-19 17:38:12', NULL),
-(13, 'Quânnguyen', 'nguyentranminhquan.dl2018@gmail.com', '$2y$10$TNGTMn5mJbZGg6dWoIbr3uQRgjSRjT4BylVZq3xO3.Gl4muL7eSAC', '0783318579', NULL, 'user', '65101', 1, NULL, NULL, '2025-05-17 21:46:42', '2025-05-24 01:43:20', NULL),
-(14, 'Thanh Liêm', 'tranthanhliemvvt@gmail.com', '$2y$10$oLzYH2zQSSkwgD5zx5D5IeMHDQXzLndevfVkyzSo3WgoqfrlaCLJa', '1234567890', NULL, 'user', '40485', 1, NULL, NULL, '2025-05-19 17:00:10', '2025-05-19 22:02:09', NULL),
-(15, 'Thảo Nhi', 'test1234php@gmail.com', '$2y$10$YLATvAIB7EjlDrNYImIOhuIly.t24uAci6HRZiEr8rFL2bxhMHPUy', '0783318569', NULL, 'user', '24462', 1, '70349a919912b561340f53c3770daa23e6ed3520984031ecb81a03ca128591cb', '2025-05-23 21:35:57', '2025-05-23 20:34:50', '2025-05-24 01:35:57', NULL);
+(1, 'Phạm Nhựt Huy', 'nhuthuyhk9@gmail.com', 'Huy123@gmail.com', '1234567890', 'Thành Phố Hồ Chí Minh', 'admin', 'NULL', 0, NULL, NULL, '2025-05-24 14:55:14', '2025-05-24 14:55:14', NULL),
+(16, 'Phan Văn Huy', 'huy@gmail.com', 'NhutHuy@123', '1234567811', 'Tiền Giang', 'admin', NULL, 0, NULL, NULL, '2025-05-24 16:09:35', '2025-05-24 16:09:35', 0);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `user_address`
+-- Table structure for table `user_address`
 --
 
 CREATE TABLE `user_address` (
@@ -622,24 +470,10 @@ CREATE TABLE `user_address` (
   `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `user_address`
---
-
-INSERT INTO `user_address` (`id`, `id_User`, `address_name`, `receiver_name`, `phone`, `street_address`, `province`, `district`, `ward`, `is_default`, `created_at`, `updated_at`) VALUES
-(1, 11, 'Nhà Liêm', 'Thanh Liêm', '0785054969', '4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng', 'TP. Hồ Chí Minh', 'Quận 2', 'Phường Bình Trưng Đông', 1, '2025-05-21 08:56:16', NULL),
-(2, 6, 'Nhà Liêm', 'Thanh Liêm', '1234567890', '4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng', 'Hà Nội', 'Quận Hoàn Kiếm', 'Phường Hàng Bồ', 1, '2025-05-21 10:13:36', '2025-05-21 18:15:44'),
-(3, 6, 'dsgfs', 'sdfds', '0783318569', 'sdfadsdf', 'Hà Nội', 'Quận Hoàn Kiếm', 'Phường Hàng Bồ', 0, '2025-05-21 12:35:12', '2025-05-21 18:15:44'),
-(4, 1, 'quân', 'hihi', '849032890', 'ádfasfasfadsfsqr4eyrew', 'TP. Hồ Chí Minh', 'Quận 2', 'Phường Bình Trưng Đông', 1, '2025-05-21 13:25:43', NULL),
-(5, 2, 'Nhà Liêm', 'dgdfgd', '0785054969', 'ưerwerw', 'TP. Hồ Chí Minh', 'Quận 2', 'Phường Thảo Điền', 1, '2025-05-23 16:07:23', NULL),
-(6, 13, 'quân', 'sdfds', '0785054969', '4/4/4/4 Tô Hà Lan, phường 6, Lâm Đồng', 'TP. Hồ Chí Minh', 'Quận 2', 'Phường Thảo Điền', 0, '2025-05-23 20:45:03', NULL),
-(7, 13, 'Địa chỉ giao hàng', 'Thanh Liêm', '0785054969', 'undefined', 'Hà Nội', 'Quận Hoàn Kiếm', 'Phường Hàng Bạc', 0, '2025-05-23 21:31:00', NULL),
-(8, 13, 'Địa chỉ giao hàng', 'Thảo NHi', '0783318539', 'undefined', 'Đà Nẵng', 'Quận Thanh Khê', 'Phường Hòa Khê', 0, '2025-05-23 21:33:50', NULL);
-
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `visits`
+-- Table structure for table `visits`
 --
 
 CREATE TABLE `visits` (
@@ -649,33 +483,17 @@ CREATE TABLE `visits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `visits`
---
-
-INSERT INTO `visits` (`id`, `ip_address`, `visited_at`) VALUES
-(1, '', '2025-05-02 21:14:27'),
-(2, '::1', '2025-05-02 21:17:50'),
-(3, '127.0.0.1', '2025-05-02 21:22:12'),
-(4, '127.0.0.1', '2025-05-02 21:30:24'),
-(5, '::1', '2025-05-18 01:25:07'),
-(6, '::1', '2025-05-19 14:58:59'),
-(7, '::1', '2025-05-22 01:05:48'),
-(8, '::1', '2025-05-23 09:46:18'),
-(9, '::1', '2025-05-23 15:17:37'),
-(10, '::1', '2025-05-24 12:10:43');
-
---
--- Chỉ mục cho các bảng đã đổ
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `banners`
+-- Indexes for table `banners`
 --
 ALTER TABLE `banners`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `cart`
+-- Indexes for table `cart`
 --
 ALTER TABLE `cart`
   ADD PRIMARY KEY (`id`),
@@ -683,44 +501,44 @@ ALTER TABLE `cart`
   ADD KEY `idx_cart_product` (`id_Product`);
 
 --
--- Chỉ mục cho bảng `category`
+-- Indexes for table `category`
 --
 ALTER TABLE `category`
   ADD PRIMARY KEY (`id_Category`);
 
 --
--- Chỉ mục cho bảng `footer_payment_methods`
+-- Indexes for table `footer_payment_methods`
 --
 ALTER TABLE `footer_payment_methods`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `footer_policies`
+-- Indexes for table `footer_policies`
 --
 ALTER TABLE `footer_policies`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `footer_social_media`
+-- Indexes for table `footer_social_media`
 --
 ALTER TABLE `footer_social_media`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `home_sections`
+-- Indexes for table `home_sections`
 --
 ALTER TABLE `home_sections`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `home_section_items`
+-- Indexes for table `home_section_items`
 --
 ALTER TABLE `home_section_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `section_id` (`section_id`);
 
 --
--- Chỉ mục cho bảng `order`
+-- Indexes for table `order`
 --
 ALTER TABLE `order`
   ADD PRIMARY KEY (`id_Order`),
@@ -728,7 +546,7 @@ ALTER TABLE `order`
   ADD KEY `order_shipping_address_fk` (`shipping_address_id`);
 
 --
--- Chỉ mục cho bảng `order_detail`
+-- Indexes for table `order_detail`
 --
 ALTER TABLE `order_detail`
   ADD PRIMARY KEY (`id_Order`,`id_Product`,`size`),
@@ -736,14 +554,14 @@ ALTER TABLE `order_detail`
   ADD KEY `idx_order_detail_product` (`id_Product`);
 
 --
--- Chỉ mục cho bảng `product`
+-- Indexes for table `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id_product`),
   ADD KEY `idx_product_category` (`id_Category`);
 
 --
--- Chỉ mục cho bảng `review`
+-- Indexes for table `review`
 --
 ALTER TABLE `review`
   ADD PRIMARY KEY (`id`),
@@ -751,14 +569,14 @@ ALTER TABLE `review`
   ADD KEY `idx_review_product` (`id_Product`);
 
 --
--- Chỉ mục cho bảng `settings`
+-- Indexes for table `settings`
 --
 ALTER TABLE `settings`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `setting_key` (`setting_key`);
 
 --
--- Chỉ mục cho bảng `user`
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id_User`),
@@ -766,158 +584,158 @@ ALTER TABLE `user`
   ADD KEY `idx_user_email` (`email`);
 
 --
--- Chỉ mục cho bảng `user_address`
+-- Indexes for table `user_address`
 --
 ALTER TABLE `user_address`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_User` (`id_User`);
 
 --
--- Chỉ mục cho bảng `visits`
+-- Indexes for table `visits`
 --
 ALTER TABLE `visits`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `banners`
+-- AUTO_INCREMENT for table `banners`
 --
 ALTER TABLE `banners`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT cho bảng `cart`
+-- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
--- AUTO_INCREMENT cho bảng `category`
+-- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `id_Category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_Category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- AUTO_INCREMENT cho bảng `footer_payment_methods`
+-- AUTO_INCREMENT for table `footer_payment_methods`
 --
 ALTER TABLE `footer_payment_methods`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT cho bảng `footer_policies`
+-- AUTO_INCREMENT for table `footer_policies`
 --
 ALTER TABLE `footer_policies`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
--- AUTO_INCREMENT cho bảng `footer_social_media`
+-- AUTO_INCREMENT for table `footer_social_media`
 --
 ALTER TABLE `footer_social_media`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT cho bảng `home_sections`
+-- AUTO_INCREMENT for table `home_sections`
 --
 ALTER TABLE `home_sections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
--- AUTO_INCREMENT cho bảng `home_section_items`
+-- AUTO_INCREMENT for table `home_section_items`
 --
 ALTER TABLE `home_section_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
--- AUTO_INCREMENT cho bảng `order`
+-- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
   MODIFY `id_Order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
--- AUTO_INCREMENT cho bảng `product`
+-- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
--- AUTO_INCREMENT cho bảng `review`
+-- AUTO_INCREMENT for table `review`
 --
 ALTER TABLE `review`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT cho bảng `settings`
+-- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT cho bảng `user`
+-- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
--- AUTO_INCREMENT cho bảng `user_address`
+-- AUTO_INCREMENT for table `user_address`
 --
 ALTER TABLE `user_address`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT cho bảng `visits`
+-- AUTO_INCREMENT for table `visits`
 --
 ALTER TABLE `visits`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- Constraints for dumped tables
 --
 
 --
--- Các ràng buộc cho bảng `cart`
+-- Constraints for table `cart`
 --
 ALTER TABLE `cart`
   ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
   ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 
 --
--- Các ràng buộc cho bảng `home_section_items`
+-- Constraints for table `home_section_items`
 --
 ALTER TABLE `home_section_items`
   ADD CONSTRAINT `home_section_items_ibfk_1` FOREIGN KEY (`section_id`) REFERENCES `home_sections` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `order`
+-- Constraints for table `order`
 --
 ALTER TABLE `order`
   ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
   ADD CONSTRAINT `order_shipping_address_fk` FOREIGN KEY (`shipping_address_id`) REFERENCES `user_address` (`id`) ON DELETE SET NULL;
 
 --
--- Các ràng buộc cho bảng `order_detail`
+-- Constraints for table `order_detail`
 --
 ALTER TABLE `order_detail`
   ADD CONSTRAINT `order_detail_ibfk_1` FOREIGN KEY (`id_Order`) REFERENCES `order` (`id_Order`),
   ADD CONSTRAINT `order_detail_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 
 --
--- Các ràng buộc cho bảng `product`
+-- Constraints for table `product`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`id_Category`) REFERENCES `category` (`id_Category`);
 
 --
--- Các ràng buộc cho bảng `review`
+-- Constraints for table `review`
 --
 ALTER TABLE `review`
   ADD CONSTRAINT `review_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`),
   ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`id_Product`) REFERENCES `product` (`id_product`);
 
 --
--- Các ràng buộc cho bảng `user_address`
+-- Constraints for table `user_address`
 --
 ALTER TABLE `user_address`
   ADD CONSTRAINT `user_address_ibfk_1` FOREIGN KEY (`id_User`) REFERENCES `user` (`id_User`) ON DELETE CASCADE;
