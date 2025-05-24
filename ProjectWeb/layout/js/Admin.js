@@ -830,12 +830,25 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('detailPolicyWarranty').src = row.getAttribute('data-policy_warranty') || '';
             document.getElementById('detailDesc').textContent = decodeURIComponent(escape(atob(row.getAttribute('data-description')))) || '';
             document.getElementById('detailImage').src = row.getAttribute('data-main_image') || '';
+            
             // Gallery ảnh phụ
             const gallery = document.getElementById('detailGallery');
             gallery.innerHTML = '';
-            const imgs = (row.getAttribute('data-img') || '').split(',');
-            imgs.forEach(src => {
-                if (src.trim()) {
+            
+            // Thêm ảnh chính vào gallery
+            const mainImg = document.createElement('img');
+            mainImg.src = row.getAttribute('data-main_image');
+            mainImg.className = 'rounded border';
+            mainImg.style.height = '50px';
+            mainImg.style.width = '50px';
+            mainImg.style.objectFit = 'cover';
+            mainImg.style.marginRight = '6px';
+            gallery.appendChild(mainImg);
+
+            // Thêm các ảnh phụ
+            const additionalImgs = row.getAttribute('data-img').split(',');
+            additionalImgs.forEach(src => {
+                if (src && src.trim()) {
                     const img = document.createElement('img');
                     img.src = src.trim();
                     img.className = 'rounded border';
@@ -846,6 +859,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     gallery.appendChild(img);
                 }
             });
+
             // Hiện modal
             var modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
             modal.show();

@@ -272,20 +272,20 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
     </div>
 </div>
 
-<!-- Modal Thêm/Sửa Danh mục -->
-<div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+<!-- Modal Thêm danh mục -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="categoryModalTitle">Thêm danh mục mới</h5>
+                <h5 class="modal-title" id="addCategoryModalLabel">Thêm danh mục mới</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form id="categoryForm">
-                    <input type="hidden" id="categoryId">
+            <form id="addCategoryForm" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+                <div class="modal-body">
                     <div class="mb-3">
-                        <label for="categoryName" class="form-label">Tên danh mục</label>
-                        <input type="text" class="form-control" id="categoryName" required>
+                        <label for="categoryName" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="categoryName" name="name" required>
+                        <div class="invalid-feedback">Vui lòng nhập tên danh mục</div>
                     </div>
                     <div class="mb-3">
                         <label for="categoryImage" class="form-label">Ảnh danh mục</label>
@@ -304,19 +304,19 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                             <button type="button" class="btn btn-secondary btn-sm" id="cancelCropBtn">Hủy</button>
                         </div>
                         <div id="categoryBannerPreview" class="mt-2"></div>
-                        <input type="hidden" id="croppedBannerData">
-                        <input type="hidden" id="currentBannerPath">
+                        <input type="hidden" id="croppedBannerData" name="banner_data">
+                        <input type="hidden" id="currentBannerPath" name="current_banner_path">
                     </div>
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="categoryHide">
+                        <input type="checkbox" class="form-check-input" id="categoryHide" name="hide">
                         <label class="form-check-label" for="categoryHide">Ẩn danh mục</label>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary" id="saveCategory">Lưu</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="saveCategory">Lưu</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -1380,6 +1380,20 @@ if (deleteSelectedBtn && deleteConfirmModal && confirmDeleteBtn && deleteConfirm
                 console.error('Error restoring category:', error);
                 showErrorAlert('Lỗi kết nối khi khôi phục danh mục. Chi tiết: ' + error.message);
             });
+    }
+
+    function validateForm() {
+        const categoryName = document.getElementById('categoryName');
+        let isValid = true;
+
+        if (!categoryName.value.trim()) {
+            categoryName.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            categoryName.classList.remove('is-invalid');
+        }
+
+        return isValid;
     }
 });
 </script>

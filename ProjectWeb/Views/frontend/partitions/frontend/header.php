@@ -252,6 +252,8 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 right: 1rem;
             }
         }
+
+        
     </style>
 
     <script>
@@ -412,105 +414,45 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 <!-- User actions -->
                 <div class="col-md-4 col-lg-3 col-4">
                     <div class="d-flex justify-content-end">
-                        <!-- User account -->
-                      <!-- User account -->
-                      <!-- User account -->
-                       <div class="header-action me-3 position-relative d-flex align-items-center">
+                        <div class="header-actions d-flex align-items-center">
                             <?php if ($isLoggedIn): ?>
-                                <!-- Hiển thị thông tin người dùng đã đăng nhập -->
-                                <a href="index.php?controller=account" class="action-link d-flex align-items-center">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span class="d-none d-lg-inline-block"><?= $_SESSION['user']['name'] ?></span>
-                                </a>
-                                <a href="index.php?controller=login&action=logout" class="action-link small ms-2 d-flex align-items-center">
-                                    <i class="fas fa-sign-out-alt me-1"></i>
-                                    <span>Đăng Xuất</span>
-                                </a>
+                                <!-- User Account -->
+                                <div class="header-action me-3">
+                                    <a href="index.php?controller=account" class="action-link d-flex flex-column align-items-center">
+                                        <i class="fas fa-user"></i>
+                                        <span class="action-text"><?= $_SESSION['user']['name'] ?></span>
+                                    </a>
+                                </div>
+                                <!-- Logout -->
+                                <div class="header-action me-3">
+                                    <a href="index.php?controller=login&action=logout" class="action-link d-flex flex-column align-items-center">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span class="action-text">Đăng Xuất</span>
+                                    </a>
+                                </div>
                             <?php else: ?>
-                                <!-- Hiển thị link đơn giản cho người dùng chưa đăng nhập -->
-                                <a href="index.php?controller=login" class="action-link d-flex align-items-center">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span class="d-none d-lg-inline-block">Tài khoản</span>
-                                </a>
+                                <!-- Login Link -->
+                                <div class="header-action me-3">
+                                    <a href="index.php?controller=login" class="action-link d-flex flex-column align-items-center">
+                                        <i class="fas fa-user"></i>
+                                        <span class="action-text">Tài khoản</span>
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($isLoggedIn): ?>
+                                <!-- Shopping Cart -->
+                                <div class="header-action">
+                                    <a href="index.php?controller=cart&action=index" class="action-link d-flex flex-column align-items-center cart-toggle" id="cartBtn">
+                                        <div class="cart-icon-wrapper position-relative">
+                                            <i class="fas fa-shopping-cart"></i>
+                                            <span class="cart-count position-absolute" id="item-count"><?= $totalItems ?? 0; ?></span>
+                                        </div>
+                                        <span class="action-text">Giỏ hàng</span>
+                                    </a>
+                                </div>
                             <?php endif; ?>
                         </div>
-
-                        <?php if ($isLoggedIn): ?>
-                            <div class="header-action position-relative dropdown">
-                                <a href="index.php?controller=cart&action=index" class="action-link cart-toggle" id="cartBtn">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    <span class="cart-count" id="item-count"><?= $totalItems ?? 0; ?></span>
-                                    <span class="d-none d-lg-inline-block">Giỏ hàng</span>
-                                </a>
-                                <!-- Dropdown content... -->
-                            </div>
-                        <?php endif; ?>
-                        <!-- Shopping cart -->
-                        <!-- <div class="header-action position-relative dropdown">
-                              <a href="index.php?controller=cart&action=index" class="action-link cart-toggle" id="cartBtn">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    <span class="cart-count" id="item-count"><?=$totalItems; ?></span>
-                                    <span class="d-none d-lg-inline-block">Giỏ hàng</span>
-                             </a>
-                            <div class="cart-dropdown dropdown-menu">
-                                <div class="dropdown-content">
-                                    <div class="dropdown-header">
-                                        <h5>Giỏ hàng</h5>
-                                    </div>
-                                    <div class="dropdown-body">
-                                        <?php if (empty($cart)): ?>
-                                            <div class="empty-cart text-center">
-                                                <img src="/ProjectWeb/upload/img/Header/no-cart.png" alt="Empty Cart" class="img-fluid mb-3">
-                                                <p>Hiện chưa có sản phẩm</p>
-                                            </div>
-                                        <?php else: ?>
-                                            <div class="cart-items">
-                                                <?php 
-                                                $cartTotal = 0;
-                                                foreach ($cart as $item):
-                                                    $productId = $item['product_id'];
-                                                    // Tạo một đối tượng ProductModel để lấy thông tin sản phẩm
-                                                    require_once('Models/ProductModel.php');
-                                                    $productModel = new ProductModel();
-                                                    $product = $productModel->findById($productId);
-                                                    if ($product):
-                                                        $subtotal = $product['current_price'] * $item['quantity'];
-                                                        $cartTotal += $subtotal;
-                                                ?>
-                                                    <div class="cart-item d-flex mb-2">
-                                                        <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $product['main_image'] ?>" alt="<?= $product['name'] ?>" class="cart-item-image me-2" style="width: 50px; height: 50px; object-fit: cover;">
-                                                        <div class="cart-item-details flex-grow-1">
-                                                            <div class="cart-item-title"><?= $product['name'] ?></div>
-                                                            <div class="d-flex justify-content-between">
-                                                                <span class="cart-item-quantity"><?= $item['quantity'] ?> x</span>
-                                                                <span class="cart-item-price"><?= number_format($product['current_price'], 0, ',', '.') ?>₫</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                <?php 
-                                                    endif;
-                                                endforeach; 
-                                                ?>
-                                            </div>
-                                            <div class="cart-summary">
-                                                <div class="d-flex justify-content-between mb-2">
-                                                    <span>Tạm tính:</span>
-                                                    <span><?= number_format($cartTotal, 0, ',', '.') ?>₫</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between fw-bold mb-3">
-                                                    <span>Tổng tiền:</span>
-                                                    <span><?= number_format($cartTotal, 0, ',', '.') ?>₫</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between">
-                                                    <a href="index.php?controller=cart&action=index" class="btn btn-outline-dark">Giỏ hàng</a>
-                                                    <a href="index.php?controller=order" class="btn btn-dark">Thanh toán</a>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             </div>
