@@ -7,6 +7,11 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     header('Location: ?controller=Adminlogin');
     exit;
 }
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
+
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +20,10 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo cáo thống kê - SR Store</title>
+    <title>Báo cáo thống kê</title>
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <!-- Bootstrap CSS -->
     <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -388,39 +396,6 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             </div>
                         </div>
                     </div>
-
-                    <!-- Additional Stats Card -->
-                    <div class="col-12 mb-4">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Thông tin chi tiết sản phẩm</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover table-bordered">
-                                        <thead class="table-primary">
-                                            <tr>
-                                                <th class="text-center">Sản phẩm</th>
-                                                <th class="text-center">Tỷ lệ hoàn trả</th>
-                                                <th class="text-center">Đánh giá TB</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($topProducts as $product): ?>
-                                                <tr>
-                                                    <td><?= htmlspecialchars($product['product_name']) ?></td>
-                                                    <td class="text-center"><?= $product['return_rate'] ?>%</td>
-                                                    <td class="text-center">
-                                                        <?= number_format($product['avg_rating'], 1) ?>/5
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -432,6 +407,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chart.js plugin for chart labels -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
     <!-- Chart.js plugin for image export -->
     <script>
         // Cấu hình Chart.js để hỗ trợ xuất hình ảnh tốt hơn
@@ -496,7 +472,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 // Vẽ biểu đồ đường - doanh thu
                 renderRevenueChart(chartData);
 
-                // Vẽ biểu đồ tròn - trạng thái đơn hàng
+                // Vẽ biểu đồ trạng thái đơn hàng
                 renderOrderStatusChart(pieChartData);
 
                 // Thêm sự kiện lắng nghe khi các biểu đồ đã hiển thị
@@ -627,34 +603,23 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 
                 const ctx = document.getElementById('orderStatusChart').getContext('2d');
 
-                // Đảm bảo biểu đồ tròn hiển thị đầy đủ 100%
-                // Tính tổng số lượng đơn hàng
-                const totalOrders = pieChartData.values.reduce((a, b) => a + b, 0);
-
-                // Tạo nhãn hiển thị cùng với phần trăm
-                const enhancedLabels = pieChartData.labels.map((label, idx) => {
-                    const percent = ((pieChartData.values[idx] / totalOrders) * 100).toFixed(1);
-                    return `${label} (${percent}%)`;
-                });
-
-                // Dữ liệu biểu đồ tròn
-                const orderPieData = {
-                    labels: enhancedLabels,
-                    datasets: [{
-                        data: pieChartData.values,
-                        backgroundColor: pieChartData.colors,
-                        borderWidth: 2,
-                        borderColor: '#fff',
-                        hoverBorderWidth: 3,
-                        hoverBorderColor: '#fff',
-                        hoverOffset: 10
-                    }]
-                };
-
                 // Tạo biểu đồ mới với cấu hình cải tiến
                 orderPieChart = new Chart(ctx, {
                     type: 'pie',
-                    data: orderPieData,
+                    data: {
+                        labels: pieChartData.labels.map((label, i) => 
+                            `${label} (${pieChartData.percentages[i]}%)`
+                        ),
+                        datasets: [{
+                            data: pieChartData.values,
+                            backgroundColor: pieChartData.colors,
+                            borderWidth: 2,
+                            borderColor: '#fff',
+                            hoverBorderWidth: 3,
+                            hoverBorderColor: '#fff',
+                            hoverOffset: 10
+                        }]
+                    },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
@@ -662,10 +627,9 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             legend: {
                                 position: 'right',
                                 labels: {
-                                    boxWidth: 15,
-                                    padding: 15,
+                                    padding: 20,
                                     font: {
-                                        size: 13,
+                                        size: 14,
                                         weight: 'bold'
                                     },
                                     color: '#333'
@@ -674,53 +638,61 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             datalabels: {
                                 color: '#fff',
                                 font: {
-                                    weight: 'bold',
-                                    size: 14
+                                    size: 16,
+                                    weight: 'bold'
                                 },
                                 formatter: (value, context) => {
-                                    return ((value / totalOrders) * 100).toFixed(1) + '%';
+                                    return pieChartData.percentages[context.dataIndex] + '%';
                                 },
                                 textAlign: 'center',
-                                textStrokeColor: '#000',
-                                textStrokeWidth: 1,
-                                padding: 6,
-                                display: function (context) {
-                                    // Chỉ hiển thị nhãn cho các mục có giá trị đủ lớn
-                                    return context.dataset.data[context.dataIndex] / totalOrders > 0.03;
-                                }
+                                textStrokeColor: 'rgba(0, 0, 0, 0.5)',
+                                textStrokeWidth: 2,
+                                padding: {
+                                    top: 5,
+                                    bottom: 5
+                                },
+                                display: true
                             },
                             tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
                                 titleFont: {
-                                    size: 14
+                                    size: 16
                                 },
                                 bodyFont: {
-                                    size: 13
+                                    size: 14
                                 },
-                                padding: 10,
+                                padding: 15,
                                 cornerRadius: 5,
-                                displayColors: false
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const percentage = pieChartData.percentages[context.dataIndex];
+                                        return ` ${context.label}: ${value} đơn (${percentage}%)`;
+                                    }
+                                }
                             }
                         },
                         layout: {
                             padding: 20
                         },
-                        radius: '90%',
                         animation: {
                             animateRotate: true,
                             animateScale: true,
-                            duration: 500
+                            duration: 1000
                         }
                     },
                     plugins: [ChartDataLabels]
                 });
-
-                // Khi chart vẽ xong, ghi log để debug
-                orderPieChart.options.animation.onComplete = function () {
-                    console.log('Biểu đồ trạng thái đơn hàng đã render xong');
-                };
             }
-
+            // Trong index.php, thêm hàm applyStyle
+            function applyStyle(worksheet, row, col, style) {
+                const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+                if (!worksheet[cellRef]) {
+                    worksheet[cellRef] = { v: "", t: "s" };
+                }
+                worksheet[cellRef].s = style;
+            }
             // Hàm xuất bảng sang Excel với định dạng chuyên nghiệp
             function exportTableToExcel(tableID, filename = '') {
                 // Tạo một workbook mới
@@ -740,247 +712,123 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 // Tạo worksheet từ dữ liệu công ty
                 const ws = XLSX.utils.aoa_to_sheet(companyInfo);
 
-                // Thiết lập thuộc tính merge cells cho phần header
-                ws['!merges'] = [
-                    { s: { r: 0, c: 0 }, e: { r: 0, c: 6 } }, // Mở rộng merge cells
-                    { s: { r: 1, c: 0 }, e: { r: 1, c: 6 } },
-                    { s: { r: 2, c: 0 }, e: { r: 2, c: 6 } }
-                ];
-
-                // Chuyển đổi dữ liệu từ bảng HTML sang sheet
-                const tableData = XLSX.utils.table_to_sheet(table);
-                const tableRange = XLSX.utils.decode_range(tableData['!ref']);
-
-                // Copy dữ liệu từ bảng vào sheet chính (sau header)
-                for (let R = 0; R <= tableRange.e.r; ++R) {
-                    for (let C = 0; C <= tableRange.e.c; ++C) {
-                        const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-                        if (tableData[cellAddress]) {
-                            const newCellAddress = XLSX.utils.encode_cell({ r: R + companyInfo.length, c: C });
-                            ws[newCellAddress] = tableData[cellAddress];
-                        }
-                    }
-                }
-
-                // Thêm thông tin footer
-                const totalRows = companyInfo.length + tableRange.e.r + 1;
-                const footerStart = totalRows + 1;
-
-                const today = new Date();
-                ws[XLSX.utils.encode_cell({ r: footerStart, c: 0 })] = { v: `Ngày tạo: ${formatDate(today)}`, t: 's' };
-                ws[XLSX.utils.encode_cell({ r: footerStart + 1, c: 0 })] = { v: "Người tạo: Admin", t: 's' };
-                ws[XLSX.utils.encode_cell({ r: footerStart + 3, c: 0 })] = { v: "© RS Store - Hệ thống thời trang", t: 's' };
-
-                // Thêm merge cell cho footer
-                if (!ws['!merges']) ws['!merges'] = [];
-                ws['!merges'].push({ s: { r: footerStart, c: 0 }, e: { r: footerStart, c: 6 } });
-                ws['!merges'].push({ s: { r: footerStart + 1, c: 0 }, e: { r: footerStart + 1, c: 6 } });
-                ws['!merges'].push({ s: { r: footerStart + 3, c: 0 }, e: { r: footerStart + 3, c: 6 } });
-
-                // Cập nhật phạm vi sheet
-                const maxCol = Math.max(6, tableRange.e.c);
-                ws['!ref'] = XLSX.utils.encode_range({
-                    s: { r: 0, c: 0 },
-                    e: { r: footerStart + 3, c: maxCol }
+                // Lấy dữ liệu từ bảng HTML
+                const tableRows = Array.from(table.querySelectorAll('tr'));
+                const tableData = tableRows.map(row => {
+                    return Array.from(row.cells).map(cell => cell.innerText);
                 });
+
+                // Copy dữ liệu từ bảng vào worksheet (sau header)
+                tableData.forEach((row, rowIndex) => {
+                    row.forEach((cellValue, colIndex) => {
+                        const cellAddress = XLSX.utils.encode_cell({ 
+                            r: rowIndex + companyInfo.length, 
+                            c: colIndex 
+                        });
+                        ws[cellAddress] = { v: cellValue, t: 's' };
+                    });
+                });
+
+                // Thiết lập phạm vi dữ liệu
+                const range = {
+                    s: { r: 0, c: 0 },
+                    e: { 
+                        r: tableData.length + companyInfo.length - 1,
+                        c: tableData[0].length - 1
+                    }
+                };
+                ws['!ref'] = XLSX.utils.encode_range(range);
+
+                // Thiết lập merge cells cho header
+                ws['!merges'] = [
+                    { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
+                    { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } },
+                    { s: { r: 2, c: 0 }, e: { r: 2, c: 4 } }
+                ];
 
                 // Thiết lập độ rộng cột
                 ws['!cols'] = [
-                    { width: 20 }, // Cột 1 - Ngày
-                    { width: 15 }, // Cột 2 - Số đơn hàng
-                    { width: 18 }, // Cột 3 - Doanh thu
-                    { width: 18 }, // Cột 4 - Chi phí
-                    { width: 18 }, // Cột 5 - Lợi nhuận
-                    { width: 15 }, // Cột 6 (nếu có)
-                    { width: 15 }  // Cột 7 (nếu có)
+                    { width: 20 }, // Ngày
+                    { width: 15 }, // Số đơn hàng
+                    { width: 18 }, // Doanh thu
+                    { width: 18 }, // Chi phí
+                    { width: 18 }  // Lợi nhuận
                 ];
 
-                // Thiết lập chiều cao hàng
-                ws['!rows'] = [];
-                for (let i = 0; i <= footerStart + 3; i++) {
-                    ws['!rows'][i] = { hpt: 25 }; // Chiều cao 25 points
-                }
-
-                // Định nghĩa styles nâng cao
-                const headerStyle = {
-                    font: { bold: true, color: { rgb: "FFFFFF" }, sz: 14 },
-                    fill: { patternType: "solid", fgColor: { rgb: "4472C4" } },
-                    alignment: { horizontal: "center", vertical: "center", wrapText: true },
-                    border: {
-                        top: { style: "thick", color: { rgb: "000000" } },
-                        right: { style: "thick", color: { rgb: "000000" } },
-                        bottom: { style: "thick", color: { rgb: "000000" } },
-                        left: { style: "thick", color: { rgb: "000000" } }
-                    }
-                };
-
-                const titleStyle = {
-                    font: { bold: true, sz: 18, color: { rgb: "1F497D" } },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    fill: { patternType: "solid", fgColor: { rgb: "DCE6F1" } },
-                    border: {
-                        top: { style: "medium", color: { rgb: "000000" } },
-                        right: { style: "medium", color: { rgb: "000000" } },
-                        bottom: { style: "medium", color: { rgb: "000000" } },
-                        left: { style: "medium", color: { rgb: "000000" } }
-                    }
-                };
-
-                const subtitleStyle = {
-                    font: { bold: true, sz: 16, color: { rgb: "1F497D" } },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    fill: { patternType: "solid", fgColor: { rgb: "DCE6F1" } },
-                    border: {
-                        top: { style: "medium", color: { rgb: "000000" } },
-                        right: { style: "medium", color: { rgb: "000000" } },
-                        bottom: { style: "medium", color: { rgb: "000000" } },
-                        left: { style: "medium", color: { rgb: "000000" } }
-                    }
-                };
-
-                const dateRangeStyle = {
-                    font: { bold: true, sz: 14 },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    fill: { patternType: "solid", fgColor: { rgb: "DCE6F1" } },
-                    border: {
-                        top: { style: "medium", color: { rgb: "000000" } },
-                        right: { style: "medium", color: { rgb: "000000" } },
-                        bottom: { style: "medium", color: { rgb: "000000" } },
-                        left: { style: "medium", color: { rgb: "000000" } }
-                    }
-                };
-
-                const normalStyle = {
-                    font: { sz: 11 },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    border: {
-                        top: { style: "medium", color: { rgb: "000000" } },
-                        right: { style: "medium", color: { rgb: "000000" } },
-                        bottom: { style: "medium", color: { rgb: "000000" } },
-                        left: { style: "medium", color: { rgb: "000000" } }
-                    }
-                };
-
-                const totalRowStyle = {
-                    font: { bold: true, sz: 12 },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    border: {
-                        top: { style: "thick", color: { rgb: "000000" } },
-                        right: { style: "thick", color: { rgb: "000000" } },
-                        bottom: { style: "thick", color: { rgb: "000000" } },
-                        left: { style: "thick", color: { rgb: "000000" } }
+                // Định nghĩa styles
+                const styles = {
+                    header: {
+                        font: { bold: true, color: { rgb: "FFFFFF" } },
+                        fill: { fgColor: { rgb: "4472C4" }, patternType: "solid" },
+                        alignment: { horizontal: "center", vertical: "center" },
+                        border: {
+                            top: { style: "medium", color: { rgb: "000000" } },
+                            right: { style: "medium", color: { rgb: "000000" } },
+                            bottom: { style: "medium", color: { rgb: "000000" } },
+                            left: { style: "medium", color: { rgb: "000000" } }
+                        }
                     },
-                    fill: { patternType: "solid", fgColor: { rgb: "F2F2F2" } }
-                };
-
-                const footerStyle = {
-                    font: { italic: true, sz: 10, color: { rgb: "595959" } },
-                    alignment: { horizontal: "center", vertical: "center" }
-                };
-
-                const copyrightStyle = {
-                    font: { bold: true, italic: true, sz: 12, color: { rgb: "1F497D" } },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    fill: { patternType: "solid", fgColor: { rgb: "DCE6F1" } },
-                    border: {
-                        top: { style: "medium", color: { rgb: "000000" } },
-                        right: { style: "medium", color: { rgb: "000000" } },
-                        bottom: { style: "medium", color: { rgb: "000000" } },
-                        left: { style: "medium", color: { rgb: "000000" } }
+                    title: {
+                        font: { bold: true, sz: 16, color: { rgb: "1F497D" } },
+                        alignment: { horizontal: "center", vertical: "center" },
+                        fill: { fgColor: { rgb: "DCE6F1" }, patternType: "solid" }
+                    },
+                    cell: {
+                        alignment: { horizontal: "center", vertical: "center" },
+                        border: {
+                            top: { style: "thin", color: { rgb: "000000" } },
+                            right: { style: "thin", color: { rgb: "000000" } },
+                            bottom: { style: "thin", color: { rgb: "000000" } },
+                            left: { style: "thin", color: { rgb: "000000" } }
+                        }
+                    },
+                    total: {
+                        font: { bold: true },
+                        fill: { fgColor: { rgb: "F2F2F2" }, patternType: "solid" },
+                        alignment: { horizontal: "center", vertical: "center" },
+                        border: {
+                            top: { style: "medium", color: { rgb: "000000" } },
+                            right: { style: "medium", color: { rgb: "000000" } },
+                            bottom: { style: "medium", color: { rgb: "000000" } },
+                            left: { style: "medium", color: { rgb: "000000" } }
+                        }
                     }
                 };
 
-                // Thiết lập style cho tiêu đề
-                applyStyle(ws, 0, 0, titleStyle);
-                applyStyle(ws, 1, 0, subtitleStyle);
-                applyStyle(ws, 2, 0, dateRangeStyle);
+                // Áp dụng style cho tiêu đề
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j <= 4; j++) {
+                        const cell = XLSX.utils.encode_cell({ r: i, c: j });
+                        if (!ws[cell]) ws[cell] = { v: "", t: "s" };
+                        ws[cell].s = styles.title;
+                    }
+                }
 
-                // Thiết lập style cho header bảng
+                // Áp dụng style cho header bảng
                 const headerRow = companyInfo.length;
-                for (let C = 0; C <= tableRange.e.c; C++) {
-                    applyStyle(ws, headerRow, C, headerStyle);
+                for (let C = 0; C < tableData[0].length; C++) {
+                    const cell = XLSX.utils.encode_cell({ r: headerRow, c: C });
+                    if (ws[cell]) ws[cell].s = styles.header;
                 }
 
-                // Thiết lập style cho nội dung bảng
-                for (let R = headerRow + 1; R < totalRows - 1; R++) {
-                    for (let C = 0; C <= tableRange.e.c; C++) {
-                        applyStyle(ws, R, C, normalStyle);
+                // Áp dụng style cho nội dung bảng
+                for (let R = headerRow + 1; R < tableData.length + companyInfo.length - 1; R++) {
+                    for (let C = 0; C < tableData[0].length; C++) {
+                        const cell = XLSX.utils.encode_cell({ r: R, c: C });
+                        if (ws[cell]) ws[cell].s = styles.cell;
                     }
                 }
 
-                // Style cho hàng tổng
-                for (let C = 0; C <= tableRange.e.c; C++) {
-                    applyStyle(ws, totalRows - 1, C, totalRowStyle);
+                // Áp dụng style cho hàng tổng cộng
+                const lastRow = tableData.length + companyInfo.length - 1;
+                for (let C = 0; C < tableData[0].length; C++) {
+                    const cell = XLSX.utils.encode_cell({ r: lastRow, c: C });
+                    if (ws[cell]) ws[cell].s = styles.total;
                 }
 
-                // Thiết lập style cho footer
-                applyStyle(ws, footerStart, 0, footerStyle);
-                applyStyle(ws, footerStart + 1, 0, footerStyle);
-                applyStyle(ws, footerStart + 3, 0, copyrightStyle);
-
-                // Format các cột số liệu (doanh thu, chi phí, lợi nhuận) thành định dạng tiền tệ
-                const moneyColumns = [2, 3, 4]; // Cột doanh thu, chi phí, lợi nhuận (0-based index)
-                for (let R = headerRow + 1; R < totalRows; R++) {
-                    for (let C of moneyColumns) {
-                        if (C <= tableRange.e.c) {
-                            const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
-                            if (ws[cellRef] && ws[cellRef].v !== undefined) {
-                                // Thêm định dạng tiền tệ
-                                if (!ws[cellRef].z) ws[cellRef].z = '#,##0.00\\ "VND"';
-                            }
-                        }
-                    }
-                }
-
-                // Đảm bảo tất cả các ô đều có style
-                for (let r = 0; r <= footerStart + 3; r++) {
-                    for (let c = 0; c <= maxCol; c++) {
-                        const cellRef = XLSX.utils.encode_cell({ r: r, c: c });
-                        if (!ws[cellRef]) {
-                            ws[cellRef] = { v: "", t: "s" };
-                        }
-
-                        if (!ws[cellRef].s) {
-                            if (r === 0) {
-                                ws[cellRef].s = titleStyle;
-                            } else if (r === 1) {
-                                ws[cellRef].s = subtitleStyle;
-                            } else if (r === 2) {
-                                ws[cellRef].s = dateRangeStyle;
-                            } else if (r === headerRow) {
-                                ws[cellRef].s = headerStyle;
-                            } else if (r === totalRows - 1) {
-                                ws[cellRef].s = totalRowStyle;
-                            } else if (r === footerStart || r === footerStart + 1) {
-                                ws[cellRef].s = footerStyle;
-                            } else if (r === footerStart + 3) {
-                                ws[cellRef].s = copyrightStyle;
-                            } else if (r > headerRow && r < totalRows - 1) {
-                                ws[cellRef].s = normalStyle;
-                            }
-                        }
-                    }
-                }
-
-                // Thêm sheet vào workbook
+                // Thêm sheet vào workbook và xuất file
                 XLSX.utils.book_append_sheet(wb, ws, "Báo cáo doanh số");
-
-                // Xuất file
                 XLSX.writeFile(wb, filename + '.xlsx');
-
-                // Hàm áp dụng style cho cell
-                function applyStyle(worksheet, row, col, style) {
-                    const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
-                    if (!worksheet[cellRef]) {
-                        worksheet[cellRef] = { v: "", t: "s" };
-                    }
-
-                    // Nếu chưa có s (style) object, tạo mới
-                    if (!worksheet[cellRef].s) worksheet[cellRef].s = {};
-
-                    // Áp dụng style
-                    Object.assign(worksheet[cellRef].s, style);
-                }
             }
 
             // Hàm định dạng ngày
@@ -1522,6 +1370,21 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             // Đóng thông báo đang xử lý
                             Swal.close();
                             
+                            // Xóa backdrop và reset modal
+                            const modalBackdrop = document.querySelector('.modal-backdrop');
+                            if (modalBackdrop) {
+                                modalBackdrop.remove();
+                            }
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                            document.body.style.paddingRight = '';
+                            
+                            // Đóng modal chart nếu đang mở
+                            const chartModal = bootstrap.Modal.getInstance(document.getElementById('chartModal'));
+                            if (chartModal) {
+                                chartModal.hide();
+                            }
+                            
                             // Hiển thị thông báo thành công
                             Swal.fire({
                                 icon: 'success',
@@ -1548,6 +1411,21 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 document.body.removeChild(container);
             }
             
+            // Xóa backdrop và reset modal
+            const modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+                modalBackdrop.remove();
+            }
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            // Đóng modal chart nếu đang mở
+            const chartModal = bootstrap.Modal.getInstance(document.getElementById('chartModal'));
+            if (chartModal) {
+                chartModal.hide();
+            }
+            
             // Đóng thông báo đang xử lý nếu đang hiển thị
             try {
                 Swal.close();
@@ -1555,7 +1433,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 console.error('Error closing Swal:', e);
             }
             
-            // Hiển thị thông báo lỗi bằng alert nếu SweetAlert2 không hoạt động
+            // Hiển thị thông báo lỗi
             try {
                 Swal.fire({
                     icon: 'error',
@@ -1564,7 +1442,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 });
             } catch (e) {
                 console.error('Error displaying Swal error message:', e);
-                showErrorAlert('Không thể tạo file PDF. Vui lòng thử lại sau.');
+                alert('Không thể tạo file PDF. Vui lòng thử lại sau.');
             }
         }
 
@@ -1672,7 +1550,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 
     <!-- Thư viện xuất Excel with Styling Support -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx-style@0.8.13/dist/xlsx-style.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
     <!-- Thư viện xuất PDF với hỗ trợ đầy đủ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Thư viện SweetAlert2 cho thông báo -->

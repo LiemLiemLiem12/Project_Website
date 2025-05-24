@@ -40,6 +40,9 @@ $storeSettings = $footerController->getStoreSettings();
 // Lấy đường dẫn logo và tên website
 $logoPath = !empty($storeSettings['logo_path']) ? $storeSettings['logo_path'] : '/Project_Website/ProjectWeb/upload/img/Header/logo.png';
 $siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 'RS Store';
+
+// Đường dẫn favicon - mặc định hoặc từ cài đặt
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -47,14 +50,17 @@ $siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($siteName) ?> - Thời trang nam chính hãng</title>
-    
+
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+
     <!-- Trong thẻ <head> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css"> <!-- Đường dẫn đến file CSS mới -->
     
-       
 </head>
 <body>
         <!-- Top promotional banner -->
@@ -83,18 +89,33 @@ $siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 
                 
                 <!-- Combined Logo, Brand Text, and Search bar for MD and UP -->
                 <div class="col-md-8 col-lg-9 d-none d-md-flex align-items-center">
-                    <a href="/ProjectWeb/index.php" class="logo me-2 d-none d-md-inline-block">
-                        <img src="<?= htmlspecialchars($logoPath) ?>" alt="<?= htmlspecialchars($siteName) ?> Logo" class="img-fluid desktop-logo-img">
-                    </a>
+                <a href="/Project_Website/ProjectWeb/index.php?controller=home&action=index" class="logo">
+                    <img src="<?= htmlspecialchars($logoPath) ?>" alt="<?= htmlspecialchars($siteName) ?> Logo" class="img-fluid desktop-logo-img">
+                </a>
                     <h1 class="rs-store-brand-text me-3 h5 mb-0 d-none d-md-inline-block"><?= htmlspecialchars($siteName) ?></h1>
                     <div class="search-container flex-grow-1">
-                        <form action="/ProjectWeb/index.php?controller=search" method="get">
-                            <input type="text" placeholder="Bạn đang tìm gì..." name="q" class="search-input">
+                        <form id="searchForm" onsubmit="return handleSearch(event)">
+                            <input type="text" placeholder="Bạn đang tìm gì..." name="q" id="searchInput" class="search-input" autocomplete="off">
+                            <div id="searchResults" class="search-results-dropdown"></div>
                             <button type="submit" class="search-button">
                                 <i class="fas fa-search"></i>
                             </button>
                         </form>
                     </div>
+                    <script>
+                        function handleSearch(event) {
+                            event.preventDefault();
+                            const searchInput = document.getElementById('searchInput');
+                            const keyword = searchInput.value.trim();
+                            
+                            if (keyword) {
+                                // Chuyển hướng đến trang tìm kiếm với keyword
+                                window.location.href = 'index.php?controller=search&q=' + encodeURIComponent(keyword);
+                            }
+                            
+                            return false;
+                        }
+                    </script>
                 </div>
                 
                 <!-- User actions -->
@@ -383,6 +404,109 @@ $siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 
                 });
             }
         });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Lấy các phần tử DOM
+    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    
+    // Biến để kiểm soát debounce
+    let searchTimeout = null;
+    
+    // Event listener cho input tìm kiếm
+    searchInput.addEventListener('input', function() {
+        // Clear timeout trước đó nếu có
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        const keyword = this.value.trim();
+        
+        // Ẩn kết quả nếu không có từ khóa
+        if (keyword.length === 0) {
+            searchResults.classList.remove('show');
+            searchResults.innerHTML = '';
+            return;
+        }
+        
+        // Hiển thị loading
+        searchResults.classList.add('show');
+        searchResults.innerHTML = '<div class="search-loading"><div class="search-loading-spinner"></div></div>';
+        
+        // Thiết lập debounce 300ms
+        searchTimeout = setTimeout(function() {
+            // Gọi API tìm kiếm
+            fetch(`index.php?controller=search&action=quick&q=${encodeURIComponent(keyword)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderSearchResults(data);
+                    } else {
+                        searchResults.innerHTML = '<div class="p-3 text-center">Không tìm thấy kết quả</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi tìm kiếm:', error);
+                    searchResults.innerHTML = '<div class="p-3 text-center">Đã xảy ra lỗi</div>';
+                });
+        }, 300);
+    });
+    
+    // Hàm hiển thị kết quả tìm kiếm
+    function renderSearchResults(data) {
+        // Kiểm tra nếu không có sản phẩm
+        if (data.products.length === 0) {
+            searchResults.innerHTML = '<div class="p-3 text-center">Không tìm thấy sản phẩm nào</div>';
+            return;
+        }
+        
+        // Tạo HTML cho các sản phẩm
+        let html = '';
+        
+        // Thêm từng sản phẩm vào kết quả
+        data.products.forEach(product => {
+            html += `
+                <a href="${product.url}" class="search-result-item">
+                    <img src="${product.image}" alt="${product.name}" class="search-result-image">
+                    <div class="search-result-info">
+                        <div class="search-result-name">${product.name}</div>
+                        <div>
+                            <span class="search-result-price">${product.price}</span>
+                            ${product.originalPrice ? `<span class="search-result-original-price">${product.originalPrice}</span>` : ''}
+                        </div>
+                    </div>
+                </a>
+            `;
+        });
+        
+        // Thêm link xem tất cả kết quả
+        html += `
+            <a href="${data.allResultsUrl}" class="search-view-all">
+                Xem tất cả kết quả
+            </a>
+        `;
+        
+        // Cập nhật nội dung dropdown
+        searchResults.innerHTML = html;
+    }
+    
+    // Đóng dropdown khi click ra ngoài
+    document.addEventListener('click', function(event) {
+        if (!searchForm.contains(event.target)) {
+            searchResults.classList.remove('show');
+        }
+    });
+    
+    // Ngăn submit form khi chưa nhập từ khóa
+    searchForm.addEventListener('submit', function(event) {
+        const keyword = searchInput.value.trim();
+        if (keyword.length === 0) {
+            event.preventDefault();
+        }
+    });
+});
     </script>
 </body>
 </html>

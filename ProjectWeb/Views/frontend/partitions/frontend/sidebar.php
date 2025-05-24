@@ -418,12 +418,25 @@
             cursor: default !important;
         }
     </style>
+    <?php
+    require_once __DIR__ . '/../../../../Controllers/FooterController.php';
 
+
+    // Khởi tạo controller để lấy dữ liệu nếu chưa được khởi tạo trước đó
+    if (!isset($storeSettings)) {
+        $footerController = new FooterController();
+        if (!isset($storeSettings)) {
+            $storeSettings = $footerController->getStoreSettings();
+        }
+       
+    }
+    ?>
     <div class="logo">
-        <h2>SR STORE</h2>
+    <h2 class="mb-2"><?= htmlspecialchars($storeSettings['site_name']) ?></h2>
     </div>
     <button class="sidebar-close d-md-none" id="sidebarCloseBtn" aria-label="Đóng menu"><span>&times;</span></button>
     <?php
+    
     // Get the current controller from URL
     $currentController = isset($_GET['controller']) ? strtolower($_GET['controller']) : 'home';
     ?>

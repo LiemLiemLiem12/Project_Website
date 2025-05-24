@@ -1,3 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title><?= $policy['title'] ?? 'Chính Sách' ?> - RSStore</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Footer.css">
+</head>
+<body>
 <div class="policy-container">
     <div class="container py-5">
         <!-- Breadcrumb -->
@@ -10,7 +26,7 @@
         
         <!-- Title -->
         <div class="policy-title text-center mb-5">
-            <h1><?= strtoupper($policy['title'] ?? 'CHÍNH SÁCH') ?></h1>
+            <h1><?= mb_strtoupper($policy['title'] ?? 'CHÍNH SÁCH', 'UTF-8') ?></h1>
             <div class="title-line mx-auto"></div>
         </div>
         
@@ -114,3 +130,13 @@
         </div>
     </div>
 </div> 
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="/Project_Website/ProjectWeb/layout/js/Header.js"></script>
+    <script src="/Project_Website/ProjectWeb/layout/js/Footer.js"></script>
+</body>
+</html>

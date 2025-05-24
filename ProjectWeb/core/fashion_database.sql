@@ -106,7 +106,6 @@ INSERT INTO `category` (`id_Category`, `name`, `image`, `link`, `meta`, `hide`, 
 (13, 'KJKJKJK', '1747813467_1_1_160_ao_thun_486-13_61b0f05164cd46859fb972f67dfc2d33_1024x1024.webp', NULL, NULL, 0, 6, 'banner_1747813477.jpg'),
 (14, 'KO`', '1747817176_1747666069_ThanhToanSpay.webp', NULL, NULL, 0, 7, 'banner_1747817176.jpg');
 
--- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `footer_payment_methods`
@@ -116,7 +115,7 @@ CREATE TABLE `footer_payment_methods` (
   `id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL COMMENT 'Tên phương thức thanh toán',
   `image` varchar(255) NOT NULL COMMENT 'Tên file ảnh logo',
-  `link` varchar(255) NOT NULL COMMENT 'Đường dẫn khi click vào phương thức (nếu có)',
+  `qr_image` varchar(255) COMMENT 'Tên file ảnh QR code của phương thức',
   `order` int(11) NOT NULL DEFAULT 0 COMMENT 'Thứ tự hiển thị',
   `hide` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0: Hiển thị, 1: Ẩn',
   `meta` text DEFAULT NULL COMMENT 'Thông tin bổ sung',
@@ -124,16 +123,7 @@ CREATE TABLE `footer_payment_methods` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `footer_payment_methods`
---
 
-INSERT INTO `footer_payment_methods` (`id`, `title`, `image`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`) VALUES
-(7, 'SHOPPEEEEEEEEEEEEEEEEEEEEEEE', '1747638484_Đăng ký thông tin.png', 'https://www.google.com/', 2, 0, '13213', '2025-05-19 05:22:11', '2025-05-19 07:08:04'),
-(9, 'SP MẮC NHẤT', '1747637035_Đăng ký thông tin.png', 'https://www.google.com/', 4, 0, 'ffgdgf', '2025-05-19 06:43:55', '2025-05-19 06:43:55'),
-(10, 'TIKI', '1747666069_ThanhToanSpay.webp', 'http://localhost/phpmyadmin/index.php?route=/sql&pos=0&db=fashion_database&table=home_sections', 5, 0, 'htyht', '2025-05-19 14:47:49', '2025-05-19 14:47:49');
-
--- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `footer_policies`
@@ -156,10 +146,6 @@ CREATE TABLE `footer_policies` (
 --
 -- Đang đổ dữ liệu cho bảng `footer_policies`
 --
-
-INSERT INTO `footer_policies` (`id`, `title`, `image`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`, `image2`, `image3`) VALUES
-(19, 'Chính Sách Sinh Nhật', '1747813663_sinhnhat.webp', '/Project_Website/ProjectWeb/index.php?controller=policy&action=show&id=19', 1, 0, 'Ưu đãi sinh nhật 5 năm ', '2025-05-21 07:47:43', '2025-05-21 07:47:43', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -181,12 +167,6 @@ CREATE TABLE `footer_social_media` (
 --
 -- Đang đổ dữ liệu cho bảng `footer_social_media`
 --
-
-INSERT INTO `footer_social_media` (`id`, `title`, `icon`, `link`, `order`, `hide`, `meta`, `created_at`, `updated_at`) VALUES
-(7, 'Tik Tok', 'fab fa-tiktok', 'https://www.google.com/', 7, 0, '123', '2025-05-19 04:43:49', '2025-05-19 07:34:48'),
-(8, 'FB', 'fab fa-facebook', 'https://www.google.com/', 8, 0, 'hehehe', '2025-05-19 07:01:23', '2025-05-19 07:01:23'),
-(9, 'IG', 'fab fa-twitter', 'http://localhost/phpmyadmin/index.php?route=/sql&pos=0&db=fashion_database&table=home_sections', 9, 0, 'hththth', '2025-05-19 14:46:32', '2025-05-19 14:46:41');
-
 -- --------------------------------------------------------
 
 --
@@ -272,16 +252,6 @@ CREATE TABLE `order` (
 --
 
 INSERT INTO `order` (`id_Order`, `order_number`, `total_amount`, `payment_by`, `shipping_method`, `status`, `payment_status`, `transaction_id`, `payment_bank`, `payment_response`, `created_at`, `updated_at`, `id_User`, `shipping_address_id`, `note`, `shipping_fee`, `hide`) VALUES
-(1, NULL, 315000.00, NULL, NULL, 'pending', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
-(2, NULL, 400000.00, NULL, NULL, 'completed', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 2, NULL, NULL, NULL, 0),
-(3, NULL, 595000.00, NULL, NULL, 'cancelled', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
-(4, NULL, 427500.00, NULL, NULL, 'cancelled', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 4, NULL, NULL, NULL, 0),
-(5, NULL, 225000.00, NULL, NULL, 'cancelled', 'pending', NULL, NULL, NULL, '2025-05-01 14:25:49', '2025-05-13 02:51:10', 5, NULL, NULL, NULL, 0),
-(6, NULL, 12.00, NULL, NULL, 'completed', 'pending', NULL, NULL, NULL, '2025-05-02 18:56:30', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
-(7, NULL, 1000000.00, NULL, NULL, 'shipping', 'pending', NULL, NULL, NULL, '2025-05-02 13:05:02', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
-(8, NULL, 1000000.00, NULL, NULL, 'pending', 'pending', NULL, NULL, NULL, '2025-02-09 13:05:23', '2025-05-13 02:51:10', 3, NULL, NULL, NULL, 0),
-(9, NULL, 10000000.00, NULL, NULL, 'completed', 'pending', NULL, NULL, NULL, '2025-04-16 13:36:31', '2025-05-13 02:51:10', 5, NULL, NULL, NULL, 0),
-(10, NULL, 10000000.00, NULL, NULL, 'completed', 'pending', NULL, NULL, NULL, '2025-04-17 21:57:49', '2025-05-13 02:51:10', 1, NULL, NULL, NULL, 0),
 (14, 'SR202505178641', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-17 19:14:49', '2025-05-18 00:14:49', 6, NULL, 'Minh Quân - 0783318569 - liem@ - Đà Lạt, 79101, 791, 79 | Xin chàoo', 35000.00, 0),
 (15, 'SR202505176086', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-17 19:32:28', '2025-05-18 00:32:28', 6, NULL, 'Minh Quân - 0785054969 - liem@ - Đà Lạt, 79001, 790, 79 | Xin Chàooo', 35000.00, 0),
 (16, 'SR202505176903', 331100.00, 'cod', 'ghn', 'pending', 'pending', NULL, NULL, NULL, '2025-05-17 21:06:44', '2025-05-18 02:06:44', 6, NULL, 'Minh Quân - 1234567890 - liem@ - 123, 79001, 790, 79 | dfsaf', 35000.00, 0),
@@ -380,7 +350,8 @@ CREATE TABLE `product` (
   `L` int(11) NOT NULL DEFAULT 0,
   `XL` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ALTER TABLE `product` 
+ADD COLUMN `import_price` decimal(10,2) DEFAULT NULL AFTER `original_price`;
 --
 -- Đang đổ dữ liệu cho bảng `product`
 --

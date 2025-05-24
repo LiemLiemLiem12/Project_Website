@@ -29,24 +29,23 @@ class AdminHomeController {
     }
     
     // QUẢN LÝ SECTIONS
-    
     public function addSection() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
-                $sectionData = [
-                    'title' => $_POST['title'] ?? '',
-                    'section_type' => $_POST['section_type'] ?? 'product',
-                    'display_style' => $_POST['display_style'] ?? 'grid',
-                    'product_count' => $_POST['product_count'] ?? 4,
-                    'hide' => isset($_POST['status']) ? 0 : 1, // Bật status = hide=0, ẩn status = hide=1
-                    'link' => $_POST['link'] ?? '',
-                    'meta' => $_POST['meta'] ?? ''
-                ];
-                
-                // Validate data
-                if (empty($sectionData['title'])) {
-                    throw new Exception("Tiêu đề vùng hiển thị không được để trống");
+                // Kiểm tra đầy đủ các trường bắt buộc
+                if (empty($_POST['title']) || empty($_POST['section_type']) || empty($_POST['product_count'])) {
+                    throw new Exception("Vui lòng điền đầy đủ thông tin bắt buộc");
                 }
+                
+                $sectionData = [
+                    'title' => $_POST['title'],
+                    'section_type' => $_POST['section_type'] ?? 'product',
+                    'display_style' => 'grid', // Luôn đặt là grid (lưới)
+                    'product_count' => $_POST['product_count'] ?? 4,
+                    'hide' => 0, // Luôn hiển thị (không ẩn)
+                    'link' => '#', // Giá trị mặc định
+                    'meta' => '' // Không có metadata
+                ];
                 
                 $sectionId = $this->model->createSection($sectionData);
                 
@@ -58,12 +57,8 @@ class AdminHomeController {
             } catch (Exception $e) {
                 $this->sendJsonResponse(['success' => false, 'message' => $e->getMessage()]);
             }
-        } else {
-            // Redirect to index if not POST request
-            header('Location: index.php?controller=adminhome');
         }
     }
-    
     public function editSection() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
@@ -73,20 +68,20 @@ class AdminHomeController {
                     throw new Exception("ID không hợp lệ");
                 }
                 
-                $sectionData = [
-                    'title' => $_POST['title'] ?? '',
-                    'section_type' => $_POST['section_type'] ?? 'product',
-                    'display_style' => $_POST['display_style'] ?? 'grid',
-                    'product_count' => $_POST['product_count'] ?? 4,
-                    'hide' => isset($_POST['status']) ? 0 : 1, // Hiển thị = 0, Ẩn = 1
-                    'link' => $_POST['link'] ?? '',
-                    'meta' => $_POST['meta'] ?? ''
-                ];
-                
-                // Validate data
-                if (empty($sectionData['title'])) {
-                    throw new Exception("Tiêu đề vùng hiển thị không được để trống");
+                // Validate dữ liệu đầu vào
+                if (empty($_POST['title']) || empty($_POST['section_type']) || empty($_POST['product_count'])) {
+                    throw new Exception("Vui lòng điền đầy đủ thông tin bắt buộc");
                 }
+                
+                $sectionData = [
+                    'title' => $_POST['title'],
+                    'section_type' => $_POST['section_type'],
+                    'display_style' => 'grid', // Luôn đặt là grid (lưới)
+                    'product_count' => $_POST['product_count'],
+                    'hide' => 0, // Luôn hiển thị
+                    'link' => '#', // Giá trị mặc định
+                    'meta' => '' // Không có metadata
+                ];
                 
                 $success = $this->model->updateSection($id, $sectionData);
                 
@@ -103,18 +98,18 @@ class AdminHomeController {
             $id = $_GET['id'] ?? 0;
             
             if (!$id) {
-                header('Location: index.php?controller=adminhome');
+                $this->sendJsonResponse(['success' => false, 'message' => 'ID không hợp lệ']);
                 return;
             }
             
             $section = $this->model->getSectionById($id);
             
             if (!$section) {
-                header('Location: index.php?controller=adminhome');
+                $this->sendJsonResponse(['success' => false, 'message' => 'Không tìm thấy section']);
                 return;
             }
             
-            $this->sendJsonResponse($section);
+            $this->sendJsonResponse(['success' => true, 'section' => $section]);
         }
     }
     
@@ -584,7 +579,8 @@ class AdminHomeController {
                 $policyData = [
                     'title' => $_POST['title'] ?? '',
                     'status' => isset($_POST['status']), // Status là checkbox
-                    'meta' => $_POST['meta'] ?? ''
+                    'meta' => $_POST['meta'] ?? '',
+                    'hide' => isset($_POST['hide']) ? 0 : 1 // Hiển thị = 0, Ẩn = 1
                 ];
                 
                 // Validate dữ liệu
@@ -1018,12 +1014,11 @@ class AdminHomeController {
             // Dữ liệu payment method
             $paymentMethodData = [
                 'title' => $_POST['title'],
-                'link' => $_POST['link'] ?? '#',
                 'status' => isset($_POST['status']), // Status là checkbox
                 'meta' => $_POST['meta'] ?? ''
             ];
             
-            // Xử lý upload hình ảnh
+            // Xử lý upload hình ảnh logo
             $targetDir = $this->footerUploadPath;
             
             // Đảm bảo thư mục tồn tại
@@ -1051,12 +1046,38 @@ class AdminHomeController {
                 throw new Exception("Không thể upload file");
             }
             
+            // Xử lý upload ảnh QR nếu có
+            $qrFileName = null;
+            if (!empty($_FILES['qr_image_upload']['name'])) {
+                $qrFileName = time() . '_qr_' . basename($_FILES['qr_image_upload']['name']);
+                $qrTargetFile = $targetDir . $qrFileName;
+                $qrImageFileType = strtolower(pathinfo($qrTargetFile, PATHINFO_EXTENSION));
+                
+                // Kiểm tra định dạng file
+                if (!in_array($qrImageFileType, $allowedFormats)) {
+                    throw new Exception("Chỉ chấp nhận file hình ảnh QR (JPG, JPEG, PNG, GIF, WEBP)");
+                }
+                
+                // Kiểm tra kích thước file (max 1MB)
+                if ($_FILES['qr_image_upload']['size'] > 1 * 1024 * 1024) {
+                    throw new Exception("Kích thước file QR không được vượt quá 1MB");
+                }
+                
+                // Upload file QR
+                if (!move_uploaded_file($_FILES['qr_image_upload']['tmp_name'], $qrTargetFile)) {
+                    throw new Exception("Không thể upload file QR");
+                }
+            }
+            
             // Thêm mới payment method
-            $result = $this->model->createPaymentMethod($paymentMethodData, $fileName);
+            $result = $this->model->createPaymentMethod($paymentMethodData, $fileName, $qrFileName);
             
             if (!$result) {
                 // Xóa file đã upload nếu thêm mới thất bại
-                unlink($targetFile);
+                @unlink($targetFile);
+                if ($qrFileName && file_exists($targetDir . $qrFileName)) {
+                    @unlink($targetDir . $qrFileName);
+                }
                 throw new Exception("Không thể thêm mới phương thức thanh toán");
             }
             
@@ -1093,16 +1114,17 @@ class AdminHomeController {
                 // Dữ liệu payment method
                 $paymentMethodData = [
                     'title' => $_POST['title'] ?? '',
-                    'link' => $_POST['link'] ?? '#',
                     'status' => isset($_POST['status']), // Status là checkbox
                     'meta' => $_POST['meta'] ?? ''
                 ];
                 
+                $targetDir = $this->footerUploadPath;
                 $imagePath = null;
+                $qrImagePath = null;
+                $qrChanged = false;
                 
-                // Xử lý upload hình ảnh mới nếu có
+                // Xử lý upload hình ảnh logo mới nếu có
                 if (!empty($_FILES['image_upload']['name'])) {
-                    $targetDir = $this->footerUploadPath;
                     if (!file_exists($targetDir)) {
                         mkdir($targetDir, 0777, true);
                     }
@@ -1120,44 +1142,73 @@ class AdminHomeController {
                         throw new Exception("Không thể upload hình ảnh");
                     }
                     $imagePath = $fileName;
+                    
+                    // Xóa file ảnh cũ
                     if (!empty($paymentMethod['image'])) {
-                        $oldFile = $targetDir . $paymentMethod['image'];
-                        if (file_exists($oldFile)) {
-                            @unlink($oldFile);
-                        }
-                    }
-                } else if (!empty($_POST['image']) && strpos($_POST['image'], 'data:image/') === 0) {
-                    $imageData = $_POST['image'];
-                    $imageInfo = $this->getImageInfoFromBase64($imageData);
-                    $extension = $imageInfo['extension'];
-                    $targetDir = $this->footerUploadPath;
-                    if (!file_exists($targetDir)) {
-                        mkdir($targetDir, 0777, true);
-                    }
-                    $fileName = time() . '_cropped.' . $extension;
-                    $targetFile = $targetDir . $fileName;
-                    $decoded = $this->decodeBase64Image($imageData);
-                    if (!file_put_contents($targetFile, $decoded)) {
-                        throw new Exception("Không thể lưu ảnh đã cắt");
-                    }
-                    $imagePath = $fileName;
-                    if (!empty($paymentMethod['image'])) {
-                        $oldFile = $targetDir . $paymentMethod['image'];
+                        $oldFilePath = str_replace('upload/img/Footer/', '', $paymentMethod['image']);
+                        $oldFile = $targetDir . $oldFilePath;
                         if (file_exists($oldFile)) {
                             @unlink($oldFile);
                         }
                     }
                 }
                 
+                // Xử lý upload hình ảnh QR mới nếu có
+                if (!empty($_FILES['qr_image_upload']['name'])) {
+                    if (!file_exists($targetDir)) {
+                        mkdir($targetDir, 0777, true);
+                    }
+                    $qrFileName = time() . '_qr_' . basename($_FILES['qr_image_upload']['name']);
+                    $qrTargetFile = $targetDir . $qrFileName;
+                    $qrImageFileType = strtolower(pathinfo($qrTargetFile, PATHINFO_EXTENSION));
+                    $allowedFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    if (!in_array($qrImageFileType, $allowedFormats)) {
+                        throw new Exception("Chỉ chấp nhận file hình ảnh QR (JPG, JPEG, PNG, GIF, WEBP)");
+                    }
+                    if ($_FILES['qr_image_upload']['size'] > 1 * 1024 * 1024) {
+                        throw new Exception("Kích thước file QR không được vượt quá 1MB");
+                    }
+                    if (!move_uploaded_file($_FILES['qr_image_upload']['tmp_name'], $qrTargetFile)) {
+                        throw new Exception("Không thể upload hình ảnh QR");
+                    }
+                    $qrImagePath = $qrFileName;
+                    $qrChanged = true;
+                    
+                    // Xóa file QR cũ
+                    if (!empty($paymentMethod['qr_image'])) {
+                        $oldQrFilePath = str_replace('upload/img/Footer/', '', $paymentMethod['qr_image']);
+                        $oldQrFile = $targetDir . $oldQrFilePath;
+                        if (file_exists($oldQrFile)) {
+                            @unlink($oldQrFile);
+                        }
+                    }
+                } else if (isset($_POST['remove_qr_image']) && $_POST['remove_qr_image'] === '1') {
+                    // Nếu người dùng đã chọn xóa ảnh QR
+                    $qrImagePath = '';
+                    $qrChanged = true;
+                    
+                    // Xóa file QR cũ
+                    if (!empty($paymentMethod['qr_image'])) {
+                        $oldQrFilePath = str_replace('upload/img/Footer/', '', $paymentMethod['qr_image']);
+                        $oldQrFile = $targetDir . $oldQrFilePath;
+                        if (file_exists($oldQrFile)) {
+                            @unlink($oldQrFile);
+                        }
+                    }
+                }
+                
                 // Cập nhật payment method
-                $result = $this->model->updatePaymentMethod($id, $paymentMethodData, $imagePath);
+                $result = $this->model->updatePaymentMethod($id, $paymentMethodData, $imagePath, $qrChanged ? $qrImagePath : null);
                 
                 if ($result) {
                     $this->sendJsonResponse(['success' => true, 'message' => 'Cập nhật phương thức thanh toán thành công']);
                 } else {
-                    // Xóa file mới nếu cập nhật thất bại
-                    if ($imagePath) {
-                        unlink($targetDir . $imagePath);
+                    // Xóa các file mới nếu cập nhật thất bại
+                    if ($imagePath && file_exists($targetDir . $imagePath)) {
+                        @unlink($targetDir . $imagePath);
+                    }
+                    if ($qrImagePath && file_exists($targetDir . $qrImagePath)) {
+                        @unlink($targetDir . $qrImagePath);
                     }
                     throw new Exception("Không thể cập nhật phương thức thanh toán");
                 }
@@ -1204,11 +1255,23 @@ class AdminHomeController {
                 throw new Exception("Không thể xóa phương thức thanh toán");
             }
             
-            // Xóa file ảnh
+            // Xóa file ảnh logo
             $targetDir = $this->footerUploadPath;
-            $oldFile = $targetDir . $paymentMethod['image'];
+            if (!empty($paymentMethod['image'])) {
+                $oldFilePath = str_replace('upload/img/Footer/', '', $paymentMethod['image']);
+                $oldFile = $targetDir . $oldFilePath;
             if (file_exists($oldFile)) {
-                unlink($oldFile);
+                    @unlink($oldFile);
+                }
+            }
+            
+            // Xóa file ảnh QR
+            if (!empty($paymentMethod['qr_image'])) {
+                $oldQrFilePath = str_replace('upload/img/Footer/', '', $paymentMethod['qr_image']);
+                $oldQrFile = $targetDir . $oldQrFilePath;
+                if (file_exists($oldQrFile)) {
+                    @unlink($oldQrFile);
+                }
             }
             
             $this->sendJsonResponse([

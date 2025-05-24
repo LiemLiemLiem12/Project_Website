@@ -7,6 +7,11 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     header('Location: ?controller=Adminlogin');
     exit;
 }
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
+
 ?>
 
 <!DOCTYPE html>
@@ -16,6 +21,9 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Trang chủ - SR Store</title>
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <!-- Bootstrap CSS -->
     <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -713,16 +721,26 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                                         <div class="section-card-body">
                                             <div class="row">
                                                 <div class="col-md-3">
-                                                    <img src="<?= $paymentMethod['image'] ?>" class="img-fluid rounded"
-                                                        alt="<?= $paymentMethod['title'] ?>">
-                                                </div>
-                                                <div class="col-md-9">
-                                                    <div class="mb-2">
-                                                        <strong>Link:</strong> <a href="<?= $paymentMethod['link'] ?>"
-                                                            target="_blank"><?= $paymentMethod['link'] ?></a>
+                                                    <strong>Logo:</strong>
+                                                    <div class="mt-2">
+                                                        <img src="<?= $paymentMethod['image'] ?>" class="img-fluid rounded"
+                                                            alt="<?= $paymentMethod['title'] ?>">
                                                     </div>
-                                                    <div>
-                                                        <strong>Mô tả:</strong>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <strong>Mã QR:</strong>
+                                                    <div class="mt-2">
+                                                        <?php if (!empty($paymentMethod['qr_image'])): ?>
+                                                            <img src="<?= $paymentMethod['qr_image'] ?>" class="img-fluid rounded" style="max-height: 150px;"
+                                                                alt="QR Code - <?= $paymentMethod['title'] ?>">
+                                                        <?php else: ?>
+                                                            <span class="text-muted">Chưa có mã QR</span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <strong>Mô tả:</strong>
+                                                    <div class="mt-2">
                                                         <?= nl2br($paymentMethod['meta'] ?? 'Không có mô tả') ?>
                                                     </div>
                                                 </div>
@@ -740,66 +758,47 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     </div>
 
     <!-- Add Section Modal -->
-    <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel"
-        aria-hidden="true">
+    <!-- Modal Thêm Section -->
+    <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSectionModalLabel">Thêm mới vùng hiển thị</h5>
+                    <h5 class="modal-title" id="addSectionModalLabel">Thêm vùng hiển thị mới</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addSectionForm">
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="title" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="section_type" class="form-label">Loại vùng</label>
-                            <select class="form-select" id="section_type" name="section_type">
-                                <option value="product">Sản phẩm</option>
-                                <option value="category">Danh mục</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="display_style" class="form-label">Kiểu hiển thị</label>
-                            <select class="form-select" id="display_style" name="display_style">
-                                <option value="grid">Lưới</option>
-                                <option value="carousel">Trượt ngang</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="product_count" class="form-label">Số lượng hiển thị</label>
-                            <input type="number" class="form-control" id="product_count" name="product_count" value="4"
-                                min="1" max="20">
-                        </div>
-                        <div class="mb-3">
-                            <label for="link" class="form-label">Đường dẫn (Link)</label>
-                            <input type="text" class="form-control" id="link" name="link" value="#">
-                        </div>
-                        <div class="mb-3">
-                            <label for="meta" class="form-label">Metadata</label>
-                            <textarea class="form-control" id="meta" name="meta" rows="2"></textarea>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="status" name="status" checked>
-                            <label class="form-check-label" for="status">
-                                Hiển thị
-                            </label>
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Thêm mới</button>
-                        </div>
-                    </form>
+                <form id="addSectionForm" novalidate>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="section_type" class="form-label">Loại vùng <span class="text-danger">*</span></label>
+                        <select class="form-select" id="section_type" name="section_type" required>
+                            <option value="product">Sản phẩm</option>
+                            <option value="category">Danh mục</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="product_count" class="form-label">Số lượng hiển thị <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="product_count" name="product_count" min="1" max="12" value="4" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Kiểu hiển thị</label>
+                        <input type="text" class="form-control" value="Lưới" disabled>
+                    </div>
+                </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="addSectionBtn">Thêm mới</button>
                 </div>
             </div>
         </div>
-    </div>
+    </div>                                                     
 
-    <!-- Edit Section Modal -->
-    <div class="modal fade" id="editSectionModal" tabindex="-1" aria-labelledby="editSectionModalLabel"
-        aria-hidden="true">
+     <!-- Edit Section Modal -->
+    <div class="modal fade" id="editSectionModal" tabindex="-1" aria-labelledby="editSectionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -810,58 +809,33 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                     <form id="editSectionForm">
                         <input type="hidden" id="edit_id" name="id">
                         <div class="mb-3">
-                            <label for="edit_title" class="form-label">Tiêu đề <span
-                                    class="text-danger">*</span></label>
+                            <label for="edit_title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="edit_title" name="title" required>
                         </div>
                         <div class="mb-3">
-                            <label for="edit_section_type" class="form-label">Loại vùng</label>
-                            <select class="form-select" id="edit_section_type" name="section_type">
+                            <label for="edit_section_type" class="form-label">Loại vùng <span class="text-danger">*</span></label>
+                            <select class="form-select" id="edit_section_type" name="section_type" required>
                                 <option value="product">Sản phẩm</option>
                                 <option value="category">Danh mục</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="edit_display_style" class="form-label">Kiểu hiển thị</label>
-                            <select class="form-select" id="edit_display_style" name="display_style">
-                                <option value="grid">Lưới</option>
-                                <option value="carousel">Trượt ngang</option>
-                            </select>
+                            <label for="edit_product_count" class="form-label">Số lượng hiển thị <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="edit_product_count" name="product_count" min="1" max="12" value="4" required>
                         </div>
                         <div class="mb-3">
-                            <label for="edit_product_count" class="form-label">Số lượng hiển thị</label>
-                            <input type="number" class="form-control" id="edit_product_count" name="product_count"
-                                min="1" max="20">
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_link" class="form-label">Đường dẫn (Link)</label>
-                            <input type="text" class="form-control" id="edit_link" name="link">
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_meta" class="form-label">Metadata</label>
-                            <textarea class="form-control" id="edit_meta" name="meta" rows="2"></textarea>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="edit_hide" name="hide">
-                            <label class="form-check-label" for="edit_hide">
-                                Ẩn khỏi trang chủ (đặt vào thùng rác)
-                            </label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="edit_status" name="status">
-                            <label class="form-check-label" for="edit_status">
-                                Hiển thị
-                            </label>
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            <label class="form-label">Kiểu hiển thị</label>
+                            <input type="text" class="form-control" value="Lưới" disabled>
                         </div>
                     </form>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="editSectionBtn">Lưu thay đổi</button>
+                </div>
             </div>
         </div>
-    </div>
+    </div>                                                      
 
     <!-- Section Items Modal -->
     <div class="modal fade" id="sectionItemsModal" tabindex="-1" aria-hidden="true">
@@ -1177,7 +1151,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 
     <!-- Add Policy Modal -->
     <div class="modal fade" id="addPolicyModal" tabindex="-1" aria-labelledby="addPolicyModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addPolicyModalLabel">Thêm mới chính sách</h5>
@@ -1186,87 +1160,62 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 <div class="modal-body">
                     <form id="addPolicyForm" enctype="multipart/form-data" method="post" action="javascript:void(0);">
                         <div class="mb-3">
-                            <label for="policy_title" class="form-label">Tiêu đề <span
-                                    class="text-danger">*</span></label>
+                            <label for="policy_title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="policy_title" name="title" required>
                         </div>
                         <div class="mb-3">
                             <label for="policy_image" class="form-label">Ảnh (tùy chọn)</label>
-                            <input type="file" class="form-control" id="policy_image" name="image_upload"
-                                accept="image/*">
+                            <input type="file" class="form-control" id="policy_image" name="image_upload" accept="image/*">
                             <div class="form-text">Hình ảnh đại diện cho chính sách (nếu có), tối đa 1MB</div>
                         </div>
-
-                        <div id="policy_cropperContainer" style="display: none;">
-                            <div class="img-container mb-3">
-                                <img id="policyImageToCrop" src="">
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-secondary" data-method="zoom"
-                                        data-option="0.1">
-                                        <i class="fas fa-search-plus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary" data-method="zoom"
-                                        data-option="-0.1">
-                                        <i class="fas fa-search-minus"></i>
-                                    </button>
-                                </div>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-secondary" data-method="rotate"
-                                        data-option="-90">
-                                        <i class="fas fa-undo"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary" data-method="rotate"
-                                        data-option="90">
-                                        <i class="fas fa-redo"></i>
-                                    </button>
-                                </div>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-secondary" data-method="reset">
-                                        <i class="fas fa-sync-alt"></i> Reset
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="text-center mb-3">
-                                <div class="preview-container mx-auto">
-                                    <div class="policy-preview"></div>
-                                </div>
-                            </div>
-
-                            <div class="text-center mb-3">
-                                <button type="button" class="btn btn-primary crop-btn" id="cropPolicyBtn">
-                                    <i class="fas fa-crop-alt"></i> Cắt và sử dụng
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" id="cancelPolicyCropBtn">
-                                    <i class="fas fa-times"></i> Hủy
-                                </button>
-                            </div>
-
-                            <!-- Hidden input to store cropped image data -->
-                            <input type="hidden" name="image" id="policyCroppedImageData">
-                        </div>
-
                         <div class="mb-3">
+                            <label for="policy_meta" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="policy_meta" name="meta" rows="2"></textarea>
+                            </div>
+                        <input type="hidden" name="status" value="1">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Thêm mới</button>
+                                </div>
+                    </form>
+                                </div>
+                                </div>
+                                </div>
+                            </div>
 
-                            <div class="mb-3">
-                                <label for="policy_meta" class="form-label">Mô tả</label>
-                                <textarea class="form-control" id="policy_meta" name="meta" rows="2"></textarea>
+    <!-- Edit Policy Modal -->
+    <div class="modal fade" id="editPolicyModal" tabindex="-1" aria-labelledby="editPolicyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPolicyModalLabel">Chỉnh sửa chính sách</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="policy_status" name="status"
-                                    checked>
-                                <label class="form-check-label" for="policy_status">
-                                    Hiển thị
-                                </label>
+                <div class="modal-body">
+                    <form id="editPolicyForm" enctype="multipart/form-data" method="post" action="javascript:void(0);">
+                        <input type="hidden" id="edit_policy_id" name="id">
+                        <div class="mb-3">
+                            <label for="edit_policy_title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_policy_title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_policy_image" class="form-label">Ảnh (tùy chọn)</label>
+                            <input type="file" class="form-control" id="edit_policy_image" name="image_upload" accept="image/*">
+                            <div class="form-text">Hình ảnh đại diện cho chính sách (nếu có), tối đa 1MB</div>
+                            <div class="mt-2">
+                                <img id="currentPolicyImage" src="" alt="Preview" style="max-width: 100%; max-height: 200px; display: none;">
                             </div>
+                            </div>
+                        <div class="mb-3">
+                            <label for="edit_policy_meta" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="edit_policy_meta" name="meta" rows="2"></textarea>
+                        </div>
+                        <input type="hidden" name="status" value="1">
                             <div class="text-end">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="submit" class="btn btn-primary">Thêm mới</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                             </div>
                     </form>
-                </div>
             </div>
         </div>
     </div>
@@ -1406,7 +1355,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             <input type="text" class="form-control" id="payment_method_title" name="title" required>
                         </div>
                         <div class="mb-3" id="payment_method_image_container">
-                            <label for="payment_method_image" class="form-label">Ảnh <span
+                            <label for="payment_method_image" class="form-label">Ảnh logo <span
                                     class="text-danger">*</span></label>
                             <input type="file" class="form-control" id="payment_method_image" name="image_upload"
                                 accept="image/*" required>
@@ -1464,10 +1413,13 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             <input type="hidden" name="image" id="paymentMethodCroppedImageData">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="payment_method_link" class="form-label">Đường dẫn (Link)</label>
-                            <input type="url" class="form-control" id="payment_method_link" name="link" value="#">
+                        <div class="mb-3" id="payment_method_qr_image_container">
+                            <label for="payment_method_qr_image" class="form-label">Ảnh QR</label>
+                            <input type="file" class="form-control" id="payment_method_qr_image" name="qr_image_upload"
+                                accept="image/*">
+                            <div class="form-text">Hình ảnh QR code cho phương thức thanh toán (nếu có), tối đa 1MB</div>
                         </div>
+
                         <div class="mb-3">
                             <label for="payment_method_meta" class="form-label">Mô tả</label>
                             <textarea class="form-control" id="payment_method_meta" name="meta" rows="2"></textarea>
@@ -1509,10 +1461,10 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                                 required>
                         </div>
                         <div class="mb-3" id="edit_payment_method_image_container">
-                            <label for="edit_payment_method_image" class="form-label">Ảnh</label>
+                            <label for="edit_payment_method_image" class="form-label">Ảnh logo</label>
                             <input type="file" class="form-control" id="edit_payment_method_image" name="image_upload"
                                 accept="image/*">
-                            <div class="form-text">Để trống nếu không muốn thay đổi ảnh hiện tại, tối đa 1MB</div>
+                            <div class="form-text">Để trống nếu không muốn thay đổi ảnh logo hiện tại, tối đa 1MB</div>
                             <div class="mt-2">
                                 <img id="editPaymentMethodPreview" src="" alt="Preview"
                                     style="max-width: 100%; max-height: 200px; display: none;">
@@ -1571,10 +1523,23 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             <input type="hidden" name="image" id="editPaymentMethodCroppedImageData">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="edit_payment_method_link" class="form-label">Đường dẫn (Link)</label>
-                            <input type="url" class="form-control" id="edit_payment_method_link" name="link">
+                        <div class="mb-3" id="edit_payment_method_qr_image_container">
+                            <label for="edit_payment_method_qr_image" class="form-label">Ảnh QR</label>
+                            <input type="file" class="form-control" id="edit_payment_method_qr_image" name="qr_image_upload"
+                                accept="image/*">
+                            <div class="form-text">Để trống nếu không muốn thay đổi ảnh QR hiện tại, tối đa 1MB</div>
+                            <div class="mt-2">
+                                <img id="editPaymentMethodQrPreview" src="" alt="QR Preview"
+                                    style="max-width: 100%; max-height: 200px; display: none;">
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="remove_qr_image" name="remove_qr_image" value="1">
+                                <label class="form-check-label" for="remove_qr_image">
+                                    Xóa ảnh QR
+                                </label>
+                            </div>
                         </div>
+
                         <div class="mb-3">
                             <label for="edit_payment_method_meta" class="form-label">Mô tả</label>
                             <textarea class="form-control" id="edit_payment_method_meta" name="meta"
@@ -1612,6 +1577,9 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Add this in the head section or before closing body tag -->
+    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -1812,136 +1780,104 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 });
             }
 
-            // Thêm section mới
-            $("#addSectionForm").on("submit", function (e) {
-                e.preventDefault();
-                console.log("Add section form submitted");
+            // Xử lý khi nhấn nút Thêm mới trong modal thêm section
+            $('#addSectionBtn').on('click', function() {
+                // Kiểm tra form validation
+                const form = $('#addSectionForm')[0];
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
 
-                const formData = new FormData(this);
-
+                // Lấy dữ liệu từ form
+                const formData = new FormData(form);
+                
+                // Gửi request AJAX
                 $.ajax({
                     url: 'index.php?controller=adminhome&action=addSection',
                     type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
-                    dataType: 'json',
-                    beforeSend: function () {
-                        toggleLoading(true);
+                    beforeSend: function() {
+                        // Disable nút thêm mới để tránh submit nhiều lần
+                        $('#addSectionBtn').prop('disabled', true);
                     },
-                    success: function (response) {
-                        console.log("Add section response:", response);
+                    success: function(response) {
                         if (response.success) {
-                            showAlert(response.message);
-
-                            // Đóng modal và reset form
-                            $("#addSectionModal").modal('hide');
-                            $("#addSectionForm")[0].reset();
-
-                            // Tải lại danh sách sections mà không cần refresh trang
-                            loadSections();
-
-                            // Mở modal để thêm sản phẩm vào section mới
-                            setTimeout(function () {
-                                openSectionItemsModal(response.id);
-                            }, 500);
+                            // Hiển thị thông báo thành công
+                            alert(response.message);
+                            
+                            // Đóng modal
+                            $('#addSectionModal').modal('hide');
+                            
+                            // Reload trang để cập nhật danh sách
+                            location.reload();
                         } else {
-                            showAlert(response.message, 'error');
+                            // Hiển thị thông báo lỗi
+                            alert(response.message || 'Có lỗi xảy ra khi thêm vùng hiển thị');
                         }
                     },
-                    error: function (xhr, status, error) {
-                        handleAjaxError(xhr, status, error, 'Không thể thêm vùng hiển thị');
+                    error: function(xhr, status, error) {
+                        alert('Đã xảy ra lỗi khi thêm vùng hiển thị');
+                        console.error(error);
                     },
-                    complete: function () {
-                        toggleLoading(false);
+                    complete: function() {
+                        // Enable lại nút thêm mới
+                        $('#addSectionBtn').prop('disabled', false);
                     }
                 });
             });
 
-            // Sửa section
-            $(document).on("click", ".btn-edit-section", function (e) {
-                e.preventDefault();
-                console.log("Edit section button clicked");
+            // Reset form khi đóng modal
+            $('#addSectionModal').on('hidden.bs.modal', function() {
+                $('#addSectionForm')[0].reset();
+            });
 
-                const sectionId = $(this).data("id");
-                if (!sectionId) {
-                    showAlert("Không tìm thấy ID của vùng hiển thị", "error");
-                    return;
-                }
-
-                $.ajax({
-                    url: `index.php?controller=adminhome&action=editSection&id=${sectionId}`,
-                    type: 'GET',
-                    dataType: 'json',
-                    beforeSend: function () {
-                        toggleLoading(true);
-                    },
-                    success: function (section) {
-                        console.log("Section data received:", section);
-
+            // Xử lý khi mở modal edit
+            $('.btn-edit-section').on('click', function() {
+                const sectionId = $(this).data('id');
+                
+                // Gọi API lấy thông tin section
+                $.get(`index.php?controller=adminhome&action=editSection&id=${sectionId}`, function(response) {
+                    if (response.success) {
+                        const section = response.section;
+                        
                         // Điền dữ liệu vào form
                         $('#edit_id').val(section.id);
                         $('#edit_title').val(section.title);
                         $('#edit_section_type').val(section.section_type);
-                        $('#edit_display_style').val(section.display_style);
                         $('#edit_product_count').val(section.product_count);
-                        $('#edit_link').val(section.link || '');
-                        $('#edit_meta').val(section.meta || '');
-
-                        // Set trạng thái hiển thị
-                        $('#edit_status').prop('checked', section.hide == 0);
-                        $('#edit_hide').prop('checked', section.hide == 1);
-
-                        // Mở modal
-                        openModal('editSectionModal');
-                    },
-                    error: function (xhr, status, error) {
-                        handleAjaxError(xhr, status, error, 'Không thể tải thông tin vùng hiển thị');
-                    },
-                    complete: function () {
-                        toggleLoading(false);
+                        
+                        // Hiển thị modal
+                        $('#editSectionModal').modal('show');
+                    } else {
+                        alert(response.message);
                     }
                 });
             });
 
-            // Xử lý submit form edit section
-            $("#editSectionForm").on("submit", function (e) {
-                e.preventDefault();
-                console.log("Edit section form submitted");
-
-                const formData = new FormData(this);
-
+            // Xử lý khi nhấn nút Lưu thay đổi
+            $('#editSectionBtn').on('click', function() {
+                const formData = new FormData($('#editSectionForm')[0]);
+                
                 $.ajax({
                     url: 'index.php?controller=adminhome&action=editSection',
                     type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
-                    dataType: 'json',
-                    beforeSend: function () {
-                        toggleLoading(true);
-                    },
-                    success: function (response) {
-                        console.log("Edit section response:", response);
+                    success: function(response) {
                         if (response.success) {
-                            showAlert(response.message);
-
-                            // Đóng modal
-                            $("#editSectionModal").modal('hide');
-
-                            // Tải lại trang sau 1s
-                            setTimeout(function () {
-                                location.reload();
-                            }, 1000);
+                            alert(response.message);
+                            $('#editSectionModal').modal('hide');
+                            location.reload(); // Tải lại trang để cập nhật danh sách
                         } else {
-                            showAlert(response.message, 'error');
+                            alert(response.message);
                         }
                     },
-                    error: function (xhr, status, error) {
-                        handleAjaxError(xhr, status, error, 'Không thể cập nhật vùng hiển thị');
-                    },
-                    complete: function () {
-                        toggleLoading(false);
+                    error: function() {
+                        alert('Đã xảy ra lỗi khi cập nhật vùng hiển thị');
                     }
                 });
             });
@@ -3178,11 +3114,22 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             <div class="section-card-body">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <img src="${method.image}" class="img-fluid rounded" alt="${method.title}">
+                                        <strong>Logo:</strong>
+                                        <div class="mt-2">
+                                            <img src="${method.image}" class="img-fluid rounded" alt="${method.title}">
+                                        </div>
                                     </div>
-                                    <div class="col-md-9">
-                                        <div class="mb-2"><strong>Link:</strong> <a href="${method.link}" target="_blank">${method.link}</a></div>
-                                        <div><strong>Mô tả:</strong> ${method.meta ? method.meta : 'Không có mô tả'}</div>
+                                    <div class="col-md-3">
+                                        <strong>Mã QR:</strong>
+                                        <div class="mt-2">
+                                            ${method.qr_image ? `<img src="${method.qr_image}" class="img-fluid rounded" style="max-height: 150px;" alt="QR Code - ${method.title}">` : '<span class="text-muted">Chưa có mã QR</span>'}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Mô tả:</strong>
+                                        <div class="mt-2">
+                                            ${method.meta ? method.meta.replace(/\n/g, '<br>') : 'Không có mô tả'}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -3229,13 +3176,23 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                                         const method = response.data;
                                         $('#edit_payment_method_id').val(method.id);
                                         $('#edit_payment_method_title').val(method.title);
-                                        $('#edit_payment_method_link').val(method.link);
                                         $('#edit_payment_method_meta').val(method.meta);
                                         $('#edit_payment_method_status').prop('checked', method.hide == 0);
+                                        
+                                        // Hiển thị ảnh logo
                                         if (method.image) {
                                             $('#editPaymentMethodPreview').attr('src', method.image).show();
                                         } else {
                                             $('#editPaymentMethodPreview').hide();
+                                        }
+                                        
+                                        // Hiển thị ảnh QR
+                                        if (method.qr_image) {
+                                            $('#editPaymentMethodQrPreview').attr('src', method.qr_image).show();
+                                            $('#remove_qr_image').prop('checked', false);
+                                        } else {
+                                            $('#editPaymentMethodQrPreview').hide();
+                                            $('#remove_qr_image').prop('checked', false);
                                         }
                                         $('#editPaymentMethodModal').modal('show');
                                     } else {
@@ -3589,52 +3546,230 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
         </div>
     </div>
 
-    <!-- Edit Policy Modal -->
-    <div class="modal fade" id="editPolicyModal" tabindex="-1" aria-labelledby="editPolicyModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editPolicyModalLabel">Chỉnh sửa chính sách</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editPolicyForm" enctype="multipart/form-data" method="post" action="javascript:void(0);">
-                        <input type="hidden" id="edit_policy_id" name="id">
-                        <div class="mb-3">
-                            <label for="edit_policy_title" class="form-label">Tiêu đề <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="edit_policy_title" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_policy_image" class="form-label">Ảnh (tùy chọn)</label>
-                            <input type="file" class="form-control" id="edit_policy_image" name="image_upload"
-                                accept="image/*">
-                            <div class="form-text">Hình ảnh đại diện cho chính sách (nếu có), tối đa 1MB</div>
-                            <div class="mt-2">
-                                <img id="currentPolicyImage" src="" alt="Preview"
-                                    style="max-width: 100%; max-height: 200px; display: none;">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_policy_meta" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="edit_policy_meta" name="meta" rows="2"></textarea>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="edit_policy_status" name="status">
-                            <label class="form-check-label" for="edit_policy_status">
-                                Hiển thị
-                            </label>
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- After your existing modals, add this script -->
+    <script>
+        // Initialize CKEditor for Add Policy form
+        CKEDITOR.replace('policy_meta', {
+            height: 400,
+            width: '100%',
+            removeButtons: 'Save,NewPage,Preview,Print,Templates',
+            toolbarGroups: [
+                { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+                { name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+                { name: 'forms', groups: [ 'forms' ] },
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'paragraph' ] },
+                { name: 'links', groups: [ 'links' ] },
+                { name: 'insert', groups: [ 'insert' ] },
+                { name: 'styles', groups: [ 'styles' ] },
+                { name: 'colors', groups: [ 'colors' ] },
+                { name: 'tools', groups: [ 'tools' ] },
+                { name: 'others', groups: [ 'others' ] }
+            ]
+        });
+
+        // Initialize CKEditor for Edit Policy form
+        CKEDITOR.replace('edit_policy_meta', {
+            height: 400,
+            width: '100%',
+            removeButtons: 'Save,NewPage,Preview,Print,Templates',
+            toolbarGroups: [
+                { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+                { name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+                { name: 'forms', groups: [ 'forms' ] },
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'paragraph' ] },
+                { name: 'links', groups: [ 'links' ] },
+                { name: 'insert', groups: [ 'insert' ] },
+                { name: 'styles', groups: [ 'styles' ] },
+                { name: 'colors', groups: [ 'colors' ] },
+                { name: 'tools', groups: [ 'tools' ] },
+                { name: 'others', groups: [ 'others' ] }
+            ]
+        });
+
+        // Add click event handler for edit policy buttons
+        $(document).on('click', '.btn-edit-policy', function() {
+            const id = $(this).data('id');
+            editPolicy(id);
+        });
+
+        // Function to handle edit policy data loading
+        function editPolicy(id) {
+            $.ajax({
+                url: 'index.php?controller=adminhome&action=editPolicy',
+                type: 'GET',
+                data: { id: id },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success && response.policy) {
+                        const policy = response.policy;
+                        $('#edit_policy_id').val(policy.id);
+                        $('#edit_policy_title').val(policy.title);
+                        
+                        // Show modal first
+                        $('#editPolicyModal').modal('show');
+                        
+                        // Set content for CKEditor after modal is shown
+                        setTimeout(() => {
+                            // Decode HTML entities if any
+                            const decodedMeta = $('<div/>').html(policy.meta).text();
+                            editEditor.setData(decodedMeta);
+                        }, 100);
+                        
+                        // Handle image preview
+                        if (policy.image) {
+                            $('#currentPolicyImage').attr('src', policy.image).show();
+                        } else {
+                            $('#currentPolicyImage').hide();
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: response.message || 'Không thể tải thông tin chính sách'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Đã có lỗi xảy ra khi tải thông tin chính sách'
+                    });
+                }
+            });
+        }
+
+        // Handle form submissions
+        $('#addPolicyForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('meta', addEditor.getData());
+            formData.append('status', '1'); // Active by default
+            
+            $.ajax({
+                url: 'index.php?controller=adminhome&action=addPolicy',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: 'Thêm chính sách thành công'
+                        }).then(() => {
+                            $('#addPolicyModal').modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: response.message || 'Không thể thêm chính sách'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Đã có lỗi xảy ra khi thêm chính sách'
+                    });
+                }
+            });
+        });
+
+        $('#editPolicyForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('meta', editEditor.getData());
+            formData.append('status', '1'); // Keep active
+            
+            $.ajax({
+                url: 'index.php?controller=adminhome&action=editPolicy',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: 'Cập nhật chính sách thành công'
+                        }).then(() => {
+                            $('#editPolicyModal').modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: response.message || 'Không thể cập nhật chính sách'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Đã có lỗi xảy ra khi cập nhật chính sách'
+                    });
+                }
+            });
+        });
+
+        // Clean up when modals are hidden
+        $('#addPolicyModal').on('hidden.bs.modal', function () {
+            $('#addPolicyForm')[0].reset();
+            addEditor.setData('');
+        });
+
+        $('#editPolicyModal').on('hidden.bs.modal', function () {
+            $('#editPolicyForm')[0].reset();
+            editEditor.setData('');
+            $('#currentPolicyImage').hide();
+        });
+    </script>
+
+    <script>
+    $(document).ready(function() {
+        // Handle select all checkbox
+        const selectAllCheckbox = $('#select-all');
+        const productCheckboxes = $('.product-checkbox');
+        const deleteSelectedBtn = $('#deleteSelectedBtn');
+
+        // Function to update delete button state
+        function updateDeleteButtonState() {
+            const checkedBoxes = $('.product-checkbox:checked').length;
+            const totalBoxes = $('.product-checkbox').length;
+            
+            // Enable delete button if at least one checkbox is checked
+            deleteSelectedBtn.prop('disabled', checkedBoxes === 0);
+            
+            // Update select all checkbox state
+            selectAllCheckbox.prop('checked', checkedBoxes === totalBoxes && totalBoxes > 0);
+        }
+
+        // Handle select all checkbox change
+        selectAllCheckbox.on('change', function() {
+            const isChecked = $(this).prop('checked');
+            productCheckboxes.prop('checked', isChecked);
+            updateDeleteButtonState();
+        });
+
+        // Handle individual checkbox changes
+        $(document).on('change', '.product-checkbox', function() {
+            updateDeleteButtonState();
+        });
+
+        // Initial state check
+        updateDeleteButtonState();
+    });
+    </script>
 </body>
 
 </html>

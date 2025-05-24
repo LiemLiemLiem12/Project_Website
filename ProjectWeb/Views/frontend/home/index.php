@@ -12,6 +12,12 @@ if (!isset($_SESSION['visited'])) {
     $vs = new VisitModel();
     $vs->createSession($ip);
 }
+// Lấy đường dẫn favicon từ cài đặt hoặc mặc định
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
+?>
 ?> -->
 
 
@@ -30,7 +36,9 @@ if (!isset($_SESSION['visited'])) {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Home.css">
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Footer.css">
 </head>

@@ -7,6 +7,11 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     header('Location: ?controller=Adminlogin');
     exit;
 }
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
+
 ?>
 
 
@@ -17,9 +22,12 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cài Đặt - SR Store</title>
+    <title>Cài Đặt</title>
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <!-- Bootstrap CSS -->
-    <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.css" rel="stylesheet">
+    <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
@@ -75,23 +83,25 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 
 <body>
     <div class="admin-container">
-        <!-- Sidebar -->
-        <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
-        
+         <!-- Sidebar -->
+         <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
+
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Header -->
-            <header class="header">
+             <!-- Top Header -->
+             <header class="header">
                 <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div class="header-right" style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
+                <div class="header-right"
+                    style="display: flex; align-items: center; gap: 1rem; margin-left: auto; position: relative;">
                     <div class="notification" id="notificationBell" style="position: relative; cursor: pointer;">
                     </div>
                     <div class="profile">
-                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
+                        <img src="/Project_Website/ProjectWeb/upload/img/avatar.jpg" alt="Admin Avatar"
+                            class="profile-image">
                     </div>
                 </div>
             </header>
@@ -236,28 +246,30 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS with Popper -->
-    <script src="/Project_Website/ProjectWeb/layout/jsBootstrap/bootstrap.js"></script>
+                                            
+    <!-- Bootstrap Bundle JS (includes Popper) -->
+    <script src="/Project_Website/ProjectWeb/layout/jsBootstrap/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js plugin for chart labels -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <!-- Custom JavaScript -->
-    <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
+
     <script>
-        // Script xử lý preview file khi upload
         document.addEventListener('DOMContentLoaded', function() {
+            // Xử lý preview file khi upload
             const fileInputs = document.querySelectorAll('input[type="file"]');
             
             fileInputs.forEach(input => {
                 input.addEventListener('change', function() {
-                    const previewContainer = this.nextElementSibling;
-                    
-                    if (previewContainer && this.files && this.files[0]) {
+                    if (this.files && this.files[0]) {
                         const reader = new FileReader();
+                        const previewContainer = this.closest('.setting-item').querySelector('.preview-image');
                         
                         reader.onload = function(e) {
-                            // Kiểm tra nếu previewContainer chứa thẻ img
-                            const img = previewContainer.querySelector('img');
-                            if (img) {
-                                img.src = e.target.result;
+                            if (previewContainer) {
+                                // Cập nhật src với timestamp để tránh cache
+                                previewContainer.src = e.target.result + '?v=' + new Date().getTime();
                             }
                         };
                         
@@ -265,71 +277,50 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                     }
                 });
             });
-        });
-        // Thêm đoạn script này vào cuối file AdminSetting/index.php
-document.addEventListener('DOMContentLoaded', function() {
-    const fileInputs = document.querySelectorAll('input[type="file"]');
-    
-    fileInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                const previewContainer = this.closest('.setting-item').querySelector('.preview-image');
-                
-                reader.onload = function(e) {
-                    if (previewContainer) {
-                        // Cập nhật src với timestamp để tránh cache
-                        previewContainer.src = e.target.result + '?v=' + new Date().getTime();
-                    }
-                };
-                
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-    });
-    
-    // Cập nhật tất cả các hình ảnh hiển thị với timestamp để tránh cache
-    document.querySelectorAll('.preview-image').forEach(img => {
-        const currentSrc = img.src;
-        const timestamp = new Date().getTime();
-        
-        // Thêm timestamp vào URL
-        if (currentSrc.includes('?')) {
-            img.src = currentSrc.split('?')[0] + '?v=' + timestamp;
-        } else {
-            img.src = currentSrc + '?v=' + timestamp;
-        }
-    });
-    
-    // Xử lý form submit
-    const settingsForm = document.querySelector('form[action*="adminsetting"]');
-    if (settingsForm) {
-        settingsForm.addEventListener('submit', function() {
-            // Lưu lại thông tin rằng form đã được submit
-            localStorage.setItem('settings_updated', 'true');
-        });
-    }
-    
-    // Kiểm tra nếu vừa refresh sau khi submit
-    if (localStorage.getItem('settings_updated') === 'true') {
-        // Xóa flag
-        localStorage.removeItem('settings_updated');
-        
-        // Force refresh tất cả ảnh
-        document.querySelectorAll('.preview-image').forEach(img => {
-            const currentSrc = img.src;
-            const timestamp = new Date().getTime();
             
-            // Thêm timestamp mới vào URL
-            if (currentSrc.includes('?')) {
-                img.src = currentSrc.split('?')[0] + '?v=' + timestamp;
-            } else {
-                img.src = currentSrc + '?v=' + timestamp;
+            // Cập nhật tất cả các hình ảnh hiển thị với timestamp để tránh cache
+            document.querySelectorAll('.preview-image').forEach(img => {
+                const currentSrc = img.src;
+                const timestamp = new Date().getTime();
+                
+                // Thêm timestamp vào URL
+                if (currentSrc.includes('?')) {
+                    img.src = currentSrc.split('?')[0] + '?v=' + timestamp;
+                } else {
+                    img.src = currentSrc + '?v=' + timestamp;
+                }
+            });
+            
+            // Xử lý form submit
+            const settingsForm = document.querySelector('form[action*="adminsetting"]');
+            if (settingsForm) {
+                settingsForm.addEventListener('submit', function() {
+                    // Lưu lại thông tin rằng form đã được submit
+                    localStorage.setItem('settings_updated', 'true');
+                });
+            }
+            
+            // Kiểm tra nếu vừa refresh sau khi submit
+            if (localStorage.getItem('settings_updated') === 'true') {
+                // Xóa flag
+                localStorage.removeItem('settings_updated');
+                
+                // Force refresh tất cả ảnh
+                document.querySelectorAll('.preview-image').forEach(img => {
+                    const currentSrc = img.src;
+                    const timestamp = new Date().getTime();
+                    
+                    // Thêm timestamp mới vào URL
+                    if (currentSrc.includes('?')) {
+                        img.src = currentSrc.split('?')[0] + '?v=' + timestamp;
+                    } else {
+                        img.src = currentSrc + '?v=' + timestamp;
+                    }
+                });
             }
         });
-    }
-});
-</script>
+    </script>
+
 </body>
 
 </html>

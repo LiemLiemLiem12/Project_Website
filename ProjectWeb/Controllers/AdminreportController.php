@@ -76,21 +76,15 @@ class AdminreportController {
         $orderStatusLabels = [];
         $orderStatusCounts = [];
         $orderStatusColors = [
-            'completed' => '#1dd1a1',
-            'shipping' => '#4ca3ff',
-            'cancelled' => '#ff6b6b',
-            'pending' => '#feca57'
+            'Đang xử lý' => '#feca57',
+            'Đang giao' => '#4ca3ff',
+            'Hoàn thành' => '#1dd1a1',
+            'Đã hủy' => '#ff6b6b'
         ];
         
         foreach ($orderStatusData as $status) {
-            $statusName = '';
-            switch ($status['status']) {
-                case 'completed': $statusName = 'Hoàn thành'; break;
-                case 'shipping': $statusName = 'Đang giao'; break;
-                case 'cancelled': $statusName = 'Đã hủy'; break;
-                case 'pending': $statusName = 'Đang xử lý'; break;
-            }
-            $orderStatusLabels[] = $statusName;
+            // Không thêm % vào labels vì sẽ được hiển thị trực tiếp trên biểu đồ
+            $orderStatusLabels[] = $status['status'];
             $orderStatusCounts[] = $status['count'];
         }
         
@@ -103,7 +97,10 @@ class AdminreportController {
         $pieChartData = json_encode([
             'labels' => $orderStatusLabels,
             'values' => $orderStatusCounts,
-            'colors' => array_values($orderStatusColors)
+            'colors' => array_values($orderStatusColors),
+            'percentages' => array_map(function($status) {
+                return $status['percentage'];
+            }, $orderStatusData)
         ]);
         
         // Hiển thị view

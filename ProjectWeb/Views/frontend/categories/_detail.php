@@ -1,3 +1,11 @@
+<?php
+// Thêm vào đầu file để lấy thông tin cài đặt
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+$siteName = $storeSettings['site_name'] ?? 'RSStore';
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,16 +17,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/AllProduct.css">
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Footer.css">
+
 </head>
 
 <body>
       <?php
-    view('frontend.partitions.frontend.header');
-    ?>
-    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css">
+       // Chỉ hiển thị header nếu không được gọi từ file khác đã có header
+       if (!isset($skipHeader) || $skipHeader !== true) {
+           view('frontend.partitions.frontend.header');
+       ?>
+
+       <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css">
+       <?php
+       }
+       ?>
     <!-- Main Container -->
     <div class="container mt-4">
         <!-- Breadcrumb -->

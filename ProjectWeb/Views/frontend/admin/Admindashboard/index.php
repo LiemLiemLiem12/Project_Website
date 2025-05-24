@@ -11,6 +11,11 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     header('Location: ?controller=Adminlogin');
     exit;
 }
+// Lấy đường dẫn favicon từ cài đặt hoặc mặc định
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
 ?>
 
 <!DOCTYPE html>
@@ -20,6 +25,9 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - SR Store</title>
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <!-- Bootstrap CSS -->
     <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -31,52 +39,14 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 
 <body>
     <div class="admin-container">
-        <!-- Sidebar
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2>SR STORE</h2>
-            </div>
-            <button class="sidebar-close d-md-none" id="sidebarCloseBtn"
-                aria-label="Đóng menu"><span>&times;</span></button>
-            <ul class="nav-links">
-                <li class="active">
-                    <a href="index.php?controller=admindashboard"><i class="fas fa-th-large"></i> Dashboard</a>
-                </li>
-                <li>
-                    <a href="AdminHome.html"><i class="fas fa-home"></i> Trang chủ</a>
-                </li>
-                <li>
-                    <a href="index.php?controller=adminproduct"><i class="fas fa-tshirt"></i> Sản Phẩm</a>
-                </li>
-                <li>
-                    <a href="index.php?controller=adminorder"><i class="fas fa-shopping-cart"></i> Đơn Hàng</a>
-                </li>
-                <li>
-                    <a href="AdminCustomer.html"><i class="fas fa-users"></i> Khách Hàng</a>
-                </li>
-                <li>
-                    <a href="AdminCategory.html"><i class="fas fa-tags"></i> Danh Mục</a>
-                </li>
-                <li>
-                    <a href="AdminReport.html"><i class="fas fa-chart-bar"></i> Báo Cáo</a>
-                </li>
-                <li>
-                    <a href="AdminSetting.html"><i class="fas fa-cog"></i> Cài Đặt</a>
-                </li>
-            </ul>
-            <div class="admin-info">
-                <img src="../upload/img/avatar.jpg" alt="Admin Avatar" class="profile-image">
-                <div>
-                    <p class="admin-name">Admin</p>
-                    <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-                </div>
-            </div>
-        </div>
+       
 
         <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/Project_Website/ProjectWeb/Views/frontend/partitions/frontend/sidebar.php'; ?>
-        <!-- Main Content -->
+
+
+
+
         <div class="main-content">
-            <!-- Top Header -->
             <header class="header">
                 <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Mở menu">
                     <span></span>
@@ -301,7 +271,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     <!-- Bootstrap JS with Popper -->
     <script src="/Project_Website/ProjectWeb/layout/jsBootstrap/bootstrap.js"></script>
     <!-- Custom JavaScript -->
-    <script src="/Project_Website/ProjectWeb/layout/js/Admin.js"></script>
+
 </body>
 
 </html>

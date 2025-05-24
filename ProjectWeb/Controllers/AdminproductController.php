@@ -112,12 +112,21 @@ class AdminproductController extends BaseController
     public function add()
     {
         // Kiểm tra sự tồn tại của tất cả các trường trước
-        if (isset($_POST['productName'], $_POST['productDesc'], $_POST['productCategory'], $_POST['productPrice'], $_POST['productStock'], $_FILES['productImage'], $_FILES['policyReturn'], $_FILES['policyWarranty'])) {
+        if (isset($_POST['productName'], 
+        $_POST['productDesc'], 
+        $_POST['productCategory'], 
+        $_POST['productPrice'], 
+        $_POST['productStock'], 
+        $_FILES['productImage'], 
+        $_FILES['policyReturn'], 
+        $_FILES['policyWarranty'])) {
             // Nếu tất cả các trường đều có dữ liệu, gán giá trị cho các biến
             $productName = $_POST['productName'];
             $productDesc = $_POST['productDesc'];
             $productCategory = $_POST['productCategory'];
             $productPrice = $_POST['productPrice'];
+            $importPrice = $_POST['importPrice'];
+            $discountPercent = $_POST['discountPercent'] ?? 0;
             $productStock = $_POST['productStock'];
             $productImage = $_FILES['productImage'];
             $policyReturn = $_FILES['policyReturn'];
@@ -174,6 +183,8 @@ class AdminproductController extends BaseController
             "description" => $productDesc,
             "id_Category" => $productCategory,
             "original_price" => $productPrice,
+            "import_price" => $importPrice,
+            "discount_percent" => $discountPercent,
             "current_price" => $productPrice,
             "store" => $productStock,
             "CSGiaoHang" => $warranty,
@@ -208,6 +219,8 @@ class AdminproductController extends BaseController
             $productDesc = $_POST['productDesc'];
             $productCategory = $_POST['productCategory'];
             $productPrice = $_POST['productPrice'];
+            $importPrice = $_POST['importPrice'];
+            $discountPercent = $_POST['discountPercent'] ?? 0;
             $productStock = $_POST['productStock'];
             $productImage = $_FILES['productImage'];
             $policyReturn = $_FILES['policyReturn'];
@@ -265,6 +278,8 @@ class AdminproductController extends BaseController
             "description" => $productDesc,
             "id_Category" => $productCategory,
             "original_price" => $productPrice,
+            "import_price" => $importPrice,
+            "discount_percent" => $discountPercent,
             "current_price" => $productPrice,
             "store" => $productStock,
             "CSGiaoHang" => $warranty,
@@ -421,6 +436,23 @@ class AdminproductController extends BaseController
             echo json_encode(['success' => false, 'error' => 'Lỗi khôi phục sản phẩm: ' . $e->getMessage()]);
             exit;
         }
+    }
+    // Thêm action mới vào class AdminproductController
+    // Thêm action mới để lọc theo danh mục
+    public function filterCategory() {
+        // Lấy ID danh mục từ request
+        $categoryId = isset($_POST['category_id']) ? $_POST['category_id'] : '';
+        
+        // Gọi hàm từ model để lấy sản phẩm đã lọc
+        $productList = $this->productModel->filterProductsByCategory($categoryId);
+        
+        // Trả về view chỉ với phần HTML của bảng sản phẩm
+        $this->view(
+            "frontend.admin.AdminProduct.sort",
+            [
+                "productList" => $productList
+            ]
+        );
     }
 }
 ?>

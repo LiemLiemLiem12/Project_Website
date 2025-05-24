@@ -1,10 +1,13 @@
 <?php
+    // Chỉ include header ở đây, không include trong _detail.php
     view('frontend.partitions.frontend.header');
-    // view('partitions.frontend.header', ['menus' => $menus ?? []]);
-    view('frontend.categories._detail', [
-        // 'category' => $category,
-        'products' => $products,
-    ]);
-    view('frontend.partitions.frontend.footer');
     
+    view('frontend.categories._detail', [
+        'products' => $products,
+        'category' => $category ?? null, // Thêm category nếu có
+        'filters' => $filters ?? [], // Thêm filters nếu có
+        'skipHeader' => true // Flag để tránh load header lần nữa
+    ]);
+    
+    view('frontend.partitions.frontend.footer');
 ?>
