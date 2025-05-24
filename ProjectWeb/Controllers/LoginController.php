@@ -636,10 +636,12 @@ class LoginController extends BaseController
             // Người nhận
             $mail->setFrom('nguyentranminhquan.dl2018@gmail.com', '160STORE');
             $mail->addAddress($email);
-            
+            $storeName = $this->userModel->getSettingValueByKey('site_name');
+
             // Nội dung
             $mail->isHTML(true);
-            $mail->Subject = '160STORE - Mã xác thực đặt lại mật khẩu';
+          $mail->Subject = ' - Mã xác thực đặt lại mật khẩu';
+
             
             // Tạo nội dung email đẹp mắt
             $mailContent = '
@@ -659,7 +661,7 @@ class LoginController extends BaseController
                     <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.</p>
                 </div>
                 <div style="margin-top: 20px; text-align: center; color: #777; font-size: 12px;">
-                    <p>© 2025 160STORE. All rights reserved.</p>
+                    <p>© 2025 .160STORE. All rights reserved.</p>
                 </div>
             </div>';
             

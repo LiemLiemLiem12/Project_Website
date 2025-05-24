@@ -3,6 +3,7 @@ class UserModel extends BaseModel
 {
     const TABLE = "user";
 
+    
     public function getNumByMonth($month)
     {
         return $this->getScalar("
@@ -11,7 +12,20 @@ class UserModel extends BaseModel
             WHERE MONTH(CREATED_AT) = " . $month . " AND YEAR(CREATED_AT) = YEAR(CURDATE()) AND ROLE = 'user'
         ");
     }
-    
+    public function getSettingValueByKey($key)
+{
+    $key = $this->escapeValue($key);
+    $sql = "SELECT setting_value FROM settings WHERE setting_key = '{$key}' LIMIT 1";
+    $result = $this->_query($sql);
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['setting_value'];
+    }
+
+    return null;
+}
+
     /**
      * Find user by email
      */

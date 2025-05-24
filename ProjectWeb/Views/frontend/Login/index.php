@@ -13,6 +13,13 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Login.css">
     <style>
+        .toast-body.toast-error {
+    border: 1px solid red;
+    background-color: #ffe5e5;
+}
+        .danger.alert-dismissible.fade.show {
+            color: #dc3545 !important;
+        }
         .password-requirements {
             font-size: 0.875rem;
             color: #6c757d;
@@ -68,7 +75,14 @@
         .password-field-wrapper {
             position: relative;
         }
-        
+      
+.alert-custom-red {
+    background-color: #f44336;  /* màu nền đỏ */
+    color: #fff;
+    border-color: #d32f2f;
+}
+
+
         .password-toggle-btn {
             position: absolute;
             right: 10px;
@@ -97,15 +111,23 @@
     </nav>
 
     <!-- Flash Message -->
-    <?php if (isset($_SESSION['flash_message'])): ?>
-        <div class="container mt-3">
-            <div class="alert alert-<?= $_SESSION['flash_message']['type'] ?> alert-dismissible fade show" role="alert">
-                <?= $_SESSION['flash_message']['message'] ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+   <?php if (isset($_SESSION['flash_message'])): ?>
+    <?php
+        $type = $_SESSION['flash_message']['type'];
+        $message = $_SESSION['flash_message']['message'];
+        $customClass = $type === 'error' ? 'alert-custom-red' : "alert-$type";
+    ?>
+    <div class="container mt-3">
+        <div class="alert <?= $customClass ?> alert-dismissible fade show" role="alert">
+            <?= $message ?>
+           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+
         </div>
-        <?php unset($_SESSION['flash_message']); ?>
-    <?php endif; ?>
+    </div>
+    <?php unset($_SESSION['flash_message']); ?>
+<?php endif; ?>
+
+
 
     <!-- Main Content -->
     <div class="container auth-container">
@@ -421,7 +443,7 @@
         // Create toast content
         toastEl.innerHTML = `
             <div class="d-flex">
-                <div class="toast-body">
+                <div class="toast-body" >
                     ${message}
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>

@@ -304,12 +304,7 @@
                             <a href="index.php" class="btn btn-primary me-2">
                                 <i class="fas fa-home"></i> Về trang chủ
                             </a>
-                            <a href="index.php?controller=product" class="btn btn-outline-primary">
-                                <i class="fas fa-th-large"></i> Xem tất cả sản phẩm
-                            </a>
-                            <button type="button" class="btn btn-dark reset-filters">
-                                <i class="fas fa-undo"></i> Đặt lại bộ lọc
-                            </button>
+                           
                         </div>
                     </div>
                 <?php endif; ?>

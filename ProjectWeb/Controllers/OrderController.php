@@ -31,7 +31,9 @@ class OrderController extends BaseController
     {
         // Nếu có order_success=true trong URL, hiển thị modal thành công
         $orderSuccess = isset($_GET['order_success']) && $_GET['order_success'] === 'true';
-        
+         $storeName = $this->orderModel->getSettingValueByKey('site_name');
+
+          
         // Kiểm tra xem có đơn hàng mới tạo không
         $lastOrderId = $_SESSION['last_order_id'] ?? null;
         $lastOrder = null;
@@ -138,7 +140,8 @@ class OrderController extends BaseController
             'shippingOptions' => $shippingOptions,
             'paymentMethods' => $paymentMethods,
             'orderSuccess' => $orderSuccess,
-            'lastOrder' => $lastOrder
+            'lastOrder' => $lastOrder,
+            'storeName'=> $storeName,
         ]);
     }
     

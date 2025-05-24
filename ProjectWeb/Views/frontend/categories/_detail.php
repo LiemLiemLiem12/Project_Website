@@ -5,6 +5,9 @@ $footerController = new FooterController();
 $storeSettings = $footerController->getStoreSettings();
 $siteName = $storeSettings['site_name'] ?? 'RSStore';
 $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
+$isTagSearch = isset($isTagSearch) && $isTagSearch;
+$searchTag = $searchTag ?? '';
+$categoryName = $isTagSearch ? 'Tag: ' . ucfirst($searchTag) : ($category['name'] ?? 'Tất cả sản phẩm');
 ?>
 <!DOCTYPE html>
 <html lang="en">

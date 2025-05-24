@@ -3,6 +3,10 @@
 class OrderModel extends BaseModel
 {
        const TABLE = "order"; // Thêm dấu backticks
+ 
+
+     
+    
     public function getByMonth($month)
     {
         return $this->getScalar("SELECT COUNT(*) 
@@ -109,6 +113,22 @@ public function createOrderDetail($detailData)
     /**
      * Get order with details
      */
+ public function getSettingValueByKey($key)
+{
+    $key = $this->escapeValue($key);
+    $sql = "SELECT setting_value FROM settings WHERE setting_key = '{$key}' LIMIT 1";
+    $result = $this->_query($sql);
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['setting_value'];
+    }
+
+    return null;
+}
+
+
+
      public function getOrderWithDetails($orderId)
     {
         $orderId = (int)$orderId;

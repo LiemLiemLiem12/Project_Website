@@ -276,9 +276,10 @@
                                     <div class="invalid-feedback">Vui lòng nhập địa chỉ.</div>
                                 </div>
                                 
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-4">
                                     <label for="province" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
                                     <select class="form-select" id="province" name="province" required>
+
                                         <option value="">Chọn tỉnh/thành phố</option>
                                         <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
                                         <option value="Hà Nội">Hà Nội</option>
@@ -343,7 +344,33 @@
                                         <option value="Vĩnh Long">Vĩnh Long</option>
                                         <option value="Vĩnh Phúc">Vĩnh Phúc</option>
                                         <option value="Yên Bái">Yên Bái</option>
+                                    </select> 
+                                    
+                                    <div class="invalid-feedback">Vui lòng chọn tỉnh/thành phố.</div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="district" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="district" name="district" required disabled>
+                                        <option value="">Chọn quận/huyện</option>
                                     </select>
+                                    <div class="invalid-feedback">Vui lòng chọn quận/huyện.</div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="ward" class="form-label">Phường/Xã <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="ward" name="ward" required disabled>
+                                        <option value="">Chọn phường/xã</option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn phường/xã.</div>
+                                </div> -->
+                                  <div class="col-md-4">
+                                    <label for="province" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="province" name="province" required>
+
+                                       
+                                    </select> 
+                                    
                                     <div class="invalid-feedback">Vui lòng chọn tỉnh/thành phố.</div>
                                 </div>
                                 
@@ -519,7 +546,7 @@
                     <p>Đơn hàng của bạn đã được xác nhận.</p>
                     <p>Mã đơn hàng: <strong><?= $lastOrder['order_number'] ?? 'N/A' ?></strong></p>
                     <p>Chúng tôi sẽ giao hàng cho bạn trong thời gian sớm nhất.</p>
-                    <p class="mb-4">Cảm ơn bạn đã mua sắm tại 160STORE!</p>
+                    <p class="mb-4">Cảm ơn bạn đã mua sắm tại <?= $storeName ?>!</p>
                     <div class="d-grid gap-2 d-md-flex justify-content-center">
                         <a href="index.php" class="btn btn-outline-primary me-md-2">
                             <i class="bi bi-house-door-fill me-1"></i> Trang chủ
@@ -538,91 +565,174 @@
     <script>
         // Xử lý location selects
         document.addEventListener('DOMContentLoaded', function() {
+             let provinces = [];
+    console.log("provinces");
+  // Gọi API JSON 63 tỉnh/thành (hoặc đổi thành 'vietnam.json' nếu dùng nội bộ)
+  fetch('/Project_Website/ProjectWeb/core/full_json_generated_data_vn_units.json')
+  
+    .then(res => res.json())
+    .then(data => {
+      provinces = data;
+      loadProvinces();
+      console.log(provinces);
+    });
+  const provinceSelect = document.getElementById("province");
+  const districtSelect = document.getElementById("district");
+  const wardSelect = document.getElementById("ward");
+
+  function loadProvinces() {
+    provinces.forEach(province => {
+      const option = document.createElement("option");
+      option.value = province.Code;
+      option.textContent = province.Name;
+      provinceSelect.appendChild(option);
+    });
+  }
+
+  provinceSelect.addEventListener("change", function () {
+      const selectedCode = this.value;
+      const selectedProvince = provinces.find(p => p.Code == selectedCode);
+      
+      // Reset quận/huyện và phường/xã
+      districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+      wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+      districtSelect.disabled = true;
+      wardSelect.disabled = true;
+      
+      console.log(selectedProvince);
+      if (selectedProvince) {
+      selectedProvince.District.forEach(districts => {
+        const option = document.createElement("option");
+        option.value = districts.Code;
+        option.textContent = districts.Name;
+        districtSelect.appendChild(option);
+      });
+      districtSelect.disabled = false;
+    }
+  });
+
+  districtSelect.addEventListener("change", function () {
+    const selectedProvince = provinces.find(p => p.Code == provinceSelect.value);
+    const selectedDistrict = selectedProvince?.District.find(d => d.Code == this.value);
+
+    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+    wardSelect.disabled = true;
+
+    if (selectedDistrict) {
+      selectedDistrict.Ward.forEach(wards => {
+        const option = document.createElement("option");
+        option.value = wards.Code;
+        option.textContent = wards.Name;
+        wardSelect.appendChild(option);
+      });
+      wardSelect.disabled = false;
+    }
+  });
             // Location data for districts and wards
-            const locationData = {
-                'TP. Hồ Chí Minh': {
-                    'Quận 1': ['Phường Bến Nghé', 'Phường Bến Thành', 'Phường Cầu Kho', 'Phường Cô Giang'],
-                    'Quận 2': ['Phường An Phú', 'Phường Thảo Điền', 'Phường Bình Trưng Đông', 'Phường Bình Trưng Tây'],
-                    'Quận 3': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4']
-                },
-                'Hà Nội': {
-                    'Quận Ba Đình': ['Phường Phúc Xá', 'Phường Trúc Bạch', 'Phường Vĩnh Phúc', 'Phường Cống Vị'],
-                    'Quận Hoàn Kiếm': ['Phường Hàng Bạc', 'Phường Hàng Bồ', 'Phường Hàng Buồm', 'Phường Hàng Đào'],
-                    'Quận Tây Hồ': ['Phường Bưởi', 'Phường Nhật Tân', 'Phường Quảng An', 'Phường Xuân La']
-                },
-                'Đà Nẵng': {
-                    'Quận Hải Châu': ['Phường Hải Châu 1', 'Phường Hải Châu 2', 'Phường Nam Dương', 'Phường Phước Ninh'],
-                    'Quận Thanh Khê': ['Phường An Khê', 'Phường Chính Gián', 'Phường Hòa Khê', 'Phường Tân Chính'],
-                    'Quận Sơn Trà': ['Phường An Hải Bắc', 'Phường An Hải Đông', 'Phường An Hải Tây', 'Phường Mân Thái']
-                },
-                'Lâm Đồng': {
-                    'Thành phố Đà Lạt': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5'],
-                    'Huyện Đức Trọng': ['Thị trấn Liên Nghĩa', 'Xã Hiệp An', 'Xã Hiệp Thạnh', 'Xã Liên Hiệp'],
-                    'Huyện Lâm Hà': ['Thị trấn Đinh Văn', 'Thị trấn Nam Ban', 'Xã Đan Phượng', 'Xã Đông Thanh']
-                }
-            };
+            // const locationData = {
+            //     'TP. Hồ Chí Minh': {
+            //         'Quận 1': ['Phường Bến Nghé', 'Phường Bến Thành', 'Phường Cầu Kho', 'Phường Cô Giang'],
+            //         'Quận 2': ['Phường An Phú', 'Phường Thảo Điền', 'Phường Bình Trưng Đông', 'Phường Bình Trưng Tây'],
+            //         'Quận 3': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận 4': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận 5': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận 6': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận 7': ['Phường Tân Phong', 'Phường Tân Hưng', 'Phường Tân Thuận Đông', 'Phường Tân Thuận Tây'],
+            //         'Quận 8': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận 10': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận 11': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận 12': ['Phường An Phú Đông', 'Phường Đông Hưng Thuận', 'Phường Hiệp Thành', 'Phường Tân Chánh Hiệp'],
+            //         'Quận Bình Tân': ['Phường An Lạc', 'Phường An Lạc A', 'Phường Bình Trị Đông', 'Phường Tân Tạo'],
+            //         'Quận Bình Thạnh': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 5'],
+            //         'Quận Gò Vấp': ['Phường 1', 'Phường 3', 'Phường 5', 'Phường 6'],
+            //         'Quận Phú Nhuận': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận Tân Bình': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4'],
+            //         'Quận Tân Phú': ['Phường Hiệp Tân', 'Phường Hòa Thạnh', 'Phường Phú Thạnh', 'Phường Tân Quý'],
+            //         'TP Thủ Đức': ['Phường Linh Trung', 'Phường Linh Xuân', 'Phường Bình Thọ', 'Phường Hiệp Phú'],
+            //         'Huyện Bình Chánh': ['Xã Bình Hưng', 'Xã Bình Chánh', 'Xã Tân Kiên', 'Xã Vĩnh Lộc A'],
+            //         'Huyện Cần Giờ': ['Xã Cần Thạnh', 'Xã Long Hòa', 'Xã Lý Nhơn', 'Xã Tam Thôn Hiệp'],
+            //         'Huyện Củ Chi': ['Xã Phú Mỹ Hưng', 'Xã Trung An', 'Xã Tân Thông Hội', 'Xã Tân Phú Trung'],
+            //         'Huyện Hóc Môn': ['Xã Bà Điểm', 'Xã Đông Thạnh', 'Xã Nhị Bình', 'Xã Tân Xuân'],
+            //         'Huyện Nhà Bè': ['Xã Hiệp Phước', 'Xã Long Thới', 'Xã Nhơn Đức', 'Xã Phú Xuân']
+            //     },
+            //     'Hà Nội': {
+            //         'Quận Ba Đình': ['Phường Phúc Xá', 'Phường Trúc Bạch', 'Phường Vĩnh Phúc', 'Phường Cống Vị'],
+            //         'Quận Hoàn Kiếm': ['Phường Hàng Bạc', 'Phường Hàng Bồ', 'Phường Hàng Buồm', 'Phường Hàng Đào'],
+            //         'Quận Tây Hồ': ['Phường Bưởi', 'Phường Nhật Tân', 'Phường Quảng An', 'Phường Xuân La']
+            //     },
+            //     'Đà Nẵng': {
+            //         'Quận Hải Châu': ['Phường Hải Châu 1', 'Phường Hải Châu 2', 'Phường Nam Dương', 'Phường Phước Ninh'],
+            //         'Quận Thanh Khê': ['Phường An Khê', 'Phường Chính Gián', 'Phường Hòa Khê', 'Phường Tân Chính'],
+            //         'Quận Sơn Trà': ['Phường An Hải Bắc', 'Phường An Hải Đông', 'Phường An Hải Tây', 'Phường Mân Thái']
+            //     },
+            //     'Lâm Đồng': {
+            //         'Thành phố Đà Lạt': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5'],
+            //         'Huyện Đức Trọng': ['Thị trấn Liên Nghĩa', 'Xã Hiệp An', 'Xã Hiệp Thạnh', 'Xã Liên Hiệp'],
+            //         'Huyện Lâm Hà': ['Thị trấn Đinh Văn', 'Thị trấn Nam Ban', 'Xã Đan Phượng', 'Xã Đông Thanh']
+            //     }
+            // };
             
             // Handle location selects
-            const provinceSelect = document.getElementById('province');
-            const districtSelect = document.getElementById('district');
-            const wardSelect = document.getElementById('ward');
+            // const provinceSelect = document.getElementById('province');
+            // const districtSelect = document.getElementById('district');
+            // const wardSelect = document.getElementById('ward');
             
-            if (provinceSelect && districtSelect && wardSelect) {
-                // Province change
-                provinceSelect.addEventListener('change', function() {
-                    const selectedProvince = this.value;
+            // if (provinceSelect && districtSelect && wardSelect) {
+            //     // Province change
+            //     provinceSelect.addEventListener('change', function() {
+            //         const selectedProvince = this.value;
                     
-                    // Clear district and ward selects
-                    districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            //         // Clear district and ward selects
+            //         districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+            //         wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
                     
-                    // Disable ward select
-                    wardSelect.disabled = true;
+            //         // Disable ward select
+            //         wardSelect.disabled = true;
                     
-                    if (selectedProvince && locationData[selectedProvince]) {
-                        // Enable district select
-                        districtSelect.disabled = false;
+            //         if (selectedProvince && locationData[selectedProvince]) {
+            //             // Enable district select
+            //             districtSelect.disabled = false;
                         
-                        // Add district options
-                        for (const district in locationData[selectedProvince]) {
-                            const option = document.createElement('option');
-                            option.value = district;
-                            option.textContent = district;
-                            districtSelect.appendChild(option);
-                        }
-                    } else {
-                        // Disable district select if no province selected
-                        districtSelect.disabled = true;
-                    }
-                });
+            //             // Add district options
+            //             for (const district in locationData[selectedProvince]) {
+            //                 const option = document.createElement('option');
+            //                 option.value = district;
+            //                 option.textContent = district;
+            //                 districtSelect.appendChild(option);
+            //             }
+            //         } else {
+            //             // Disable district select if no province selected
+            //             districtSelect.disabled = true;
+            //         }
+            //     });
                 
-                // District change
-                districtSelect.addEventListener('change', function() {
-                    const selectedProvince = provinceSelect.value;
-                    const selectedDistrict = this.value;
+            //     // District change
+            //     districtSelect.addEventListener('change', function() {
+            //         const selectedProvince = provinceSelect.value;
+            //         const selectedDistrict = this.value;
                     
-                    // Clear ward select
-                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            //         // Clear ward select
+            //         wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
                     
-                    if (selectedProvince && selectedDistrict && 
-                        locationData[selectedProvince] && 
-                        locationData[selectedProvince][selectedDistrict]) {
-                        // Enable ward select
-                        wardSelect.disabled = false;
+            //         if (selectedProvince && selectedDistrict && 
+            //             locationData[selectedProvince] && 
+            //             locationData[selectedProvince][selectedDistrict]) {
+            //             // Enable ward select
+            //             wardSelect.disabled = false;
                         
-                        // Add ward options
-                        locationData[selectedProvince][selectedDistrict].forEach(ward => {
-                            const option = document.createElement('option');
-                            option.value = ward;
-                            option.textContent = ward;
-                            wardSelect.appendChild(option);
-                        });
-                    } else {
-                        // Disable ward select if no district selected
-                        wardSelect.disabled = true;
-                    }
-                });
-            }
+            //             // Add ward options
+            //             locationData[selectedProvince][selectedDistrict].forEach(ward => {
+            //                 const option = document.createElement('option');
+            //                 option.value = ward;
+            //                 option.textContent = ward;
+            //                 wardSelect.appendChild(option);
+            //             });
+            //         } else {
+            //             // Disable ward select if no district selected
+            //             wardSelect.disabled = true;
+            //         }
+            //     });
+            // }
 
             // Xử lý hiển thị/ẩn checkbox lưu địa chỉ
             const addressSelectors = document.querySelectorAll('.address-selector');

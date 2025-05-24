@@ -254,7 +254,7 @@ $image3 = !empty($productImages['img3']) ? $productImages['img3'] : '';
             
             <?php if (!empty($relatedProducts)): ?>
                 <div class="related-products-carousel">
-                    <button class="carousel-control carousel-control-prev" id="prevBtn">&lt;</button>
+                
                     
                     <div class="related-products-wrapper" id="productsWrapper">
                         <div class="related-products-slider" id="productsSlider">
@@ -316,7 +316,7 @@ $image3 = !empty($productImages['img3']) ? $productImages['img3'] : '';
                         </div>
                     </div>
                     
-                    <button class="carousel-control carousel-control-next" id="nextBtn">&gt;</button>
+                    
                 </div>
             <?php else: ?>
                 <div class="text-center py-5">
