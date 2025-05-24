@@ -475,7 +475,7 @@
                         <?php foreach ($cartItems as $index => $item): ?>
                         <div class="product-item animate__animated animate__fadeIn" data-product-id="<?= $item['product']['id_product'] ?>" data-product-size="<?= $item['size'] ?>" data-max-stock="<?= $item['product'][$item['size']] ?>">
                                 <div class="d-flex">
-                                    <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $item['product']['main_image'] ?>" 
+                                    <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $item['product']['main_image'] ?>" 
                                         alt="<?= $item['product']['name'] ?>" class="product-image">
                                     <div class="product-info">
                                         <div class="product-name"><?= $item['product']['name'] ?></div>

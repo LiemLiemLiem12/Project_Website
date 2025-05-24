@@ -111,7 +111,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                     <!-- Loại bỏ thẻ <a>, thêm data-product-id -->
                     <div class="product-card" data-product-id="<?= $product['id_product'] ?>">
                         <div class="product-image">
-                            <img src="/Project_Website/ProjectWeb/upload/img/Home/<?= $product['main_image']; ?>"
+                            <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $product['main_image']; ?>"
                                 alt="<?= $product['name']; ?>">
                         </div>
                         <div class="product-info">
@@ -143,7 +143,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 <div class="col-lg-3 col-md-4 col-6">
                     <div class="product-card" data-product-id="' . $detail['item_id'] . '">
                         <div class="product-image">
-                            <img src="/Project_Website/ProjectWeb/upload/img/Home/' . $detail['main_image'] . '" alt="' . $detail['name'] . '">
+                            <img src="/Project_Website/ProjectWeb/upload/img/All-Product/' . $detail['main_image'] . '" alt="' . $detail['name'] . '">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">' . $detail['name'] . '</h3>

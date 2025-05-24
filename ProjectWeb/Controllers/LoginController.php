@@ -636,22 +636,22 @@ class LoginController extends BaseController
             // Người nhận
             $mail->setFrom('nguyentranminhquan.dl2018@gmail.com', '160STORE');
             $mail->addAddress($email);
-            $storeName = $this->userModel->getSettingValueByKey('site_name');
+            // $storeName = $this->userModel->getSettingValueByKey('site_name');
 
             // Nội dung
             $mail->isHTML(true);
-          $mail->Subject = ' - Mã xác thực đặt lại mật khẩu';
+          $mail->Subject = 'SR Store-Mã xác thực đặt lại mật khẩu';
 
             
             // Tạo nội dung email đẹp mắt
             $mailContent = '
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <h2 style="color: #333;">160STORE - Xác thực mật khẩu</h2>
+                    <h2 style="color: #333;">Xác thực mật khẩu</h2>
                 </div>
                 <div style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
                     <p>Xin chào,</p>
-                    <p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản của mình tại 160STORE. Đây là mã xác thực của bạn:</p>
+                    <p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản của mình. Đây là mã xác thực của bạn:</p>
                     <div style="text-align: center; margin: 30px 0;">
                         <div style="display: inline-block; padding: 15px 30px; background-color: #f5f5f5; border-radius: 5px; letter-spacing: 5px; font-size: 24px; font-weight: bold;">
                             '.$code.'
@@ -661,7 +661,7 @@ class LoginController extends BaseController
                     <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.</p>
                 </div>
                 <div style="margin-top: 20px; text-align: center; color: #777; font-size: 12px;">
-                    <p>© 2025 .160STORE. All rights reserved.</p>
+                    <p>© 2025 SR StoreStore All rights reserved.</p>
                 </div>
             </div>';
             
