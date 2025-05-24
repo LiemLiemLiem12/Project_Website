@@ -1,95 +1,143 @@
 <?php
-require_once 'Models/SearchModel.php';
 
-class SearchController {
-    private $searchModel;
-    
-    public function __construct() {
-        $this->searchModel = new SearchModel();
+class SearchController extends BaseController
+{
+    private $productModel;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->loadModel('ProductModel');
+        $this->productModel = new ProductModel();
     }
-    
-    /**
-     * Hiển thị kết quả tìm kiếm dạng trang danh mục
-     */
-    public function index() {
-        $keyword = isset($_GET['q']) ? trim($_GET['q']) : '';
+        public function showByTag()
+    {
+        $tag = $_GET['tag'] ?? '';
         
-        if (empty($keyword)) {
+        if (empty($tag)) {
             header('Location: index.php');
             exit;
         }
-        
-        // Lấy danh sách sản phẩm từ model
-        $products = $this->searchModel->searchProducts($keyword);
-        
-        // Tạo "fake category" để dùng template categories/show hiện có
-        $category = [
-            'name' => 'Kết quả tìm kiếm: "' . htmlspecialchars($keyword) . '"',
-            'id_Category' => 0,
-            'is_search_results' => true
-        ];
-        
-        // Tạo filters giả để template hiện tại vẫn hoạt động
+
+        // Xử lý các tham số lọc và sắp xếp
         $filters = [
-            'price_max' => 2000000,
-            'sort' => 'newest',
-            'sizes' => []
+            'price_min' => isset($_GET['price_min']) ? (int) $_GET['price_min'] : 100000,
+            'price_max' => isset($_GET['price_max']) ? (int) $_GET['price_max'] : 2000000,
+            'sizes' => isset($_GET['size']) && is_array($_GET['size']) ? $_GET['size'] : [],
+            'sort' => $_GET['sort'] ?? 'newest'
         ];
-        
-        // Hiển thị view
-        require_once('Views/frontend/categories/show.php');
+
+        // Lấy giá từ thanh trượt (slider)
+        if (isset($_GET['price']) && !empty($_GET['price'])) {
+            $filters['price_max'] = (int) $_GET['price'];
+        }
+
+        // Get products by tag with filters
+        $products = $this->productModel->getFilteredProductsByTag($tag, $filters);
+
+        // Tạo category ảo cho tag
+        $category = [
+            'id_Category' => 'tag',
+            'name' => 'Tag: ' . ucfirst($tag)
+        ];
+
+        $this->view('frontend.categories._detail', [
+            'category' => $category,
+            'products' => $products,
+            'filters' => $filters,
+            'searchTag' => $tag,
+            'isTagSearch' => true
+        ]);
     }
-    
+
     /**
-     * API trả về kết quả tìm kiếm nhanh dạng JSON
+     * AJAX filter cho tag search  
      */
-    public function quick() {
-        header('Content-Type: application/json');
-        
-        $keyword = isset($_GET['q']) ? trim($_GET['q']) : '';
-        
-        if (empty($keyword)) {
-            echo json_encode(['success' => false, 'products' => []]);
+    public function filterByTag()
+    {
+        // Kiểm tra có phải là yêu cầu AJAX không
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
+            header('HTTP/1.0 403 Forbidden');
             exit;
         }
-        
-        $products = $this->searchModel->quickSearchProducts($keyword);
-        
-        // Định dạng lại dữ liệu sản phẩm cho dễ hiển thị
-        $formattedProducts = [];
-        foreach ($products as $product) {
-            $formattedProducts[] = [
-                'id' => $product['id_product'],
-                'name' => $product['name'],
-                'price' => number_format($product['current_price'], 0, ',', '.') . '₫',
-                'originalPrice' => $product['original_price'] > $product['current_price'] ? 
-                    number_format($product['original_price'], 0, ',', '.') . '₫' : '',
-                'image' => '/Project_Website/ProjectWeb/upload/img/All-Product/' . $product['main_image'],
-                'url' => 'index.php?controller=product&action=show&id=' . $product['id_product']
-            ];
+
+        $tag = $_GET['tag'] ?? '';
+        if (empty($tag)) {
+            echo json_encode(['error' => 'Tag không hợp lệ']);
+            exit;
         }
+
+        // Xử lý các tham số lọc và sắp xếp  
+        $filters = [
+            'price_min' => isset($_GET['price_min']) ? (int) $_GET['price_min'] : 100000,
+            'price_max' => isset($_GET['price_max']) ? (int) $_GET['price_max'] : 2000000,
+            'sizes' => isset($_GET['size']) && is_array($_GET['size']) ? $_GET['size'] : [],
+            'sort' => $_GET['sort'] ?? 'newest'
+        ];
+
+        // Lấy giá từ thanh trượt (slider)
+        if (isset($_GET['price']) && !empty($_GET['price'])) {
+            $filters['price_max'] = (int) $_GET['price'];
+        }
+
+        // Lấy sản phẩm đã lọc theo tag
+        $products = $this->productModel->getFilteredProductsByTag($tag, $filters);
+
+        // Tạo response với HTML của danh sách sản phẩm
+        ob_start();
+        require('Views/frontend/categories/product_grid.php');
+        $productGridHtml = ob_get_clean();
         
         echo json_encode([
             'success' => true,
-            'products' => $formattedProducts,
-            'allResultsUrl' => 'index.php?controller=search&q=' . urlencode($keyword)
+            'count' => count($products),
+            'html' => $productGridHtml
         ]);
+        exit;
     }
-        /**
-     * Xử lý tìm kiếm bằng AJAX
-     */
-    public function ajaxSearch() {
-        $keyword = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+    public function index()
+    {
+        $searchQuery = $_GET['q'] ?? '';
+        $page = $_GET['page'] ?? 1;
+        $itemsPerPage = 12;
         
-        if (empty($keyword)) {
-            echo json_encode(['success' => false, 'message' => 'Từ khóa không hợp lệ']);
+        if (empty($searchQuery)) {
+            // Nếu không có từ khóa, chuyển về trang chủ
+            header('Location: index.php');
             exit;
         }
+
+        // Tìm kiếm sản phẩm theo tên và tag
+        $searchResult = $this->productModel->searchProducts($searchQuery);
         
-        $products = $this->searchModel->searchProducts($keyword);
+        // Phân trang
+        $totalProducts = count($searchResult);
+        $totalPages = ceil($totalProducts / $itemsPerPage);
+        $currentPage = max(1, min($totalPages, (int)$page));
+        $offset = ($currentPage - 1) * $itemsPerPage;
+        $products = array_slice($searchResult, $offset, $itemsPerPage);
+
+        $this->view('frontend.search.index', [
+            'products' => $products,
+            'searchQuery' => $searchQuery,
+            'totalProducts' => $totalProducts,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'itemsPerPage' => $itemsPerPage
+        ]);
+    }
+
+    public function suggestions()
+    {
+        $query = $_GET['q'] ?? '';
         
-        // Chỉ trả về HTML của phần kết quả sản phẩm, không bao gồm header/footer
-        require('Views/frontend/categories/product_grid.php');
+        if (strlen($query) < 2) {
+            echo json_encode([]);
+            return;
+        }
+
+        $suggestions = $this->productModel->getSearchSuggestions($query);
+        echo json_encode($suggestions);
     }
 }
-?>

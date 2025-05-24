@@ -22,6 +22,11 @@ $dynamicDetails = $productDetailCtrl->getProductDetails($productId);
 
 // Get product images
 $productImages = $productDetailCtrl->getProductImages($productId);
+
+// Get related products based on category
+require_once('Models/ProductModel.php');
+$productModel = new ProductModel();
+$relatedProducts = $productModel->getRelatedProducts($productDetail['id_Category'], $productId, 8);
                 
 // Set default images if any are missing
 $mainImage = !empty($productImages['main_image']) ? $productImages['main_image'] : 'default.jpg';
@@ -44,7 +49,7 @@ $image3 = !empty($productImages['img3']) ? $productImages['img3'] : '';
         <!-- Breadcrumb -->
         <div class="breadcrumb mb-3">
             <a href="#" onclick="goBack()">Trang chủ</a> / 
-            <a href="AllProduct.html">TẤT CẢ SẢN PHẨM</a> / 
+          
             <span><?= $productDetail['name'];?></span>
         </div>
 
@@ -240,124 +245,87 @@ $image3 = !empty($productImages['img3']) ? $productImages['img3'] : '';
                 </div>
             </div>
         </div>
-        
-        <!-- Customer support section -->
-        <!-- <div class="row customer-support-section mt-5">
-            <div class="col-lg-5 mb-4">
-                <h5 class="support-section-title">TÌM SẢN PHẨM TẠI CỬA HÀNG</h5>
-                <div class="store-finder-container">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Nhập tên cửa hàng...">
-                        <button class="btn btn-dark" type="button">
-                            <i class="fas fa-search"></i> Kiểm tra
-                        </button>
-                    </div>
-                    <div class="store-desc mt-3">
-                        <p>Kiểm tra sản phẩm và kích cỡ có sẵn tại cửa hàng gần bạn nhất</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-7">
-                <h5 class="support-section-title">CHÍNH SÁCH & HỖ TRỢ</h5>
-                <div class="row support-policies">
-                    <div class="col-md-6">
-                        <div class="policy-item">
-                            <i class="fas fa-undo-alt"></i>
-                            <span>Đổi trả tận nhà trong vòng 15 ngày</span>
-                        </div>
-                        <div class="policy-item">
-                            <i class="fas fa-shipping-fast"></i>
-                            <span>Miễn phí vận chuyển đơn từ 250K</span>
-                        </div>
-                        <div class="policy-item">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>Bảo hành trong vòng 30 ngày</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="policy-item">
-                            <i class="fas fa-headset"></i>
-                            <span>Hotline 0287.100.6789 hỗ trợ từ 8h30-24h</span>
-                        </div>
-                        <div class="policy-item">
-                            <i class="fas fa-truck"></i>
-                            <span>Giao hàng toàn quốc</span>
-                        </div>
-                        <div class="policy-item">
-                            <i class="fas fa-medal"></i>
-                            <span>Có cộng dồn ưu đãi KHTT</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
+    </div>
     
     <!-- Related Products Section -->
     <div class="container my-5">
         <section class="related-products-section">
             <h3 class="section-title">SẢN PHẨM LIÊN QUAN</h3>
             
-            <div class="related-products-carousel">
-                <button class="carousel-control carousel-control-prev" id="prevBtn">&lt;</button>
-                
-                <div class="related-products-wrapper" id="productsWrapper">
-                    <div class="related-products-slider" id="productsSlider">
-                        <div class="related-product-card">
-                            <span class="badge-new">Hàng Mới</span>
-                            <div class="product-image-container">
-                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem3.webp" alt="Vớ Lười Nam ICONDENIM Twinline">
-                            </div>
-                            <div class="product-info-container">
-                                <h6>Vớ Lười Nam ICONDENIM Twinline</h6>
-                                <p class="product-price">₫29,000</p>
-                            </div>
-                        </div>
-                        <div class="related-product-card">
-                            <span class="badge-new">Hàng Mới</span>
-                            <div class="product-image-container">
-                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem4.webp" alt="Vớ Crew Nam ICONDENIM Office Stride">
-                            </div>
-                            <div class="product-info-container">
-                                <h6>Vớ Crew Nam ICONDENIM Office Stride</h6>
-                                <p class="product-price">₫59,000</p>
-                            </div>
-                        </div>
-                        <div class="related-product-card">
-                            <span class="badge-new">Hàng Mới</span>
-                            <div class="product-image-container">
-                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem5.webp" alt="Vớ Nam ICONDENIM Bold Logo ICDN">
-                            </div>
-                            <div class="product-info-container">
-                                <h6>Vớ Nam ICONDENIM Bold Logo ICDN</h6>
-                                <p class="product-price">₫29,000</p>
-                            </div>
-                        </div>
-                        <div class="related-product-card">
-                            <span class="badge-new">Hàng Mới</span>
-                            <div class="product-image-container">
-                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem1.webp" alt="Vớ Low-Cut Nam ICONDENIM Combo Brand ICDN">
-                            </div>
-                            <div class="product-info-container">
-                                <h6>Vớ Low-Cut Nam ICONDENIM Combo Brand ICDN</h6>
-                                <p class="product-price">₫109,000</p>
-                            </div>
-                        </div>
-                        <div class="related-product-card">
-                            <span class="badge-new">Hàng Mới</span>
-                            <div class="product-image-container">
-                                <img src="/Project_Website/ProjectWeb/upload/img/DetailProduct/detailItem2.webp" alt="Vớ Low-Cut Nam ICONDENIM Color Block">
-                            </div>
-                            <div class="product-info-container">
-                                <h6>Vớ Low-Cut Nam ICONDENIM Color Block</h6>
-                                <p class="product-price">₫29,000</p>
-                            </div>
+            <?php if (!empty($relatedProducts)): ?>
+                <div class="related-products-carousel">
+                    <button class="carousel-control carousel-control-prev" id="prevBtn">&lt;</button>
+                    
+                    <div class="related-products-wrapper" id="productsWrapper">
+                        <div class="related-products-slider" id="productsSlider">
+                            <?php foreach ($relatedProducts as $relatedProduct): ?>
+                                <div class="related-product-card">
+                                    <?php if (!empty($relatedProduct['discount_percent']) && $relatedProduct['discount_percent'] > 0): ?>
+                                        <span class="badge-discount">-<?= $relatedProduct['discount_percent'] ?>%</span>
+                                    <?php else: ?>
+                                        <span class="badge-new">Hàng Mới</span>
+                                    <?php endif; ?>
+                                    
+                                    <div class="product-image-container">
+                                        <a href="index.php?controller=product&action=show&id=<?= $relatedProduct['id_product'] ?>">
+                                            <img src="/Project_Website/ProjectWeb/upload/img/All-Product/<?= $relatedProduct['main_image'] ?>" 
+                                                 alt="<?= htmlspecialchars($relatedProduct['name']) ?>"
+                                                 onerror="this.src='/Project_Website/ProjectWeb/upload/img/All-Product/default.jpg'">
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="product-info-container">
+                                        <h6>
+                                            <a href="index.php?controller=product&action=show&id=<?= $relatedProduct['id_product'] ?>" 
+                                               class="text-decoration-none text-dark">
+                                                <?= htmlspecialchars($relatedProduct['name']) ?>
+                                            </a>
+                                        </h6>
+                                        
+                                        <div class="product-price-container">
+                                            <p class="product-price">₫<?= number_format($relatedProduct['current_price'], 0, ',', '.') ?></p>
+                                            <?php if (!empty($relatedProduct['original_price']) && $relatedProduct['original_price'] > $relatedProduct['current_price']): ?>
+                                                <p class="product-original-price">₫<?= number_format($relatedProduct['original_price'], 0, ',', '.') ?></p>
+                                            <?php endif; ?>
+                                        </div>
+                                        
+                                        <?php if (!empty($relatedProduct['tag'])): ?>
+                                            <div class="product-tags">
+                                                <?php 
+                                                $tags = explode(',', $relatedProduct['tag']);
+                                                foreach (array_slice($tags, 0, 2) as $tag): 
+                                                    $tag = trim($tag);
+                                                    if (!empty($tag)):
+                                                ?>
+                                                    <span class="product-tag"><?= htmlspecialchars($tag) ?></span>
+                                                <?php 
+                                                    endif;
+                                                endforeach; 
+                                                ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        
+                                        <div class="product-stats">
+                                            <small class="text-muted">
+                                                <i class="fas fa-eye"></i> <?= $relatedProduct['click_count'] ?? 0 ?> lượt xem
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
+                    
+                    <button class="carousel-control carousel-control-next" id="nextBtn">&gt;</button>
                 </div>
-                
-                <button class="carousel-control carousel-control-next" id="nextBtn">&gt;</button>
-            </div>
+            <?php else: ?>
+                <div class="text-center py-5">
+                    <p class="text-muted">Không có sản phẩm liên quan nào để hiển thị.</p>
+                    <a href="index.php" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i> Về trang chủ
+                    </a>
+                </div>
+            <?php endif; ?>
         </section>
     </div>
     
@@ -409,5 +377,220 @@ $image3 = !empty($productImages['img3']) ? $productImages['img3'] : '';
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/Project_Website/ProjectWeb/layout/js/DetailProduct.js"></script>
+    
+    <script>
+        // Initialize related products carousel when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeRelatedProductsCarousel();
+            
+            // Add click tracking for related products
+            document.querySelectorAll('.related-product-card a').forEach(link => {
+                link.addEventListener('click', function() {
+                    // Track related product clicks for analytics
+                    const productId = this.href.match(/id=(\d+)/);
+                    if (productId) {
+                        trackRelatedProductClick(productId[1]);
+                    }
+                });
+            });
+        });
+        
+        function trackRelatedProductClick(productId) {
+            // Send analytics data (optional)
+            fetch('index.php?controller=analytics&action=trackRelatedClick', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    current_product: <?= $productDetail['id_product'] ?>,
+                    clicked_product: productId
+                })
+            }).catch(err => console.log('Analytics tracking failed:', err));
+        }
+        
+        function initializeRelatedProductsCarousel() {
+            const carousel = document.querySelector('.related-products-carousel');
+            const slider = document.querySelector('.related-products-slider');
+            const cards = document.querySelectorAll('.related-product-card');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (!carousel || !slider || cards.length === 0) return;
+            
+            let currentIndex = 0;
+            const cardWidth = 280 + 24; // card width + gap
+            const visibleCards = Math.floor(carousel.offsetWidth / cardWidth) || 1;
+            const maxIndex = Math.max(0, cards.length - visibleCards);
+            
+            // Update carousel position
+            function updateCarousel() {
+                const translateX = -currentIndex * cardWidth;
+                slider.style.transform = `translateX(${translateX}px)`;
+                
+                // Update button states
+                prevBtn.style.opacity = currentIndex <= 0 ? '0.5' : '1';
+                prevBtn.style.pointerEvents = currentIndex <= 0 ? 'none' : 'auto';
+                
+                nextBtn.style.opacity = currentIndex >= maxIndex ? '0.5' : '1';
+                nextBtn.style.pointerEvents = currentIndex >= maxIndex ? 'none' : 'auto';
+            }
+            
+            // Previous button
+            prevBtn?.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarousel();
+                }
+            });
+            
+            // Next button
+            nextBtn?.addEventListener('click', () => {
+                if (currentIndex < maxIndex) {
+                    currentIndex++;
+                    updateCarousel();
+                }
+            });
+            
+            // Touch/swipe support for mobile
+            let startX = 0;
+            let currentX = 0;
+            let isDragging = false;
+            
+            slider.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+                slider.style.transition = 'none';
+            });
+            
+            slider.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                
+                currentX = e.touches[0].clientX;
+                const diff = startX - currentX;
+                const currentTranslate = -currentIndex * cardWidth;
+                slider.style.transform = `translateX(${currentTranslate - diff}px)`;
+            });
+            
+            slider.addEventListener('touchend', (e) => {
+                if (!isDragging) return;
+                
+                const diff = startX - currentX;
+                const threshold = cardWidth / 3;
+                
+                slider.style.transition = 'transform 0.3s ease';
+                
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0 && currentIndex < maxIndex) {
+                        currentIndex++;
+                    } else if (diff < 0 && currentIndex > 0) {
+                        currentIndex--;
+                    }
+                }
+                
+                updateCarousel();
+                isDragging = false;
+            });
+            
+            // Initialize
+            updateCarousel();
+            
+            // Update on window resize
+            window.addEventListener('resize', debounce(() => {
+                const newVisibleCards = Math.floor(carousel.offsetWidth / cardWidth) || 1;
+                const newMaxIndex = Math.max(0, cards.length - newVisibleCards);
+                
+                if (currentIndex > newMaxIndex) {
+                    currentIndex = newMaxIndex;
+                }
+                
+                updateCarousel();
+            }, 250));
+            
+            // Add animation to cards
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('animate-in');
+            });
+        }
+        
+        // Debounce utility function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+    
+    <style>
+        /* Additional styles for related products */
+        .badge-discount {
+            background-color: #e74c3c;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+        
+        .product-price-container {
+            margin: 0.5rem 0;
+        }
+        
+        .product-original-price {
+            font-size: 0.9rem;
+            color: #999;
+            text-decoration: line-through;
+            margin: 0;
+        }
+        
+        .product-tags {
+            margin: 0.5rem 0;
+        }
+        
+        .product-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.2rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-right: 0.3rem;
+            display: inline-block;
+        }
+        
+        .product-stats {
+            margin-top: 0.5rem;
+        }
+        
+        .related-product-card {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .related-product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .product-image-container img {
+            transition: transform 0.3s ease;
+        }
+        
+        .related-product-card:hover .product-image-container img {
+            transform: scale(1.05);
+        }
+    </style>
 </body>
 </html>

@@ -93,29 +93,320 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                     <img src="<?= htmlspecialchars($logoPath) ?>" alt="<?= htmlspecialchars($siteName) ?> Logo" class="img-fluid desktop-logo-img">
                 </a>
                     <h1 class="rs-store-brand-text me-3 h5 mb-0 d-none d-md-inline-block"><?= htmlspecialchars($siteName) ?></h1>
-                    <div class="search-container flex-grow-1">
-                        <form id="searchForm" onsubmit="return handleSearch(event)">
-                            <input type="text" placeholder="Bạn đang tìm gì..." name="q" id="searchInput" class="search-input" autocomplete="off">
-                            <div id="searchResults" class="search-results-dropdown"></div>
+                        <div class="search-container flex-grow-1 position-relative">
+                        <form action="index.php" method="get" id="searchForm">
+                            <input type="hidden" name="controller" value="search">
+                            <input type="text" 
+                                   placeholder="Tìm theo tên sản phẩm, tag..." 
+                                   name="q" 
+                                   class="search-input" 
+                                   id="searchInput"
+                                   autocomplete="off">
                             <button type="submit" class="search-button">
                                 <i class="fas fa-search"></i>
                             </button>
                         </form>
+                        
+                        <!-- Search Suggestions Dropdown -->
+                        <div class="search-suggestions" id="searchSuggestions" style="display: none;">
+                            <div class="suggestions-header">
+                                <i class="fas fa-search"></i> Gợi ý tìm kiếm
+                            </div>
+                            <div class="suggestions-content" id="suggestionsContent">
+                                <!-- Suggestions will be populated by JavaScript -->
+                            </div>
+                        </div>
                     </div>
-                    <script>
-                        function handleSearch(event) {
-                            event.preventDefault();
-                            const searchInput = document.getElementById('searchInput');
-                            const keyword = searchInput.value.trim();
+                    
+                    <!-- Mobile search bar version -->
+                    <div class="container-fluid d-md-none py-2 mobile-search">
+                        <div class="search-container position-relative">
+                            <form action="index.php" method="get" id="mobileSearchForm">
+                                <input type="hidden" name="controller" value="search">
+                                <input type="text" 
+                                       placeholder="Tìm theo tên sản phẩm, tag..." 
+                                       name="q" 
+                                       class="search-input" 
+                                       id="mobileSearchInput"
+                                       autocomplete="off">
+                                <button type="submit" class="search-button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
                             
-                            if (keyword) {
-                                // Chuyển hướng đến trang tìm kiếm với keyword
-                                window.location.href = 'index.php?controller=search&q=' + encodeURIComponent(keyword);
+                            <!-- Mobile Search Suggestions -->
+                            <div class="search-suggestions" id="mobileSearchSuggestions" style="display: none;">
+                                <div class="suggestions-header">
+                                    <i class="fas fa-search"></i> Gợi ý tìm kiếm
+                                </div>
+                                <div class="suggestions-content" id="mobileSuggestionsContent">
+                                    <!-- Suggestions will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+    <style>
+        /* Search Suggestions Styling */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .suggestions-header {
+            padding: 0.75rem 1rem;
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .suggestion-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-image {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 0.75rem;
+        }
+        
+        .suggestion-info {
+            flex-grow: 1;
+        }
+        
+        .suggestion-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .suggestion-price {
+            color: #e74c3c;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .no-suggestions {
+            padding: 1rem;
+            text-align: center;
+            color: #999;
+            font-style: italic;
+        }
+        
+        .search-loading {
+            padding: 1rem;
+            text-align: center;
+            color: #666;
+        }
+        
+        /* Loading animation */
+        .search-loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 0.5rem;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #333;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile specific styles */
+        @media (max-width: 767px) {
+            .search-suggestions {
+                left: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize search functionality for both desktop and mobile
+            initializeSearch('searchInput', 'searchSuggestions', 'suggestionsContent');
+            initializeSearch('mobileSearchInput', 'mobileSearchSuggestions', 'mobileSuggestionsContent');
+            
+            function initializeSearch(inputId, suggestionsId, contentId) {
+                const searchInput = document.getElementById(inputId);
+                const searchSuggestions = document.getElementById(suggestionsId);
+                const suggestionsContent = document.getElementById(contentId);
+                
+                if (!searchInput || !searchSuggestions || !suggestionsContent) return;
+                
+                let searchTimeout;
+                let isSearching = false;
+                
+                // Search input event listener
+                searchInput.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    
+                    clearTimeout(searchTimeout);
+                    
+                    if (query.length < 2) {
+                        hideSuggestions();
+                        return;
+                    }
+                    
+                    // Show loading state
+                    showLoading();
+                    
+                    // Debounce search requests
+                    searchTimeout = setTimeout(() => {
+                        fetchSuggestions(query);
+                    }, 300);
+                });
+                
+                // Hide suggestions when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                        hideSuggestions();
+                    }
+                });
+                
+                // Handle keyboard navigation
+                searchInput.addEventListener('keydown', function(e) {
+                    const suggestions = searchSuggestions.querySelectorAll('.suggestion-item');
+                    const activeIndex = Array.from(suggestions).findIndex(item => 
+                        item.classList.contains('active')
+                    );
+                    
+                    switch(e.key) {
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            if (activeIndex < suggestions.length - 1) {
+                                setActiveSuggestion(suggestions, activeIndex + 1);
                             }
-                            
-                            return false;
-                        }
-                    </script>
+                            break;
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            if (activeIndex > 0) {
+                                setActiveSuggestion(suggestions, activeIndex - 1);
+                            }
+                            break;
+                        case 'Enter':
+                            const activeItem = suggestions[activeIndex];
+                            if (activeItem) {
+                                e.preventDefault();
+                                activeItem.click();
+                            }
+                            break;
+                        case 'Escape':
+                            hideSuggestions();
+                            break;
+                    }
+                });
+                
+                function fetchSuggestions(query) {
+                    if (isSearching) return;
+                    
+                    isSearching = true;
+                    
+                    fetch(`index.php?controller=search&action=suggestions&q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            displaySuggestions(data);
+                            isSearching = false;
+                        })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                            hideSuggestions();
+                            isSearching = false;
+                        });
+                }
+                
+                function displaySuggestions(suggestions) {
+                    if (suggestions.length === 0) {
+                        suggestionsContent.innerHTML = '<div class="no-suggestions">Không tìm thấy sản phẩm phù hợp</div>';
+                    } else {
+                        const html = suggestions.map(item => `
+                            <div class="suggestion-item" onclick="selectProduct(${item.id_product})">
+                                <img src="/Project_Website/ProjectWeb/upload/img/All-Product/${item.main_image}" 
+                                     alt="${escapeHtml(item.name)}" 
+                                     class="suggestion-image"
+                                     onerror="this.src='/Project_Website/ProjectWeb/upload/img/All-Product/default.jpg'">
+                                <div class="suggestion-info">
+                                    <div class="suggestion-name">${escapeHtml(item.name)}</div>
+                                    <div class="suggestion-price">${formatPrice(item.current_price)}₫</div>
+                                </div>
+                            </div>
+                        `).join('');
+                        suggestionsContent.innerHTML = html;
+                    }
+                    
+                    showSuggestions();
+                }
+                
+                function showLoading() {
+                    suggestionsContent.innerHTML = '<div class="search-loading">Đang tìm kiếm...</div>';
+                    showSuggestions();
+                }
+                
+                function showSuggestions() {
+                    searchSuggestions.style.display = 'block';
+                }
+                
+                function hideSuggestions() {
+                    searchSuggestions.style.display = 'none';
+                }
+                
+                function setActiveSuggestion(suggestions, index) {
+                    suggestions.forEach(item => item.classList.remove('active'));
+                    if (suggestions[index]) {
+                        suggestions[index].classList.add('active');
+                    }
+                }
+            }
+            
+            // Global functions
+            window.selectProduct = function(productId) {
+                window.location.href = `index.php?controller=product&action=show&id=${productId}`;
+            };
+            
+            window.escapeHtml = function(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+            
+            window.formatPrice = function(price) {
+                return parseInt(price).toLocaleString('vi-VN');
+            };
+        });
+    </script>
                 </div>
                 
                 <!-- User actions -->
@@ -124,24 +415,26 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                         <!-- User account -->
                       <!-- User account -->
                       <!-- User account -->
-                        <div class="header-action me-3 position-relative">
+                       <div class="header-action me-3 position-relative d-flex align-items-center">
                             <?php if ($isLoggedIn): ?>
                                 <!-- Hiển thị thông tin người dùng đã đăng nhập -->
-                                <a href="index.php?controller=account" class="action-link">
-                                    <i class="fas fa-user"></i>
+                                <a href="index.php?controller=account" class="action-link d-flex align-items-center">
+                                    <i class="fas fa-user me-1"></i>
                                     <span class="d-none d-lg-inline-block"><?= $_SESSION['user']['name'] ?></span>
                                 </a>
-                                <a href="index.php?controller=login&action=logout" class="action-link small ms-2">
-                                    <i class="fas fa-sign-out-alt"></i>
+                                <a href="index.php?controller=login&action=logout" class="action-link small ms-2 d-flex align-items-center">
+                                    <i class="fas fa-sign-out-alt me-1"></i>
+                                    <span>Đăng Xuất</span>
                                 </a>
                             <?php else: ?>
                                 <!-- Hiển thị link đơn giản cho người dùng chưa đăng nhập -->
-                                <a href="index.php?controller=login" class="action-link">
-                                    <i class="fas fa-user"></i>
+                                <a href="index.php?controller=login" class="action-link d-flex align-items-center">
+                                    <i class="fas fa-user me-1"></i>
                                     <span class="d-none d-lg-inline-block">Tài khoản</span>
                                 </a>
                             <?php endif; ?>
                         </div>
+
                         <?php if ($isLoggedIn): ?>
                             <div class="header-action position-relative dropdown">
                                 <a href="index.php?controller=cart&action=index" class="action-link cart-toggle" id="cartBtn">
@@ -315,6 +608,13 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
     <script src="/Project_Website/ProjectWeb/layout/js/Header.js"></script> <!-- Đường dẫn đến file JS mới -->
     <!-- Thêm script để xử lý header khi cuộn -->
     <script>
+        document.addEventListener("cartUpdated", function () {
+    const countElement = document.getElementById("item-count");
+    if (countElement) {
+        const cartCount = sessionStorage.getItem("cartCount") || 0;
+        countElement.textContent = cartCount;
+    }
+});
         document.addEventListener('DOMContentLoaded', function() {
     // Lấy thông tin giỏ hàng mới nhất từ server
     fetch("index.php?controller=cart&action=getCount", {
@@ -404,109 +704,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 });
             }
         });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    // Lấy các phần tử DOM
-    const searchForm = document.getElementById('searchForm');
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    
-    // Biến để kiểm soát debounce
-    let searchTimeout = null;
-    
-    // Event listener cho input tìm kiếm
-    searchInput.addEventListener('input', function() {
-        // Clear timeout trước đó nếu có
-        if (searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
         
-        const keyword = this.value.trim();
-        
-        // Ẩn kết quả nếu không có từ khóa
-        if (keyword.length === 0) {
-            searchResults.classList.remove('show');
-            searchResults.innerHTML = '';
-            return;
-        }
-        
-        // Hiển thị loading
-        searchResults.classList.add('show');
-        searchResults.innerHTML = '<div class="search-loading"><div class="search-loading-spinner"></div></div>';
-        
-        // Thiết lập debounce 300ms
-        searchTimeout = setTimeout(function() {
-            // Gọi API tìm kiếm
-            fetch(`index.php?controller=search&action=quick&q=${encodeURIComponent(keyword)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        renderSearchResults(data);
-                    } else {
-                        searchResults.innerHTML = '<div class="p-3 text-center">Không tìm thấy kết quả</div>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Lỗi tìm kiếm:', error);
-                    searchResults.innerHTML = '<div class="p-3 text-center">Đã xảy ra lỗi</div>';
-                });
-        }, 300);
-    });
-    
-    // Hàm hiển thị kết quả tìm kiếm
-    function renderSearchResults(data) {
-        // Kiểm tra nếu không có sản phẩm
-        if (data.products.length === 0) {
-            searchResults.innerHTML = '<div class="p-3 text-center">Không tìm thấy sản phẩm nào</div>';
-            return;
-        }
-        
-        // Tạo HTML cho các sản phẩm
-        let html = '';
-        
-        // Thêm từng sản phẩm vào kết quả
-        data.products.forEach(product => {
-            html += `
-                <a href="${product.url}" class="search-result-item">
-                    <img src="${product.image}" alt="${product.name}" class="search-result-image">
-                    <div class="search-result-info">
-                        <div class="search-result-name">${product.name}</div>
-                        <div>
-                            <span class="search-result-price">${product.price}</span>
-                            ${product.originalPrice ? `<span class="search-result-original-price">${product.originalPrice}</span>` : ''}
-                        </div>
-                    </div>
-                </a>
-            `;
-        });
-        
-        // Thêm link xem tất cả kết quả
-        html += `
-            <a href="${data.allResultsUrl}" class="search-view-all">
-                Xem tất cả kết quả
-            </a>
-        `;
-        
-        // Cập nhật nội dung dropdown
-        searchResults.innerHTML = html;
-    }
-    
-    // Đóng dropdown khi click ra ngoài
-    document.addEventListener('click', function(event) {
-        if (!searchForm.contains(event.target)) {
-            searchResults.classList.remove('show');
-        }
-    });
-    
-    // Ngăn submit form khi chưa nhập từ khóa
-    searchForm.addEventListener('submit', function(event) {
-        const keyword = searchInput.value.trim();
-        if (keyword.length === 0) {
-            event.preventDefault();
-        }
-    });
-});
     </script>
 </body>
 </html>

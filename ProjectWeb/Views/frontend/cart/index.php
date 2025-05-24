@@ -22,6 +22,12 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
 </head>
 
 <body>
+        <?php
+    view('frontend.partitions.frontend.header');
+    ?>
+    <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css">
+
+
     <div class="cart-header">
         <div class="container">
             <nav aria-label="breadcrumb">
@@ -39,7 +45,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 <div class="cart-container">
                     <div class="cart-title">
                         <span>Giỏ hàng:</span>
-                        <span class="badge bg-dark" id="item-count">22 Sản phẩm</span>
+                        <!-- <span class="badge bg-dark" id="item-count">22 Sản phẩm</span> -->
                     </div>
 
                  
@@ -87,7 +93,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                                     </div>
                                 </div>
                             </div>
-                            <div class="cart-item-price"><?= number_format($item['product']['current_price'], 0, ',', '.') ?>đ</div>
+                            <div class="cart-item-price text-dark"><?= number_format($item['product']['current_price'], 0, ',', '.') ?>đ</div>
                             <a href="index.php?controller=cart&action=delete& id=<?= $item['product']['id_product']?>">
                        <a href="index.php?controller=cart&action=delete&product_id=<?= $item['product']['id_product'] ?>&size=<?= $item['size'] ?>" class="btn btn-dark btn-sm ms-3">Xóa</a>
 
@@ -115,7 +121,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                     <div class="mt-4">
                         <div class="summary-row">
                             <span>Tạm tính:</span>
-                            <span id="cart-subtotal">224,000₫</span>
+                            <span id="cart-subtotal" class="fw-bold">224,000₫</span>
                         </div>
                         <!-- <div class="summary-row">
                             <span>Phí vận chuyển:</span>
@@ -131,7 +137,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                         </div>
                     </div>
 
-                    <button  type="button" class=" checkout-btn" >THANH TOÁN</button>
+                    <button  type="button" class="checkout-btn" >THANH TOÁN</button>
 
 
                     <div class="mt-3">
@@ -145,8 +151,12 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
             </div>
         </div>
     </div>
-
+<?php
+    view('frontend.partitions.frontend.footer');
+    ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/Project_Website/ProjectWeb/layout/js/Cart.js"></script>
+     <script src="/Project_Website/ProjectWeb/layout/js/Header.js"></script>
+    <script src="/Project_Website/ProjectWeb/layout/js/Footer.js"></script>
 </body>
 

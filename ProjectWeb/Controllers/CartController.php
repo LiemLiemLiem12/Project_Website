@@ -182,6 +182,15 @@ public function add()
 
     $this->redirectWithMessage('index.php?controller=cart&action=index', 'Đã thêm sản phẩm vào giỏ hàng!', 'success');
 }
+private function getCartItemCount()
+{
+    $cart = $_SESSION['cart'] ?? [];
+    $totalItems = 0;
+    foreach ($cart as $item) {
+        $totalItems += $item['quantity'];
+    }
+    return $totalItems;
+}
 
     /**
      * Mua ngay - thêm sản phẩm vào giỏ và chuyển đến trang thanh toán
