@@ -479,29 +479,34 @@ function deleteBtn() {
 }
 
 function exportPDFBtn() {
-    $('#exportPDF').click(function() {
-
+    $('#exportPDF').click(async function() {
         let checkboxes = document.querySelectorAll('.order-checkbox');
-        // Kiểm tra nếu có checkbox được chọn
         let selectedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
 
-        if(selectedCheckboxes.length != 0 && confirm('Bạn có muốn xuất hóa đơn các đơn hàng này không?')) {
-            selectedCheckboxes.forEach(element => {
-                let row = element.closest('tr')
-                orderId = row.getAttribute('data-order-id')
-                fetch(`?controller=adminorder&action=getDetailInfo`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        orderID : orderId 
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
+        if(selectedCheckboxes.length === 0) {
+            alert('Vui lòng chọn hóa đơn');
+            return;
+        }
+
+        if(confirm('Bạn có muốn xuất hóa đơn các đơn hàng này không?')) {
+            for(const element of selectedCheckboxes) {
+                let row = element.closest('tr');
+                let orderId = row.getAttribute('data-order-id');
+                
+                try {
+                    const response = await fetch(`?controller=adminorder&action=getDetailInfo`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            orderID: orderId 
+                        })
+                    });
+
+                    const data = await response.json();
                     const customer = data.customer[0] || {};
-                    const products = data.detail_product || {};
+                    const products = data.detail_product || [];
 
                     var tableBody = [
                         [
@@ -511,50 +516,46 @@ function exportPDFBtn() {
                             { text: 'Đơn giá', bold: true },
                             { text: 'Thành tiền', bold: true }
                         ]
-                    ]
+                    ];
 
                     products.forEach((product, index) => {
-                    tableBody.push([
-                        (index + 1).toString(),
-                        product.name,
-                        product.quantity.toString(),
-                        product.current_price,
-                        product.sub_total
-                    ]);
+                        tableBody.push([
+                            (index + 1).toString(),
+                            product.name,
+                            product.quantity.toString(),
+                            product.current_price,
+                            product.sub_total
+                        ]);
                     });
 
                     var docDefinition = {
-                        pageOrientation: 'landscape', // Khổ ngang
-
+                        pageOrientation: 'landscape',
                         content: [
                             { text: 'HÓA ĐƠN BÁN HÀNG', style: 'header' },
-
                             {
                                 columns: [
                                     {
                                         width: '50%',
                                         stack: [
                                             { text: 'Thông tin người mua:', bold: true, margin: [0, 10, 0, 5] },
-                                            { text: `Họ tên: ${customer.NAME}` },
-                                            { text: `Số điện thoại: ${customer.phone}` },
-                                            { text: `Địa chỉ: ${customer.address}` }
+                                            { text: `Họ tên: ${customer.NAME || ''}` },
+                                            { text: `Số điện thoại: ${customer.phone || ''}` },
+                                            { text: `Địa chỉ: ${customer.address || ''}` }
                                         ]
                                     },
                                     {
                                         width: '50%',
                                         stack: [
                                             { text: `Mã hóa đơn: HD00${orderId}`, alignment: 'right' },
-                                            { text: `Ngày: ${products[0].created_at}`, alignment: 'right' }
+                                            { text: `Ngày: ${products[0]?.created_at || ''}`, alignment: 'right' }
                                         ]
                                     }
                                 ]
                             },
-
                             {
                                 text: 'Danh sách sản phẩm đã mua:',
                                 style: 'subheader'
                             },
-
                             {
                                 table: {
                                     widths: ['auto', '*', 'auto', 'auto', 'auto'],
@@ -562,15 +563,13 @@ function exportPDFBtn() {
                                 },
                                 margin: [0, 10, 0, 10]
                             },
-
                             {
-                                text: `Tổng cộng: ${products[0].total_amount}`,
+                                text: `Tổng cộng: ${products[0]?.total_amount || ''}`,
                                 alignment: 'right',
                                 bold: true,
                                 fontSize: 13,
                                 margin: [0, 0, 0, 20]
                             },
-
                             {
                                 columns: [
                                     { text: 'Người bán hàng\n\n(Ký tên)', alignment: 'center' },
@@ -578,7 +577,6 @@ function exportPDFBtn() {
                                 ]
                             }
                         ],
-
                         styles: {
                             header: {
                                 fontSize: 18,
@@ -593,41 +591,43 @@ function exportPDFBtn() {
                             }
                         }
                     };
-                    pdfMake.createPdf(docDefinition).open(); // hoặc .download("hoa-don.pdf")
-                })
-            })
-            
 
-                // Xuất hóa đơn
-        }else {
-            alert('Vui lòng chọn hóa đơn')
+                    // Tạo và tải xuống PDF
+                    pdfMake.createPdf(docDefinition).download(`hoa_don_${orderId}.pdf`);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(`Có lỗi xảy ra khi tạo PDF cho đơn hàng #${orderId}`);
+                }
+            }
         }
-        
-    
-    })
-
+    });
 }
 
 function exportExcelBtn() {
-    $('#exportExcel').click(function () {
-
+    $('#exportExcel').click(async function () {
         let checkboxes = document.querySelectorAll('.order-checkbox');
         let selectedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
 
-        if (selectedCheckboxes.length !== 0 && confirm('Bạn có muốn xuất Excel các đơn hàng này không?')) {
-            selectedCheckboxes.forEach(element => {
+        if (selectedCheckboxes.length === 0) {
+            alert('Vui lòng chọn hóa đơn');
+            return;
+        }
+
+        if (confirm('Bạn có muốn xuất Excel các đơn hàng này không?')) {
+            for(const element of selectedCheckboxes) {
                 let row = element.closest('tr');
                 let orderId = row.getAttribute('data-order-id');
 
-                fetch(`?controller=adminorder&action=getDetailInfo`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({ orderID: orderId })
-                })
-                .then(response => response.json())
-                .then(data => {
+                try {
+                    const response = await fetch(`?controller=adminorder&action=getDetailInfo`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({ orderID: orderId })
+                    });
+
+                    const data = await response.json();
                     const customer = data.customer[0] || {};
                     const products = data.detail_product || [];
 
@@ -645,13 +645,16 @@ function exportExcelBtn() {
                     let rowIdx = 3;
 
                     // Thông tin khách hàng
-                    sheet.getCell(`A${rowIdx++}`).value = `Họ tên: ${customer.NAME}`;
-                    sheet.getCell(`A${rowIdx++}`).value = `Số điện thoại: ${customer.phone}`;
-                    sheet.getCell(`A${rowIdx++}`).value = `Địa chỉ: ${customer.address}`;
-                    sheet.getCell(`A${rowIdx++}`).value = `Mã hóa đơn: HD00${orderId}`;
-                    sheet.getCell(`A${rowIdx++}`).value = `Ngày: ${products[0].created_at}`;
-
-                    rowIdx++; // dòng trống
+                    sheet.getCell(`A${rowIdx}`).value = `Họ tên: ${customer.NAME || ''}`;
+                    rowIdx++;
+                    sheet.getCell(`A${rowIdx}`).value = `Số điện thoại: ${customer.phone || ''}`;
+                    rowIdx++;
+                    sheet.getCell(`A${rowIdx}`).value = `Địa chỉ: ${customer.address || ''}`;
+                    rowIdx++;
+                    sheet.getCell(`A${rowIdx}`).value = `Mã hóa đơn: HD00${orderId}`;
+                    rowIdx++;
+                    sheet.getCell(`A${rowIdx}`).value = `Ngày: ${products[0]?.created_at || ''}`;
+                    rowIdx += 2;
 
                     // Tiêu đề bảng
                     const headerRow = sheet.getRow(rowIdx++);
@@ -661,13 +664,14 @@ function exportExcelBtn() {
 
                     // Dữ liệu sản phẩm
                     products.forEach((product, index) => {
-                        sheet.addRow([
+                        const row = sheet.addRow([
                             index + 1,
                             product.name,
                             product.quantity,
                             product.current_price,
                             product.sub_total
                         ]);
+                        row.alignment = { horizontal: 'center' };
                     });
 
                     rowIdx = sheet.lastRow.number + 2;
@@ -679,7 +683,7 @@ function exportExcelBtn() {
                     totalCell.font = { bold: true };
                     totalCell.alignment = { horizontal: 'right' };
 
-                    sheet.getCell(`E${rowIdx}`).value = products[0].total_amount;
+                    sheet.getCell(`E${rowIdx}`).value = products[0]?.total_amount || '';
                     sheet.getCell(`E${rowIdx}`).font = { bold: true };
 
                     rowIdx += 3;
@@ -700,14 +704,13 @@ function exportExcelBtn() {
                     ];
 
                     // Xuất file Excel
-                    workbook.xlsx.writeBuffer().then(function (buffer) {
-                        saveAs(new Blob([buffer]), `hoa_don_${orderId}.xlsx`);
-                    });
-
-                });
-            });
-        } else {
-            alert('Vui lòng chọn hóa đơn');
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    saveAs(new Blob([buffer]), `hoa_don_${orderId}.xlsx`);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(`Có lỗi xảy ra khi tạo file Excel cho đơn hàng #${orderId}`);
+                }
+            }
         }
     });
 }

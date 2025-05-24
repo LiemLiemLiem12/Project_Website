@@ -220,7 +220,6 @@ class AdminorderController extends BaseController
                 echo json_encode(['success' => false, 'error' => 'Không có ID hợp lệ']);
                 exit;
             }
-
             $model = new AdminOrderModel();
             $result = $model->restoreOrder($id);
 
