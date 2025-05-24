@@ -208,9 +208,73 @@ function changeStatus() {
                 status: status
             })
         })
-        .then(res => res.text())
+        .then(res => res.json())
         .then(data => {
-            document.getElementById('order-table').innerHTML = data
+            if(data.status === 'waitConfirm') {
+                row.cells[6].innerHTML = '<td data-label="Trạng thái"><span class="status waitConfirm">Chờ xác nhận</span></td>'
+                row.cells[7].innerHTML = `
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-success d-flex justify-content-center align-items-center status-btn status-wait" data-bs-toggle="tooltip"
+                            title="Xác nhận">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger d-flex justify-content-center align-items-center status-cancel" data-bs-toggle="tooltip"
+                            title="Hủy bỏ">
+                            <i class="fa-solid fa-x"></i>
+                        </button>
+                    </div>
+                `;
+                row.setAttribute('data-status', data.status);
+            }
+            if(data.status === 'pending') {
+                row.cells[6].innerHTML = '<td data-label="Trạng thái"><span class="status pending">Đang xử lý</span></td>'
+                row.cells[7].innerHTML = `
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-primary d-flex justify-content-center align-items-center status-btn status-pending" data-bs-toggle="tooltip"
+                            title="Giao hàng">
+                            <i class="fa-solid fa-truck"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger d-flex justify-content-center align-items-center status-cancel" data-bs-toggle="tooltip"
+                            title="Hủy bỏ">
+                            <i class="fa-solid fa-x"></i>
+                        </button>
+                    </div>
+                `;
+                row.setAttribute('data-status', data.status);
+                
+            }
+            if(data.status === 'shipping') {
+                row.cells[6].innerHTML = '<td data-label="Trạng thái"><span class="status shipping">Đang giao</span></td>'
+                row.cells[7].innerHTML = `
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-warning d-flex justify-content-center align-items-center status-btn status-shipping" data-bs-toggle="tooltip"
+                            title="Nhận hàng">
+                            <i class="fa-solid fa-inbox"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger d-flex justify-content-center align-items-center status-cancel" data-bs-toggle="tooltip"
+                            title="Hủy bỏ">
+                            <i class="fa-solid fa-x"></i>
+                        </button>
+                    </div>
+                `;
+                row.setAttribute('data-status', data.status);
+
+            }
+            if(data.status === 'completed') {
+                row.cells[6].innerHTML = '<td data-label="Trạng thái"><span class="status completed">Hoàn thành</span></td>'
+                row.cells[7].innerHTML = ''
+                row.setAttribute('data-status', data.status);
+
+            }
+            if(data.status === 'cancelled') {
+                row.cells[6].innerHTML = '<td data-label="Trạng thái"><span class="status cancelled">Đã hủy</span></td>'
+                row.cells[7].innerHTML = ''
+                row.setAttribute('data-status', data.status);
+
+            }
+
+           
+            
 
         })
         .catch(err => {
@@ -238,10 +302,13 @@ function changeStatus() {
                     status: status
                 })
             })
-            .then(res => res.text())
+            .then(res => res.json())
             .then(data => {
-                document.getElementById('order-table').innerHTML = data
-
+                if(data.status === 'cancelled') {
+                row.cells[6].innerHTML = '<td data-label="Trạng thái"><span class="status cancelled">Đã hủy</span></td>'
+                row.cells[7].innerHTML = ''
+                row.setAttribute('data-status', data.status);
+            }
             })
             .catch(err => {
                 console.error(err);

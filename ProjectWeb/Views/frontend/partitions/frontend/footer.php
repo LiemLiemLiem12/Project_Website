@@ -19,19 +19,37 @@ if (!isset($storeSettings) || !isset($policies) || !isset($socialMedia) || !isse
     }
 }
 ?>
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Footer.css">
 
-<body>
 <!-- FOOTER SECTION -->
 <footer class="footer bg-black text-white py-4">
-    <div class="container">
-         <!-- Newsletter -->
-      
+    <style>
+        /* CS cho phương thức thanh toán */
+.payment-methods-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem; /* 10px → 0.625rem */
+}
 
+.payment-method-item {
+    width: 3.75rem; /* 60px → 3.75rem */
+    height: 2.5rem; /* 40px → 2.5rem */
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 0.25rem; /* 4px → 0.25rem */
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.payment-method-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* thay vì contain để lấp đầy khung */
+    padding: 0; /* bỏ padding hoàn toàn */
+}
+    </style>
+    <div class="container">
         <!-- MAIN FOOTER SECTIONS -->
         <div class="row">
             <!-- GIỚI THIỆU -->
@@ -74,56 +92,43 @@ if (!isset($storeSettings) || !isset($policies) || !isset($socialMedia) || !isse
                 </div>
             </div>
 
-            <!-- CHÍNH SÁCH --> 
-            <div class="col-md-4">
-                <h5 class="text-uppercase mb-3">CHÍNH SÁCH</h5>
-                <ul class="list-unstyled">
-                    
-                    <li class="mb-2">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <i class="bi bi-circle-fill me-2" style="font-size: 0.5rem;"></i>
-                                <a href="#" class="text-white text-decoration-none" data-bs-toggle="collapse"
-                                    data-bs-target="#chinhSachList" aria-expanded="true"
-                                    aria-controls="chinhSachList">Chính sách</a>
-                            </div>
-                            <button class="btn btn-link text-white p-0 border-0" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#chinhSachList" aria-expanded="true"
-                                aria-controls="chinhSachList">
-                                <i class="bi bi-chevron-up" id="chinhSachIcon"></i>
-                            </button>
-                        </div>
-                    </li>
-                </ul>
-
-                <!-- Dropdown content - Hiển thị danh sách chính sách từ database -->
-                <div class="collapse show ms-3" id="chinhSachList">
-                    <ul class="list-unstyled">
-                        <?php 
-                        // Lấy dữ liệu từ controller nếu chưa có
-                        if (!isset($policies)) {
-                            $footerController = new FooterController();
-                            $policies = $footerController->getPoliciesData();
-                        }
-                        
-                        if (!empty($policies)): 
-                        ?>
-                            <?php foreach ($policies as $policy): ?>
-                            <li class="mb-2">
-                                <i class="bi bi-circle-fill me-2" style="font-size: 0.5rem;"></i>
-                                <a href="<?= htmlspecialchars($policy['link']) ?>" class="text-white text-decoration-none" target="_blank" rel="noopener">
-                                    <?= htmlspecialchars($policy['title']) ?>
-                                </a>
-                            </li>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <li class="mb-2">
-                                <span class="text-muted">Không có chính sách nào</span>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
+           <!-- CHÍNH SÁCH --> 
+<div class="col-md-4">
+    <h5 class="text-uppercase mb-3">CHÍNH SÁCH</h5>
+    <ul class="list-unstyled">
+        <li class="mb-2">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <i class="bi bi-circle-fill me-2" style="font-size: 0.5rem;"></i>
+                    <a href="javascript:void(0);" class="text-white">Chính sách</a>
                 </div>
+                <button class="policy-toggle-btn" id="policyToggleBtn">
+                    <span id="chinhSachIcon">▼</span>
+                </button>
             </div>
+        </li>
+    </ul>
+
+    <!-- Dropdown content -->
+    <div class="ms-3 footer-policy-content" id="policyContent" style="display:block;">
+        <ul class="list-unstyled">
+            <?php if (!empty($policies)): ?>
+                <?php foreach ($policies as $policy): ?>
+                <li class="mb-2">
+                    <i class="bi bi-circle-fill me-2" style="font-size: 0.5rem;"></i>
+                    <a href="<?= htmlspecialchars($policy['link']) ?>" class="text-white">
+                        <?= htmlspecialchars($policy['title']) ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <li class="mb-2">
+                    <span class="text-muted">Không có chính sách nào</span>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </div>
+</div>
 
             <!-- PHƯƠNG THỨC THANH TOÁN -->
             <div class="col-md-4">
@@ -175,87 +180,87 @@ if (!isset($storeSettings) || !isset($policies) || !isset($socialMedia) || !isse
     <div class="py-3 mt-4">
         <div class="container text-center">
             <p class="mb-0">BẢN QUYỀN THUỘC VỀ <?= strtoupper(htmlspecialchars($storeSettings['site_name'])) ?></p>
+            <p class="mb-0">Được phát triển tại Trường Đại Học Tôn Đức Thắng
+                <br>
+                Phạm Nhựt Huy - 52300030
+                <br>
+                Trần Thanh Liêm - 52300041
+                <br>
+                Nguyễn Trần Minh Quân - 52300054
+                <br>      
+            </p>
         </div>
     </div>
 </footer>
 
 <style>
-/* CSS cho phương thức thanh toán */
-.payment-methods-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+/* CSS cho footer */
+.footer a {
+    text-decoration: none !important;
 }
 
-.payment-method-item {
-    width: 60px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 4px;
-    overflow: hidden;
+.footer a:hover {
+    text-decoration: none !important;
+    color: #cccccc !important; 
+}
+
+.policy-toggle-btn {
+    background-color: transparent;
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    font-size: 12px;
 }
 
-.payment-method-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    padding: 5px;
+.policy-toggle-btn:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* Tạo animation cho dropdown */
+.footer-policy-content {
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.footer-policy-content.collapsed {
+    max-height: 0;
 }
 </style>
 
-<!-- Inline JavaScript để xử lý toggle chính sách -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Tìm các phần tử cần thiết cho việc toggle
-    const chinhSachBtns = document.querySelectorAll('[data-bs-target="#chinhSachList"]');
-    const chinhSachIcon = document.getElementById('chinhSachIcon');
-    const chinhSachList = document.getElementById('chinhSachList');
+// Script độc lập
+document.addEventListener('DOMContentLoaded', function() {
+    // Chỉ chạy khi chưa được khởi tạo
+    if (window.footerPolicyInitialized) return;
+    window.footerPolicyInitialized = true;
     
-    if (chinhSachBtns.length > 0 && chinhSachIcon && chinhSachList) {
-        // Thiết lập trạng thái icon ban đầu dựa vào trạng thái của chinhSachList
-        if (chinhSachList.classList.contains('show')) {
-            chinhSachIcon.classList.add('bi-chevron-up');
-            chinhSachIcon.classList.remove('bi-chevron-down');
+    const toggleBtn = document.getElementById('policyToggleBtn');
+    const policyContent = document.getElementById('policyContent');
+    const icon = document.getElementById('chinhSachIcon');
+    
+    // Mặc định ban đầu đã mở sẵn
+    policyContent.style.display = 'block';
+    icon.innerHTML = '▲';
+    
+    toggleBtn.addEventListener('click', function(e) {
+        if (policyContent.style.display === 'block') {
+            policyContent.style.display = 'none';
+            icon.innerHTML = '▼';
         } else {
-            chinhSachIcon.classList.remove('bi-chevron-up');
-            chinhSachIcon.classList.add('bi-chevron-down');
+            policyContent.style.display = 'block';
+            icon.innerHTML = '▲';
         }
-        
-        // Thêm sự kiện click cho các nút toggle
-        chinhSachBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                // Toggle icon khi người dùng click
-                chinhSachIcon.classList.toggle('bi-chevron-up');
-                chinhSachIcon.classList.toggle('bi-chevron-down');
-                
-                // Nếu không dùng Bootstrap JS, thì cũng toggle lớp show cho phần tử collapse
-                if (!window.bootstrap) {
-                    e.preventDefault();
-                    chinhSachList.classList.toggle('show');
-                }
-            });
-        });
-        
-        // Sử dụng sự kiện Bootstrap collapse nếu có sẵn
-        if (typeof bootstrap !== 'undefined') {
-            chinhSachList.addEventListener('show.bs.collapse', function () {
-                chinhSachIcon.classList.add('bi-chevron-up');
-                chinhSachIcon.classList.remove('bi-chevron-down');
-            });
-            
-            chinhSachList.addEventListener('hide.bs.collapse', function () {
-                chinhSachIcon.classList.remove('bi-chevron-up');
-                chinhSachIcon.classList.add('bi-chevron-down');
-            });
-        }
-    }
+    });
 });
 </script>
 
-<!-- Helper function to get social media brand color -->
 <?php
 function getSocialMediaColor($icon) {
     $colors = [
@@ -282,11 +287,3 @@ function getSocialMediaColor($icon) {
     return '#666666';
 }
 ?>
-
-<!-- Bootstrap JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Custom JS -->
-<script src="/Project_Website/ProjectWeb/layout/js/Footer.js"></script>
-
-</body>
-</html>

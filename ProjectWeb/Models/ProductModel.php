@@ -230,18 +230,32 @@ public function incrementClickCount($id)
 
   public function getProductList_AdminProduct()
   {
-    $sql = "
-        Select id_product, main_image, p.name as product_name, c.id_Category, c.name as category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3, M, L, XL
-        from product p join category c on p.id_Category = c.id_Category
-        where p.hide = 0
-        ";
-    return $this->getByQuery($sql);
+      $sql = "
+      Select id_product, main_image, p.name as product_name, 
+          c.id_Category, c.name as category_name, 
+          CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, 
+          CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price,
+          CONCAT(REPLACE(FORMAT(p.import_price, 0), ',', '.'), 'đ') as import_price,
+          store, click_count, created_at, updated_at, p.link, p.meta, 
+          p.`order`, tag, CSDoiTra, CSGiaoHang, description, 
+          discount_percent, p.hide, img2, img3, M, L, XL
+      from product p join category c on p.id_Category = c.id_Category
+      where p.hide = 0
+  ";
+  return $this->getByQuery($sql);
   }
 
   public function getProductList_AdminProduct_newest()
   {
     $sql = "
-        Select id_product, main_image, p.name as product_name, c.id_Category, c.name as category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3 , M, L, XL
+        Select id_product, main_image, p.name as product_name, 
+            c.id_Category, c.name as category_name, 
+            CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, 
+            CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price,
+            CONCAT(REPLACE(FORMAT(p.import_price, 0), ',', '.'), 'đ') as import_price,
+            store, click_count, created_at, updated_at, p.link, p.meta, 
+            p.`order`, tag, CSDoiTra, CSGiaoHang, description, 
+            discount_percent, p.hide, img2, img3, M, L, XL
         from product p join category c on p.id_Category = c.id_Category
         where p.hide = 0
         order by p.created_at desc
@@ -252,7 +266,14 @@ public function incrementClickCount($id)
   public function getProductList_AdminProduct_oldest()
   {
     $sql = "
-        Select id_product, main_image, p.name as product_name, c.id_Category, c.name as category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3 , M, L, XL
+        Select id_product, main_image, p.name as product_name, 
+            c.id_Category, c.name as category_name, 
+            CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, 
+            CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price,
+            CONCAT(REPLACE(FORMAT(p.import_price, 0), ',', '.'), 'đ') as import_price,
+            store, click_count, created_at, updated_at, p.link, p.meta, 
+            p.`order`, tag, CSDoiTra, CSGiaoHang, description, 
+            discount_percent, p.hide, img2, img3, M, L, XL
         from product p join category c on p.id_Category = c.id_Category
         where p.hide = 0
         order by p.created_at asc
@@ -263,7 +284,14 @@ public function incrementClickCount($id)
   public function getProductList_AdminProduct_priceASC()
   {
     $sql = "
-        Select id_product, main_image, p.name as product_name, c.id_Category, c.name as category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3 , M, L, XL
+        Select id_product, main_image, p.name as product_name, 
+            c.id_Category, c.name as category_name, 
+            CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, 
+            CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price,
+            CONCAT(REPLACE(FORMAT(p.import_price, 0), ',', '.'), 'đ') as import_price,
+            store, click_count, created_at, updated_at, p.link, p.meta, 
+            p.`order`, tag, CSDoiTra, CSGiaoHang, description, 
+            discount_percent, p.hide, img2, img3, M, L, XL
         from product p join category c on p.id_Category = c.id_Category
         where p.hide = 0
         order by p.current_price asc
@@ -274,7 +302,14 @@ public function incrementClickCount($id)
   public function getProductList_AdminProduct_priceDESC()
   {
     $sql = "
-        Select id_product, main_image, p.name as product_name, c.id_Category, c.name as category_name, CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price, store, click_count, created_at, updated_at, p.link, p.meta, p.`order`, tag, CSDoiTra, CSGiaoHang, description, discount_percent, p.hide, img2, img3 , M, L, XL
+        Select id_product, main_image, p.name as product_name, 
+            c.id_Category, c.name as category_name, 
+            CONCAT(REPLACE(FORMAT(p.current_price, 0), ',', '.'), 'đ') as current_price, 
+            CONCAT(REPLACE(FORMAT(p.original_price, 0), ',', '.'), 'đ') as original_price,
+            CONCAT(REPLACE(FORMAT(p.import_price, 0), ',', '.'), 'đ') as import_price,
+            store, click_count, created_at, updated_at, p.link, p.meta, 
+            p.`order`, tag, CSDoiTra, CSGiaoHang, description, 
+            discount_percent, p.hide, img2, img3, M, L, XL
         from product p join category c on p.id_Category = c.id_Category
         where p.hide = 0
         order by p.current_price desc

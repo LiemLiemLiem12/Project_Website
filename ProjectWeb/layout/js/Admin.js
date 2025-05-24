@@ -77,8 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    productSearching()
-    addProduct()
+    // Only call productSearching if we're on the product page
+    if (document.querySelector('.product-table')) {
+        productSearching();
+    }
+    addProduct();
     
     // Handle sidebar navigation
     const navLinks = document.querySelectorAll('.nav-links li');
@@ -807,6 +810,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('detailCode').textContent = row.getAttribute('data-id_product') || '';
             document.getElementById('detailName').textContent = row.getAttribute('data-name') || '';
             document.getElementById('detailCategory').textContent = row.getAttribute('data-id_category') || '';
+            document.getElementById('detailImportPrice').textContent = row.getAttribute('data-import_price') || '';
             document.getElementById('detailOriginalPrice').textContent = row.getAttribute('data-original_price') || '';
             document.getElementById('detailCurrentPrice').textContent = row.getAttribute('data-current_price') || '';
             document.getElementById('detailDiscount').textContent = row.getAttribute('data-discount_percent') ? '-' + row.getAttribute('data-discount_percent') + '%' : '';

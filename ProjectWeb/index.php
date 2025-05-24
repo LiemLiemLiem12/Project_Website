@@ -9,6 +9,11 @@ session_start();
 require './core/Database.php';
 require 'Models/BaseModel.php';
 require './Controllers/BaseController.php';
+require './core/MaintenanceMiddleware.php';
+
+// Kiểm tra maintenance mode
+$maintenanceMiddleware = new MaintenanceMiddleware();
+$maintenanceMiddleware->handle();
 
 // Get controller and action from URL parameters
 $controllerName = ucfirst(strtolower($_REQUEST['controller'] ?? 'Home')) . 'Controller';

@@ -340,3 +340,101 @@ header { /* Thẻ <header> */
 .main-header .col-6.d-md-none .logo img {
   max-height: 50px; /* Ensure mobile logo is still a good size, adjust if needed from previous 45px/40px */
 }
+
+/* CSS cho dropdown kết quả tìm kiếm */
+.search-container {
+    position: relative;
+}
+
+.search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+}
+
+.search-results-dropdown.show {
+    display: block;
+}
+
+.search-result-item {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: #f9f9f9;
+}
+
+.search-result-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.search-result-info {
+    flex: 1;
+}
+
+.search-result-name {
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.search-result-price {
+    color: #e4393c;
+    font-weight: 600;
+}
+
+.search-result-original-price {
+    color: #999;
+    font-size: 0.9em;
+    text-decoration: line-through;
+    margin-left: 5px;
+}
+
+.search-view-all {
+    padding: 10px;
+    text-align: center;
+    background-color: #f5f5f5;
+    font-weight: 500;
+    color: #0066cc;
+    cursor: pointer;
+}
+
+/* Hiệu ứng loading */
+.search-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.search-loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+

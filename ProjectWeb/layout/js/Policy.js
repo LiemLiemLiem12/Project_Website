@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Active link highlighting
-    const policyLinks = document.querySelectorAll('.policy-nav li a');
+
     const currentPath = window.location.pathname;
     
     policyLinks.forEach(link => {

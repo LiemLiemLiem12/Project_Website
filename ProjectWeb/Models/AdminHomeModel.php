@@ -724,6 +724,9 @@ class AdminHomeModel {
                 if (!empty($row['image'])) {
                     $row['image'] = 'upload/img/Footer/' . $row['image'];
                 }
+                if (!empty($row['qr_image'])) {
+                    $row['qr_image'] = 'upload/img/Footer/' . $row['qr_image'];
+                }
                 $paymentMethods[] = $row;
             }
         }
@@ -739,14 +742,17 @@ class AdminHomeModel {
             if (!empty($row['image'])) {
                 $row['image'] = 'upload/img/Footer/' . $row['image'];
             }
+            if (!empty($row['qr_image'])) {
+                $row['qr_image'] = 'upload/img/Footer/' . $row['qr_image'];
+            }
             return $row;
         }
         return null;
     }
     
-    public function createPaymentMethod($data, $imagePath) {
+    public function createPaymentMethod($data, $imagePath, $qrImagePath = null) {
         $title = $this->conn->real_escape_string($data['title']);
-        $link = $this->conn->real_escape_string($data['link'] ?? '#');
+        $qrImage = $qrImagePath ? $this->conn->real_escape_string($qrImagePath) : 'NULL';
         $hide = $data['status'] ? 0 : 1;
         $meta = isset($data['meta']) ? $this->conn->real_escape_string($data['meta']) : '';
         $image = $this->conn->real_escape_string($imagePath);
@@ -758,9 +764,9 @@ class AdminHomeModel {
         $orderPosition = (int)($orderRow['max_order'] ?? 0) + 1;
         
         $sql = "INSERT INTO footer_payment_methods 
-                (title, image, link, meta, `order`, hide) 
+                (title, image, qr_image, meta, `order`, hide) 
                 VALUES 
-                ('$title', '$image', '$link', '$meta', $orderPosition, $hide)";
+                ('$title', '$image', " . ($qrImagePath ? "'$qrImage'" : "NULL") . ", '$meta', $orderPosition, $hide)";
         
         if (!$this->conn->query($sql)) {
             error_log("SQL Error: " . $this->conn->error . " with query: " . $sql);
@@ -770,22 +776,29 @@ class AdminHomeModel {
         return $this->conn->insert_id;
     }
     
-    public function updatePaymentMethod($id, $data, $imagePath = null) {
+    public function updatePaymentMethod($id, $data, $imagePath = null, $qrImagePath = null) {
         $id = $this->conn->real_escape_string($id);
         $title = $this->conn->real_escape_string($data['title']);
-        $link = $this->conn->real_escape_string($data['link'] ?? '#');
         $hide = $data['status'] ? 0 : 1;
         $meta = isset($data['meta']) ? $this->conn->real_escape_string($data['meta']) : '';
         
         $sql = "UPDATE footer_payment_methods 
                 SET title = '$title',
-                    link = '$link',
                     meta = '$meta',
                     hide = $hide";
         
         if ($imagePath) {
             $image = $this->conn->real_escape_string($imagePath);
             $sql .= ", image = '$image'";
+        }
+        
+        if ($qrImagePath !== null) {
+            if ($qrImagePath) {
+                $qrImage = $this->conn->real_escape_string($qrImagePath);
+                $sql .= ", qr_image = '$qrImage'";
+            } else {
+                $sql .= ", qr_image = NULL";
+            }
         }
         
         $sql .= " WHERE id = '$id'";
@@ -838,6 +851,16 @@ class AdminHomeModel {
     public function getProductById($id) {
         $id = $this->conn->real_escape_string($id);
         $sql = "SELECT id_product, name, main_image, current_price, original_price, discount_percent FROM product WHERE id_product = '$id' LIMIT 1";
+        $result = $this->conn->query($sql);
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        return null;
+    }
+    
+    public function getCategoryById($id) {
+        $id = $this->conn->real_escape_string($id);
+        $sql = "SELECT id_Category as id, name, image FROM category WHERE id_Category = '$id' LIMIT 1";
         $result = $this->conn->query($sql);
         if ($result && $result->num_rows > 0) {
             return $result->fetch_assoc();

@@ -29,14 +29,34 @@ class AdminReportModel {
         $ordersResult = mysqli_query($this->conn, $ordersSql);
         $orders = mysqli_fetch_assoc($ordersResult)['total_orders'] ?: 0;
         
-        // Khách hàng mới
-        $customersSql = "SELECT COUNT(*) as new_customers FROM `user` $whereClause";
+        // Khách hàng mới - đếm những user lần đầu xuất hiện trong tháng được chọn
+        $customersSql = "SELECT COUNT(DISTINCT new_customers.id_User) as new_customers
+            FROM (
+                SELECT DISTINCT o1.id_User
+                FROM `order` o1
+                WHERE o1.id_User IS NOT NULL 
+                AND DATE(o1.created_at) BETWEEN '$startDate' AND '$endDate'
+                AND NOT EXISTS (
+                    SELECT 1 
+                    FROM `order` o2
+                    WHERE o2.id_User = o1.id_User
+                    AND DATE(o2.created_at) < '$startDate'
+                )
+            ) as new_customers";
         $customersResult = mysqli_query($this->conn, $customersSql);
         $customers = mysqli_fetch_assoc($customersResult)['new_customers'] ?: 0;
         
-        // Tỷ lệ chuyển đổi (giả định)
+        // Tỷ lệ chuyển đổi - số khách hàng có đơn hàng / tổng số lượt truy cập
+        $conversionSql = "SELECT COUNT(DISTINCT id_User) as unique_customers 
+                         FROM `order` 
+                         WHERE id_User IS NOT NULL 
+                         AND DATE(created_at) BETWEEN '$startDate' AND '$endDate'";
+        $conversionResult = mysqli_query($this->conn, $conversionSql);
+        $uniqueCustomers = mysqli_fetch_assoc($conversionResult)['unique_customers'] ?: 0;
+
         $visits = $this->getVisitCount($startDate, $endDate);
-        $conversion = $visits > 0 ? round(($orders / $visits) * 100, 1) : 0;
+        if ($visits == 0) $visits = 1; // Tránh chia cho 0
+        $conversion = round(($uniqueCustomers / $visits) * 100, 1);
         
         // Lấy dữ liệu kỳ trước để so sánh
         $prevPeriod = $this->getPreviousPeriodStats($startDate, $endDate);
@@ -88,13 +108,33 @@ class AdminReportModel {
         $orders = mysqli_fetch_assoc($ordersResult)['total_orders'] ?: 0;
         
         // Khách hàng mới kỳ trước
-        $customersSql = "SELECT COUNT(*) as new_customers FROM `user` $whereClause";
+        $customersSql = "SELECT COUNT(DISTINCT new_customers.id_User) as new_customers
+            FROM (
+                SELECT DISTINCT o1.id_User
+                FROM `order` o1
+                WHERE o1.id_User IS NOT NULL 
+                AND DATE(o1.created_at) BETWEEN '$prevStartDate' AND '$prevEndDate'
+                AND NOT EXISTS (
+                    SELECT 1 
+                    FROM `order` o2
+                    WHERE o2.id_User = o1.id_User
+                    AND DATE(o2.created_at) < '$prevStartDate'
+                )
+            ) as new_customers";
         $customersResult = mysqli_query($this->conn, $customersSql);
         $customers = mysqli_fetch_assoc($customersResult)['new_customers'] ?: 0;
         
-        // Tỷ lệ chuyển đổi kỳ trước
+        // Tỷ lệ chuyển đổi - số khách hàng có đơn hàng / tổng số lượt truy cập
+        $conversionSql = "SELECT COUNT(DISTINCT id_User) as unique_customers 
+                         FROM `order` 
+                         WHERE id_User IS NOT NULL 
+                         AND DATE(created_at) BETWEEN '$prevStartDate' AND '$prevEndDate'";
+        $conversionResult = mysqli_query($this->conn, $conversionSql);
+        $uniqueCustomers = mysqli_fetch_assoc($conversionResult)['unique_customers'] ?: 0;
+
         $visits = $this->getVisitCount($prevStartDate, $prevEndDate);
-        $conversion = $visits > 0 ? round(($orders / $visits) * 100, 1) : 0;
+        if ($visits == 0) $visits = 1; // Tránh chia cho 0
+        $conversion = round(($uniqueCustomers / $visits) * 100, 1);
         
         return [
             'revenue' => $revenue,
@@ -117,15 +157,29 @@ class AdminReportModel {
         $limitClause = $limit ? "LIMIT $limit" : "";
         
         $sql = "SELECT 
-                DATE(created_at) as date,
-                COUNT(*) as order_count,
-                SUM(total_amount) as revenue,
-                ROUND(SUM(total_amount) * 0.65) as expense,  -- Giả định chi phí là 65% doanh thu
-                ROUND(SUM(total_amount) * 0.35) as profit    -- Giả định lợi nhuận là 35% doanh thu
-            FROM `order`
-            WHERE DATE(created_at) BETWEEN '$startDate' AND '$endDate'
-              AND status != 'cancelled'
-            GROUP BY DATE(created_at)
+                DATE(o.created_at) as date,
+                COUNT(DISTINCT o.id_Order) as order_count,
+                SUM(o.total_amount) as revenue,
+                SUM(
+                    (
+                        SELECT SUM(od2.quantity * p.import_price)
+                        FROM order_detail od2
+                        JOIN product p ON od2.id_Product = p.id_product
+                        WHERE od2.id_Order = o.id_Order
+                    )
+                ) as expense,
+                SUM(o.total_amount) - SUM(
+                    (
+                        SELECT SUM(od2.quantity * p.import_price)
+                        FROM order_detail od2
+                        JOIN product p ON od2.id_Product = p.id_product
+                        WHERE od2.id_Order = o.id_Order
+                    )
+                ) as profit
+            FROM `order` o
+            WHERE DATE(o.created_at) BETWEEN '$startDate' AND '$endDate'
+              AND o.status != 'cancelled'
+            GROUP BY DATE(o.created_at)
             ORDER BY date DESC
             $limitClause";
         
@@ -142,13 +196,27 @@ class AdminReportModel {
     // Tính tổng cho báo cáo doanh số
     public function getTotalSalesReport($startDate, $endDate) {
         $sql = "SELECT 
-                COUNT(*) as total_orders,
-                SUM(total_amount) as total_revenue,
-                ROUND(SUM(total_amount) * 0.65) as total_expense,
-                ROUND(SUM(total_amount) * 0.35) as total_profit
-            FROM `order`
-            WHERE DATE(created_at) BETWEEN '$startDate' AND '$endDate'
-              AND status != 'cancelled'";
+                COUNT(DISTINCT o.id_Order) as total_orders,
+                SUM(o.total_amount) as total_revenue,
+                SUM(
+                    (
+                        SELECT SUM(od2.quantity * p.import_price)
+                        FROM order_detail od2
+                        JOIN product p ON od2.id_Product = p.id_product
+                        WHERE od2.id_Order = o.id_Order
+                    )
+                ) as total_expense,
+                SUM(o.total_amount) - SUM(
+                    (
+                        SELECT SUM(od2.quantity * p.import_price)
+                        FROM order_detail od2
+                        JOIN product p ON od2.id_Product = p.id_product
+                        WHERE od2.id_Order = o.id_Order
+                    )
+                ) as total_profit
+            FROM `order` o
+            WHERE DATE(o.created_at) BETWEEN '$startDate' AND '$endDate'
+              AND o.status != 'cancelled'";
         
         $result = mysqli_query($this->conn, $sql);
         return mysqli_fetch_assoc($result) ?: [
@@ -198,18 +266,69 @@ class AdminReportModel {
             $whereClause = "WHERE DATE(created_at) BETWEEN '$startDate' AND '$endDate'";
         }
         
+        // Lấy tổng số đơn hàng
+        $totalSql = "SELECT COUNT(*) as total FROM `order` $whereClause";
+        $totalResult = mysqli_query($this->conn, $totalSql);
+        $total = mysqli_fetch_assoc($totalResult)['total'];
+        
+        // Lấy số lượng từng trạng thái
         $sql = "SELECT 
                 status,
                 COUNT(*) as count
             FROM `order` 
             $whereClause
-            GROUP BY status";
+            GROUP BY status
+            ORDER BY count DESC";
         
         $result = mysqli_query($this->conn, $sql);
         $data = [];
+        $totalPercentage = 0;
         
+        // Lưu tạm thời tất cả trạng thái
+        $tempData = [];
         while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
+            $statusName = '';
+            switch ($row['status']) {
+                case 'pending': 
+                    $statusName = 'Đang xử lý';
+                    break;
+                case 'shipping': 
+                    $statusName = 'Đang giao';
+                    break;
+                case 'completed': 
+                    $statusName = 'Hoàn thành';
+                    break;
+                case 'cancelled': 
+                    $statusName = 'Đã hủy';
+                    break;
+            }
+            
+            $percentage = round(($row['count'] / $total) * 100, 1);
+            // Không thêm vào tổng nếu là trạng thái đã hủy
+            if ($row['status'] !== 'cancelled') {
+                $totalPercentage += $percentage;
+            }
+            
+            $tempData[] = [
+                'status' => $statusName,
+                'count' => $row['count'],
+                'percentage' => $percentage,
+                'original_status' => $row['status']
+            ];
+        }
+        
+        // Xử lý và điều chỉnh phần trăm
+        foreach ($tempData as $item) {
+            if ($item['original_status'] === 'cancelled') {
+                // Đảm bảo tổng = 100% bằng cách gán phần còn lại cho trạng thái đã hủy
+                $item['percentage'] = round(100 - $totalPercentage, 1);
+            }
+            
+            $data[] = [
+                'status' => $item['status'],
+                'count' => $item['count'],
+                'percentage' => $item['percentage']
+            ];
         }
         
         return $data;

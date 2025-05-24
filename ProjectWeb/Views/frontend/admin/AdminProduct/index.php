@@ -7,6 +7,11 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     header('Location: ?controller=Adminlogin');
     exit;
 }
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
+
 ?>
 
 
@@ -16,7 +21,10 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Sản phẩm - SR Store</title>
+    <title>Quản lý Sản phẩm </title>
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <!-- Bootstrap CSS -->
     <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -135,16 +143,31 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                                 <?php
                                 foreach ($productList as $data) {
                                     echo '
-                                        <tr class="product-row" data-id_product="' . $data['id_product'] . '" data-name="' . $data['product_name'] . '"
+                                        <tr class="product-row" data-id_product="' . $data['id_product'] . '" 
+                                            data-name="' . $data['product_name'] . '"
                                             data-description="' . base64_encode($data['description']) . '"
-                                            data-original_price="' . $data['original_price'] . '" data-discount_percent="' . $data['discount_percent'] . '" data-current_price="' . $data['current_price'] . '"
-                                            data-created_at="' . $data['created_at'] . '" data-updated_at="' . $data['updated_at'] . '" data-id_category="' . $data['category_name'] . '" id_category = "' . $data['id_Category'] . '"
+                                            data-original_price="' . $data['original_price'] . '"
+                                            data-import_price="' . $data['import_price'] . '"
+                                            data-discount_percent="' . $data['discount_percent'] . '"
+                                            data-current_price="' . $data['current_price'] . '"
+                                            data-created_at="' . $data['created_at'] . '"
+                                            data-updated_at="' . $data['updated_at'] . '"
+                                            data-id_category="' . $data['category_name'] . '"
+                                            id_category="' . $data['id_Category'] . '"
                                             data-main_image="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '"
                                             data-img="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img2'] . ',/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['img3'] . '"
-                                            data-link="' . $data['link'] . '" data-meta="' . $data['meta'] . '" data-hide="' . $data['hide'] . '" data-order="' . $data['order'] . '"
-                                            data-click_count="' . $data['click_count'] . '" data-tags="' . $data['tag'] . '" data-M-quantity = "' . $data['M'] . '" data-L-quantity = "' . $data['L'] . '" data-XL-quantity = "' . $data['XL'] . '"
+                                            data-link="' . $data['link'] . '"
+                                            data-meta="' . $data['meta'] . '"
+                                            data-hide="' . $data['hide'] . '"
+                                            data-order="' . $data['order'] . '"
+                                            data-click_count="' . $data['click_count'] . '"
+                                            data-tags="' . $data['tag'] . '"
+                                            data-M-quantity="' . $data['M'] . '"
+                                            data-L-quantity="' . $data['L'] . '"
+                                            data-XL-quantity="' . $data['XL'] . '"
                                             data-policy_return="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSDoiTra'] . '"
-                                            data-policy_warranty="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSGiaoHang'] . '" data-stock="' . $data['store'] . '">
+                                            data-policy_warranty="/Project_Website/ProjectWeb/upload/img/DetailProduct/' . $data['CSGiaoHang'] . '"
+                                            data-stock="' . $data['store'] . '">
                                             <td><input type="checkbox" class="product-checkbox"></td>
                                             <td>' . $data['id_product'] . '</td>
                                             <td><img src="/Project_Website/ProjectWeb/upload/img/All-Product/' . $data['main_image'] . '" alt="Product" width="50"></td>
@@ -293,11 +316,58 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             <div class="invalid-feedback">Vui lòng chọn danh mục</div>
                         </div>
                         <div class="mb-3">
-                            <label for="productPrice" class="form-label">Giá</label>
+                            <!-- Trong Modal thêm/sửa sản phẩm -->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group mb-3">
+                                        <label>Giá nhập</label>
+                                        <input type="number" min="0" step="1000" 
+                                            class="form-control" name="importPrice" required
+                                            value="<?= isset($product) ? $product['import_price'] : '' ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group mb-3">
+                                        <label>Giá bán</label>
+                                        <input type="number" min="0" step="1000" 
+                                            class="form-control" name="productPrice" required
+                                            value="<?= isset($product) ? $product['original_price'] : '' ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group mb-3">
+                                        <label>Giảm giá (%)</label>
+                                        <input type="number" min="0" max="100" 
+                                            class="form-control" name="discountPercent"
+                                            value="<?= isset($product) ? $product['discount_percent'] : '0' ?>">
+                                    </div>
+                                </div>
+                                <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                        const priceInput = document.querySelector('input[name="productPrice"]');
+                                        const discountInput = document.querySelector('input[name="discountPercent"]');
+                                        const finalPriceDisplay = document.getElementById('finalPrice'); // Thêm element này vào modal
+
+                                        const calculateFinalPrice = () => {
+                                            const price = parseInt(priceInput.value) || 0;
+                                            const discount = parseInt(discountInput.value) || 0;
+                                            const finalPrice = price * (1 - (discount / 100));
+                                            finalPriceDisplay.textContent = new Intl.NumberFormat('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND'
+                                            }).format(finalPrice);
+                                        };
+
+                                        priceInput?.addEventListener('input', calculateFinalPrice);
+                                        discountInput?.addEventListener('input', calculateFinalPrice);
+                                    });
+                                </script>
+                            </div>
+                            <!-- <label for="productPrice" class="form-label">Giá</label>
                             <input type="number" class="form-control" id="productPrice" name="productPrice" min="0"
                                 max="10000000" required>
-                            <div class="invalid-feedback">Vui lòng nhập giá hợp lệ (0<< 10.000.000đ)</div>
-                            </div>
+                            <div class="invalid-feedback">Vui lòng nhập giá hợp lệ (0<< 10.000.000đ)</div> -->
+                        </div>
                             <div class="mb-3">
                                 <label for="productStock" class="form-label">Tồn Kho</label>
                                 <input type="number" class="form-control mb-3" id="productStock" name="productStock"
@@ -376,13 +446,13 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
         </div>
     </div>
     <!-- Modal Sửa Sản Phẩm -->
-    <!-- <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel"
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <form class="need-validation" id="addProductForm" novalidate>
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addProductModalLabel">Thêm Sản Phẩm Mới</h5>
+                        <h5 class="modal-title" id="addProductModalLabel">Sửa Sản Phẩm Mới</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
 
@@ -466,7 +536,7 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 </form>
             </div>
         </div>
-    </div> -->
+    </div>
     <!-- Modal Chi Tiết Sản Phẩm -->
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel"
         aria-hidden="true">
@@ -487,8 +557,9 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                             <h4 id="detailName"></h4>
                             <p><strong>Mã SP:</strong> <span id="detailCode"></span></p>
                             <p><strong>Danh mục:</strong> <span id="detailCategory"></span></p>
+                            <p><strong>Giá nhập:</strong> <span id="detailImportPrice"></span></p>
                             <p>
-                                <strong>Giá:</strong>
+                                <strong>Giá bán:</strong>
                                 <span id="detailOriginalPrice" style="text-decoration:line-through;color:gray"></span>
                                 <span id="detailCurrentPrice" style="color:red;font-weight:bold"></span>
                                 <span id="detailDiscount" class="badge bg-success"></span>
@@ -810,11 +881,241 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
         }
     });
     </script>
+    <script>
+// Xử lý lọc theo danh mục
+document.addEventListener('DOMContentLoaded', function() {
+    // Lấy dropdown danh mục
+    const categoryDropdown = document.getElementById('filter-dropdown-product');
     
+    // Thêm event listener cho dropdown danh mục
+    if (categoryDropdown) {
+        categoryDropdown.addEventListener('change', function() {
+            filterByCategory();
+        });
+    }
+    
+    // Hàm lọc theo danh mục
+    function filterByCategory() {
+        const categoryId = categoryDropdown.value;
+        
+        // Hiển thị loading
+        document.querySelector('.table-responsive-product').innerHTML = '<div class="text-center p-5"><i class="fas fa-spinner fa-spin fa-3x"></i><p class="mt-3">Đang tải dữ liệu...</p></div>';
+        
+        // Gửi request AJAX
+        const formData = new FormData();
+        formData.append('category_id', categoryId);
+        
+        fetch('/Project_Website/ProjectWeb/index.php?controller=adminproduct&action=filterCategory', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Cập nhật bảng sản phẩm với kết quả
+            document.querySelector('.table-responsive-product').innerHTML = html;
+            
+            // Khởi tạo lại các event listeners
+            reinitializeTableEvents();
+        })
+        .catch(error => {
+            console.error('Lỗi khi lọc sản phẩm:', error);
+            // Hiển thị thông báo lỗi
+            document.querySelector('.table-responsive-product').innerHTML = '<div class="alert alert-danger">Đã xảy ra lỗi khi lọc sản phẩm. Vui lòng thử lại sau.</div>';
+        });
+    }
+    
+    // Hàm khởi tạo lại các event listeners cho bảng
+    function reinitializeTableEvents() {
+        // Khởi tạo lại checkbox "Chọn tất cả"
+        const selectAll = document.getElementById('select-all');
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.product-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateDeleteButtonState();
+            });
+        }
+        
+        // Khởi tạo lại các checkbox sản phẩm
+        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateDeleteButtonState();
+            });
+        });
+        
+        // Khởi tạo lại các nút sửa
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+               const row = this.closest('.product-row');
+                const productData = {
+                    id_product: row.getAttribute('data-id_product'),
+                    name: row.getAttribute('data-name'),
+                    description: atob(row.getAttribute('data-description')),
+                    original_price: row.getAttribute('data-original_price'),
+                    import_price: row.getAttribute('data-import_price'),
+                    discount_percent: row.getAttribute('data-discount_percent'),
+                    current_price: row.getAttribute('data-current_price'),
+                    store: row.getAttribute('data-stock'),
+                    category_id: row.getAttribute('id_category'),
+                    tags: row.getAttribute('data-tags'),
+                    M_quantity: row.getAttribute('data-M-quantity'),
+                    L_quantity: row.getAttribute('data-L-quantity'),
+                    XL_quantity: row.getAttribute('data-XL-quantity')
+                };
+                
+         
+                
+                editProduct(productData);
+            });
+        });
+    }
+    
+    // Hàm cập nhật trạng thái nút xóa
+    function updateDeleteButtonState() {
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+        if (deleteSelectedBtn) {
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            deleteSelectedBtn.disabled = selectedCheckboxes.length === 0;
+        }
+    }
+    
+    // Hàm hiển thị modal sửa sản phẩm (giữ lại logic hiện có)
+    function showEditProductModal(row) {
+        // Lấy dữ liệu từ hàng được chọn
+        const productId = row.getAttribute('data-id_product');
+        const productName = row.getAttribute('data-name');
+        const productDesc = atob(row.getAttribute('data-description')); // Giải mã Base64
+        const productCategory = row.getAttribute('id_category');
+        const productPrice = row.getAttribute('data-original_price');
+        const productImportPrice = row.getAttribute('data-import_price');
+        const productStock = row.getAttribute('data-stock');
+        const productImage = row.getAttribute('data-main_image');
+        const productTags = row.getAttribute('data-tags');
+        
+        // Logic hiển thị modal sửa sản phẩm (giữ nguyên)
+        // ...
+    }
+});
+</script>
     <!-- Sweet Alert 2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom SweetAlert Config -->
     <script src="/Project_Website/ProjectWeb/layout/js/sweetalert-config.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lấy các phần tử cần thiết
+        const selectAllCheckbox = document.getElementById('select-all');
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+
+        // Hàm cập nhật trạng thái nút xóa
+        function updateDeleteButtonState() {
+            if (deleteSelectedBtn) {
+                const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+                deleteSelectedBtn.disabled = selectedCheckboxes.length === 0;
+            }
+        }
+
+        // Xử lý sự kiện cho checkbox "Chọn tất cả"
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.product-checkbox');
+                // Bỏ chọn tất cả các checkbox hiện tại trước
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                // Sau đó mới áp dụng trạng thái mới
+                if (this.checked) {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = true;
+                    });
+                }
+                updateDeleteButtonState();
+            });
+        }
+
+        // Xử lý sự kiện cho từng checkbox sản phẩm
+        document.addEventListener('change', function(event) {
+            if (event.target.classList.contains('product-checkbox')) {
+                // Cập nhật trạng thái của checkbox "Chọn tất cả"
+                if (selectAllCheckbox) {
+                    const totalCheckboxes = document.querySelectorAll('.product-checkbox').length;
+                    const checkedCheckboxes = document.querySelectorAll('.product-checkbox:checked').length;
+                    selectAllCheckbox.checked = totalCheckboxes === checkedCheckboxes && totalCheckboxes > 0;
+                }
+                updateDeleteButtonState();
+            }
+        });
+
+        // Khởi tạo trạng thái ban đầu
+        updateDeleteButtonState();
+    });
+    </script>
+
+    <!-- Thêm script để xử lý load dữ liệu khi sửa -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lưu trữ nút submit gốc
+        const originalSubmitText = document.querySelector('#addProductForm button[type="submit"]').textContent;
+        
+        // Xử lý khi nhấn nút sửa
+        window.editProduct = function(productData) {
+            const modal = new bootstrap.Modal(document.getElementById('addProductModal'));
+            modal.show();
+            
+            // Đổi text nút submit
+            document.querySelector('#addProductForm button[type="submit"]').textContent = 'Cập nhật sản phẩm';
+            
+            // Load các giá trị vào form
+            document.querySelector('input[name="importPrice"]').value = 
+                parseFloat(productData.import_price.replace(/[^\d]/g, ''));
+            document.querySelector('input[name="productPrice"]').value = 
+                parseFloat(productData.original_price.replace(/[^\d]/g, ''));
+            document.querySelector('input[name="discountPercent"]').value = 
+                productData.discount_percent || 0;
+            
+            // Thêm ID sản phẩm vào form
+            if (!document.querySelector('input[name="productID"]')) {
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'productID';
+                idInput.value = productData.id_product;
+                document.getElementById('addProductForm').appendChild(idInput);
+            } else {
+                document.querySelector('input[name="productID"]').value = productData.id_product;
+            }
+            
+            // Tính và hiển thị giá cuối cùng
+            const finalPrice = document.getElementById('finalPrice');
+            if (finalPrice) {
+                const price = parseFloat(productData.original_price.replace(/[^\d]/g, ''));
+                const discount = productData.discount_percent || 0;
+                const finalPriceValue = price * (1 - (discount / 100));
+                finalPrice.textContent = new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                }).format(finalPriceValue);
+            }
+        }
+        
+        // Reset form khi đóng modal
+        document.getElementById('addProductModal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('addProductForm').reset();
+            document.querySelector('#addProductForm button[type="submit"]').textContent = originalSubmitText;
+            const idInput = document.querySelector('input[name="productID"]');
+            if (idInput) idInput.remove();
+        });
+    });
+    </script>
+
+    <!-- Thêm div hiển thị giá cuối cùng -->
+    <div class="row mt-2">
+        <div class="col-12">
+            <strong>Giá sau giảm:</strong> 
+            <span id="finalPrice" class="text-danger fw-bold"></span>
+        </div>
+    </div>
 </body>
 
 </html>

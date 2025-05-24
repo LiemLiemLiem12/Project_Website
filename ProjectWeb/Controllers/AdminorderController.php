@@ -73,29 +73,35 @@ class AdminorderController extends BaseController
     {
         $orderID = isset($_POST['orderID']) ? $_POST['orderID'] : '';
         $status = isset($_POST['status']) ? $_POST['status'] : '';
-        // var_dump($_POST);
+
         switch ($status) {
             case 'waitConfirm':
                 $this->orderModel->updateOrder($orderID, [
                     'status' => 'pending'
                 ]);
-                break;
+                echo json_encode(['status' => 'pending']);
+                exit;
+
             case 'pending':
                 $this->orderModel->updateOrder($orderID, [
                     'status' => 'shipping'
                 ]);
-                break;
+                echo json_encode(['status' => 'shipping']);
+                exit;
+
             case 'shipping':
                 $this->orderModel->updateOrder($orderID, [
                     'status' => 'completed'
                 ]);
-                break;
+                echo json_encode(['status' => 'completed']);
+                exit;
         }
 
-        return $this->view("frontend.admin.Adminorder.sort", [
-            "orderList" => $this->orderModel->getAll_AdminOrder()
-        ]);
+        // Nếu không khớp status nào
+        echo json_encode(['error' => 'Invalid status']);
+        exit;
     }
+
     public function cancel()
     {
         $orderID = isset($_POST['orderID']) ? $_POST['orderID'] : '';
@@ -126,9 +132,8 @@ class AdminorderController extends BaseController
 
 
 
-        return $this->view("frontend.admin.Adminorder.sort", [
-            "orderList" => $this->orderModel->getAll_AdminOrder()
-        ]);
+        echo json_encode(['status' => 'cancelled']);
+        exit;
     }
 
     public function getDetailInfo()

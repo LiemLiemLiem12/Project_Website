@@ -7,6 +7,10 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     header('Location: ?controller=Adminlogin');
     exit;
 }
+require_once 'Controllers/FooterController.php';
+$footerController = new FooterController();
+$storeSettings = $footerController->getStoreSettings();
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
 ?>
 
 
@@ -17,6 +21,9 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Quản lý tài khoản Admin - SR Store</title>
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <link href="/Project_Website/ProjectWeb/layout/cssBootstrap/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Admin.css">
@@ -271,27 +278,43 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                                     <input type="hidden" name="id" id="customerId">
                                     <div class="mb-3">
                                         <label>Họ tên <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="name" id="customerNameInput"
-                                            required>
+                                        <input type="text" class="form-control" name="name" id="customerNameInput" required
+                                            minlength="2" maxlength="50">
+                                        <div class="form-text">Họ tên từ 2-50 ký tự</div>
                                     </div>
                                     <div class="mb-3">
                                         <label>Email <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" name="email" id="customerEmailInput"
-                                            required>
+                                        <input type="email" class="form-control" name="email" id="customerEmailInput" required
+                                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                                        <div class="form-text">Email phải đúng định dạng (vd: example@domain.com)</div>
                                     </div>
                                     <div class="mb-3">
                                         <label>Mật khẩu <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" name="password"
-                                            id="customerPasswordInput" required autocomplete="new-password">
+                                        <input type="password" class="form-control" name="password" id="customerPasswordInput" required
+                                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                                            autocomplete="new-password">
+                                        <div class="form-text">
+                                            Mật khẩu phải có ít nhất:
+                                            <ul class="mb-0">
+                                                <li>8 ký tự</li>
+                                                <li>1 chữ hoa</li>
+                                                <li>1 chữ thường</li>
+                                                <li>1 số</li>
+                                                <li>1 ký tự đặc biệt (@$!%*?&)</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label>Số điện thoại</label>
-                                        <input type="text" class="form-control" name="phone" id="customerPhoneInput">
+                                        <label>Số điện thoại <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control" name="phone" id="customerPhoneInput" required
+                                            pattern="[0-9]{10,11}">
+                                        <div class="form-text">Số điện thoại từ 10-11 số</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label>Địa chỉ</label>
-                                        <textarea class="form-control" name="address"
-                                            id="customerAddressInput"></textarea>
+                                        <label>Địa chỉ <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" name="address" id="customerAddressInput" required
+                                            minlength="5" maxlength="200"></textarea>
+                                        <div class="form-text">Địa chỉ từ 5-200 ký tự</div>
                                     </div>
                                     <div class="mb-3">
                                         <input type="hidden" name="role" id="customerRoleInput" value="admin">
@@ -1561,6 +1584,58 @@ if (!isset($_SESSION['admin_logged_in']) || !$_SESSION['admin_logged_in']) {
                 });
             }
         });
+    </script>
+
+    <!-- Add validation script -->
+    <script>
+    document.getElementById('customerForm').addEventListener('submit', function(e) {
+        const password = document.getElementById('customerPasswordInput');
+        const email = document.getElementById('customerEmailInput');
+        const phone = document.getElementById('customerPhoneInput');
+        const name = document.getElementById('customerNameInput');
+        const address = document.getElementById('customerAddressInput');
+        
+        // Reset custom validity
+        [password, email, phone, name, address].forEach(input => input.setCustomValidity(''));
+        
+        // Validate email format
+        if (email.value && !email.checkValidity()) {
+            email.setCustomValidity('Email không đúng định dạng');
+            e.preventDefault();
+            return;
+        }
+        
+        // Validate password only for new admin (when adding)
+        if (!document.getElementById('customerId').value && password.value) {
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(password.value)) {
+                password.setCustomValidity('Mật khẩu phải có ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt');
+                e.preventDefault();
+                return;
+            }
+        }
+        
+        // Validate phone number
+        if (phone.value && !phone.checkValidity()) {
+            phone.setCustomValidity('Số điện thoại phải có 10-11 số');
+            e.preventDefault();
+            return;
+        }
+        
+        // Validate name length
+        if (name.value && !name.checkValidity()) {
+            name.setCustomValidity('Họ tên phải từ 2-50 ký tự');
+            e.preventDefault();
+            return;
+        }
+        
+        // Validate address length  
+        if (address.value && !address.checkValidity()) {
+            address.setCustomValidity('Địa chỉ phải từ 5-200 ký tự');
+            e.preventDefault();
+            return;
+        }
+    });
     </script>
 </body>
 

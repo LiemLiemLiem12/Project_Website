@@ -40,6 +40,9 @@ $storeSettings = $footerController->getStoreSettings();
 // Lấy đường dẫn logo và tên website
 $logoPath = !empty($storeSettings['logo_path']) ? $storeSettings['logo_path'] : '/Project_Website/ProjectWeb/upload/img/Header/logo.png';
 $siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 'RS Store';
+
+// Đường dẫn favicon - mặc định hoặc từ cài đặt
+$faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_path'] : '/Project_Website/ProjectWeb/upload/img/Header/favicon.ico';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -47,14 +50,17 @@ $siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($siteName) ?> - Thời trang nam chính hãng</title>
-    
+
+    <!-- Favicon -->
+    <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+
     <!-- Trong thẻ <head> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/Project_Website/ProjectWeb/layout/css/Header.css"> <!-- Đường dẫn đến file CSS mới -->
     
-       
 </head>
 <body>
         <!-- Top promotional banner -->
@@ -83,9 +89,9 @@ $siteName = !empty($storeSettings['site_name']) ? $storeSettings['site_name'] : 
                 
                 <!-- Combined Logo, Brand Text, and Search bar for MD and UP -->
                 <div class="col-md-8 col-lg-9 d-none d-md-flex align-items-center">
-                    <a href="/ProjectWeb/index.php" class="logo me-2 d-none d-md-inline-block">
-                        <img src="<?= htmlspecialchars($logoPath) ?>" alt="<?= htmlspecialchars($siteName) ?> Logo" class="img-fluid desktop-logo-img">
-                    </a>
+                <a href="/Project_Website/ProjectWeb/index.php?controller=home&action=index" class="logo">
+                    <img src="<?= htmlspecialchars($logoPath) ?>" alt="<?= htmlspecialchars($siteName) ?> Logo" class="img-fluid desktop-logo-img">
+                </a>
                     <h1 class="rs-store-brand-text me-3 h5 mb-0 d-none d-md-inline-block"><?= htmlspecialchars($siteName) ?></h1>
                         <div class="search-container flex-grow-1 position-relative">
                         <form action="index.php" method="get" id="searchForm">
