@@ -917,7 +917,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                                     class="text-danger">*</span></label>
                             <input type="file" class="form-control" id="bannerImage" name="image_upload"
                                 accept="image/*" required>
-                            <div class="form-text">Kích thước đề xuất: 1200x400 pixel, tối đa 2MB</div>
+                            <div class="form-text">Kích thước đề xuất: 1300x500 pixel, tối đa 2MB</div>
                         </div>
 
                         <div id="cropperContainer" style="display: none;">
@@ -963,7 +963,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                             </div>
 
                             <div class="text-center mb-3">
-                                <h6>Xem trước (1200x400)</h6>
+                                <h6>Xem trước (1300x500)</h6>
                                 <div class="preview-container wide mx-auto">
                                     <div class="preview"></div>
                                 </div>
@@ -1039,7 +1039,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                             <label for="edit_banner_image" class="form-label">Ảnh banner</label>
                             <input type="file" class="form-control" id="edit_banner_image" name="image_upload"
                                 accept="image/*">
-                            <div class="form-text">Kích thước đề xuất: 1200x400 pixel, tối đa 2MB. Để trống nếu không
+                            <div class="form-text">Kích thước đề xuất: 1300x500 pixel, tối đa 2MB. Để trống nếu không
                                 thay đổi ảnh.</div>
                             <div class="mt-2">
                                 <img id="editBannerPreview" src="" alt="Preview"
@@ -1090,7 +1090,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                             </div>
 
                             <div class="text-center mb-3">
-                                <h6>Xem trước (1200x400)</h6>
+                                <h6>Xem trước (1300x500)</h6>
                                 <div class="preview-container wide mx-auto">
                                     <div class="edit-preview"></div>
                                 </div>
@@ -1941,7 +1941,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
 
                         // Lấy thứ tự mới
                         const positions = {};
-                        $(".section-card").each(function (index) {
+                        $("#sectionsContainer .section-card").each(function (index) {
                             positions[$(this).data("id")] = index + 1;
                         });
 
@@ -2365,7 +2365,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
 
                     // Khởi tạo cropper mới
                     cropper = new Cropper(document.getElementById('imageToCrop'), {
-                        aspectRatio: 1200 / 400,
+                        aspectRatio: 1300 / 500,
                         viewMode: 1,
                         preview: '.preview-container .preview',
                         minContainerWidth: 300,
@@ -2383,8 +2383,8 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 if (!cropper) return;
 
                 const canvas = cropper.getCroppedCanvas({
-                    width: 1200,
-                    height: 400
+                    width: 1300,
+                    height: 500
                 });
 
                 if (!canvas) return;
@@ -2469,7 +2469,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
 
                     // Khởi tạo cropper mới
                     editCropper = new Cropper(document.getElementById('editImageToCrop'), {
-                        aspectRatio: 1200 / 400,
+                        aspectRatio: 1300 / 500,
                         viewMode: 1,
                         preview: '.preview-container .edit-preview',
                         minContainerWidth: 300,
@@ -2487,8 +2487,8 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 if (!editCropper) return;
 
                 const canvas = editCropper.getCroppedCanvas({
-                    width: 1200,
-                    height: 400
+                    width: 1300,
+                    height: 500
                 });
 
                 if (!canvas) return;
