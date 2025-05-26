@@ -8,6 +8,7 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
 $isTagSearch = isset($isTagSearch) && $isTagSearch;
 $searchTag = $searchTag ?? '';
 $categoryName = $isTagSearch ? 'Tag: ' . ucfirst($searchTag) : ($category['name'] ?? 'Tất cả sản phẩm');
+$categoryBanner = $category['banner'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,7 +85,7 @@ $categoryName = $isTagSearch ? 'Tag: ' . ucfirst($searchTag) : ($category['name'
                     </div>
                 </div>
             <?php else: ?>
-                <img src="/Project_Website/ProjectWeb/upload/img/home/Banner3.webp" alt="<?= $categoryName ?>" class="img-fluid">
+                <img src="/Project_Website/ProjectWeb/upload/img/category/<?= $category['banner'] ?? 'Banner3.webp' ?>" alt="<?= $categoryName ?>" class="img-fluid">
                 <div class="banner-content">
                     <h1><?= $categoryName ?></h1>
                 </div>

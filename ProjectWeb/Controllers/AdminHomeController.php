@@ -1459,6 +1459,26 @@ class AdminHomeController {
         return base64_decode($base64);
     }
 
-    
-  
+    public function upload()
+    {
+        if (isset($_FILES['upload'])) {
+            $file = $_FILES['upload'];
+            $target = 'upload/img/Description_img/' . basename($file['name']);
+
+            // Đảm bảo thư mục tồn tại
+            $uploadDir = 'upload/img/Description_img/';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            if (move_uploaded_file($file['tmp_name'], $target)) {
+                $funcNum = $_GET['CKEditorFuncNum'];
+                $url = '/Project_Website/ProjectWeb/' . $target;
+                $message = 'Tải ảnh lên thành công';
+                echo "<script>window.parent.CKEDITOR.tools.callFunction($funcNum, '$url', '$message');</script>";
+            } else {
+                echo 'Không thể tải ảnh lên.';
+            }
+        }
+    }
 }

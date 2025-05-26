@@ -25,6 +25,8 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
     <!-- Favicon -->
     <link rel="icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
     <link rel="shortcut icon" href="<?= htmlspecialchars($faviconPath) ?>" type="image/x-icon">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
             background: url('/Project_Website/ProjectWeb/upload/img/wallpaper.jpg') no-repeat center center fixed;
@@ -114,6 +116,40 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
             font-size: 1rem;
         }
 
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: #333;
+        }
+
+        .password-container input[type="password"],
+        .password-container input[type="text"] {
+            padding-right: 40px;
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f5f7fa;
+            color: #222;
+            font-size: 1rem;
+            margin-bottom: 2px;
+            box-sizing: border-box;
+        }
+
         @media (max-width: 500px) {
             .login-container {
                 padding: 24px 8px 16px 8px;
@@ -129,16 +165,37 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
         <?php if (!empty($error)): ?>
             <div class="error-message"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
+      
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required autofocus style="background:#f5f7fa;color:#222;">
         </div>
         <div class="form-group">
             <label for="password">Mật khẩu</label>
-            <input type="password" id="password" name="password" required style="background:#f5f7fa;color:#222;">
+            <div class="password-container">
+                <input type="password" id="password" name="password" required style="background:#f5f7fa;color:#222;">
+                <i class="toggle-password fas fa-eye" onclick="togglePassword()"></i>
+            </div>
         </div>
         <button type="submit" class="login-btn">Đăng nhập</button>
     </form>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 
 </html>

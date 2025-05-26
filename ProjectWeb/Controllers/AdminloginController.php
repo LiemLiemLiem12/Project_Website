@@ -91,12 +91,30 @@ class AdminLoginController
             session_start();
         }
 
+        // Xóa các session liên quan đến admin
+        unset($_SESSION['admin_logged_in']);
+        unset($_SESSION['admin_id']);
+        unset($_SESSION['admin_name']);
+        unset($_SESSION['admin_email']);
+
         // Xóa tất cả session
-        session_unset();
+        $_SESSION = array();
+
+        // Xóa cookie session nếu có
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', time()-3600, '/');
+        }
+
+        // Hủy session
         session_destroy();
 
-        // Chuyển hướng về trang đăng nhập
-        header('Location: index.php?controller=adminlogin');
+        // Tạo session ID mới để tránh session fixation
+        session_start();
+        session_regenerate_id(true);
+        session_destroy();
+
+        // Chuyển hướng về trang đăng nhập với thông báo
+        header('Location: index.php?controller=adminlogin&message=logged_out');
         exit;
     }
 }

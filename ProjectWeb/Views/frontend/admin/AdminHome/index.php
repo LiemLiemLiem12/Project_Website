@@ -807,13 +807,13 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                 </div>
                 <div class="modal-body">
                     <form id="editSectionForm">
-                        <input type="hidden" id="edit_id" name="id">
+                        <input type="hidden" id="edit_section_id" name="id">
                         <div class="mb-3">
-                            <label for="edit_title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="edit_title" name="title" required>
+                            <label for="edit_section_title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_section_title" name="title" required>
                         </div>
                         <div class="mb-3">
-                            <label for="edit_section_type" class="form-label">Loại vùng <span class="text-danger">*</span></label>
+                            <label for="edit_section_type" class="form-label">Loại vùng hiển thị <span class="text-danger">*</span></label>
                             <select class="form-select" id="edit_section_type" name="section_type" required>
                                 <option value="product">Sản phẩm</option>
                                 <option value="category">Danh mục</option>
@@ -821,17 +821,13 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
                         </div>
                         <div class="mb-3">
                             <label for="edit_product_count" class="form-label">Số lượng hiển thị <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" id="edit_product_count" name="product_count" min="1" max="12" value="4" required>
+                            <input type="number" class="form-control" id="edit_product_count" name="product_count" min="1" max="12" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Kiểu hiển thị</label>
-                            <input type="text" class="form-control" value="Lưới" disabled>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary" id="editSectionBtn">Lưu thay đổi</button>
                 </div>
             </div>
         </div>
@@ -3552,6 +3548,12 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
         CKEDITOR.replace('policy_meta', {
             height: 400,
             width: '100%',
+            removePlugins: 'image2',            // ❌ Loại bỏ image2
+            extraPlugins: 'image',              // ✅ Thêm plugin image cũ
+            uploadUrl: '?controller=adminhome&action=upload',
+            filebrowserImageUploadUrl: '?controller=adminhome&action=upload',
+            filebrowserUploadMethod: 'form',
+            allowedContent: true,               // Cho phép tất cả HTML (bao gồm width, height, alt,...)
             removeButtons: 'Save,NewPage,Preview,Print,Templates',
             toolbarGroups: [
                 { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
@@ -3568,10 +3570,16 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
             ]
         });
 
-        // Initialize CKEditor for Edit Policy form
+        // Initialize CKEditor for Edit Policy form with same config
         CKEDITOR.replace('edit_policy_meta', {
             height: 400,
             width: '100%',
+            removePlugins: 'image2',            // ❌ Loại bỏ image2
+            extraPlugins: 'image',              // ✅ Thêm plugin image cũ
+            uploadUrl: '?controller=adminhome&action=upload',
+            filebrowserImageUploadUrl: '?controller=adminhome&action=upload',
+            filebrowserUploadMethod: 'form',
+            allowedContent: true,               // Cho phép tất cả HTML (bao gồm width, height, alt,...)
             removeButtons: 'Save,NewPage,Preview,Print,Templates',
             toolbarGroups: [
                 { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
@@ -3770,6 +3778,105 @@ $faviconPath = !empty($storeSettings['favicon_path']) ? $storeSettings['favicon_
         updateDeleteButtonState();
     });
     </script>
+
+    <script>
+    $(document).ready(function() {
+        // Xử lý sự kiện click nút sửa section
+        $(document).on('click', '.btn-edit-section', function(e) {
+            e.preventDefault();
+            const sectionId = $(this).data('id');
+            
+            // Gọi API để lấy thông tin section
+            $.ajax({
+                url: 'index.php?controller=adminhome&action=editSection',
+                type: 'GET',
+                data: { id: sectionId },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success && response.section) {
+                        const section = response.section;
+                        
+                        // Điền thông tin vào form
+                        $('#edit_section_id').val(section.id);
+                        $('#edit_section_title').val(section.title);
+                        $('#edit_section_type').val(section.section_type);
+                        $('#edit_product_count').val(section.product_count);
+                        
+                        // Mở modal sửa
+                        $('#editSectionModal').modal('show');
+                    } else {
+                        showAlert(response.message || 'Không thể tải thông tin section', 'error');
+                    }
+                },
+                error: function() {
+                    showAlert('Không thể kết nối đến máy chủ', 'error');
+                }
+            });
+        });
+
+        // Xử lý submit form sửa section
+        $('#editSectionForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+            
+            $.ajax({
+                url: 'index.php?controller=adminhome&action=editSection',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        showAlert('Cập nhật vùng hiển thị thành công');
+                        $('#editSectionModal').modal('hide');
+                        // Reload lại danh sách sections
+                        loadSections();
+                    } else {
+                        showAlert(response.message || 'Không thể cập nhật vùng hiển thị', 'error');
+                    }
+                },
+                error: function() {
+                    showAlert('Không thể kết nối đến máy chủ', 'error');
+                }
+            });
+        });
+    });
+    </script>
+
+    <!-- Modal sửa section -->
+    <div class="modal fade" id="editSectionModal" tabindex="-1" aria-labelledby="editSectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSectionModalLabel">Chỉnh sửa vùng hiển thị</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSectionForm">
+                        <input type="hidden" id="edit_section_id" name="id">
+                        <div class="mb-3">
+                            <label for="edit_section_title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_section_title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_section_type" class="form-label">Loại vùng hiển thị <span class="text-danger">*</span></label>
+                            <select class="form-select" id="edit_section_type" name="section_type" required>
+                                <option value="product">Sản phẩm</option>
+                                <option value="category">Danh mục</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_product_count" class="form-label">Số lượng hiển thị <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="edit_product_count" name="product_count" min="1" max="12" required>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

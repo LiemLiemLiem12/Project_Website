@@ -1,5 +1,4 @@
 <?php
-// Thêm vào đầu file để lấy thông tin cài đặt
 require_once 'Controllers/FooterController.php';
 $footerController = new FooterController();
 $storeSettings = $footerController->getStoreSettings();
